@@ -16,7 +16,7 @@ to install Git, CMake and GCC.
 Install instructions for Eigen can be found at their website.
 
 ###Steps to install (on UNIX, steps are probably similar on Windows)
-1. `git clone`
+1. `git clone https://github.com/bgrimstad/bspline.git`
 2. `cd bspline`
 3. `cmake .`
 4. `make`
@@ -76,10 +76,15 @@ int main()
     SortedDataTable table;
 
     DenseVector x(2);
+    // Record the domain of i and j so we don't evaluate outside their
+    // domains in the loops following these two loops.
+    double i_max = 0.0, j_max = 0.0;
     for(double i = 0.0; i <= 2.6; i += 0.11)
     {
+        i_max = i;
         for(double j = 1.4; j <= 5.3; j += 0.05)
         {
+            j_max = j;
             x(0) = i; x(1) = j;
             // addSample has several signatures, see the header file.
             table.addSample(x, func(x));
@@ -88,11 +93,10 @@ int main()
 
     Bspline bSpline(table, 3);
 
-    // Make sure we evaluate the BSpline inside the domain of x
     DenseVector y, b;
-    for(double i = 0.0; i <= 2.6; i += 0.07)
+    for(double i = 0.0; i <= i_max; i += 0.07)
     {
-        for(double j = 1.4; j <= 5.3; j += 0.09)
+        for(double j = 1.4; j <= j_max; j += 0.09)
         {
             x(0) = i; x(1) = j;
             y = func(x);
