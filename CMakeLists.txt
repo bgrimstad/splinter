@@ -22,13 +22,13 @@ if(NOT HEADER_DIRECTORY)
     set(HEADER_DIRECTORY ${DEFAULT_HEADER_DIRECTORY})
 endif(NOT HEADER_DIRECTORY)
 # Display the option with help text in CMakeCache.txt
-set(HEADER_DIRECTORY ${HEADER_DIRECTORY} CACHE STRING "Absolute directory, or, if relative, relative to CMAKE_INSTALL_PREFIX to install the header files.")
+set(HEADER_DIRECTORY ${HEADER_DIRECTORY} CACHE STRING "Absolute path, or, if relative, relative to CMAKE_INSTALL_PREFIX to install the header files.")
 
 if(NOT LIBRARY_DIRECTORY)
     set(LIBRARY_DIRECTORY ${DEFAULT_LIBRARY_DIRECTORY})
 endif(NOT LIBRARY_DIRECTORY)
 # Display the option with help text in CMakeCache.txt
-set(LIBRARY_DIRECTORY ${LIBRARY_DIRECTORY} CACHE STRING "Absolute directory, or, if relative, relative to CMAKE_INSTALL_PREFIX to install the library file.")
+set(LIBRARY_DIRECTORY ${LIBRARY_DIRECTORY} CACHE STRING "Absolute path, or, if relative, relative to CMAKE_INSTALL_PREFIX to install the library file.")
 
 
 # These are the headers we need for compilation
