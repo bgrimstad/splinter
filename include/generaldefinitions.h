@@ -56,7 +56,6 @@ void printArray(const T a[], int n)
 bool isInteger(double value);
 
 // Randomizer
-static bool randomSeedSet = false;
 int randomInteger(int min, int max);
 
 void myKroneckerProduct(const SparseMatrix &A, const SparseMatrix &B, SparseMatrix &AB);

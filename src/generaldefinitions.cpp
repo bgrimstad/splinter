@@ -1,4 +1,4 @@
-#include "generaldefinitions.h"
+#include "include/generaldefinitions.h"
 
 bool isInteger(double value)
 {
@@ -9,6 +9,7 @@ bool isInteger(double value)
 // Returns a random integer in the range [min, max]
 int randomInteger(int min, int max)
 {
+    static bool randomSeedSet = false;
     if (!randomSeedSet)
     {
         srand(time(NULL)); // Random seed
