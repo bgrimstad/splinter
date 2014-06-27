@@ -48,6 +48,8 @@ If the path is relative (the first character is not / on UNIX or C:/ (or equival
 ###Usage
 This is a simple example demonstrating the use of BSpline. Note that there is no restrictions to the dimension of x or y (except that they have to be >= 1, of course), nor is there any requirement that their dimensions should be equal.
 
+Remember to compile with a c++11 compiler! That means you probably have to add a flag when compiling.
+
 ```c++
 #include <iostream>
 #include <sorteddatatable.h>
