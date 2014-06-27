@@ -10,12 +10,37 @@ SortedDataTable::SortedDataTable(bool allowDuplicates)
 {
 }
 
+void SortedDataTable::addSample(double x, double y)
+{
+    addSample(DataSample(x, y));
+}
+
+void SortedDataTable::addSample(std::vector<double> x, double y)
+{
+    addSample(DataSample(x, y));
+}
+
+void SortedDataTable::addSample(std::vector<double> x, std::vector<double> y)
+{
+    addSample(DataSample(x, y));
+}
+
+void SortedDataTable::addSample(DenseVector x, double y)
+{
+    addSample(DataSample(x, y));
+}
+
+void SortedDataTable::addSample(DenseVector x, DenseVector y)
+{
+    addSample(DataSample(x, y));
+}
+
 void SortedDataTable::addSample(const DataSample &sample)
 {
     if(getNumSamples() == 0)
     {
-        xDim = sample.getPoint().size();
-        yDim = sample.getValue().size();
+        xDim = sample.getX().size();
+        yDim = sample.getY().size();
         initDataStructures();
     }
 
@@ -42,9 +67,9 @@ void SortedDataTable::addSample(const DataSample &sample)
 
 void SortedDataTable::recordGridPoint(const DataSample &sample)
 {
-    for(unsigned int i = 0; i < getXDimension(); i++)
+    for(unsigned int i = 0; i < getDimX(); i++)
     {
-        grid.at(i).insert(sample.getPoint().at(i));
+        grid.at(i).insert(sample.getX().at(i));
     }
 }
 
@@ -68,18 +93,18 @@ bool SortedDataTable::isGridComplete() const
 
 void SortedDataTable::initDataStructures()
 {
-    for(unsigned int i = 0; i < getXDimension(); i++)
+    for(unsigned int i = 0; i < getDimX(); i++)
     {
         grid.push_back(std::set<double>());
     }
 }
 
-unsigned int SortedDataTable::getXDimension() const
+unsigned int SortedDataTable::getDimX() const
 {
     return xDim;
 }
 
-unsigned int SortedDataTable::getYDimension() const
+unsigned int SortedDataTable::getDimY() const
 {
     return yDim;
 }
@@ -117,11 +142,11 @@ void SortedDataTable::gridCompleteGuard() const
  ***************************/
 
 // = [x1, x2, x3], where x1 = [...] holds unique values of x1 variable
-void SortedDataTable::getBackwardsCompatibleGrid(std::vector< std::vector<double> > &backwardsCompatibleGrid) const
+std::vector< std::vector<double> > SortedDataTable::getBackwardsCompatibleGrid() const
 {
     gridCompleteGuard();
 
-    backwardsCompatibleGrid.clear();
+    std::vector< std::vector<double> > backwardsCompatibleGrid;
 
     for(auto &variable : grid)
     {
@@ -131,34 +156,40 @@ void SortedDataTable::getBackwardsCompatibleGrid(std::vector< std::vector<double
             backwardsCompatibleGrid.at(backwardsCompatibleGrid.size() - 1).push_back(value);
         }
     }
+
+    return backwardsCompatibleGrid;
 }
 
 // = [x1, x2, x3], where x1 = [x11, x12, ...] holds the variables of point x1.
 //   1 <= size(x1) = size(x2) = ... = size(xn) < m
-void SortedDataTable::getBackwardsCompatibleX(std::vector< std::vector<double> > &backwardsCompatibleX) const
+std::vector< std::vector<double> > SortedDataTable::getBackwardsCompatibleX() const
 {
     gridCompleteGuard();
 
-    backwardsCompatibleX.clear();
+    std::vector< std::vector<double> > backwardsCompatibleX;
 
     for(auto &sample : samples)
     {
-        backwardsCompatibleX.push_back(sample.getPoint());
+        backwardsCompatibleX.push_back(sample.getX());
     }
+
+    return backwardsCompatibleX;
 }
 
 // = [y1, y2, y3], where y1 = [y11, y12, ...] holds the variables of value y1.
 //   1 <= size(yn) < m
-void SortedDataTable::getBackwardsCompatibleY(std::vector< std::vector<double> > &backwardsCompatibleY) const
+std::vector< std::vector<double> > SortedDataTable::getBackwardsCompatibleY() const
 {
     gridCompleteGuard();
 
-    backwardsCompatibleY.clear();
+    std::vector< std::vector<double> > backwardsCompatibleY;
 
     for(auto &sample : samples)
     {
-        backwardsCompatibleY.push_back(sample.getValue());
+        backwardsCompatibleY.push_back(sample.getY());
     }
+
+    return backwardsCompatibleY;
 }
 
 // Copy and transpose table: turn columns to rows and rows to columns
@@ -185,16 +216,12 @@ std::vector< std::vector<double> > SortedDataTable::transposeTable(const std::ve
 
 std::vector< std::vector<double> > SortedDataTable::getTransposedTableX() const
 {
-    std::vector< std::vector<double> > backwardsCompatibleX;
-    getBackwardsCompatibleX(backwardsCompatibleX);
-    return transposeTable(backwardsCompatibleX);
+    return transposeTable(getBackwardsCompatibleX());
 }
 
 std::vector< std::vector<double> > SortedDataTable::getTransposedTableY() const
 {
-    std::vector< std::vector<double> > backwardsCompatibleY;
-    getBackwardsCompatibleY(backwardsCompatibleY);
-    return transposeTable(backwardsCompatibleY);
+    return transposeTable(getBackwardsCompatibleY());
 }
 
 /**************

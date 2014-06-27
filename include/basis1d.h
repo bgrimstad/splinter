@@ -1,7 +1,7 @@
 #ifndef BASIS1D_H
 #define BASIS1D_H
 
-#include "generaldefinitions.h"
+#include "include/generaldefinitions.h"
 
 enum class KnotSequenceType
 {

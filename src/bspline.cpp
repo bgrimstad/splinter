@@ -1,10 +1,9 @@
 #include "bspline.h"
-#include "tensorindex.h"
+#include "include/tensorindex.h"
 #include "unsupported/Eigen/KroneckerProduct"
 #include "Eigen/IterativeLinearSolvers"
-#include "basis.h"
-#include "basis1d.h"
-//#include "timer.h"
+#include "include/basis.h"
+#include "include/basis1d.h"
 
 #include <iostream>
 
@@ -27,50 +26,9 @@ Bspline::Bspline(DenseMatrix coefficients, std::vector< std::vector<double> > kn
     checkControlPoints();
 }
 
-// Constructors for interpolation data (InterpolationTable)
-//Bspline::Bspline(InterpolationTable &data, int basisdegree)
-//    : Bspline(data, std::vector<int>(data.getDimX(), basisdegree ))
-//{
-//    // All bases have the same degree
-//}
-
-//Bspline::Bspline(InterpolationTable &data, std::vector<int> basisdegree)
-//{
-//    // Check data
-//    assert(data.isGridComplete());
-
-//    std::vector< std::vector<double> > xdata = data.getTransposedTableX();
-//    std::vector< std::vector<double> > ydata = data.getTransposedTableY();
-
-//    numInputs = xdata.size();
-//    numOutputs = ydata.size();
-
-//    // Construct basis and control points
-//    //basis = Basis(xdata, basisdegree);
-//    //calculateControlPoints(xdata, ydata);
-
-//    BsplineType bsplineType = BsplineType::FREE;
-
-//    if (bsplineType == BsplineType::PSPLINE)
-//    {
-//        basis = Basis(xdata, basisdegree, KnotSequenceType::FREE);
-//        calculateControlPointsPspline(xdata, ydata);
-//    }
-//    else
-//    {
-//        // Default is FREE
-//        basis = Basis(xdata, basisdegree, KnotSequenceType::FREE);
-//        calculateControlPoints(xdata, ydata);
-//    }
-
-//    init();
-
-//    checkControlPoints();
-//}
-
 // Constructors for interpolation data (SortedDataTable)
 Bspline::Bspline(SortedDataTable &data, int basisdegree)
-    : Bspline(data, std::vector<int>(data.getXDimension(), basisdegree ))
+    : Bspline(data, std::vector<int>(data.getDimX(), basisdegree ))
 {
     // All bases have the same degree
 }
@@ -125,7 +83,9 @@ DenseVector Bspline::evaluate(DenseVector &x)
     {
         DenseVector y(numOutputs);
         y.setZero(numOutputs);
-        //TODO return
+        cout << "Tried to evaluate B-spline outside its domain!" << endl;
+        return y;
+        // TODO: throw exception
     }
 
     SparseVector tensorvalues = basis.evaluate(x);

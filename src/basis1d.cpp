@@ -1,7 +1,6 @@
-#include "basis1d.h"
+#include "include/basis1d.h"
 #include <iostream>
 #include <algorithm>
-//#include "timer.h"
 
 //using namespace std;
 using std::cout;

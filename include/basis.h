@@ -1,8 +1,8 @@
 #ifndef BASIS_H
 #define BASIS_H
 
-#include "generaldefinitions.h"
-#include "basis1d.h"
+#include "include/generaldefinitions.h"
+#include "include/basis1d.h"
 
 class Basis
 {

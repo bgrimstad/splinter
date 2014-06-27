@@ -1,9 +1,8 @@
-#include "basis.h"
+#include "include/basis.h"
 #include "unsupported/Eigen/KroneckerProduct"
 #include <iostream>
 using std::cout;
 using std::endl;
-//#include "timer.h"
 
 Basis::Basis()
 {
