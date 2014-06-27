@@ -111,7 +111,7 @@ int main()
 ```
 
 ###Grid
-The grid, meaning all the values of x where you have sampled the function, must be complete. This means that if you have sampled the function in `x = [0 0]`, `x = [1 0]` and `x = [2 1]`, you must also sample the function in `x = [1 1]`, `x = [0 1]` and `x = [2 0]`. You must have sampled the function in all permutations of x within the possible values of x0, x1 ... xn. The number of samples will then (disregarding duplicates) be num(x1) * num(x2) * ... * num(xn) where num(x) is the number of distinct values of x the the function has been sampled in. You can check if the grid is complete by calling `isGridComplete()` on your SortedDataTable.
+The grid, meaning all the values of x where you have sampled the function, must be complete. This means that if you have sampled the function in `x = [0 0]`, `x = [1 0]` and `x = [2 1]`, you must also sample the function in `x = [1 1]`, `x = [0 1]` and `x = [2 0]`. You must have sampled the function in all permutations of x within the possible values of x<sub>0</sub>, x<sub>1</sub> ... x<sub>n</sub>. The number of samples will then (disregarding duplicates) be num(x<sub>0</sub>) * num(x<sub>1</sub>) * ... * num(x<sub>n</sub>) where num(x) is the number of distinct values of x the the function has been sampled in. You can check if the grid is complete by calling `isGridComplete()` on your SortedDataTable.
 
 
 This is **not** a complete grid:
@@ -125,7 +125,7 @@ This is **not** a complete grid:
 
 This is a complete grid:
 
-| y0   | y1   | x0    | x1   |
+| y<sub>0</sub>   | y<sub>1</sub>   | x<sub>0</sub>    | x<sub>1</sub>   |
 | ---- | ---- | ----- | ---- |
 | 1    | 2    | 2.1   | 1    |
 | 0    | 20   | 2.3   | 3    |
