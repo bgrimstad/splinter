@@ -116,7 +116,7 @@ The grid, meaning all the values of x where you have sampled the function, must 
 
 This is **not** a complete grid:
 
-| y0   | y1   | x0    | x1   |
+| y<sub>0</sub>   | y<sub>1</sub>   | x<sub>0</sub>    | x<sub>1</sub>   |
 | ---- | ---- | ----- | ---- |
 | 1    | 2    | 2.1   | 1    |
 | 0    | 20   | 2.3   | 3    |
