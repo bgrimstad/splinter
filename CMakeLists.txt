@@ -8,8 +8,8 @@ set(BSPLINE_VERSION ${BSPLINE_VERSION_MAJOR}.${BSPLINE_VERSION_MINOR})
 
 
 set(DEFAULT_EIGEN_DIRECTORY "/usr/local/include/eigen3")
-set(DEFAULT_HEADER_DIRECTORY "include/bsplinelib")
-set(DEFAULT_LIBRARY_DIRECTORY "lib/bsplinelib")
+set(DEFAULT_HEADER_DIRECTORY "include/bspline")
+set(DEFAULT_LIBRARY_DIRECTORY "lib/bspline")
 
 
 if(NOT EIGEN_DIRECTORY)
