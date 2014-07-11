@@ -40,7 +40,7 @@ include_directories(${EIGEN_DIRECTORY})
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/src SRC_LIST)
 
 # Add output library: add_library(libname [SHARED | STATIC] sourcelist)
-add_library(BSpline SHARED ${SRC_LIST})
+add_library(BSpline STATIC ${SRC_LIST})
 
 # Compiler flags
 add_definitions(
@@ -49,7 +49,7 @@ add_definitions(
 
 # Install the header files the user will see
 install(
-    FILES bspline.h sorteddatatable.h
+    FILES bspline.h sorteddatatable.h radialbasisfunction.h
     DESTINATION ${HEADER_DIRECTORY}
 )
 
