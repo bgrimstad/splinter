@@ -127,3 +127,8 @@ double RadialBasisFunction::dist(std::vector<double> x, std::vector<double> y) c
         sum += (x.at(i)-y.at(i))*(x.at(i)-y.at(i));
     return std::sqrt(sum);
 }
+
+int RadialBasisFunction::dimX() const
+{
+    return dim;
+}

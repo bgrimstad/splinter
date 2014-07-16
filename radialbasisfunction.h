@@ -82,6 +82,8 @@ public:
     //    std::vector<double> getDomainUpperBound() const;
     //    std::vector<double> getDomainLowerBound() const;
 
+    int dimX() const;
+
 private:
 
     const SortedDataTable samples;
