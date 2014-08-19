@@ -3,6 +3,9 @@
 
 #include <set>
 #include "include/datasample.h"
+#include <string>
+
+#define SAVE_DOUBLE_PRECISION 9
 
 class SortedDataTable
 {
@@ -23,6 +26,9 @@ public:
     unsigned int getDimX() const;
     unsigned int getDimY() const;
     unsigned int getNumSamples() const;
+
+    void saveDataTable(std::string fileName) const; // Throws std::ios_base::failure
+    void loadDataTable(std::string fileName);       // Throws std::ios_base::failure
 
     /*
      * Backwards compatibility

@@ -1,4 +1,7 @@
 #include "sorteddatatable.h"
+#include <iomanip> // Set precision used by streams on double values
+#include <fstream>
+#include <sstream>
 
 SortedDataTable::SortedDataTable()
     : SortedDataTable(false)
@@ -53,7 +56,7 @@ void SortedDataTable::addSample(const DataSample &sample)
         if(!allowDuplicates)
         {
             std::cout << "Discarding duplicate sample because allowDuplicates is false!" << std::endl;
-            std::cout << "Initialise with SortedDataTable(true) to set it to true." << std::endl;
+            std::cout << "Initialize with SortedDataTable(true) to set it to true." << std::endl;
             return;
         }
 
@@ -134,6 +137,125 @@ void SortedDataTable::gridCompleteGuard() const
     {
         std::cout << "The grid is not complete yet!" << std::endl;
         exit(1);
+    }
+}
+
+void SortedDataTable::saveDataTable(std::string fileName) const
+{
+    std::ofstream outFile;
+
+    try
+    {
+        outFile.open(fileName);
+    }
+    catch(const std::ios_base::failure &e)
+    {
+        throw;
+    }
+
+    // If this function is still alive the file must be open,
+    // no need to call is_open()
+
+    // Write header
+    outFile << "# Kommentar" << '\n';
+    outFile << xDim << " " << yDim << '\n';
+
+    for(auto it = cbegin(); it != cend(); it++)
+    {
+        for(int i = 0; i < xDim; i++)
+        {
+            outFile << std::setprecision(SAVE_DOUBLE_PRECISION) << it->getX().at(i) << " ";
+        }
+        for(int j = 0; j < yDim; j++)
+        {
+            outFile << std::setprecision(SAVE_DOUBLE_PRECISION) << it->getY().at(j);
+            if(j + 1 < yDim)
+                outFile << " ";
+        }
+        outFile << '\n';
+    }
+
+    // close() also flushes
+    try
+    {
+        outFile.close();
+    }
+    catch(const std::ios_base::failure &e)
+    {
+        throw;
+    }
+}
+
+void SortedDataTable::loadDataTable(std::string fileName)
+{
+    std::ifstream inFile;
+
+    try
+    {
+        inFile.open(fileName);
+    }
+    catch(const std::ios_base::failure &e)
+    {
+        throw;
+    }
+
+    // If this function is still alive the file must be open,
+    // no need to call is_open()
+
+    // Skip past comments
+    std::string line;
+
+    std::stringstream ss;
+
+    int nX, nY;
+    int state = 0;
+    while(std::getline(inFile, line))
+    {
+        std::cout << "Reading line: " << line << std::endl;
+        // Look for comment sign
+        if(line.at(0) == '#')
+            continue;
+
+        ss.flush();
+        ss << line;
+
+        // Reading number of dimensions
+        if(state == 0)
+        {
+            ss >> nX >> nY;
+            state = 1;
+            std::cout << nX << " = " << nY << std::endl;
+        }
+
+        // Reading samples
+        else if(state == 1)
+        {
+            auto x = std::vector<double>(nX);
+            auto y = std::vector<double>(nY);
+            std::string::size_type sz = 0;
+            for(int i = 0; i < nX; i++)
+            {
+                line = line.substr(sz);
+                x.at(i) = std::stod(line, &sz);
+            }
+            for(int j = 0; j < nY; j++)
+            {
+                line = line.substr(sz);
+                y.at(j) = std::stod(line, &sz);
+            }
+
+            addSample(x, y);
+        }
+    }
+
+    // close() also flushes
+    try
+    {
+        inFile.close();
+    }
+    catch(const std::ios_base::failure &e)
+    {
+        throw;
     }
 }
 
