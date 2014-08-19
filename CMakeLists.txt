@@ -40,7 +40,10 @@ include_directories(${EIGEN_DIRECTORY})
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/src SRC_LIST)
 
 # Add output library: add_library(libname [SHARED | STATIC] sourcelist)
-add_library(BSpline STATIC ${SRC_LIST})
+add_library(BSplineStatic STATIC ${SRC_LIST})
+add_library(BSplineShared SHARED ${SRC_LIST})
+
+add_executable("bspline_test" ${SRC_LIST})
 
 # Compiler flags
 add_definitions(
@@ -59,8 +62,13 @@ install(
     DESTINATION ${HEADER_DIRECTORY}/include
 )
 
-# Install the library file
+# Install the static library file
 install(
-    TARGETS BSpline
+    TARGETS BSplineStatic
+    DESTINATION ${LIBRARY_DIRECTORY}
+)
+# Install the shared library file
+install(
+    TARGETS BSplineShared
     DESTINATION ${LIBRARY_DIRECTORY}
 )
