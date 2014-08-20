@@ -1,5 +1,4 @@
 CMakeLists.txt.user
-cleanCmake.sh
 InterpolationLibrary.cbp
 Makefile
 bspline_test
