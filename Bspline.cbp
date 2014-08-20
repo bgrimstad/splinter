@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+   <FileVersion major="1" minor="6" />
+   <Project>
+      <Option title="Bspline" />
+      <Option makefile_is_custom="1" />
+      <Option compiler="gcc" />
+      <Option virtualFolders="CMake Files\;" />
+      <Build>
+      <Target title="all">
+         <Option working_dir="/home/anders/C++/bspline/bspline" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 all" />
+            <CompileFile command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="BSpline">
+         <Option output="/home/anders/C++/bspline/bspline/libBSpline.so" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/home/anders/C++/bspline/bspline" />
+         <Option object_output="./" />
+         <Option type="3" />
+         <Option compiler="gcc" />
+         <Compiler>
+            <Add directory="/home/anders/C++/bspline/bspline" />
+            <Add directory="/home/anders/C++/bspline/bspline/include" />
+            <Add directory="/usr/local/include/eigen3" />
+         </Compiler>
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 BSpline" />
+            <CompileFile command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="BSpline/fast">
+         <Option output="/home/anders/C++/bspline/bspline/libBSpline.so" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/home/anders/C++/bspline/bspline" />
+         <Option object_output="./" />
+         <Option type="3" />
+         <Option compiler="gcc" />
+         <Compiler>
+            <Add directory="/home/anders/C++/bspline/bspline" />
+            <Add directory="/home/anders/C++/bspline/bspline/include" />
+            <Add directory="/usr/local/include/eigen3" />
+         </Compiler>
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 BSpline/fast" />
+            <CompileFile command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="BSplineStatic">
+         <Option output="/home/anders/C++/bspline/bspline/libBSplineStatic.a" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/home/anders/C++/bspline/bspline" />
+         <Option object_output="./" />
+         <Option type="2" />
+         <Option compiler="gcc" />
+         <Compiler>
+            <Add directory="/home/anders/C++/bspline/bspline" />
+            <Add directory="/home/anders/C++/bspline/bspline/include" />
+            <Add directory="/usr/local/include/eigen3" />
+         </Compiler>
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 BSplineStatic" />
+            <CompileFile command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="BSplineStatic/fast">
+         <Option output="/home/anders/C++/bspline/bspline/libBSplineStatic.a" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/home/anders/C++/bspline/bspline" />
+         <Option object_output="./" />
+         <Option type="2" />
+         <Option compiler="gcc" />
+         <Compiler>
+            <Add directory="/home/anders/C++/bspline/bspline" />
+            <Add directory="/home/anders/C++/bspline/bspline/include" />
+            <Add directory="/usr/local/include/eigen3" />
+         </Compiler>
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 BSplineStatic/fast" />
+            <CompileFile command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="bspline_test">
+         <Option output="/home/anders/C++/bspline/bspline/bspline_test" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/home/anders/C++/bspline/bspline" />
+         <Option object_output="./" />
+         <Option type="1" />
+         <Option compiler="gcc" />
+         <Compiler>
+            <Add directory="/home/anders/C++/bspline/bspline" />
+            <Add directory="/home/anders/C++/bspline/bspline/include" />
+            <Add directory="/usr/local/include/eigen3" />
+         </Compiler>
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 bspline_test" />
+            <CompileFile command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="bspline_test/fast">
+         <Option output="/home/anders/C++/bspline/bspline/bspline_test" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/home/anders/C++/bspline/bspline" />
+         <Option object_output="./" />
+         <Option type="1" />
+         <Option compiler="gcc" />
+         <Compiler>
+            <Add directory="/home/anders/C++/bspline/bspline" />
+            <Add directory="/home/anders/C++/bspline/bspline/include" />
+            <Add directory="/usr/local/include/eigen3" />
+         </Compiler>
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 bspline_test/fast" />
+            <CompileFile command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="install">
+         <Option working_dir="/home/anders/C++/bspline/bspline" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 install" />
+            <CompileFile command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="install/local">
+         <Option working_dir="/home/anders/C++/bspline/bspline" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 install/local" />
+            <CompileFile command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="install/strip">
+         <Option working_dir="/home/anders/C++/bspline/bspline" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 install/strip" />
+            <CompileFile command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="list_install_components">
+         <Option working_dir="/home/anders/C++/bspline/bspline" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 list_install_components" />
+            <CompileFile command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="rebuild_cache">
+         <Option working_dir="/home/anders/C++/bspline/bspline" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 rebuild_cache" />
+            <CompileFile command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      </Build>
+      <Unit filename="/home/anders/C++/bspline/bspline/src/basis.cpp">
+      </Unit>
+      <Unit filename="/home/anders/C++/bspline/bspline/src/basis1d.cpp">
+      </Unit>
+      <Unit filename="/home/anders/C++/bspline/bspline/src/bspline.cpp">
+      </Unit>
+      <Unit filename="/home/anders/C++/bspline/bspline/src/datasample.cpp">
+      </Unit>
+      <Unit filename="/home/anders/C++/bspline/bspline/src/generaldefinitions.cpp">
+      </Unit>
+      <Unit filename="/home/anders/C++/bspline/bspline/src/mykroneckerproduct.cpp">
+      </Unit>
+      <Unit filename="/home/anders/C++/bspline/bspline/src/radialbasisfunction.cpp">
+      </Unit>
+      <Unit filename="/home/anders/C++/bspline/bspline/src/sorteddatatable.cpp">
+      </Unit>
+      <Unit filename="/home/anders/C++/bspline/bspline/test/main.cpp">
+      </Unit>
+      <Unit filename="/home/anders/C++/bspline/bspline/bspline.h">
+      </Unit>
+      <Unit filename="/home/anders/C++/bspline/bspline/include/basis.h">
+      </Unit>
+      <Unit filename="/home/anders/C++/bspline/bspline/include/basis1d.h">
+      </Unit>
+      <Unit filename="/home/anders/C++/bspline/bspline/include/datasample.h">
+      </Unit>
+      <Unit filename="/home/anders/C++/bspline/bspline/include/generaldefinitions.h">
+      </Unit>
+      <Unit filename="/home/anders/C++/bspline/bspline/include/linearsolvers.h">
+      </Unit>
+      <Unit filename="/home/anders/C++/bspline/bspline/include/mykroneckerproduct.h">
+      </Unit>
+      <Unit filename="/home/anders/C++/bspline/bspline/include/tensorindex.h">
+      </Unit>
+      <Unit filename="/home/anders/C++/bspline/bspline/radialbasisfunction.h">
+      </Unit>
+      <Unit filename="/home/anders/C++/bspline/bspline/sorteddatatable.h">
+      </Unit>
+      <Unit filename="/home/anders/C++/bspline/bspline/CMakeLists.txt">
+          <Option virtualFolder="CMake Files\" />
+      </Unit>
+   </Project>
+</CodeBlocks_project_file>

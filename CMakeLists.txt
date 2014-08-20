@@ -37,17 +37,35 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${EIGEN_DIRECTORY})
 
 # These are the sources we need for compilation
-aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/src SRC_LIST)
-
-# Remove main.cpp from library sources (it is only used for testing)
-set(LIB_SRC_LIST ${SRC_LIST})
-list(REMOVE_ITEM LIB_SRC_LIST ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
+#aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/src SRC_LIST)
+set(SRC_LIST
+    bspline.h
+    radialbasisfunction.h
+    sorteddatatable.h
+    include/basis.h
+    include/basis1d.h
+    include/datasample.h
+    include/generaldefinitions.h
+    include/linearsolvers.h
+    include/mykroneckerproduct.h
+    include/tensorindex.h
+    src/bspline.cpp
+    src/radialbasisfunction.cpp
+    src/sorteddatatable.cpp
+    src/datasample.cpp
+    src/generaldefinitions.cpp
+    src/basis.cpp
+    src/basis1d.cpp
+    src/mykroneckerproduct.cpp
+)
 
 # Add output library: add_library(libname [SHARED | STATIC] sourcelist)
-add_library(BSpline SHARED ${LIB_SRC_LIST})
-add_library(BSplineStatic STATIC ${LIB_SRC_LIST})
+add_library(BSpline SHARED ${SRC_LIST})
+add_library(BSplineStatic STATIC ${SRC_LIST})
 
-add_executable("bspline_test" ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
+
+# Testing executable
+add_executable("bspline_test" ${CMAKE_CURRENT_SOURCE_DIR}/test/main.cpp)
 target_link_libraries("bspline_test" BSpline)
 
 # Compiler flags
@@ -60,7 +78,6 @@ install(
     FILES bspline.h sorteddatatable.h radialbasisfunction.h
     DESTINATION ${HEADER_DIRECTORY}
 )
-
 # Install the header files that are used internally
 install(
     DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
