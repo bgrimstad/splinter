@@ -41,13 +41,14 @@ aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/src SRC_LIST)
 
 # Remove main.cpp from library sources (it is only used for testing)
 set(LIB_SRC_LIST ${SRC_LIST})
-list(REMOVE_ITEM LIB_SRC_LIST main.cpp)
+list(REMOVE_ITEM LIB_SRC_LIST ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
 
 # Add output library: add_library(libname [SHARED | STATIC] sourcelist)
+add_library(BSpline SHARED ${LIB_SRC_LIST})
 add_library(BSplineStatic STATIC ${LIB_SRC_LIST})
-add_library(BSplineShared SHARED ${LIB_SRC_LIST})
 
-add_executable("bspline_test" ${SRC_LIST})
+add_executable("bspline_test" ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
+target_link_libraries("bspline_test" BSpline)
 
 # Compiler flags
 add_definitions(
@@ -66,13 +67,13 @@ install(
     DESTINATION ${HEADER_DIRECTORY}/include
 )
 
+# Install the shared library file
+install(
+    TARGETS BSpline
+    DESTINATION ${LIBRARY_DIRECTORY}
+)
 # Install the static library file
 install(
     TARGETS BSplineStatic
-    DESTINATION ${LIBRARY_DIRECTORY}
-)
-# Install the shared library file
-install(
-    TARGETS BSplineShared
     DESTINATION ${LIBRARY_DIRECTORY}
 )
