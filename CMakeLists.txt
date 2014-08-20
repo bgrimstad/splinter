@@ -39,9 +39,13 @@ include_directories(${EIGEN_DIRECTORY})
 # These are the sources we need for compilation
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/src SRC_LIST)
 
+# Remove main.cpp from library sources (it is only used for testing)
+set(LIB_SRC_LIST ${SRC_LIST})
+list(REMOVE_ITEM LIB_SRC_LIST main.cpp)
+
 # Add output library: add_library(libname [SHARED | STATIC] sourcelist)
-add_library(BSplineStatic STATIC ${SRC_LIST})
-add_library(BSplineShared SHARED ${SRC_LIST})
+add_library(BSplineStatic STATIC ${LIB_SRC_LIST})
+add_library(BSplineShared SHARED ${LIB_SRC_LIST})
 
 add_executable("bspline_test" ${SRC_LIST})
 
