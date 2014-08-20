@@ -1,7 +1,6 @@
 #include "sorteddatatable.h"
 #include <iomanip> // Set precision used by streams on double values
 #include <fstream>
-#include <sstream>
 
 SortedDataTable::SortedDataTable()
     : SortedDataTable(false)
@@ -205,26 +204,21 @@ void SortedDataTable::loadDataTable(std::string fileName)
     // Skip past comments
     std::string line;
 
-    std::stringstream ss;
-
     int nX, nY;
     int state = 0;
     while(std::getline(inFile, line))
     {
-        std::cout << "Reading line: " << line << std::endl;
         // Look for comment sign
         if(line.at(0) == '#')
             continue;
 
-        ss.flush();
-        ss << line;
-
         // Reading number of dimensions
         if(state == 0)
         {
-            ss >> nX >> nY;
+            std::string::size_type sz = 0;
+            nX = std::stoi(line, &sz);
+            nY = std::stoi(line.substr(sz));
             state = 1;
-            std::cout << nX << " = " << nY << std::endl;
         }
 
         // Reading samples
