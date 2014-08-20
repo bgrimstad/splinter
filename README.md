@@ -72,7 +72,7 @@ DenseVector func(DenseVector &x)
 
 int main()
 {
-    // The BSpline class needs it's data sorted by x0, x1 ... xn.
+    // The BSpline class needs its data sorted by x0, x1 ... xn.
     // This class makes sure that it is. It also allows / disallows duplicates
     // and checks that the grid is complete.
     SortedDataTable table;
