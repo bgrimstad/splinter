@@ -156,7 +156,12 @@ void SortedDataTable::saveDataTable(std::string fileName) const
     // no need to call is_open()
 
     // Write header
-    outFile << "# Kommentar" << '\n';
+    outFile << "# Saved DataTable" << '\n';
+    outFile << "# Number of samples: " << getNumSamples() << '\n';
+    outFile << "# Complete grid: " << (isGridComplete() ? "yes" : "no") << '\n';
+    outFile << "# xDim: " << xDim << ", yDim: " << yDim << '\n';
+
+    // Number of x and y dimensions
     outFile << xDim << " " << yDim << '\n';
 
     for(auto it = cbegin(); it != cend(); it++)
