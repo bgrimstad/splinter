@@ -1,20 +1,15 @@
 #include <vector>
 #include <sorteddatatable.h>
 #include <sstream>
-#include <cmath> // abs
+#include <cmath> // abs, nextafter
+#include <fstream>
+#include <iostream>
+#include <iomanip>
+#include <string>
 
-
-// Checks if a is within tolerance % of b
-bool equalsWithin(double a, double b, double tolerance = 0.01)
-{
-    double bAbs = abs(b);
-    double bMin = b - tolerance * bAbs;
-    double bMax = b + tolerance * bAbs;
-    return bMin <= a && a <= bMax;
-}
 
 // Checks if a is within margin of b
-bool equalsWithinRange(double a, double b, double margin = 0.00001)
+bool equalsWithinRange(double a, double b, double margin = 0.0)
 {
     return b - margin <= a && a <= b + margin;
 }
@@ -170,7 +165,6 @@ bool test5()
                     x.at(2) = k;
                     x.at(3) = l;
                     y.at(0) = i * j;
-                    y.at(1) = i * j * k;
                     y.at(1) = i * j * k * l;
                     table.addSample(x, y);
                 }
@@ -186,6 +180,30 @@ bool test5()
     return is_identical(table, loadedTable);
 }
 
+bool test6()
+{
+    SortedDataTable table;
+
+    auto x = std::vector<double>(4);
+    auto y = std::vector<double>(2);
+    int j = 0;
+    for(double i = std::numeric_limits<double>::lowest(), k = std::numeric_limits<double>::max();
+        j < 10000;
+        i = nextafter(i, std::numeric_limits<double>::max()), k = nextafter(k, std::numeric_limits<double>::lowest()))
+    {
+        x.at(0) = i;
+        y.at(0) = k;
+        table.addSample(x, y);
+        j++;
+    }
+
+    table.saveDataTable("test6.datatable");
+
+    SortedDataTable loadedTable;
+    loadedTable.loadDataTable("test6.datatable");
+
+    return is_identical(table, loadedTable);
+}
 
 int main(int argc, char **argv)
 {
@@ -194,4 +212,7 @@ int main(int argc, char **argv)
     std::cout << "test3(): " << (test3() ? "success" : "fail") << std::endl;
     std::cout << "test4(): " << (test4() ? "success" : "fail") << std::endl;
     std::cout << "test5(): " << (test5() ? "success" : "fail") << std::endl;
+    std::cout << "test6(): " << (test6() ? "success" : "fail") << std::endl;
+
+    return 0;
 }
