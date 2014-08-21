@@ -5,7 +5,7 @@
 #include "include/datasample.h"
 #include <string>
 
-#define SAVE_DOUBLE_PRECISION 9
+#define SAVE_DOUBLE_PRECISION 17
 
 class SortedDataTable
 {
