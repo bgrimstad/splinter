@@ -8,8 +8,8 @@ set(BSPLINE_VERSION ${BSPLINE_VERSION_MAJOR}.${BSPLINE_VERSION_MINOR})
 
 
 set(DEFAULT_EIGEN_DIRECTORY "/usr/local/include/eigen3")
-set(DEFAULT_HEADER_DIRECTORY "include/bspline")
-set(DEFAULT_LIBRARY_DIRECTORY "lib/bspline")
+set(DEFAULT_HEADER_DIRECTORY "include/multivariate-bsplines")
+set(DEFAULT_LIBRARY_DIRECTORY "lib/multivariate-bsplines")
 
 
 if(NOT EIGEN_DIRECTORY)
@@ -60,13 +60,13 @@ set(SRC_LIST
 )
 
 # Add output library: add_library(libname [SHARED | STATIC] sourcelist)
-add_library(BSpline SHARED ${SRC_LIST})
-add_library(BSplineStatic STATIC ${SRC_LIST})
+add_library(MultivariateBSplines SHARED ${SRC_LIST})
+add_library(MultivariateBSplinesStatic STATIC ${SRC_LIST})
 
 
 # Testing executable
-add_executable("bspline_test" ${CMAKE_CURRENT_SOURCE_DIR}/test/main.cpp)
-target_link_libraries("bspline_test" BSpline)
+add_executable("multivariate-bsplines_test" ${CMAKE_CURRENT_SOURCE_DIR}/test/main.cpp)
+target_link_libraries("multivariate-bsplines_test" MultivariateBSplines)
 
 # Compiler flags
 add_definitions(
@@ -86,11 +86,11 @@ install(
 
 # Install the shared library file
 install(
-    TARGETS BSpline
+    TARGETS MultivariateBSplines
     DESTINATION ${LIBRARY_DIRECTORY}
 )
 # Install the static library file
 install(
-    TARGETS BSplineStatic
+    TARGETS MultivariateBSplinesStatic
     DESTINATION ${LIBRARY_DIRECTORY}
 )
