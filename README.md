@@ -10,7 +10,7 @@ The user may create a penalized B-spline (P-spline) that smooths the data instea
 
 When sampling is expensive and/or scattered (not on a grid) the radial basis function splines may be utilized for function approximation. The user should expect a high computational cost for constructing and evaluating a radial basis function spline, even with a modest number of samples (up to about 1 000 samples). 
 
-The library is based on the C++ template linear algebra library [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page); its sparse matrix support is particularly important for the speed of the tensor product B-spline implementation.
+The library is based on the C++ template linear algebra library [Eigen](http://eigen.tuxfamily.org); its sparse matrix support is particularly important for the speed of the tensor product B-spline implementation.
 
 ###Author's note:
 Multivariate-Splines implements various splines for function approximation with the purpose of utilizing the splines/approximations in mathematical programming (nonlinear optimization). Thus, special attention has been given to functionality that may support a nonlinear optimization solver. For example, the B-spline implementation includes evaluation of the Jacobian and Hessian.
