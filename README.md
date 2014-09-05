@@ -1,5 +1,5 @@
-##BSpline
-BSpline is a curve fitting library utilizing a speedy implementation of [BSplines](http://en.wikipedia.org/wiki/B-spline) with [Eigens](http://eigen.tuxfamily.org/index.php?title=Main_Page) SparseMatrix.
+##Multivariate-BSplines
+Multivariate-BSplines is a curve fitting library utilizing a speedy implementation of [BSplines](http://en.wikipedia.org/wiki/B-spline) with [Eigens](http://eigen.tuxfamily.org/index.php?title=Main_Page) SparseMatrix.
 
 ###Requirements: 
 * [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page)
@@ -7,20 +7,33 @@ BSpline is a curve fitting library utilizing a speedy implementation of [BSpline
 * [Git](http://git-scm.com/)
 * [GCC](https://gcc.gnu.org/) or an equivalent C++11 compiler
 
-If you are using Debian / Ubuntu or any derivatives of those then you can probably just open a terminal and write
-```shell
-sudo apt-get update && sudo apt-get install git cmake build-essential
-```
-to install Git, CMake and GCC.
 
-Install instructions for Eigen can be found at their website.
-
-###Steps to install (on UNIX, steps are probably similar on Windows)
-1. `git clone https://github.com/bgrimstad/bspline.git`
+###Steps to install on UNIX
+0. `sudo apt-get update && sudo apt-get install git cmake build-essential` or equivalent
+1. `git clone https://github.com/bgrimstad/multivariate-bsplines.git`
 2. `cd bspline`
 3. `cmake .`
 4. `make`
 5. `make install`
+
+###Steps to install on Windows
+1. Clone https://github.com/bgrimstad/multivariate-bsplines
+2. Download Eigen: http://bitbucket.org/eigen/eigen/get/3.2.2.zip
+2.1 Extract the zip-file into a new folder, and write down the location of that folder
+3. Download and install CMake: http://www.cmake.org/files/v3.0/cmake-3.0.1-win32-x86.exe 
+4. Download and install Qt Creator: http://qt-project.org/downloads
+4.1 Make sure that MinGW is marked for installation
+5. Run Qt Creator, select `Open project`
+5.1 Navigate into the multivariate-bsplines folder, select CMakeLists.txt
+5.2 In the arguments field, write: `-DEIGEN_DIRECTORY=C:/path/to/eigen/from/step/2.1`
+5.3 Run CMake
+6. Now you can build the library with Qt Creator, and the library files will be output to your build directory.
+
+* You may have to add -static as a flag to your linker if you are compiling with MinGW.
+* C++11 must be enabled.
+* Remember to add the Eigen directory to your include path.
+* If you get asked to specify where CMake is located, then you can typically find the file cmake.exe in C:\Program Files (x86)\CMake\bin.
+
 
 ####Options:
 These options go along with step #3, and are used like this:
@@ -29,7 +42,7 @@ These options go along with step #3, and are used like this:
 
 *     cmake . -DEIGEN_DIRECTORY=/path/to/eigen -DHEADER_DIRECTORY=/home/me/c++/bspline/includes
 
-The syntax is: `-D<VARIABLE_NAME>=<VARIABLE_VALUE>`. If you have any spaces in your value you must surround it with ".
+The syntax is: `-D<VARIABLE_NAME>=<VARIABLE_VALUE>`. If you have any spaces in your value you must surround it with double quotes (").
 
 | Variable name     | Default value             | Description                               |
 | ----------------- | ------------------------- | ----------------------------------------- |
