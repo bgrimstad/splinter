@@ -8,7 +8,7 @@ The B-spline may approximate any multivariate function sampled on a grid. The us
 
 The user may create a penalized B-spline (P-spline) that smooths the data instead of interpolating it. The construction of a P-spline is more computationally demanding than the B-spline - a large least-square problem must be solved - bringing the limit on the number of samples down to about 10 000.
 
-When sampling is expensive and/or scattered (not on a grid) the radial basis function splines may be utilized for function approximation. The user should then expect a higher computational cost for constructing and evaluating a radial basis function spline, even with a modest number of samples (up to about 1 000 samples). 
+When sampling is expensive and/or scattered (not on a grid) the radial basis function splines may be utilized for function approximation. The user should expect a higher computational cost for constructing and evaluating a radial basis function spline, even with a modest number of samples (up to about 1 000 samples). 
 
 The library is based on the C++ template linear algebra library [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page); its sparse matrix support is particularly important for the speed of the tensor product B-spline implementation.
 
