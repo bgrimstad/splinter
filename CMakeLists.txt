@@ -15,19 +15,19 @@ set(DEFAULT_LIBRARY_DIRECTORY "lib/multivariate-bsplines")
 if(NOT EIGEN_DIRECTORY)
     set(EIGEN_DIRECTORY ${DEFAULT_EIGEN_DIRECTORY})
 endif(NOT EIGEN_DIRECTORY)
-# Display the option with help text in CMakeCache.txt
+# CACHE STRING = Display the option with help text in CMakeCache.txt
 set(EIGEN_DIRECTORY ${EIGEN_DIRECTORY} CACHE STRING "Directory where the Eigen library is located.")
 
 if(NOT HEADER_DIRECTORY)
     set(HEADER_DIRECTORY ${DEFAULT_HEADER_DIRECTORY})
 endif(NOT HEADER_DIRECTORY)
-# Display the option with help text in CMakeCache.txt
+# CACHE STRING = Display the option with help text in CMakeCache.txt
 set(HEADER_DIRECTORY ${HEADER_DIRECTORY} CACHE STRING "Absolute path, or, if relative, relative to CMAKE_INSTALL_PREFIX to install the header files.")
 
 if(NOT LIBRARY_DIRECTORY)
     set(LIBRARY_DIRECTORY ${DEFAULT_LIBRARY_DIRECTORY})
 endif(NOT LIBRARY_DIRECTORY)
-# Display the option with help text in CMakeCache.txt
+# CACHE STRING = Display the option with help text in CMakeCache.txt
 set(LIBRARY_DIRECTORY ${LIBRARY_DIRECTORY} CACHE STRING "Absolute path, or, if relative, relative to CMAKE_INSTALL_PREFIX to install the library file.")
 
 
