@@ -19,14 +19,14 @@ Multivariate-BSplines is a curve fitting library utilizing a speedy implementati
 ###Steps to install on Windows
 1. Clone https://github.com/bgrimstad/multivariate-bsplines
 2. Download Eigen: http://bitbucket.org/eigen/eigen/get/3.2.2.zip
-2.1 Extract the zip-file into a new folder, and write down the location of that folder
+  1. Extract the zip-file into a new folder, and write down the location of that folder
 3. Download and install CMake: http://www.cmake.org/files/v3.0/cmake-3.0.1-win32-x86.exe 
 4. Download and install Qt Creator: http://qt-project.org/downloads
-4.1 Make sure that MinGW is marked for installation
+  1. Make sure that MinGW is marked for installation
 5. Run Qt Creator, select `Open project`
-5.1 Navigate into the multivariate-bsplines folder, select CMakeLists.txt
-5.2 In the arguments field, write: `-DEIGEN_DIRECTORY=C:/path/to/eigen/from/step/2.1`
-5.3 Run CMake
+  1. Navigate into the multivariate-bsplines folder, select CMakeLists.txt
+  2. In the arguments field, write: `-DEIGEN_DIRECTORY=C:/path/to/eigen/from/step/2.1`
+  3. Run CMake
 6. Now you can build the library with Qt Creator, and the library files will be output to your build directory.
 
 * You may have to add -static as a flag to your linker if you are compiling with MinGW.
