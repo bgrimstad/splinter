@@ -31,7 +31,6 @@ Multivariate-BSplines is a curve fitting library utilizing a speedy implementati
 
 * You may have to add -static as a flag to your linker if you are compiling with MinGW.
 * C++11 must be enabled.
-* Remember to add the Eigen directory to your include path.
 * If you get asked to specify where CMake is located, then you can typically find the file cmake.exe in C:\Program Files (x86)\CMake\bin.
 
 
@@ -58,8 +57,10 @@ If the path is relative (the first character is not / on UNIX or C:/ (or equival
 
 `make: *** [install] Error 1`: You probably need elevated rights to install the library because you are trying to write to a directory you don't have permission to write to. Either change the install paths via the options, or run step #5 again like this: `sudo make install`.
 
+Remember to add the Eigen directory to your include path.
+
 ###Usage
-This is a simple example demonstrating the use of Multivariate-BSplines. Note that there is no restrictions to the dimension of x or y (except that they have to be >= 1, of course), nor is there any requirement that their dimensions should be equal.
+This is a simple example demonstrating the use of Multivariate-BSplines. Note that there is no restrictions to the dimension of x (except that it has to be >= 1, of course).
 
 Remember to compile with a c++11 compiler! That means you probably have to add a flag when compiling.
 
@@ -131,20 +132,20 @@ The grid, meaning all the values of x where you have sampled the function, must 
 
 This is an **incomplete** grid:
 
-| x<sub>0</sub>   | x<sub>1</sub>   | y<sub>0</sub>    | y<sub>1</sub>   |
-| ---- | ---- | ----- | ---- |
-| 2.1    | 1   | - 7   | 1    |
-| 2.3    | 3   | 10  | 3.5    |
-| 2.1  | 3  | 9.3   | - 34  |
+| x<sub>0</sub>   | x<sub>1</sub>   | y   |
+| --------------- | --------------- | --- |
+| 2.1             | 1               | -7  |
+| 2.3             | 3               | 10  |
+| 2.1             | 3               | 9.3 |
 
 
 This is a **complete** grid:
 
-| x<sub>0</sub>   | x<sub>1</sub>   | y<sub>0</sub>    | y<sub>1</sub>   |
-| ---- | ---- | ----- | ---- |
-| 2.1    | 1   | - 7   | 1    |
-| 2.3    | 3   | 10  | 3.5    |
-| 2.1  | 3  | 9.3   | - 34  |
-| 2.3   | 1  | 0   | 2.3   |
+| x<sub>0</sub>   | x<sub>1</sub>   | y   |
+| --------------- | --------------- | --- |
+| 2.1             | 1               | -7  |
+| 2.3             | 3               | 10  |
+| 2.1             | 3               | 9.3 |
+| 2.3             | 1               | 0   |
 
 Please note that whether the grid is complete or not only depends on the values of x, not those of y.
