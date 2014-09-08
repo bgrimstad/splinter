@@ -4,3 +4,4 @@ test*.datatable
 *.so
 *.a
 .idea/
+build/
