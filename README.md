@@ -30,8 +30,8 @@ NOTE: the goal is to create an open, general, and fast library for multivariate 
 
 ###Steps to install on UNIX
 0. `sudo apt-get update && sudo apt-get install git cmake build-essential` or equivalent
-1. `git clone https://github.com/bgrimstad/multivariate-bsplines.git`
-2. `cd multivariate-bsplines`
+1. `git clone https://github.com/bgrimstad/multivariate-splines.git`
+2. `cd multivariate-splines`
 3. `mkdir build && cd build`
 4. `cmake .. -DCMAKE_BUILD_TYPE=RELEASE`
 5. `make`
