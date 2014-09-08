@@ -6,7 +6,7 @@ There are two separate guides for compilation:
 * [UNIX](#compile-on-unix)
 * [Windows](#compile-on-windows)
 
-Note that for both guides the same [options](#options) to CMake apply.
+Note that for both guides the same [options](#options-both-platforms) to CMake apply.
 
 ##Compile on UNIX
 ####Requirements
@@ -20,7 +20,7 @@ Note that for both guides the same [options](#options) to CMake apply.
 3. `git clone https://github.com/bgrimstad/multivariate-splines.git`
 4. `cd multivariate-splines`
 5. `mkdir build && cd build`
-6. `cmake ..` Also, see [options](#options)
+6. `cmake ..` Also, see [options](#options-both-platforms)
 7. `make`
 8. `make install`
 
@@ -41,7 +41,7 @@ Note that for both guides the same [options](#options) to CMake apply.
   1. Make sure that MinGW is marked for installation
 5. Run Qt Creator, select `Open project`
   1. Navigate into the multivariate-bsplines folder, select `CMakeLists.txt`
-  2. In the arguments field, write: `-DEIGEN_DIRECTORY=C:/path/to/eigen/from/step/2.1`. Also, see [options](#options)
+  2. In the arguments field, write: `-DEIGEN_DIRECTORY=C:/path/to/eigen/from/step/2.1`. Also, see [options](#options-both-platforms)
   3. Run CMake
 6. Now you can build the library with Qt Creator, and the library files will be output to your build directory.
 
