@@ -47,7 +47,7 @@ Note that for both guides the same [options](#options) to CMake apply.
 
 * You may have to add -static as a flag to your linker if you are compiling with MinGW.
 * C++11 must be enabled.
-* If you get asked to specify where CMake is located, then you can typically find the file cmake.exe in C:\Program Files (x86)\CMake\bin.
+* If you get asked to specify where CMake is located, then you can typically find the file cmake.exe in C:/Program Files (x86)/CMake/bin.
 
 ####Troubleshooting
 `fatal error: Eigen/Dense: No such file or directory`: The compiler could not find Eigen. You either need to install Eigen, and then run step #6 again (with `-DEIGEN_DIRECTORY="/path/to/eigen"` if Eigen did not install to the default directory (/usr/local/include/eigen3)).
