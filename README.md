@@ -80,9 +80,9 @@ If the path is relative (the first character is not / on UNIX or C:/ (or equival
 Remember to add the Eigen directory to your include path.
 
 ###Usage
-This is a simple example demonstrating the use of Multivariate-BSplines. Note that there is no restrictions to the dimension of x (except that it has to be >= 1, of course).
+This is a simple example demonstrating the use of MultivariateSplines. Note that there is no restrictions to the dimension of x (except that it has to be >= 1, of course).
 
-Remember to compile with a c++11 compiler! That means you probably have to add a flag when compiling.
+Remember to compile with a c++11 compatible compiler! That means you probably have to add a flag when compiling.
 
 ```c++
 #include <iostream>
