@@ -58,11 +58,11 @@ Please note that `-DCMAKE_BUILD_TYPE=RELEASE` is optional, but if you omit it th
 
 
 ####Options:
-These options go along with step #4, and are used like this:
+These options go along with UNIX step #4 or Windows step #5.2, and are used like this:
 
-*     cmake .. -DEIGEN_DIRECTORY=/home/me/eigen
+*     -DEIGEN_DIRECTORY=/home/me/eigen
 
-*     cmake .. -DEIGEN_DIRECTORY=/path/to/eigen -DHEADER_DIRECTORY=/home/me/c++/multivariate-bsplines/includes
+*     -DEIGEN_DIRECTORY=/path/to/eigen -DHEADER_DIRECTORY=/home/me/c++/multivariate-bsplines/includes
 
 The syntax is: `-D<VARIABLE_NAME>=<VARIABLE_VALUE>`. If you have any spaces in your value you must surround it with double quotes (").
 
