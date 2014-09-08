@@ -5,6 +5,9 @@
 #include "Eigen/IterativeLinearSolvers"
 #include "Eigen/SparseQR"
 
+namespace MultivariateSplines
+{
+
 using std::cout;
 using std::endl;
 
@@ -137,5 +140,7 @@ private:
         return false;
     }
 };
+
+} // namespace MultivariateSplines
 
 #endif // LINEARSOLVER_H

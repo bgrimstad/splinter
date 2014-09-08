@@ -1,45 +1,59 @@
-#ifndef SORTEDDATATABLE_H
-#define SORTEDDATATABLE_H
+#ifndef DATATABLE_H
+#define DATATABLE_H
 
 #include <set>
 #include "include/datasample.h"
-#include <string>
+
+namespace MultivariateSplines
+{
+
+// TODO: namespace for interpolation classes
 
 #define SAVE_DOUBLE_PRECISION 17
 
-class SortedDataTable
+/*
+ * DataTable is a class for storing multidimensional data samples (x,y).
+ * The samples are stored in a continuously sorted table.
+ */
+class DataTable
 {
 public:
-    SortedDataTable();
-    SortedDataTable(bool allowDuplicates);
+    DataTable();
+    DataTable(bool allowDuplicates);
+    DataTable(bool allowDuplicates, bool allowIncompleteGrid);
 
+    /*
+     * Functions for adding a sample (x,y)
+     */
     void addSample(const DataSample &sample);
     void addSample(double x, double y);
     void addSample(std::vector<double> x, double y);
-    void addSample(std::vector<double> x, std::vector<double> y);
     void addSample(DenseVector x, double y);
-    void addSample(DenseVector x, DenseVector y);
 
     std::multiset<DataSample>::const_iterator cbegin() const;
     std::multiset<DataSample>::const_iterator cend() const;
 
-    unsigned int getDimX() const;
-    unsigned int getDimY() const;
-    unsigned int getNumSamples() const;
+    unsigned int getNumVariables() const {return numVariables;}
+    unsigned int getNumSamples() const {return samples.size();}
 
-    void saveDataTable(std::string fileName) const; // Throws std::ios_base::failure
-    void loadDataTable(std::string fileName);       // Throws std::ios_base::failure
+    std::vector<std::set<double>> getGrid() const { return grid; }
 
     /*
      * Backwards compatibility
      */
-    std::vector< std::vector<double> > getBackwardsCompatibleGrid() const; // Creates backwards compatible grid if it doesn't exist
-    std::vector< std::vector<double> > getBackwardsCompatibleX() const;
-    std::vector< std::vector<double> > getBackwardsCompatibleY() const;
+    std::vector< std::vector<double> > getTableX() const;
+    std::vector< std::vector<double> > getTableY() const;
+    std::vector<double> getVectorY() const;
 
     std::vector< std::vector<double> > transposeTable(const std::vector< std::vector<double> > &table) const;
     std::vector< std::vector<double> > getTransposedTableX() const;
     std::vector< std::vector<double> > getTransposedTableY() const;
+
+    /*
+     * Save and load functionality
+     */
+    void save(std::string fileName) const;  // Throws std::ios_base::failure
+    void load(std::string fileName);        // Throws std::ios_base::failure
 
     /*
      * Debug
@@ -51,9 +65,9 @@ public:
 
 private:
     bool allowDuplicates;
+    bool allowIncompleteGrid;
     unsigned int numDuplicates;
-    unsigned int xDim;
-    unsigned int yDim;
+    unsigned int numVariables;
 
     std::multiset<DataSample> samples;
     std::vector< std::set<double> > grid;
@@ -68,4 +82,6 @@ private:
     void gridCompleteGuard() const;
 };
 
-#endif // SORTEDDATATABLE_H
+} // namespace MultivariateSplines
+
+#endif // DATATABLE_H

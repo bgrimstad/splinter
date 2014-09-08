@@ -1,8 +1,12 @@
 #include "include/basis.h"
+#include "include/mykroneckerproduct.h"
 #include "unsupported/Eigen/KroneckerProduct"
 #include <iostream>
 using std::cout;
 using std::endl;
+
+namespace MultivariateSplines
+{
 
 Basis::Basis()
 {
@@ -23,14 +27,14 @@ Basis::Basis(std::vector< std::vector<double> > &X, std::vector<int> basisDegree
 void Basis::setUnivariateBases(std::vector< std::vector<double> > &X, std::vector<int> &basisDegrees, KnotSequenceType knotSequenceType)
 {
     bases.clear();
-    numInputs = X.size();
-    for (unsigned int i = 0; i < numInputs; i++)
+    numVariables = X.size();
+    for (unsigned int i = 0; i < numVariables; i++)
     {
         bases.push_back(Basis1D(X.at(i), basisDegrees.at(i), knotSequenceType));
     }
 }
 
-SparseVector Basis::evaluate(const DenseVector &x) const
+SparseVector Basis::eval(const DenseVector &x) const
 {
     // Set correct starting size and values: one element of 1.
     SparseMatrix tv1(1,1);  //tv1.resize(1);
@@ -38,7 +42,7 @@ SparseVector Basis::evaluate(const DenseVector &x) const
     tv1.insert(0,0) = 1;
     SparseMatrix tv2 = tv1;
 
-    // Evaluate all basisfunctions in each dimension i and generate the tensorproduct of the functionvalues
+    // Evaluate all basisfunctions in each dimension i and generate the tensor product of the function values
     for (int dim = 0; dim < x.size(); dim++)
     {
         SparseVector xi = bases.at(dim).evaluate(x(dim));
@@ -63,17 +67,17 @@ SparseVector Basis::evaluate(const DenseVector &x) const
 }
 
 // Old implementation of Jacobian
-DenseMatrix Basis::evaluateBasisJacobianOld(DenseVector &x) const
+DenseMatrix Basis::evalBasisJacobianOld(DenseVector &x) const
 {
     // Jacobian basis matrix
-    DenseMatrix J; J.setZero(numBasisFunctions(), numInputs);
+    DenseMatrix J; J.setZero(numBasisFunctions(), numVariables);
 
     // Calculate partial derivatives
-    for (unsigned int i = 0; i < numInputs; i++)
+    for (unsigned int i = 0; i < numVariables; i++)
     {
         // One column in basis jacobian
         DenseVector bi; bi.setOnes(1);
-        for (unsigned int j = 0; j < numInputs; j++)
+        for (unsigned int j = 0; j < numVariables; j++)
         {
             DenseVector temp = bi;
             DenseVector xi;
@@ -99,19 +103,19 @@ DenseMatrix Basis::evaluateBasisJacobianOld(DenseVector &x) const
     return J;
 }
 
-SparseMatrix Basis::evaluateBasisJacobian(DenseVector &x) const
+SparseMatrix Basis::evalBasisJacobian(DenseVector &x) const
 {
     // Jacobian basis matrix
-    SparseMatrix J(numBasisFunctions(), numInputs);
+    SparseMatrix J(numBasisFunctions(), numVariables);
     //J.setZero(numBasisFunctions(), numInputs);
 
     // Calculate partial derivatives
-    for (unsigned int i = 0; i < numInputs; i++)
+    for (unsigned int i = 0; i < numVariables; i++)
     {
         // One column in basis jacobian
         SparseMatrix Ji(1,1);
         Ji.insert(0,0) = 1;
-        for (unsigned int j = 0; j < numInputs; j++)
+        for (unsigned int j = 0; j < numVariables; j++)
         {
             SparseMatrix temp = Ji;
             SparseMatrix xi;
@@ -145,7 +149,7 @@ SparseMatrix Basis::evaluateBasisJacobian(DenseVector &x) const
     return J;
 }
 
-SparseMatrix Basis::evaluateBasisHessian(DenseVector &x) const
+SparseMatrix Basis::evalBasisHessian(DenseVector &x) const
 {
     // Hessian basis matrix
     /* Hij = B1 x ... x DBi x ... x DBj x ... x Bn
@@ -157,13 +161,13 @@ SparseMatrix Basis::evaluateBasisHessian(DenseVector &x) const
      * so that basis hessian H is in R^(numBasisFunctions*numInputs x numInputs)
      * The real B-spline Hessian is calculated as (c^T x 1^(numInputs x 1))*H
      */
-    SparseMatrix H(numBasisFunctions()*numInputs, numInputs);
+    SparseMatrix H(numBasisFunctions()*numVariables, numVariables);
     //H.setZero(numBasisFunctions()*numInputs, numInputs);
 
     // Calculate partial derivatives
     // Utilizing that Hessian is symmetric
     // Filling out lower left triangular
-    for (unsigned int i = 0; i < numInputs; i++) // row
+    for (unsigned int i = 0; i < numVariables; i++) // row
     {
         for (unsigned int j = 0; j <= i; j++) // col
         {
@@ -171,7 +175,7 @@ SparseMatrix Basis::evaluateBasisHessian(DenseVector &x) const
             SparseMatrix Hi(1,1);
             Hi.insert(0,0) = 1;
 
-            for (unsigned int k = 0; k < numInputs; k++)
+            for (unsigned int k = 0; k < numVariables; k++)
             {
                 SparseMatrix temp = Hi;
                 SparseMatrix Bk;
@@ -216,7 +220,7 @@ bool Basis::insertKnots(SparseMatrix &A, double tau, unsigned int dim, unsigned 
     A.insert(0,0) = 1;
 
     // Calculate multivariate knot insertion matrix
-    for (unsigned int i = 0; i < numInputs; i++)
+    for (unsigned int i = 0; i < numVariables; i++)
     {
         SparseMatrix temp = A;
         SparseMatrix Ai;
@@ -249,7 +253,7 @@ bool Basis::refineKnots(SparseMatrix &A)
     A.resize(1,1);
     A.insert(0,0) = 1;
 
-    for (unsigned int i = 0; i < numInputs; i++)
+    for (unsigned int i = 0; i < numVariables; i++)
     {
         SparseMatrix temp = A;
         SparseMatrix Ai;
@@ -269,12 +273,12 @@ bool Basis::refineKnots(SparseMatrix &A)
 bool Basis::reduceSupport(std::vector<double>& lb, std::vector<double>& ub, SparseMatrix &A)
 {
     assert(lb.size() == ub.size());
-    assert(lb.size() == numInputs);
+    assert(lb.size() == numVariables);
 
     A.resize(1,1);
     A.insert(0,0) = 1;
 
-    for (unsigned int i = 0; i < numInputs; i++)
+    for (unsigned int i = 0; i < numVariables; i++)
     {
         SparseMatrix temp = A;
         SparseMatrix Ai;
@@ -304,7 +308,7 @@ int Basis::numBasisFunctions(int dim) const
 int Basis::numBasisFunctions() const
 {
     int prod = 1;
-    for (unsigned int dim = 0; dim < numInputs; dim++)
+    for (unsigned int dim = 0; dim < numVariables; dim++)
     {
         prod *= bases.at(dim).numBasisFunctions();
     }
@@ -324,7 +328,7 @@ std::vector<double> Basis::getKnotVector(int dim) const
 std::vector< std::vector<double> > Basis::getKnotVectors() const
 {
     std::vector< std::vector<double> > knots;
-    for (int i = 0; i < numInputs; i++)
+    for (unsigned int i = 0; i < numVariables; i++)
         knots.push_back(bases.at(i).getKnotVector());
     return knots;
 }
@@ -347,7 +351,7 @@ int Basis::getLargestKnotInterval(int dim) const
 std::vector<int> Basis::getTensorIndexDimension() const
 {
     std::vector<int> ret;
-    for (unsigned int dim = 0; dim < numInputs; dim++)
+    for (unsigned int dim = 0; dim < numVariables; dim++)
     {
         ret.push_back(bases.at(dim).numBasisFunctions());
     }
@@ -357,7 +361,7 @@ std::vector<int> Basis::getTensorIndexDimension() const
 std::vector<int> Basis::getTensorIndexDimensionTarget() const
 {
     std::vector<int> ret;
-    for (unsigned int dim = 0; dim < numInputs; dim++)
+    for (unsigned int dim = 0; dim < numVariables; dim++)
     {
         ret.push_back(bases.at(dim).numBasisFunctionsTarget() );
     }
@@ -367,7 +371,7 @@ std::vector<int> Basis::getTensorIndexDimensionTarget() const
 int Basis::supportedPrInterval() const
 {
     int ret = 1;
-    for (unsigned int dim = 0; dim < numInputs; dim++)
+    for (unsigned int dim = 0; dim < numVariables; dim++)
     {
         ret *= (bases.at(dim).getBasisDegree() + 1);
     }
@@ -376,12 +380,12 @@ int Basis::supportedPrInterval() const
 
 bool Basis::valueInsideSupport(DenseVector &x) const
 {
-    if ( x.size() != numInputs)
+    if ( x.size() != numVariables)
     {
         return false;
     }
 
-    for (unsigned int dim = 0; dim < numInputs; dim++)
+    for (unsigned int dim = 0; dim < numVariables; dim++)
     {
         if(!bases.at(dim).insideSupport(x(dim)))
         {
@@ -394,7 +398,7 @@ bool Basis::valueInsideSupport(DenseVector &x) const
 std::vector<double> Basis::getSupportLowerBound() const
 {
     std::vector<double> lb;
-    for (unsigned int dim = 0; dim < numInputs; dim++)
+    for (unsigned int dim = 0; dim < numVariables; dim++)
     {
         std::vector<double> knots = bases.at(dim).getKnotVector();
         lb.push_back(knots.front());
@@ -405,10 +409,12 @@ std::vector<double> Basis::getSupportLowerBound() const
 std::vector<double> Basis::getSupportUpperBound() const
 {
     std::vector<double> ub;
-    for (unsigned int dim = 0; dim < numInputs; dim++)
+    for (unsigned int dim = 0; dim < numVariables; dim++)
     {
         std::vector<double> knots = bases.at(dim).getKnotVector();
         ub.push_back(knots.back());
     }
     return ub;
 }
+
+} // namespace MultivariateSplines

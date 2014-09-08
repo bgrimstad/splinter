@@ -1,4 +1,7 @@
-#include "include/mykroneckerproduct.h"
+#include "mykroneckerproduct.h"
+
+namespace MultivariateSplines
+{
 
 void myKroneckerProduct(const SparseMatrix &A, const SparseMatrix &B, SparseMatrix &AB)
 {
@@ -73,3 +76,5 @@ void myKroneckerProduct(const SparseMatrix &A, const SparseMatrix &B, SparseMatr
     AB.makeCompressed();
     AB.finalize();
 }
+
+} // namespace MultivariateSplines

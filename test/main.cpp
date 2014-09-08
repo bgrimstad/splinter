@@ -1,5 +1,5 @@
 #include <vector>
-#include <sorteddatatable.h>
+#include <datatable.h>
 #include <sstream>
 #include <cmath> // abs, nextafter
 #include <fstream>
@@ -8,6 +8,8 @@
 #include <string>
 
 
+using namespace MultivariateSplines;
+
 // Checks if a is within margin of b
 bool equalsWithinRange(double a, double b, double margin = 0.0)
 {
@@ -15,26 +17,24 @@ bool equalsWithinRange(double a, double b, double margin = 0.0)
 }
 
 
-bool is_identical(SortedDataTable &a, SortedDataTable &b)
+bool is_identical(DataTable &a, DataTable &b)
 {
-    if(a.getDimX() != b.getDimX() || a.getDimY() != b.getDimY())
+    if(a.getNumVariables() != b.getNumVariables())
         return false;
 
     auto ait = a.cbegin(), bit = b.cbegin();
     for(; ait != a.cend() && bit != b.cend(); ait++, bit++)
     {
-        for(int i = 0; i < a.getDimX(); i++)
+        for(int i = 0; i < a.getNumVariables(); i++)
         {
 //            std::cout << std::setprecision(SAVE_DOUBLE_PRECISION) << ait->getX().at(i) << " == " << std::setprecision(SAVE_DOUBLE_PRECISION) << bit->getX().at(i) << " ";
             if(!equalsWithinRange(ait->getX().at(i), bit->getX().at(i)))
                 return false;
         }
-        for(int j = 0; j < a.getDimY(); j++)
-        {
+
 //            std::cout << std::setprecision(SAVE_DOUBLE_PRECISION) << ait->getY().at(j) << " == " << std::setprecision(SAVE_DOUBLE_PRECISION) << bit->getY().at(j) << " ";
-            if(!equalsWithinRange(ait->getY().at(j), bit->getY().at(j)))
-                return false;
-        }
+        if(!equalsWithinRange(ait->getY(), bit->getY()))
+            return false;
 //        std::cout << std::endl;
     }
 
@@ -46,82 +46,81 @@ bool is_identical(SortedDataTable &a, SortedDataTable &b)
 
 bool test1()
 {
-    SortedDataTable table;
+    DataTable table;
 
     auto x = std::vector<double>(1);
-    auto y = std::vector<double>(1);
+    double y;
     for(double i = -0.3; i <= 0.3; i += 0.04)
     {
         x.at(0) = i;
-        y.at(0) = 2 * i;
+        y = 2 * i;
         table.addSample(x, y);
     }
 
-    table.saveDataTable("test1.datatable");
+    table.save("test1.datatable");
 
-    SortedDataTable loadedTable;
-    loadedTable.loadDataTable("test1.datatable");
+    DataTable loadedTable;
+    loadedTable.load("test1.datatable");
 
     return is_identical(table, loadedTable);
 }
 
 bool test2()
 {
-    SortedDataTable table;
+    DataTable table;
 
     auto x = std::vector<double>(2);
-    auto y = std::vector<double>(1);
+    double y;
     for(double i = -0.3; i <= 0.3; i += 0.04)
     {
         for(double j = -0.4; j <= 1.0; j += 0.08)
         {
             x.at(0) = i;
             x.at(1) = j;
-            y.at(0) = i * j;
+            y = i * j;
             table.addSample(x, y);
         }
     }
 
-    table.saveDataTable("test2.datatable");
+    table.save("test2.datatable");
 
-    SortedDataTable loadedTable;
-    loadedTable.loadDataTable("test2.datatable");
+    DataTable loadedTable;
+    loadedTable.load("test2.datatable");
 
     return is_identical(table, loadedTable);
 }
 
 bool test3()
 {
-    SortedDataTable table;
+    DataTable table;
 
     auto x = std::vector<double>(2);
-    auto y = std::vector<double>(2);
+    double y;
     for(double i = -0.3; i <= 0.3; i += 0.04)
     {
         for(double j = -0.4; j <= 1.0; j += 0.03)
         {
             x.at(0) = i;
             x.at(1) = j;
-            y.at(0) = i * j;
-            y.at(1) = 2 * i*i - j;
+            y = i * j;
             table.addSample(x, y);
         }
     }
 
-    table.saveDataTable("test3.datatable");
+    table.save("test3.datatable");
 
-    SortedDataTable loadedTable;
-    loadedTable.loadDataTable("test3.datatable");
+    DataTable loadedTable;
+    loadedTable.load("test3.datatable");
 
     return is_identical(table, loadedTable);
 }
 
 bool test4()
 {
-    SortedDataTable table;
+    DataTable table;
 
     auto x = std::vector<double>(3);
-    auto y = std::vector<double>(2);
+    double y;
     for(double i = -0.0001; i <= 0.0001; i += 0.000001)
     {
         for(double j = -0.01; j <= 0.01; j += 0.001)
@@ -131,27 +130,26 @@ bool test4()
                 x.at(0) = i;
                 x.at(1) = j;
                 x.at(2) = k;
-                y.at(0) = i * j;
-                y.at(1) = i * j * k;
+                y = i * j;
                 table.addSample(x, y);
             }
         }
     }
 
-    table.saveDataTable("test4.datatable");
+    table.save("test4.datatable");
 
-    SortedDataTable loadedTable;
-    loadedTable.loadDataTable("test4.datatable");
+    DataTable loadedTable;
+    loadedTable.load("test4.datatable");
 
     return is_identical(table, loadedTable);
 }
 
 bool test5()
 {
-    SortedDataTable table;
+    DataTable table;
 
     auto x = std::vector<double>(4);
-    auto y = std::vector<double>(2);
+    double y;
     for(double i = -0.0001; i <= 0.0001; i += 0.000001)
     {
         for(double j = -0.01; j <= 0.01; j += 0.001)
@@ -164,43 +162,42 @@ bool test5()
                     x.at(1) = j;
                     x.at(2) = k;
                     x.at(3) = l;
-                    y.at(0) = i * j;
-                    y.at(1) = i * j * k * l;
+                    y = i * j;
                     table.addSample(x, y);
                 }
             }
         }
     }
 
-    table.saveDataTable("test5.datatable");
+    table.save("test5.datatable");
 
-    SortedDataTable loadedTable;
-    loadedTable.loadDataTable("test5.datatable");
+    DataTable loadedTable;
+    loadedTable.load("test5.datatable");
 
     return is_identical(table, loadedTable);
 }
 
 bool test6()
 {
-    SortedDataTable table;
+    DataTable table;
 
     auto x = std::vector<double>(4);
-    auto y = std::vector<double>(2);
+    double y;
     int j = 0;
     for(double i = std::numeric_limits<double>::lowest(), k = std::numeric_limits<double>::max();
         j < 10000;
         i = nextafter(i, std::numeric_limits<double>::max()), k = nextafter(k, std::numeric_limits<double>::lowest()))
     {
         x.at(0) = i;
-        y.at(0) = k;
+        y = k;
         table.addSample(x, y);
         j++;
     }
 
-    table.saveDataTable("test6.datatable");
+    table.save("test6.datatable");
 
-    SortedDataTable loadedTable;
-    loadedTable.loadDataTable("test6.datatable");
+    DataTable loadedTable;
+    loadedTable.load("test6.datatable");
 
     return is_identical(table, loadedTable);
 }

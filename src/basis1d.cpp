@@ -2,9 +2,11 @@
 #include <iostream>
 #include <algorithm>
 
-//using namespace std;
 using std::cout;
 using std::endl;
+
+namespace MultivariateSplines
+{
 
 Basis1D::Basis1D(std::vector<double> &x, int degree)
     : Basis1D(x, degree, KnotSequenceType::FREE)
@@ -54,7 +56,8 @@ SparseVector Basis1D::evaluate(const double x) const
 
     if (knots.back() == x)
     {
-        // if evaluated at the end of the last interval
+        // NOTE: iff evaluated at the end of the last interval
+        // AND there are p+1 equal knots at the end of the knot vector
         // set the last basisfunction equal to 1, all others are 0
         basisvalues.reserve(1);
         basisvalues.insert(numBasisFunctions() - 1) = 1;
@@ -118,6 +121,7 @@ SparseVector Basis1D::evaluateDerivative(double x, int r) const
     // Check for knot multiplicity here!
 
     // Knot hack
+    // TODO: and there are p+1 equal knots at the end of the knot vector
     if (knots.back() == x) x = x-1e-12;
 
     int knotIndex = indexHalfopenInterval(x);
@@ -623,6 +627,9 @@ bool Basis1D::isRefinement(const std::vector<double> &refinedKnots) const
     return true;
 }
 
+/*
+ * Repeats first and last knot p+1 times. Removes no knots.
+ */
 std::vector<double> Basis1D::knotSequenceRegular(std::vector<double> &X)
 {
     // Copy X -> sort -> remove duplicates -> resize = a sorted vector of unique values
@@ -665,53 +672,61 @@ std::vector<double> Basis1D::knotSequenceRegular(std::vector<double> &X)
     return knots;
 }
 
-// Only implemented for cubic splines!
+/*
+ * Free knot sequence for degrees 1 and 3 only.
+ * Example for degree=3 and x={a,b,c,d,e,f,g,h}: knots={a,a,a,a,c,d,e,f,h,h,h,h}
+ */
 std::vector<double> Basis1D::knotSequenceFree(std::vector<double> &X)
 {
+    // The minimum number of samples (independent of degree)
+    // from which a free knot vector can be created is 4.
+    assert(X.size() >= 4);
+
     // Copy X -> sort -> remove duplicates -> resize = a sorted vector of unique values
     std::vector<double> uniqueX(X);
-    sort (uniqueX.begin(), uniqueX.end());
+    sort(uniqueX.begin(), uniqueX.end());
     std::vector<double>::iterator it = unique_copy (uniqueX.begin(), uniqueX.end(), uniqueX.begin());
-    uniqueX.resize( distance(uniqueX.begin(),it) );
+    uniqueX.resize(distance(uniqueX.begin(),it));
 
     // Multiplicity of the first and last knot.
     // basisDegree + 1 creates discontinuity that allows for interpolation at endpoints
     int repeats_at_ends = degree + 1;
 
     // Number of knots in a (p+1)-regular knot sequence
-    int num_knots = uniqueX.size() + repeats_at_ends;
-
-    // NOTE: when splineDegree = 3 and uniqueX.size() = 2 (two samples)
-    // num_knots = 6, although 8 knots are required for a p-regular knot sequence!
-    // The code fail in this special case.
-    // if (splineDegree == 3 && num_knots < 8) num_knots = 8; // Does not work
+    // Ensures a square matrix when calculating the control points
+    int num_knots = uniqueX.size() + degree + 1;
 
     std::vector<double> knots;
     it = uniqueX.begin();
 
-    // Repeat first x value p + 1 times, skip second first and second last, repeat last p + 1 times
+    // Repeat first x value p + 1 times
     for (int i = 0; i < repeats_at_ends; i++)
     {
         knots.push_back(*it);
     }
 
-    if (1 == degree)
+    if(degree == 1)
     {
-        knots.insert(knots.end(), uniqueX.begin()+1, uniqueX.end()-1);
+        for (it = uniqueX.begin()+1; it < uniqueX.end()-1; it++)
+        {
+            knots.push_back(*it);
+        }
     }
-    else if( 3 == degree)
+    else if(degree == 3)
     {
-        for (it = uniqueX.begin()+2 ; it < uniqueX.end()-2; it++)
+        // Copy all but the second and last x value
+        for (it = uniqueX.begin()+2; it < uniqueX.end()-2; it++)
         {
             knots.push_back(*it);
         }
     }
     else
     {
-        cout << "Only 1. and 3. degree supported for knot generation." << endl;
+        cout << "Only degree 1 and 3 is supported for free knot vectors!" << endl;
+        exit(1);
     }
 
-    // Repeat knots at end
+    // Repeat last x value p + 1 times
     it = uniqueX.end()-1; // Last element in uniqueX
     for (int i = 0; i < repeats_at_ends; i++)
     {
@@ -719,6 +734,7 @@ std::vector<double> Basis1D::knotSequenceFree(std::vector<double> &X)
     }
 
     assert(knots.size() == (unsigned)num_knots);
-
     return knots;
 }
+
+} // namespace MultivariateSplines

@@ -1,52 +1,50 @@
-#ifndef TENSORPRODUCTBSPLINE_H
-#define TENSORPRODUCTBSPLINE_H
+#ifndef BSPLINE_H
+#define BSPLINE_H
 
+#include "datatable.h"
 #include "include/generaldefinitions.h"
-#include "sorteddatatable.h"
-#include "include/tensorindex.h"
+#include "include/spline.h"
 #include "include/basis.h"
 
-// Enum for different B-spline types
-enum class BsplineType
+namespace MultivariateSplines
 {
-    EXPLICIT,   // B-spline is explicitly given by control points and knot sequences
-    FREE,       // Interpolates all points. Ensures p-1'th derivative continuous at x(2) and x(n-1). p+1-regular knot sequence with two deleted knots
-    NATURAL,    // Not implemented. Interpolates all points. Ensures second derivative of B-spline is zero at end points.
-    PSPLINE     // Minimizes objective which penalizes both deviation (for interpolation) and second derivative (for smoothing)
+
+// Enum for different B-spline types
+enum class BSplineType
+{
+    LINEAR,             // Piecewise linear interpolation. Interpolates all points.
+    //CUBIC_HERMITE,    // Cubic spline with Hermite end conditions. Interpolates all points. Not implemented.
+    //CUBIC_NATURAL,    // Cubic spline with Natural end conditions. Interpolates all points. Ensures second derivative of B-spline is zero at end points. Not implemented.
+    CUBIC_FREE          // Cubic spline with Free end conditions. Interpolates all points. Ensures p'th derivative continuous at x(2) and x(n-1). p+1-regular knot sequence with two deleted knots.
+    //CUBIC_PERIODIC,   // Cubic spline with Periodic end conditions. Not implemented.
 };
 
-// Maybe change name to EXPLICIT, CUBIC_FREE, CUBIC_NATURAL, PSPLINE,
-
-// Implements tensor product B-splines
-class Bspline
+/*
+ * Class that implements the multivariate tensor product B-spline
+ */
+class BSpline : public Spline
 {
 public:
 
     // Construct B-spline from knot sequences, control coefficients (assumed vectorized), and basis degrees
     //Bspline(std::vector<double> coefficients, std::vector<double> knotSequence, int basisDegrees);
     //Bspline(std::vector<double> coefficients, std::vector< std::vector<double> > knotSequences, std::vector<int> basisDegrees);
-    Bspline(DenseMatrix coefficients, std::vector< std::vector<double> > knotSequences, std::vector<int> basisDegrees);
+    BSpline(DenseMatrix coefficients, std::vector< std::vector<double> > knotSequences, std::vector<int> basisDegrees);
 
-    // Construct B-spline from interpolation data (InterpolationTable)
-//    Bspline(InterpolationTable &data, int basisdegree);
-//    Bspline(InterpolationTable &data, std::vector<int> basisdegree);
+    // Construct B-spline that interpolates the samples in DataTable
+    BSpline(DataTable &samples, BSplineType type);
 
-    // Construct B-spline from interpolation data (SortedDataTable)
-    Bspline(SortedDataTable &data, int basisdegree);
-    Bspline(SortedDataTable &data, std::vector<int> basisdegree);
-
-    virtual Bspline* clone() const { return new Bspline(*this); }
+    virtual BSpline* clone() const { return new BSpline(*this); }
 
     void init();
 
     // Evaluation of B-spline
-    DenseVector evaluate(DenseVector &x);
-    DenseMatrix jacobian(DenseVector &x);
-    DenseMatrix hessian(DenseVector &x); // Supports only 1 output
+    double eval(DenseVector &x) const;
+    DenseMatrix evalJacobian(DenseVector &x) const;
+    DenseMatrix evalHessian(DenseVector &x) const;
 
     // Getters
-    unsigned int getNumInputs() const { return numInputs; }
-    unsigned int getNumOutputs() const { return numOutputs; }
+    unsigned int getNumVariables() const { return numVariables; }
     unsigned int getNumControlPoints() const { return coefficients.cols(); }
 
     std::vector< std::vector<double> > getKnotVectors() const;
@@ -62,31 +60,28 @@ public:
     // B-spline operations
     bool reduceDomain(std::vector<double> lb, std::vector<double> ub, bool regularKnotsequences = true, bool refineKnotsequences = true);
 
-    bool insertKnots(double tau, unsigned int dim, unsigned int multiplicity = 1); // MOVE BACK TO PRIVATE
+    bool insertKnots(double tau, unsigned int dim, unsigned int multiplicity = 1); // TODO: move back to private
 
-private:
+protected:
+
+    BSpline() {}
 
     Basis basis;
     DenseMatrix knotaverages; // One row per input
     DenseMatrix coefficients; // One row per output
 
-    unsigned int numInputs; // Dimension of x
-    unsigned int numOutputs; // Dimension of y = f(x)
+    unsigned int numVariables; // Dimension of x
 
-    // Control point calculations
-    void calculateKnotAverages();
-    void calculateControlPoints(std::vector< std::vector<double> > &X, std::vector< std::vector<double> > &Y);
-    void controlPointEquationLHS(std::vector< std::vector<double> > &X, SparseMatrix &A);
-    void controlPointEquationRHS(std::vector< std::vector<double> > &Y, DenseMatrix &B);
-    bool solveSparseLSE(const SparseMatrix &A, const DenseMatrix &b, DenseMatrix &x) const;
-    bool solveDenseLSE(const DenseMatrix &A, const DenseMatrix &b, DenseMatrix &x) const;
+    // Control point computations
+    void computeBasisFunctionMatrix(const DataTable &samples, SparseMatrix &A) const {controlPointEquationLHS(samples,A);}
 
-    // P-spline control point calculation
-    void calculateControlPointsPspline(std::vector< std::vector<double> > &X, std::vector< std::vector<double> > &Y);
-    void controlPointEquationPsplineLHS(std::vector< std::vector<double> > &X, SparseMatrix &L, SparseMatrix &B, SparseMatrix &W, double lambda);
-    void controlPointEquationPsplineRHS(std::vector< std::vector<double> > &Y, DenseMatrix &R, SparseMatrix &B, SparseMatrix &W);
-    void getSecondOrderFiniteDifferenceMatrix(SparseMatrix &D);
-    void getBasisFunctionMatrix(Basis b, std::vector< std::vector<double> > &X, SparseMatrix &B);
+private:
+
+    // Control point computations
+    void computeKnotAverages();
+    void computeControlPoints(const DataTable &samples);
+    void controlPointEquationLHS(const DataTable &samples, SparseMatrix &A) const;
+    void controlPointEquationRHS(const DataTable &samples, DenseMatrix &Bx, DenseMatrix &By) const;
 
     // Domain reduction
     bool regularSequences(std::vector<double> &lb, std::vector<double> &ub);
@@ -96,9 +91,10 @@ private:
     bool refineKnotSequences(); // All knots in one shabang
 
     // Helper functions
-    bool valueInsideDomain(DenseVector x);
+    bool valueInsideDomain(DenseVector x) const;
 
-    friend class TBtestbench;
 };
 
-#endif // TENSORPRODUCTBSPLINE_H
+} // namespace MultivariateSplines
+
+#endif // BSPLINE_H

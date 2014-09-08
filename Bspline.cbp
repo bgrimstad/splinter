@@ -145,16 +145,6 @@
             <DistClean command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 clean" />
          </MakeCommands>
       </Target>
-      <Target title="install/strip">
-         <Option working_dir="/home/anders/C++/bspline/bspline" />
-         <Option type="4" />
-         <MakeCommands>
-            <Build command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 install/strip" />
-            <CompileFile command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
-            <Clean command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 clean" />
-            <DistClean command="/usr/bin/make -f &quot;/home/anders/C++/bspline/bspline/Makefile&quot;  VERBOSE=1 clean" />
-         </MakeCommands>
-      </Target>
       <Target title="list_install_components">
          <Option working_dir="/home/anders/C++/bspline/bspline" />
          <Option type="4" />

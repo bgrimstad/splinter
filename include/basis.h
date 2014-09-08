@@ -1,8 +1,11 @@
 #ifndef BASIS_H
 #define BASIS_H
 
-#include "include/generaldefinitions.h"
-#include "include/basis1d.h"
+#include "generaldefinitions.h"
+#include "basis1d.h"
+
+namespace MultivariateSplines
+{
 
 class Basis
 {
@@ -14,10 +17,10 @@ public:
     void setUnivariateBases(std::vector< std::vector<double> > &X, std::vector<int> &basisDegrees, KnotSequenceType knotSequenceType);
 
     // Evaluation
-    SparseVector evaluate(const DenseVector &x) const;
-    SparseMatrix evaluateBasisJacobian(DenseVector &x) const;
-    DenseMatrix evaluateBasisJacobianOld(DenseVector &x) const; // Depricated
-    SparseMatrix evaluateBasisHessian(DenseVector &x) const;
+    SparseVector eval(const DenseVector &x) const;
+    SparseMatrix evalBasisJacobian(DenseVector &x) const;
+    DenseMatrix evalBasisJacobianOld(DenseVector &x) const; // Depricated
+    SparseMatrix evalBasisHessian(DenseVector &x) const;
 
     // Knot insertion
     bool refineKnots(SparseMatrix &A);
@@ -50,9 +53,9 @@ public:
 
 private:
     std::vector<Basis1D> bases;
-    unsigned int numInputs;
-
-    friend class TBtestbench;
+    unsigned int numVariables;
 };
+
+} // namespace MultivariateSplines
 
 #endif // BASIS_H

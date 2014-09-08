@@ -1,13 +1,16 @@
 #ifndef BASIS1D_H
 #define BASIS1D_H
 
-#include "include/generaldefinitions.h"
+#include "generaldefinitions.h"
+
+namespace MultivariateSplines
+{
 
 enum class KnotSequenceType
 {
     EXPLICIT, // Knot sequence is given (should be regular)
     REGULAR,   // p+1-regular knots (knots are added if necessary)
-    FREE    // Knots for cubic spline interpolation with natural end conditions (should be free end conditions!)
+    FREE    // Knots for cubic spline interpolation with free end conditions
 };
 
 class Basis1D
@@ -70,10 +73,8 @@ private:
     int degree;
     std::vector<double> knots;
     int targetNumBasisfunctions;
-
-    friend class TBtestbench;
 };
 
-
+} // namespace MultivariateSplines
 
 #endif // BASIS1D_H

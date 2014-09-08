@@ -40,23 +40,23 @@ include_directories(${EIGEN_DIRECTORY})
 #aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/src SRC_LIST)
 set(SRC_LIST
     bspline.h
-    radialbasisfunction.h
-    sorteddatatable.h
+    datatable.h
+    pspline.h
+    rbfspline.h
     include/basis.h
     include/basis1d.h
     include/datasample.h
     include/generaldefinitions.h
     include/linearsolvers.h
     include/mykroneckerproduct.h
-    include/tensorindex.h
-    src/bspline.cpp
-    src/radialbasisfunction.cpp
-    src/sorteddatatable.cpp
-    src/datasample.cpp
-    src/generaldefinitions.cpp
+    include/spline.h
     src/basis.cpp
     src/basis1d.cpp
+    src/bspline.cpp
+    src/datasample.cpp
+    src/datatable.cpp
     src/mykroneckerproduct.cpp
+    src/rbfspline.cpp
 )
 
 # Add output library: add_library(libname [SHARED | STATIC] sourcelist)
@@ -75,7 +75,7 @@ add_definitions(
 
 # Install the header files the user will see
 install(
-    FILES bspline.h sorteddatatable.h radialbasisfunction.h
+    FILES bspline.h datatable.h pspline.h rbfspline.h
     DESTINATION ${HEADER_DIRECTORY}
 )
 # Install the header files that are used internally

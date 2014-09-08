@@ -2,9 +2,10 @@ CMakeLists.txt.user
 InterpolationLibrary.cbp
 Makefile
 bspline_test
-libBSpline.a
 cmake_install.cmake
 CMakeFiles/
 install_manifest.txt
 CMakeCache.txt
 test*.datatable
+*.so
+*.a
