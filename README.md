@@ -38,7 +38,7 @@ NOTE: the goal is to create an open, general, and fast library for multivariate 
 3. `git clone https://github.com/bgrimstad/multivariate-splines.git`
 4. `cd multivariate-splines`
 5. `mkdir build && cd build`
-6. `cmake ..`
+6. `cmake ..` Also, see [options](https://github.com/bgrimstad/multivariate-splines/blob/master/README.md#compiling-the-library)
 7. `make`
 8. `make install`
 
