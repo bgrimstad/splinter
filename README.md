@@ -21,13 +21,12 @@ NOTE: general implementation which is readily extended with new functionality. T
 
 NOTE: the goal is to create an open, general, and fast library for multivariate splines.
 
-###Requirements for use: 
+###Requirements for use:
 * [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page)
 
+You can either compile the library yourself or download a pre-compiled version [here](https://github.com/bgrimstad/multivariate-splines/releases).
 
-##Compiling the library
-
-###Compile on UNIX
+##Compile on UNIX
 ####Requirements
 * [CMake](http://www.cmake.org/)
 * [Git](http://git-scm.com/)
@@ -49,8 +48,9 @@ NOTE: the goal is to create an open, general, and fast library for multivariate 
 
 Remember to add the Eigen directory to your include path.
 
+---
 
-###Compile on Windows
+##Compile on Windows
 
 1. Clone https://github.com/bgrimstad/multivariate-bsplines
 2. Download Eigen: http://eigen.tuxfamily.org/index.php?title=Main_Page
@@ -87,7 +87,7 @@ The syntax is: `-D<VARIABLE_NAME>=<VARIABLE_VALUE>`. If you have any spaces in y
 Note for the header and library paths:
 If the path is relative (the first character is not / on UNIX or C:/ (or equivalent) on Windows), then the actual path used will be relative to [CMAKE_INSTALL_PREFIX](http://www.cmake.org/cmake/help/v2.8.12/cmake.html#variable:CMAKE_INSTALL_PREFIX).
 
-###Usage
+##Usage
 This is a simple example demonstrating the use of Multivariate Splines. Note that there is no restrictions to the dimension of x (except that it has to be >= 1, of course).
 
 Remember to compile with a c++11 compatible compiler! That means you probably have to add a flag when compiling.
