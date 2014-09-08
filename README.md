@@ -1,5 +1,5 @@
-##MultivariateSplines
-MultivariateSplines is a function approximation library implementing various multivariate splines in C++. It contains the following implementations:
+##Multivariate Splines
+Multivariate Splines is a function approximation library implementing various multivariate splines in C++. It contains the following implementations:
 
 1. a speedy implementation of the tensor product [B-spline](http://en.wikipedia.org/wiki/B-spline), and 
 2. a simple implementation of [radial basis function splines](http://en.wikipedia.org/wiki/Radial_basis_function), including the [thin plate spline](http://en.wikipedia.org/wiki/Thin_plate_spline).
@@ -13,7 +13,7 @@ When sampling is expensive and/or scattered (not on a grid) the radial basis fun
 The library is based on the C++ template linear algebra library [Eigen](http://eigen.tuxfamily.org); its sparse matrix support is particularly important for the speed of the tensor product B-spline implementation.
 
 ###Author's note:
-MultivariateSplines implements various splines for function approximation with the purpose of utilizing the splines/approximations in mathematical programming (nonlinear optimization). Thus, special attention has been given to functionality that may support a nonlinear optimization solver. For example, the B-spline implementation includes evaluation of the Jacobian and Hessian.
+Multivariate Splines implements various splines for function approximation with the purpose of utilizing the splines/approximations in mathematical programming (nonlinear optimization). Thus, special attention has been given to functionality that may support a nonlinear optimization solver. For example, the B-spline implementation includes evaluation of the Jacobian and Hessian.
 
 NOTE: focus has not been on curve fitting, NURBS, etc.
 
@@ -80,7 +80,7 @@ If the path is relative (the first character is not / on UNIX or C:/ (or equival
 Remember to add the Eigen directory to your include path.
 
 ###Usage
-This is a simple example demonstrating the use of MultivariateSplines. Note that there is no restrictions to the dimension of x (except that it has to be >= 1, of course).
+This is a simple example demonstrating the use of Multivariate Splines. Note that there is no restrictions to the dimension of x (except that it has to be >= 1, of course).
 
 Remember to compile with a c++11 compatible compiler! That means you probably have to add a flag when compiling.
 
