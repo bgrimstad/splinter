@@ -1,8 +1,5 @@
 #include "pspline.h"
-
-//#include "Utils/mykroneckerproduct.h"
-//#include "unsupported/Eigen/KroneckerProduct"
-#include "Utils/linearsolvers.h"
+#include "include/linearsolvers.h"
 
 namespace MultivariateSplines
 {

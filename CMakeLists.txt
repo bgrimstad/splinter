@@ -56,6 +56,7 @@ set(SRC_LIST
     src/datasample.cpp
     src/datatable.cpp
     src/mykroneckerproduct.cpp
+    src/pspline.cpp
     src/rbfspline.cpp
 )
 
