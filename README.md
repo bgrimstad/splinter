@@ -146,7 +146,20 @@ int main()
 }
 ```
 
-###Grid
+###Sampling with DataTable
+Function samples are managed by and stored in the DataTable data structure. The following code snippet shows how DataTable is used to manage samples. 
+```c++
+// Create new data structure
+DataTable samples; 
+
+// Add some samples (x,y), where y = f(x)
+samples.addSample(1,0);
+samples.addSample(2,5);
+samples.addSample(3,10);
+samples.addSample(4,15);
+
+// The order in which the samples are added do not matter since DataTable sorts the samples internally.
+```
 The grid, meaning all the values of x where you have sampled the function, must be complete. This means that if you have sampled the function in `x = [0 0]`, `x = [1 0]` and `x = [2 1]`, you must also sample the function in `x = [1 1]`, `x = [0 1]` and `x = [2 0]`. You must have sampled the function in all permutations of x within the possible values of x<sub>0</sub>, x<sub>1</sub> ... x<sub>n</sub>. The number of samples will then (disregarding duplicates) be num(x<sub>0</sub>) * num(x<sub>1</sub>) * ... * num(x<sub>n</sub>) where num(x) is the number of distinct values of x the the function has been sampled in. You can check if the grid is complete by calling `isGridComplete()` on your SortedDataTable.
 
 
