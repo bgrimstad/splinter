@@ -1,4 +1,4 @@
-#Installation
+##Installation
 
 You can compile the library yourself by following the guide below, or you can download binaries and headers [here](https://github.com/bgrimstad/multivariate-splines/releases).
 
@@ -55,19 +55,20 @@ Note that for both guides the same [options](#options) to CMake apply.
 ---
 
 ##Options (both platforms)
-These options go along with UNIX step #6 or Windows step #5.2, and are used like this:
-
-*     -DEIGEN_DIRECTORY=/home/me/eigen
-
-*     -DEIGEN_DIRECTORY=/path/to/eigen -DHEADER_DIRECTORY=/home/me/c++/multivariate-bsplines/includes
-
-The syntax is: `-D<VARIABLE_NAME>=<VARIABLE_VALUE>`. If you have any spaces in your value you must surround it with double quotes (").
 
 | Variable name     | Default value                 | Description                               |
 | ----------------- | ----------------------------- | ----------------------------------------- |
 | EIGEN_DIRECTORY   | /usr/local/include/eigen3     | Path to the Eigen lib.                    |
 | HEADER_DIRECTORY  | include                       | Where the headers should be installed.    |
 | LIBRARY_DIRECTORY | lib                           | Where to install the library file.        |
+
+These options go along with UNIX step #6 or Windows step #5.2, and are used like this:
+
+    -DEIGEN_DIRECTORY=/home/me/eigen
+    
+    -DEIGEN_DIRECTORY=/path/to/eigen -DHEADER_DIRECTORY=/home/me/c++/multivariate-bsplines/includes
+
+The syntax is: `-D<VARIABLE_NAME>=<VARIABLE_VALUE>`. If you have any spaces in your value you must surround it with double quotes (").
 
 Note for the header and library paths:
 If the path is relative (the first character is not / on UNIX or C:/ (or equivalent) on Windows), then the actual path used will be relative to [CMAKE_INSTALL_PREFIX](http://www.cmake.org/cmake/help/v2.8.12/cmake.html#variable:CMAKE_INSTALL_PREFIX).
