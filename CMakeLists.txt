@@ -15,20 +15,17 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-
-project(Bspline)
+project(multivariate-splines)
 cmake_minimum_required(VERSION 2.8)
 set(CMAKE_BUILD_TYPE Release)
 
-set(BSPLINE_VERSION_MAJOR 0)
-set(BSPLINE_VERSION_MINOR 1)
-set(BSPLINE_VERSION ${BSPLINE_VERSION_MAJOR}.${BSPLINE_VERSION_MINOR})
-
+set(MULTIVARIATESPLINES_VERSION_MAJOR 0)
+set(MULTIVARIATESPLINES_VERSION_MINOR 1)
+set(MULTIVARIATESPLINES_VERSION ${MULTIVARIATESPLINES_VERSION_MAJOR}.${MULTIVARIATESPLINES_VERSION_MINOR})
 
 set(DEFAULT_EIGEN_DIRECTORY "/usr/local/include/eigen3")
 set(DEFAULT_HEADER_DIRECTORY "include")
 set(DEFAULT_LIBRARY_DIRECTORY "lib")
-
 
 if(NOT EIGEN_DIRECTORY)
     set(EIGEN_DIRECTORY ${DEFAULT_EIGEN_DIRECTORY})
@@ -47,7 +44,6 @@ if(NOT LIBRARY_DIRECTORY)
 endif(NOT LIBRARY_DIRECTORY)
 # CACHE STRING = Display the option with help text in CMakeCache.txt
 set(LIBRARY_DIRECTORY ${LIBRARY_DIRECTORY} CACHE STRING "Absolute path, or, if relative, relative to CMAKE_INSTALL_PREFIX to install the library file.")
-
 
 # These are the headers we need for compilation
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
@@ -79,13 +75,12 @@ set(SRC_LIST
 )
 
 # Add output library: add_library(libname [SHARED | STATIC] sourcelist)
-add_library(BSpline SHARED ${SRC_LIST})
-add_library(BSplineStatic STATIC ${SRC_LIST})
-
+add_library(multivariate-splines SHARED ${SRC_LIST})
+add_library(multivariate-splines-static STATIC ${SRC_LIST})
 
 # Testing executable
-add_executable("bspline_test" ${CMAKE_CURRENT_SOURCE_DIR}/test/main.cpp)
-target_link_libraries("bspline_test" BSpline)
+add_executable("multivariate-splines-test" ${CMAKE_CURRENT_SOURCE_DIR}/test/main.cpp)
+target_link_libraries("multivariate-splines-test" multivariate-splines)
 
 # Compiler flags
 add_definitions(
@@ -105,11 +100,11 @@ install(
 
 # Install the shared library file
 install(
-    TARGETS BSpline
+    TARGETS multivariate-splines
     DESTINATION ${LIBRARY_DIRECTORY}
 )
 # Install the static library file
 install(
-    TARGETS BSplineStatic
+    TARGETS multivariate-splines-static
     DESTINATION ${LIBRARY_DIRECTORY}
 )

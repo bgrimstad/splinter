@@ -21,22 +21,37 @@ NOTE: general implementation which is readily extended with new functionality. T
 
 NOTE: the goal is to create an open, general, and fast library for multivariate splines.
 
-###Requirements: 
+###Requirements for use:
 * [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page)
+
+You can either compile the library yourself or download a pre-compiled version [here](https://github.com/bgrimstad/multivariate-splines/releases).
+
+##Compile on UNIX
+####Requirements
 * [CMake](http://www.cmake.org/)
 * [Git](http://git-scm.com/)
 * [GCC](https://gcc.gnu.org/) or an equivalent C++11 compiler
 
+1. Download and install [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page)
+2. `sudo apt-get update && sudo apt-get install git cmake build-essential`
+3. `git clone https://github.com/bgrimstad/multivariate-splines.git`
+4. `cd multivariate-splines`
+5. `mkdir build && cd build`
+6. `cmake ..` Also, see [options](https://github.com/bgrimstad/multivariate-splines/blob/master/README.md#options)
+7. `make`
+8. `make install`
 
-###Steps to install on UNIX
-0. `sudo apt-get update && sudo apt-get install git cmake build-essential` or equivalent
-1. `git clone https://github.com/bgrimstad/multivariate-bsplines.git`
-2. `cd multivariate-bsplines`
-3. `cmake .`
-4. `make`
-5. `make install`
+####Troubleshooting
+`fatal error: Eigen/Dense: No such file or directory`: The compiler could not find Eigen. You either need to install Eigen, and then run step #6 again (with `-DEIGEN_DIRECTORY="/path/to/eigen"` if Eigen did not install to the default directory (/usr/local/include/eigen3)).
 
-###Steps to install on Windows
+`make: *** [install] Error 1`: You probably need elevated rights to install the library because you are trying to write to a directory you don't have permission to write to. Either change the install paths via the options, or run step #8 again like this: `sudo make install`.
+
+Remember to add the Eigen directory to your include path.
+
+---
+
+##Compile on Windows
+
 1. Clone https://github.com/bgrimstad/multivariate-bsplines
 2. Download Eigen: http://eigen.tuxfamily.org/index.php?title=Main_Page
   1. Extract the zip-file into a new folder, and write down the location of that folder
@@ -45,7 +60,7 @@ NOTE: the goal is to create an open, general, and fast library for multivariate 
   1. Make sure that MinGW is marked for installation
 5. Run Qt Creator, select `Open project`
   1. Navigate into the multivariate-bsplines folder, select `CMakeLists.txt`
-  2. In the arguments field, write: `-DEIGEN_DIRECTORY=C:/path/to/eigen/from/step/2.1`
+  2. In the arguments field, write: `-DEIGEN_DIRECTORY=C:/path/to/eigen/from/step/2.1`. Also, see [options](https://github.com/bgrimstad/multivariate-splines/blob/master/README.md#options)
   3. Run CMake
 6. Now you can build the library with Qt Creator, and the library files will be output to your build directory.
 
@@ -54,93 +69,89 @@ NOTE: the goal is to create an open, general, and fast library for multivariate 
 * If you get asked to specify where CMake is located, then you can typically find the file cmake.exe in C:\Program Files (x86)\CMake\bin.
 
 
-####Options:
-These options go along with step #3, and are used like this:
+###Options:
+These options go along with UNIX step #6 or Windows step #5.2, and are used like this:
 
-*     cmake . -DEIGEN_DIRECTORY=/home/me/eigen
+*     -DEIGEN_DIRECTORY=/home/me/eigen
 
-*     cmake . -DEIGEN_DIRECTORY=/path/to/eigen -DHEADER_DIRECTORY=/home/me/c++/multivariate-bsplines/includes
+*     -DEIGEN_DIRECTORY=/path/to/eigen -DHEADER_DIRECTORY=/home/me/c++/multivariate-bsplines/includes
 
 The syntax is: `-D<VARIABLE_NAME>=<VARIABLE_VALUE>`. If you have any spaces in your value you must surround it with double quotes (").
 
 | Variable name     | Default value                 | Description                               |
 | ----------------- | ----------------------------- | ----------------------------------------- |
 | EIGEN_DIRECTORY   | /usr/local/include/eigen3     | Path to the Eigen lib.                    |
-| HEADER_DIRECTORY  | include/multivariate-bsplines | Where the headers should be installed.    |
-| LIBRARY_DIRECTORY | lib/multivariate-bsplines     | Where to install the library file.        |
+| HEADER_DIRECTORY  | include                       | Where the headers should be installed.    |
+| LIBRARY_DIRECTORY | lib                           | Where to install the library file.        |
 
 Note for the header and library paths:
 If the path is relative (the first character is not / on UNIX or C:/ (or equivalent) on Windows), then the actual path used will be relative to [CMAKE_INSTALL_PREFIX](http://www.cmake.org/cmake/help/v2.8.12/cmake.html#variable:CMAKE_INSTALL_PREFIX).
 
-####Troubleshooting
-`fatal error: Eigen/Dense: No such file or directory`: The compiler could not find Eigen. You either need to install Eigen, and then run step #3 again (with `-DEIGEN_DIRECTORY="/path/to/eigen"` if Eigen did not install to the default directory (/usr/local/include/eigen3)).
-
-`make: *** [install] Error 1`: You probably need elevated rights to install the library because you are trying to write to a directory you don't have permission to write to. Either change the install paths via the options, or run step #5 again like this: `sudo make install`.
-
-Remember to add the Eigen directory to your include path.
-
-###Usage
+##Usage
 This is a simple example demonstrating the use of Multivariate Splines. Note that there is no restrictions to the dimension of x (except that it has to be >= 1, of course).
 
 Remember to compile with a c++11 compatible compiler! That means you probably have to add a flag when compiling.
 
 ```c++
 #include <iostream>
-#include <sorteddatatable.h>
-#include <bspline.h>
+#include "datatable.h"
+#include "bspline.h"
+#include "pspline.h"
+#include "rbfspline.h"
+
 using std::cout;
 using std::endl;
 
-// Note: DenseVector is a typedef of Eigen::VectorXd (from generaldefinitions.h)
-// typedef Eigen::VectorXd DenseVector;
+using namespace MultivariateSplines;
 
-// The function we are sampling.
-// In reality this would probably be a set of sensors or other, more useful, data sources.
-DenseVector func(DenseVector &x)
+// Six-hump camelback function
+double f(DenseVector x)
 {
-    DenseVector y(2);
-    y(0) = x(0) / (1.3 * x(1) + 0.01) + 2 * x(1);
-    y(1) = 10.2 * x(0) - 3 * x(1);
-    return y;
+    assert(x.rows() == 2);
+    return (4 - 2.1*x(0)*x(0) + (1/3.)*x(0)*x(0)*x(0)*x(0))*x(0)*x(0) + x(0)*x(1) + (-4 + 4*x(1)*x(1))*x(1)*x(1);
 }
 
-int main()
+int main(int argc, char *argv[])
 {
-    // The BSpline class needs its data sorted by x0, x1 ... xn.
-    // This class makes sure that it is. It also allows / disallows duplicates
-    // and checks that the grid is complete.
-    SortedDataTable table;
+    // Create new DataTable to manage samples
+    DataTable samples;
 
+    // Sample function
     DenseVector x(2);
-    // Record the domain of i and j so we don't evaluate outside their
-    // domains in the loops following these two loops.
-    double i_max = 0.0, j_max = 0.0;
-    for(double i = 0.0; i <= 2.6; i += 0.11)
+    double y;
+    for(int i = 0; i < 20; i++)
     {
-        i_max = i;
-        for(double j = 1.4; j <= 5.3; j += 0.05)
+        for(int j = 0; j < 20; j++)
         {
-            j_max = j;
-            x(0) = i; x(1) = j;
-            // addSample has several signatures, see the header file.
-            table.addSample(x, func(x));
+            // Sample function at x
+            x(0) = i*0.1;
+            x(1) = j*0.1;
+            y = f(x);
+
+            // Store sample
+            samples.addSample(x,y);
         }
     }
 
-    Bspline bSpline(table, 3);
+    // Build B-splines that interpolate the samples
+    BSpline bspline1(samples, BSplineType::LINEAR);
+    BSpline bspline3(samples, BSplineType::CUBIC_FREE);
 
-    DenseVector y, b;
-    for(double i = 0.0; i <= i_max; i += 0.07)
-    {
-        for(double j = 1.4; j <= j_max; j += 0.09)
-        {
-            x(0) = i; x(1) = j;
-            y = func(x);
-            b = bSpline.evaluate(x);
-            cout << y(0) << ", " << y(1) << " =? ";
-            cout << b(0) << ", " << b(1) << endl;
-        }
-    }
+    // Build penalized B-spline (P-spline) that smooths the samples
+    PSpline pspline(samples, 0.03);
+
+    // Build radial basis function spline that interpolate the samples
+    RBFSpline rbfspline(samples, RadialBasisFunctionType::THIN_PLATE_SPLINE);
+
+    // Evaluate the splines at x = (1,1)
+    x(0) = 1; x(1) = 1;
+    cout << "-------------------------------------------------"     << endl;
+    cout << "Function at x: \t\t\t"         << f(x)                 << endl;
+    cout << "Linear B-spline at x: \t\t"    << bspline1.eval(x)     << endl;
+    cout << "Cubic B-spline at x: \t\t"     << bspline3.eval(x)     << endl;
+    cout << "P-spline at x: \t\t\t"         << pspline.eval(x)      << endl;
+    cout << "Thin-plate spline at x:\t\t"   << rbfspline.eval(x)    << endl;
+    cout << "-------------------------------------------------"     << endl;
 
     return 0;
 }
