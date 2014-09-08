@@ -9,3 +9,4 @@ CMakeCache.txt
 test*.datatable
 *.so
 *.a
+.idea/
