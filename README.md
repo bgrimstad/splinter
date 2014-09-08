@@ -38,7 +38,7 @@ NOTE: the goal is to create an open, general, and fast library for multivariate 
 3. `git clone https://github.com/bgrimstad/multivariate-splines.git`
 4. `cd multivariate-splines`
 5. `mkdir build && cd build`
-6. `cmake ..` Also, see [options](https://github.com/bgrimstad/multivariate-splines/blob/master/README.md#compiling-the-library)
+6. `cmake ..` Also, see [options](https://github.com/bgrimstad/multivariate-splines/blob/master/README.md#options)
 7. `make`
 8. `make install`
 
@@ -60,7 +60,7 @@ Remember to add the Eigen directory to your include path.
   1. Make sure that MinGW is marked for installation
 5. Run Qt Creator, select `Open project`
   1. Navigate into the multivariate-bsplines folder, select `CMakeLists.txt`
-  2. In the arguments field, write: `-DEIGEN_DIRECTORY=C:/path/to/eigen/from/step/2.1`
+  2. In the arguments field, write: `-DEIGEN_DIRECTORY=C:/path/to/eigen/from/step/2.1`. Also, see [options](https://github.com/bgrimstad/multivariate-splines/blob/master/README.md#options)
   3. Run CMake
 6. Now you can build the library with Qt Creator, and the library files will be output to your build directory.
 
