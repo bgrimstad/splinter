@@ -64,9 +64,12 @@ Note that for both guides the same [options](#options-both-platforms) to CMake a
 
 These options go along with UNIX step #6 or Windows step #5.2, and are used like this:
 
-    -DEIGEN_DIRECTORY=/home/me/eigen
+    UNIX:
+    cmake .. -DEIGEN_DIRECTORY=/path/to/eigen -DHEADER_DIRECTORY=/home/me/multivariate-bsplines/includes
     
-    -DEIGEN_DIRECTORY=/path/to/eigen -DHEADER_DIRECTORY=/home/me/c++/multivariate-bsplines/includes
+    
+    Windows (in the arguments field):
+    -DEIGEN_DIRECTORY=/path/to/eigen -DHEADER_DIRECTORY=/home/me/multivariate-bsplines/includes
 
 The syntax is: `-D<VARIABLE_NAME>=<VARIABLE_VALUE>`. If you have any spaces in your value you must surround it with double quotes (").
 
