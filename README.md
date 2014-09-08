@@ -89,61 +89,64 @@ Remember to compile with a c++11 compatible compiler! That means you probably ha
 
 ```c++
 #include <iostream>
-#include <sorteddatatable.h>
-#include <bspline.h>
+#include "datatable.h"
+#include "bspline.h"
+#include "pspline.h"
+#include "rbfspline.h"
+
 using std::cout;
 using std::endl;
 
-// Note: DenseVector is a typedef of Eigen::VectorXd (from generaldefinitions.h)
-// typedef Eigen::VectorXd DenseVector;
+using namespace MultivariateSplines;
 
-// The function we are sampling.
-// In reality this would probably be a set of sensors or other, more useful, data sources.
-DenseVector func(DenseVector &x)
+// Six-hump camelback function
+double f(DenseVector x)
 {
-    DenseVector y(2);
-    y(0) = x(0) / (1.3 * x(1) + 0.01) + 2 * x(1);
-    y(1) = 10.2 * x(0) - 3 * x(1);
-    return y;
+    assert(x.rows() == 2);
+    return (4 - 2.1*x(0)*x(0) + (1/3.)*x(0)*x(0)*x(0)*x(0))*x(0)*x(0) + x(0)*x(1) + (-4 + 4*x(1)*x(1))*x(1)*x(1);
 }
 
-int main()
+int main(int argc, char *argv[])
 {
-    // The BSpline class needs its data sorted by x0, x1 ... xn.
-    // This class makes sure that it is. It also allows / disallows duplicates
-    // and checks that the grid is complete.
-    SortedDataTable table;
+    // Create new DataTable to manage samples
+    DataTable samples;
 
+    // Sample function
     DenseVector x(2);
-    // Record the domain of i and j so we don't evaluate outside their
-    // domains in the loops following these two loops.
-    double i_max = 0.0, j_max = 0.0;
-    for(double i = 0.0; i <= 2.6; i += 0.11)
+    double y;
+    for(int i = 0; i < 20; i++)
     {
-        i_max = i;
-        for(double j = 1.4; j <= 5.3; j += 0.05)
+        for(int j = 0; j < 20; j++)
         {
-            j_max = j;
-            x(0) = i; x(1) = j;
-            // addSample has several signatures, see the header file.
-            table.addSample(x, func(x));
+            // Sample function at x
+            x(0) = i*0.1;
+            x(1) = j*0.1;
+            y = f(x);
+
+            // Store sample
+            samples.addSample(x,y);
         }
     }
 
-    Bspline bSpline(table, 3);
+    // Build B-splines that interpolate the samples
+    BSpline bspline1(samples, BSplineType::LINEAR);
+    BSpline bspline3(samples, BSplineType::CUBIC_FREE);
 
-    DenseVector y, b;
-    for(double i = 0.0; i <= i_max; i += 0.07)
-    {
-        for(double j = 1.4; j <= j_max; j += 0.09)
-        {
-            x(0) = i; x(1) = j;
-            y = func(x);
-            b = bSpline.evaluate(x);
-            cout << y(0) << ", " << y(1) << " =? ";
-            cout << b(0) << ", " << b(1) << endl;
-        }
-    }
+    // Build penalized B-spline (P-spline) that smooths the samples
+    PSpline pspline(samples, 0.03);
+
+    // Build radial basis function spline that interpolate the samples
+    RBFSpline rbfspline(samples, RadialBasisFunctionType::THIN_PLATE_SPLINE);
+
+    // Evaluate the splines at x = (1,1)
+    x(0) = 1; x(1) = 1;
+    cout << "-------------------------------------------------"     << endl;
+    cout << "Function at x: \t\t\t"         << f(x)                 << endl;
+    cout << "Linear B-spline at x: \t\t"    << bspline1.eval(x)     << endl;
+    cout << "Cubic B-spline at x: \t\t"     << bspline3.eval(x)     << endl;
+    cout << "P-spline at x: \t\t\t"         << pspline.eval(x)      << endl;
+    cout << "Thin-plate spline at x:\t\t"   << rbfspline.eval(x)    << endl;
+    cout << "-------------------------------------------------"     << endl;
 
     return 0;
 }
