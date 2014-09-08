@@ -69,8 +69,8 @@ The syntax is: `-D<VARIABLE_NAME>=<VARIABLE_VALUE>`. If you have any spaces in y
 | Variable name     | Default value                 | Description                               |
 | ----------------- | ----------------------------- | ----------------------------------------- |
 | EIGEN_DIRECTORY   | /usr/local/include/eigen3     | Path to the Eigen lib.                    |
-| HEADER_DIRECTORY  | include/multivariate-bsplines | Where the headers should be installed.    |
-| LIBRARY_DIRECTORY | lib/multivariate-bsplines     | Where to install the library file.        |
+| HEADER_DIRECTORY  | include                       | Where the headers should be installed.    |
+| LIBRARY_DIRECTORY | lib                           | Where to install the library file.        |
 
 Note for the header and library paths:
 If the path is relative (the first character is not / on UNIX or C:/ (or equivalent) on Windows), then the actual path used will be relative to [CMAKE_INSTALL_PREFIX](http://www.cmake.org/cmake/help/v2.8.12/cmake.html#variable:CMAKE_INSTALL_PREFIX).
