@@ -21,25 +21,37 @@ NOTE: general implementation which is readily extended with new functionality. T
 
 NOTE: the goal is to create an open, general, and fast library for multivariate splines.
 
-###Requirements: 
+###Requirements for use: 
 * [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page)
+
+
+##Compiling the library
+
+###Compile on UNIX
+####Requirements
 * [CMake](http://www.cmake.org/)
 * [Git](http://git-scm.com/)
 * [GCC](https://gcc.gnu.org/) or an equivalent C++11 compiler
 
+1. Download and install [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page)
+2. `sudo apt-get update && sudo apt-get install git cmake build-essential`
+3. `git clone https://github.com/bgrimstad/multivariate-splines.git`
+4. `cd multivariate-splines`
+5. `mkdir build && cd build`
+6. `cmake ..`
+7. `make`
+8. `make install`
 
-###Steps to install on UNIX
-0. `sudo apt-get update && sudo apt-get install git cmake build-essential` or equivalent
-1. `git clone https://github.com/bgrimstad/multivariate-splines.git`
-2. `cd multivariate-splines`
-3. `mkdir build && cd build`
-4. `cmake .. -DCMAKE_BUILD_TYPE=RELEASE`
-5. `make`
-6. `make install`
+####Troubleshooting
+`fatal error: Eigen/Dense: No such file or directory`: The compiler could not find Eigen. You either need to install Eigen, and then run step #6 again (with `-DEIGEN_DIRECTORY="/path/to/eigen"` if Eigen did not install to the default directory (/usr/local/include/eigen3)).
 
-Please note that `-DCMAKE_BUILD_TYPE=RELEASE` is optional, but if you omit it then the project will be compiled without optimizations.
+`make: *** [install] Error 1`: You probably need elevated rights to install the library because you are trying to write to a directory you don't have permission to write to. Either change the install paths via the options, or run step #8 again like this: `sudo make install`.
 
-###Steps to install on Windows
+Remember to add the Eigen directory to your include path.
+
+
+###Compile on Windows
+
 1. Clone https://github.com/bgrimstad/multivariate-bsplines
 2. Download Eigen: http://eigen.tuxfamily.org/index.php?title=Main_Page
   1. Extract the zip-file into a new folder, and write down the location of that folder
@@ -57,8 +69,8 @@ Please note that `-DCMAKE_BUILD_TYPE=RELEASE` is optional, but if you omit it th
 * If you get asked to specify where CMake is located, then you can typically find the file cmake.exe in C:\Program Files (x86)\CMake\bin.
 
 
-####Options:
-These options go along with UNIX step #4 or Windows step #5.2, and are used like this:
+###Options:
+These options go along with UNIX step #6 or Windows step #5.2, and are used like this:
 
 *     -DEIGEN_DIRECTORY=/home/me/eigen
 
@@ -74,13 +86,6 @@ The syntax is: `-D<VARIABLE_NAME>=<VARIABLE_VALUE>`. If you have any spaces in y
 
 Note for the header and library paths:
 If the path is relative (the first character is not / on UNIX or C:/ (or equivalent) on Windows), then the actual path used will be relative to [CMAKE_INSTALL_PREFIX](http://www.cmake.org/cmake/help/v2.8.12/cmake.html#variable:CMAKE_INSTALL_PREFIX).
-
-####Troubleshooting
-`fatal error: Eigen/Dense: No such file or directory`: The compiler could not find Eigen. You either need to install Eigen, and then run step #3 again (with `-DEIGEN_DIRECTORY="/path/to/eigen"` if Eigen did not install to the default directory (/usr/local/include/eigen3)).
-
-`make: *** [install] Error 1`: You probably need elevated rights to install the library because you are trying to write to a directory you don't have permission to write to. Either change the install paths via the options, or run step #5 again like this: `sudo make install`.
-
-Remember to add the Eigen directory to your include path.
 
 ###Usage
 This is a simple example demonstrating the use of Multivariate Splines. Note that there is no restrictions to the dimension of x (except that it has to be >= 1, of course).
