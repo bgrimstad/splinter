@@ -32,9 +32,12 @@ NOTE: the goal is to create an open, general, and fast library for multivariate 
 0. `sudo apt-get update && sudo apt-get install git cmake build-essential` or equivalent
 1. `git clone https://github.com/bgrimstad/multivariate-bsplines.git`
 2. `cd multivariate-bsplines`
-3. `cmake .`
-4. `make`
-5. `make install`
+3. `mkdir build && cd build`
+4. `cmake .. -DCMAKE_BUILD_TYPE=RELEASE`
+5. `make`
+6. `make install`
+
+Please note that `-DCMAKE_BUILD_TYPE=RELEASE` is optional, but if you omit it then the project will be compiled without optimizations.
 
 ###Steps to install on Windows
 1. Clone https://github.com/bgrimstad/multivariate-bsplines
@@ -55,11 +58,11 @@ NOTE: the goal is to create an open, general, and fast library for multivariate 
 
 
 ####Options:
-These options go along with step #3, and are used like this:
+These options go along with step #4, and are used like this:
 
-*     cmake . -DEIGEN_DIRECTORY=/home/me/eigen
+*     cmake .. -DEIGEN_DIRECTORY=/home/me/eigen
 
-*     cmake . -DEIGEN_DIRECTORY=/path/to/eigen -DHEADER_DIRECTORY=/home/me/c++/multivariate-bsplines/includes
+*     cmake .. -DEIGEN_DIRECTORY=/path/to/eigen -DHEADER_DIRECTORY=/home/me/c++/multivariate-bsplines/includes
 
 The syntax is: `-D<VARIABLE_NAME>=<VARIABLE_VALUE>`. If you have any spaces in your value you must surround it with double quotes (").
 
