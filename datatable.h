@@ -50,6 +50,9 @@ public:
     void addSample(std::vector<double> x, double y);
     void addSample(DenseVector x, double y);
 
+    /*
+     * Getters
+     */
     std::multiset<DataSample>::const_iterator cbegin() const;
     std::multiset<DataSample>::const_iterator cend() const;
 
@@ -57,17 +60,8 @@ public:
     unsigned int getNumSamples() const {return samples.size();}
 
     std::vector<std::set<double>> getGrid() const { return grid; }
-
-    /*
-     * Backwards compatibility
-     */
     std::vector< std::vector<double> > getTableX() const;
-    std::vector< std::vector<double> > getTableY() const;
     std::vector<double> getVectorY() const;
-
-    std::vector< std::vector<double> > transposeTable(const std::vector< std::vector<double> > &table) const;
-    std::vector< std::vector<double> > getTransposedTableX() const;
-    std::vector< std::vector<double> > getTransposedTableY() const;
 
     /*
      * Save and load functionality

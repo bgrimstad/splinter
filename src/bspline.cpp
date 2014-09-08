@@ -57,7 +57,7 @@ BSpline::BSpline(DataTable &samples, BSplineType type = BSplineType::CUBIC_FREE)
 
     numVariables = samples.getNumVariables();
 
-    std::vector< std::vector<double> > xdata = samples.getTransposedTableX();
+    std::vector< std::vector<double> > xdata = samples.getTableX();
 
     // Set multivariate basis
     if(type == BSplineType::LINEAR)
@@ -349,7 +349,7 @@ void BSpline::computeControlPoints(const DataTable &samples)
      * c = control coefficients or knot averages.
      */
     SparseMatrix A;
-    controlPointEquationLHS(samples, A);
+    computeBasisFunctionMatrix(samples, A);
 
     DenseMatrix Bx, By;
     controlPointEquationRHS(samples, Bx, By);
@@ -383,7 +383,7 @@ void BSpline::computeControlPoints(const DataTable &samples)
     knotaverages = Cx.transpose();
 }
 
-void BSpline::controlPointEquationLHS(const DataTable &samples, SparseMatrix &A) const
+void BSpline::computeBasisFunctionMatrix(const DataTable &samples, SparseMatrix &A) const
 {
     unsigned int numVariables = samples.getNumVariables();
     unsigned int numSamples = samples.getNumSamples();

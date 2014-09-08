@@ -75,7 +75,7 @@ RBFSpline::RBFSpline(DataTable &samples, RadialBasisFunctionType type, bool norm
     //A.reserve(numSamples*numSamples);
     DenseMatrix A; A.setZero(numSamples,numSamples);
     DenseMatrix b; b.setZero(numSamples,1);
-    cout << "Starting loop" << endl;
+
     int i=0;
     std::multiset<DataSample>::const_iterator it1, it2;
     for (it1 = samples.cbegin(); it1 != samples.cend(); ++it1, ++i)
@@ -120,21 +120,23 @@ RBFSpline::RBFSpline(DataTable &samples, RadialBasisFunctionType type, bool norm
     double svalmax = svals(0);
     double svalmin = svals(svals.rows()-1);
     double rcondnum = (svalmax <= 0.0 || svalmin <= 0.0) ? 0.0 : svalmin/svalmax;
-    cout << "The reciprocal of the condition number is: " << rcondnum << endl;
-    cout << "Largest/smallest singular value: " << svalmax << " / " << svalmin << endl;
+    //cout << "The reciprocal of the condition number is: " << rcondnum << endl;
+    //cout << "Largest/smallest singular value: " << svalmax << " / " << svalmin << endl;
 
     // Solve for weights
+    cout << "Computing RBF weights using dense solver." << endl;
     weights = svd.solve(b);
+
+    // Compute error
     double err = (A*weights - b).norm() / b.norm();
     cout << "Error: " << err << endl;
-    return;
 
-    cout << "Computing RBF weights using dense solver." << endl;
-    DenseQR s;
-    bool success = s.solve(A,b,weights);
-    assert(success);
+//    // Alternative solver
+//    DenseQR s;
+//    bool success = s.solve(A,b,weights);
+//    assert(success);
 
-    // NOTE: Tried using GMRES solver but it did not work very well
+    // NOTE: Tried using experimental GMRES solver in Eigen, but it did not work very well.
 }
 
 double RBFSpline::eval(DenseVector &x) const

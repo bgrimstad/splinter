@@ -15,22 +15,21 @@ PSpline::PSpline(DataTable &samples, double lambda)
     // Check data
     assert(samples.isGridComplete());
 
-    std::vector< std::vector<double> > xdata = samples.getTransposedTableX();
-    std::vector< std::vector<double> > ydata = samples.getTransposedTableY();
+    std::vector< std::vector<double> > xdata = samples.getTableX();
 
     numVariables = samples.getNumVariables();
 
     // Assuming a cubic spline
     std::vector<int> basisDegrees(samples.getNumVariables(), 3);
     basis = Basis(xdata, basisDegrees, KnotSequenceType::FREE);
-    computeControlPoints(samples, xdata, ydata);
+    computeControlPoints(samples);
 
     init();
 
     checkControlPoints();
 }
 
-void PSpline::computeControlPoints(const DataTable &samples, std::vector< std::vector<double> > &X, std::vector< std::vector<double> > &Y)
+void PSpline::computeControlPoints(const DataTable &samples)
 {
     // Assuming regular grid
     unsigned int numSamples = samples.getNumSamples();
@@ -47,17 +46,28 @@ void PSpline::computeControlPoints(const DataTable &samples, std::vector< std::v
      * y = sample x-values when calculating knot averages
      */
 
-    SparseMatrix L, B;
-    DenseMatrix Rx, Ry;
+    SparseMatrix L, B, D, W;
+    DenseMatrix Rx, Ry, Bx, By;
 
-    SparseMatrix W;
+    // Weight matrix
     W.resize(numSamples, numSamples);
     W.setIdentity();
 
-    controlPointEquationLHS(samples, X, L, B, W, lambda);
-    controlPointEquationRHS(Y, Ry, B, W);
-    controlPointEquationRHS(X, Rx, B, W);
+    // Basis function matrix
+    computeBasisFunctionMatrix(samples, B);
 
+    // Second order finite difference matrix
+    getSecondOrderFiniteDifferenceMatrix(D);
+
+    // Left-hand side matrix
+    L = B.transpose()*W*B + lambda*D.transpose()*D;
+
+    // Compute right-hand side matrices
+    controlPointEquationRHS(samples, Bx, By);
+    Rx = B.transpose()*W*Bx;
+    Ry = B.transpose()*W*By;
+
+    // Matrices to store the resulting coefficients
     DenseMatrix Cx, Cy;
 
     int numEquations = L.rows();
@@ -86,75 +96,6 @@ void PSpline::computeControlPoints(const DataTable &samples, std::vector< std::v
     coefficients = Cy.transpose();
     knotaverages = Cx.transpose();
 }
-
-void PSpline::controlPointEquationLHS(const DataTable &samples, std::vector< std::vector<double> > &X, SparseMatrix &L, SparseMatrix &B, SparseMatrix &W, double lambda)
-{
-    SparseMatrix D;
-
-    // Basis function matrix
-    getBasisFunctionMatrix(X, B);
-
-    // Testing
-//    SparseMatrix B2;
-//    computeBasisFunctionMatrix(samples, B2);
-
-//    DenseMatrix Bd(B);
-//    DenseMatrix Bd2(B2);
-//    assert(Bd == Bd2);
-
-    // Second order finite difference matrix
-    getSecondOrderFiniteDifferenceMatrix(D);
-
-    L = B.transpose()*W*B + lambda*D.transpose()*D;
-}
-
-void PSpline::controlPointEquationRHS(std::vector< std::vector<double> > &Y, DenseMatrix &R, SparseMatrix &B, SparseMatrix &W)
-{
-    unsigned int vars = Y.size();
-    unsigned int samples = Y.at(0).size();
-
-    DenseMatrix C;
-    C.resize(samples, vars);
-
-    for (unsigned int i = 0; i < vars; i++)
-    {
-        for (unsigned int j = 0; j < samples; j++)
-        {
-            C(j,i) = Y.at(i).at(j);
-        }
-    }
-
-    R = B.transpose()*W*C;
-}
-
-void PSpline::getBasisFunctionMatrix(std::vector< std::vector<double> > &X, SparseMatrix &B)
-{
-    int vars = X.size();
-    int samples = X.at(0).size();
-
-    int nnzPrCol = basis.supportedPrInterval();
-    B.resize(samples, basis.numBasisFunctions());
-    B.reserve(DenseVector::Constant(basis.numBasisFunctions(), nnzPrCol)); // Want to reserve nnz per row, not col
-
-    for (int i = 0; i < samples; i++)
-    {
-        DenseVector xi(vars);
-        for (int j = 0; j < vars; j++)
-        {
-            xi(j) = X.at(j).at(i);
-        }
-
-        SparseVector tensorvaluesS = basis.eval(xi);
-
-        for (SparseVector::InnerIterator it(tensorvaluesS); it; ++it)
-        {
-            B.insert(i,it.index()) = it.value();
-        }
-    }
-
-    B.makeCompressed();
-}
-
 
 // Function for generating second order finite-difference matrix, which is used for penalizing the
 // (approximate) second derivative in control point calculation for P-splines.

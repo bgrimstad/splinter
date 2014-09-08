@@ -49,7 +49,6 @@ public:
      * Returns the (numVariables x numVariables) Hessian evaluated at x
      */
     virtual DenseMatrix evalHessian(DenseVector &x) const = 0;
-
 };
 
 } // namespace MultivariateSplines

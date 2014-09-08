@@ -93,15 +93,12 @@ protected:
     unsigned int numVariables; // Dimension of x
 
     // Control point computations
-    void computeBasisFunctionMatrix(const DataTable &samples, SparseMatrix &A) const {controlPointEquationLHS(samples,A);}
+    void computeKnotAverages();
+    virtual void computeControlPoints(const DataTable &samples);
+    void computeBasisFunctionMatrix(const DataTable &samples, SparseMatrix &A) const;
+    void controlPointEquationRHS(const DataTable &samples, DenseMatrix &Bx, DenseMatrix &By) const;
 
 private:
-
-    // Control point computations
-    void computeKnotAverages();
-    void computeControlPoints(const DataTable &samples);
-    void controlPointEquationLHS(const DataTable &samples, SparseMatrix &A) const;
-    void controlPointEquationRHS(const DataTable &samples, DenseMatrix &Bx, DenseMatrix &By) const;
 
     // Domain reduction
     bool regularSequences(std::vector<double> &lb, std::vector<double> &ub);

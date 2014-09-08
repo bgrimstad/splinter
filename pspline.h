@@ -34,20 +34,18 @@ namespace MultivariateSplines
 class PSpline : public BSpline
 {
 public:
+
     PSpline(DataTable &samples);
     PSpline(DataTable &samples, double lambda);
 
-private:
+protected:
 
     // Smoothing parameter (usually set to a small number; default 0.03)
     double lambda;
 
     // P-spline control point calculation
-    void computeControlPoints(const DataTable &samples, std::vector< std::vector<double> > &X, std::vector< std::vector<double> > &Y);
-    void controlPointEquationLHS(const DataTable &samples, std::vector< std::vector<double> > &X, SparseMatrix &L, SparseMatrix &B, SparseMatrix &W, double lambda);
-    void controlPointEquationRHS(std::vector< std::vector<double> > &Y, DenseMatrix &R, SparseMatrix &B, SparseMatrix &W);
+    void computeControlPoints(const DataTable &samples) override;
     void getSecondOrderFiniteDifferenceMatrix(SparseMatrix &D);
-    void getBasisFunctionMatrix(std::vector< std::vector<double> > &X, SparseMatrix &B);
 
 };
 

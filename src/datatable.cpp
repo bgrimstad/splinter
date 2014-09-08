@@ -121,6 +121,19 @@ void DataTable::initDataStructures()
     }
 }
 
+void DataTable::gridCompleteGuard() const
+{
+    if(!isGridComplete() && !allowIncompleteGrid)
+    {
+        std::cout << "The grid is not complete yet!" << std::endl;
+        exit(1);
+    }
+}
+
+/***********
+ * Getters *
+ ***********/
+
 std::multiset<DataSample>::const_iterator DataTable::cbegin() const
 {
     gridCompleteGuard();
@@ -135,35 +148,37 @@ std::multiset<DataSample>::const_iterator DataTable::cend() const
     return samples.cend();
 }
 
-void DataTable::gridCompleteGuard() const
-{
-    if(!isGridComplete() && !allowIncompleteGrid)
-    {
-        std::cout << "The grid is not complete yet!" << std::endl;
-        exit(1);
-    }
-}
-
-/***************************
- * Backwards compatibility *
- ***************************/
-
-// = [x1, x2, x3], where x1 = [x11, x12, ...] holds the values of point x1.
-//   1 <= size(x1) = size(x2) = ... = size(xn) < m
+// Get table of samples x-values,
+// i.e. table[i][j] is the value of variable i at sample j
 std::vector< std::vector<double> > DataTable::getTableX() const
 {
     gridCompleteGuard();
 
-    std::vector< std::vector<double> > backwardsCompatibleX;
-
-    for(auto &sample : samples)
+    // Initialize table
+    std::vector<std::vector<double>> table;
+    for(unsigned int i = 0; i < numVariables; i++)
     {
-        backwardsCompatibleX.push_back(sample.getX());
+        std::vector<double> xi(getNumSamples(), 0.0);
+        table.push_back(xi);
     }
 
-    return backwardsCompatibleX;
+    // Fill table with values
+    int i = 0;
+    for(auto &sample : samples)
+    {
+        std::vector<double> x = sample.getX();
+
+        for(unsigned int j = 0; j < numVariables; j++)
+        {
+            table.at(j).at(i) = x.at(j);
+        }
+        i++;
+    }
+
+    return table;
 }
 
+// Get vector of y-values
 std::vector<double> DataTable::getVectorY() const
 {
     std::vector<double> y;
@@ -172,56 +187,6 @@ std::vector<double> DataTable::getVectorY() const
         y.push_back(it->getY());
     }
     return y;
-}
-
-// = [y1, y2, y3], where y1 = [y11, y12, ...] holds the values of  y1.
-//   1 <= size(yn) < m
-std::vector< std::vector<double> > DataTable::getTableY() const
-{
-    gridCompleteGuard();
-
-    std::vector< std::vector<double> > backwardsCompatibleY;
-
-    for(auto &sample : samples)
-    {
-        std::vector<double> yv;
-        yv.push_back(sample.getY());
-        backwardsCompatibleY.push_back(yv);
-    }
-
-    return backwardsCompatibleY;
-}
-
-// Copy and transpose table: turn columns to rows and rows to columns
-std::vector< std::vector<double> > DataTable::transposeTable(const std::vector< std::vector<double> > &table) const
-{
-    if (table.size() > 0)
-    {
-        // Assumes square tables!
-        std::vector< std::vector<double> > transp(table.at(0).size());
-
-        for (unsigned int i = 0; i < table.size(); i++)
-        {
-            for (unsigned int j = 0; j < table.at(i).size(); j++)
-            {
-                transp.at(j).push_back(table.at(i).at(j));
-            }
-        }
-
-        return transp;
-    }
-
-    return table;
-}
-
-std::vector< std::vector<double> > DataTable::getTransposedTableX() const
-{
-    return transposeTable(getTableX());
-}
-
-std::vector< std::vector<double> > DataTable::getTransposedTableY() const
-{
-    return transposeTable(getTableY());
 }
 
 /*****************
