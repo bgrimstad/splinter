@@ -1,12 +1,7 @@
 CMakeLists.txt.user
-InterpolationLibrary.cbp
-Makefile
 bspline_test
-cmake_install.cmake
-CMakeFiles/
-install_manifest.txt
-CMakeCache.txt
 test*.datatable
 *.so
 *.a
 .idea/
+build/
