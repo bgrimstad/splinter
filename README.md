@@ -13,7 +13,7 @@ When sampling is expensive and/or scattered (not on a grid) the radial basis fun
 The library is based on the C++ template linear algebra library [Eigen](http://eigen.tuxfamily.org); its sparse matrix support is particularly important for the speed of the tensor product B-spline implementation.
 
 ###Author's note:
-Multivariate-Splines implements various splines for function approximation with the purpose of utilizing the splines/approximations in mathematical programming (nonlinear optimization). Thus, special attention has been given to functionality that may support a nonlinear optimization solver. For example, the B-spline implementation includes evaluation of the Jacobian and Hessian.
+MultivariateSplines implements various splines for function approximation with the purpose of utilizing the splines/approximations in mathematical programming (nonlinear optimization). Thus, special attention has been given to functionality that may support a nonlinear optimization solver. For example, the B-spline implementation includes evaluation of the Jacobian and Hessian.
 
 NOTE: focus has not been on curve fitting, NURBS, etc.
 
