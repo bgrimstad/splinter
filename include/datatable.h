@@ -22,7 +22,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #define DATATABLE_H
 
 #include <set>
-#include "include/datasample.h"
+#include "datasample.h"
 
 namespace MultivariateSplines
 {

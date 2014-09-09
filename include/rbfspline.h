@@ -22,7 +22,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #define RADIALBASISFUNCTION_H
 
 #include "datatable.h"
-#include "include/spline.h"
+#include "spline.h"
 #include "memory"
 
 namespace MultivariateSplines

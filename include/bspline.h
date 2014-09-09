@@ -22,9 +22,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #define BSPLINE_H
 
 #include "datatable.h"
-#include "include/generaldefinitions.h"
-#include "include/spline.h"
-#include "include/basis.h"
+#include "generaldefinitions.h"
+#include "spline.h"
+#include "basis.h"
 
 namespace MultivariateSplines
 {
