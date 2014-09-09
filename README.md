@@ -1,5 +1,6 @@
 ##Multivariate Splines
-![Illustration of a B-spline generated with the Multivariate Splines library](assets/bspline.png)
+![Illustration of a B-spline](assets/bspline.png)
+Figure: Illustration of a cubic B-spline generated with the Multivariate Splines library.
 
 Multivariate Splines is a function approximation library implementing various multivariate splines in C++. It contains the following implementations:
 
