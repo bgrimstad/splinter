@@ -12,17 +12,19 @@ When sampling is expensive and/or scattered (not on a grid) the radial basis fun
 
 The library is based on the C++ template linear algebra library [Eigen](http://eigen.tuxfamily.org); its sparse matrix support is particularly important for the speed of the tensor product B-spline implementation.
 
-###Author's note:
-Multivariate Splines implements various splines for function approximation with the purpose of utilizing the splines/approximations in mathematical programming (nonlinear optimization). Thus, special attention has been given to functionality that may support a nonlinear optimization solver. For example, the B-spline implementation includes evaluation of the Jacobian and Hessian.
+###Author's note
+The Multivariate Splines library is the result of two years of work and development towards a fast and general spline library for function approximation. The initial intention with the library was to build splines for use in mathematical programming (nonlinear optimization). Thus, some effort has been put into functionality that supports this, e.g. Jacobian and Hessian computations for the B-spline. The current goals with the library are: 1) to make it more general than it is today, and 2) to implement and test new features that may be useful for anyone using the library (be it for computer-aided design or other graphical work, function approximation, mathematical programming, compression of data, etc.).
 
-NOTE: focus has not been on curve fitting, NURBS, etc.
+By making the Multivariate Splines library publicly available the author hopes to help anyone looking for a multivariate spline library, or just a library for multivariate interpolation (there aren't many publicly available multivariate interpolation libraries that support any number of variables). In return the author expects nothing but your suggestions, improvements, and feature requests. As the TODO-list reflects there are still much honing to be done!
 
-NOTE: general implementation which is readily extended with new functionality. The author welcomes new contributions and improvements to the code. 
+Please let me know by e-mail what you think about the library. Installation support and administrative requests related to github may be sent to Anders Wenhaug (wenhaug@gmail.com). Together we will do our best to support your use of the library.
 
-NOTE: the goal is to create an open, general, and fast library for multivariate splines.
+Best regards,
 
-###Requirements for use:
-* [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page)
+Bjarne Grimstad  (bjarne.grimstad@gmail.com)
+
+###Requirements for use
+* [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page) (tested with versions 3.2.1 and 3.2.2)
 
 
 ###Guides
