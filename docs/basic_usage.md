@@ -1,5 +1,9 @@
 
 ##Basic usage
+
+The header files and classes intended for the end user of this library are:
+[DataTable](../include/datatable.h), [BSpline](../include/bspline.h), [BSplineType](../include/bspline.h), [PSpline](../include/pspline.h), [RBFSpline](../include/rbfspline.h) and [RBFSplineType](../include/rbfspline.h).
+
 This is a simple example demonstrating the use of Multivariate Splines. Note that there is no restrictions to the dimension of x (except that it has to be >= 1, of course).
 
 Remember to compile with a c++11 compatible compiler! That means you probably have to add a flag when compiling.
