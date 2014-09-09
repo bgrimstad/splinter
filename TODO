@@ -1,0 +1,7 @@
+TODO list:
+- Add exception handling
+- Implement more end conditions for cubic B-splines (Hermite, natural, and periodic)
+- Implement Jacobian and Hessian for radial basis function splines
+- Implement a proper preconditioning matrix for radial basis function weight computation
+- Consider implementing NURBS
+- Improve the documentation
