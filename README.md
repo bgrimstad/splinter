@@ -1,4 +1,6 @@
 ##Multivariate Splines
+![Illustration of a B-spline generated with the Multivariate Splines library](assets/bspline.png)
+
 Multivariate Splines is a function approximation library implementing various multivariate splines in C++. It contains the following implementations:
 
 1. a speedy implementation of the tensor product [B-spline](http://en.wikipedia.org/wiki/B-spline), and 
