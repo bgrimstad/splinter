@@ -53,16 +53,16 @@ include_directories(${EIGEN_DIRECTORY})
 # These are the sources we need for compilation
 #aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/src SRC_LIST)
 set(SRC_LIST
-    bspline.h
-    datatable.h
-    pspline.h
-    rbfspline.h
     include/basis.h
     include/basis1d.h
+    include/bspline.h
     include/datasample.h
+    include/datatable.h
     include/generaldefinitions.h
     include/linearsolvers.h
     include/mykroneckerproduct.h
+    include/pspline.h
+    include/rbfspline.h
     include/spline.h
     src/basis.cpp
     src/basis1d.cpp
@@ -87,15 +87,10 @@ add_definitions(
     -std=c++11
 )
 
-# Install the header files the user will see
-install(
-    FILES bspline.h datatable.h pspline.h rbfspline.h
-    DESTINATION ${HEADER_DIRECTORY}
-)
-# Install the header files that are used internally
+# Install the header files
 install(
     DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
-    DESTINATION ${HEADER_DIRECTORY}/include
+    DESTINATION ${HEADER_DIRECTORY}
 )
 
 # Install the shared library file
