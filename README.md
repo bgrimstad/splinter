@@ -17,7 +17,7 @@ The Multivariate Splines library is the result of two years of work and developm
 
 By making the Multivariate Splines library publicly available the author hopes to help anyone looking for a multivariate spline library, or just a library for multivariate interpolation (there aren't many publicly available multivariate interpolation libraries that support any number of variables). In return the author expects nothing but your suggestions, improvements, and feature requests. As the TODO-list reflects there are still much honing to be done!
 
-Please let me know by e-mail what you think about the library. Installation support and administrative requests related to github may be sent to Anders Wenhaug (wenhaug@gmail.com). Together we will do our best to support your use of the library.
+Please let me know by e-mail what you think about the library. Questions related to installation should be directed to Anders Wenhaug (wenhaug@gmail.com). Together we will do our best to support your use of the library.
 
 Best regards,
 
