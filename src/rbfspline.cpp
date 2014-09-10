@@ -113,6 +113,7 @@ RBFSpline::RBFSpline(DataTable &samples, RadialBasisFunctionType type, bool norm
         b = bp;
     }
 
+    cout << "Computing RBF weights using dense solver." << endl;
 
     // SVD analysis
     Eigen::JacobiSVD<DenseMatrix> svd(A, Eigen::ComputeThinU | Eigen::ComputeThinV);
@@ -124,7 +125,6 @@ RBFSpline::RBFSpline(DataTable &samples, RadialBasisFunctionType type, bool norm
     //cout << "Largest/smallest singular value: " << svalmax << " / " << svalmin << endl;
 
     // Solve for weights
-    cout << "Computing RBF weights using dense solver." << endl;
     weights = svd.solve(b);
 
     // Compute error
