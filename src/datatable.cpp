@@ -31,7 +31,7 @@ namespace MultivariateSplines
  * Workaround for https://gcc.gnu.org/bugzilla/show_bug.cgi?id=52015
  * Basically, std::stod and std::stoi are deactivated on MinGW because of a bug
  */
-#if defined(__MINGW32__) || defined(__MINGW64__)
+//#if defined(__MINGW32__) || defined(__MINGW64__)
 #include <sstream>
     auto stringToDouble = [](std::string s, std::string::size_type *sz)
     {
@@ -43,9 +43,9 @@ namespace MultivariateSplines
         *sz = ss.str().size() + 1;
         return d;
     };
-#else
-    auto stringToDouble = std::stod;
-#endif
+//#else
+    //auto stringToDouble = std::stod;
+//#endif
 
 DataTable::DataTable()
     : DataTable(false, false)
@@ -239,7 +239,7 @@ void DataTable::save(std::string fileName) const
 
     for(auto it = cbegin(); it != cend(); it++)
     {
-        for(int i = 0; i < numVariables; i++)
+        for(unsigned int i = 0; i < numVariables; i++)
         {
             outFile << std::setprecision(SAVE_DOUBLE_PRECISION) << it->getX().at(i) << " ";
         }
