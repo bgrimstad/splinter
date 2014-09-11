@@ -26,6 +26,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <iostream>
 #include <iomanip>
 #include <string>
+#include <cstdio>
 
 #include "bspline.h"
 #include "pspline.h"
@@ -88,6 +89,8 @@ bool test1()
     DataTable loadedTable;
     loadedTable.load("test1.datatable");
 
+    remove("test1.datatable");
+
     return is_identical(table, loadedTable);
 }
 
@@ -112,6 +115,8 @@ bool test2()
 
     DataTable loadedTable;
     loadedTable.load("test2.datatable");
+
+    remove("test2.datatable");
 
     return is_identical(table, loadedTable);
 }
@@ -138,10 +143,39 @@ bool test3()
     DataTable loadedTable;
     loadedTable.load("test3.datatable");
 
+    remove("test3.datatable");
+
     return is_identical(table, loadedTable);
 }
 
 bool test4()
+{
+    DataTable table;
+
+    auto x = std::vector<double>(4);
+    double y;
+    int j = 0;
+    for(double i = std::numeric_limits<double>::lowest(), k = std::numeric_limits<double>::max();
+        j < 10000;
+        i = nextafter(i, std::numeric_limits<double>::max()), k = nextafter(k, std::numeric_limits<double>::lowest()))
+    {
+        x.at(0) = i;
+        y = k;
+        table.addSample(x, y);
+        j++;
+    }
+
+    table.save("test4.datatable");
+
+    DataTable loadedTable;
+    loadedTable.load("test4.datatable");
+
+    remove("test4.datatable");
+
+    return is_identical(table, loadedTable);
+}
+
+bool test5()
 {
     DataTable table;
 
@@ -162,15 +196,17 @@ bool test4()
         }
     }
 
-    table.save("test4.datatable");
+    table.save("test5.datatable");
 
     DataTable loadedTable;
-    loadedTable.load("test4.datatable");
+    loadedTable.load("test5.datatable");
+
+    remove("test5.datatable");
 
     return is_identical(table, loadedTable);
 }
 
-bool test5()
+bool test6()
 {
     DataTable table;
 
@@ -195,38 +231,16 @@ bool test5()
         }
     }
 
-    table.save("test5.datatable");
-
-    DataTable loadedTable;
-    loadedTable.load("test5.datatable");
-
-    return is_identical(table, loadedTable);
-}
-
-bool test6()
-{
-    DataTable table;
-
-    auto x = std::vector<double>(4);
-    double y;
-    int j = 0;
-    for(double i = std::numeric_limits<double>::lowest(), k = std::numeric_limits<double>::max();
-        j < 10000;
-        i = nextafter(i, std::numeric_limits<double>::max()), k = nextafter(k, std::numeric_limits<double>::lowest()))
-    {
-        x.at(0) = i;
-        y = k;
-        table.addSample(x, y);
-        j++;
-    }
-
     table.save("test6.datatable");
 
     DataTable loadedTable;
     loadedTable.load("test6.datatable");
 
+    remove("test6.datatable");
+
     return is_identical(table, loadedTable);
 }
+
 
 // Six-hump camelback function
 double f(DenseVector x)
@@ -281,7 +295,6 @@ void runExample()
 int main(int argc, char **argv)
 {
     runExample();
-    exit(1);
 
     cout << "test1(): " << (test1() ? "success" : "fail") << endl;
     cout << "test2(): " << (test2() ? "success" : "fail") << endl;
