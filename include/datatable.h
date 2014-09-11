@@ -18,8 +18,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 
-#ifndef DATATABLE_H
-#define DATATABLE_H
+#ifndef MS_DATATABLE_H
+#define MS_DATATABLE_H
 
 #include <set>
 #include "datasample.h"
@@ -98,4 +98,4 @@ private:
 
 } // namespace MultivariateSplines
 
-#endif // DATATABLE_H
+#endif // MS_DATATABLE_H

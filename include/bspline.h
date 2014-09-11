@@ -18,8 +18,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 
-#ifndef BSPLINE_H
-#define BSPLINE_H
+#ifndef MS_BSPLINE_H
+#define MS_BSPLINE_H
 
 #include "datatable.h"
 #include "generaldefinitions.h"
@@ -114,4 +114,4 @@ private:
 
 } // namespace MultivariateSplines
 
-#endif // BSPLINE_H
+#endif // MS_BSPLINE_H

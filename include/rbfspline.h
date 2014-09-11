@@ -18,8 +18,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 
-#ifndef RADIALBASISFUNCTION_H
-#define RADIALBASISFUNCTION_H
+#ifndef MS_RBFSPLINE_H
+#define MS_RBFSPLINE_H
 
 #include "datatable.h"
 #include "spline.h"
@@ -229,4 +229,4 @@ private:
 
 } // namespace MultivariateSplines
 
-#endif // RADIALBASISFUNCTION_H
+#endif // MS_RBFSPLINE_H

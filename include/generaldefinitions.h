@@ -18,8 +18,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 
-#ifndef GENERALDEFINITIONS_H
-#define GENERALDEFINITIONS_H
+#ifndef MS_GENERALDEFINITIONS_H
+#define MS_GENERALDEFINITIONS_H
 
 #include <iostream>
 #include <iomanip>
@@ -41,4 +41,4 @@ typedef Eigen::SparseMatrix<double> SparseMatrix; // declares a column-major spa
 
 } // namespace MultivariateSplines
 
-#endif // GENERALDEFINITIONS_H
+#endif // MS_GENERALDEFINITIONS_H

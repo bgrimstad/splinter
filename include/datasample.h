@@ -18,8 +18,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 
-#ifndef DATASAMPLE_H
-#define DATASAMPLE_H
+#ifndef MS_DATASAMPLE_H
+#define MS_DATASAMPLE_H
 
 #include "generaldefinitions.h"
 
@@ -54,4 +54,4 @@ private:
 
 } // namespace MultivariateSplines
 
-#endif // DATASAMPLE_H
+#endif // MS_DATASAMPLE_H

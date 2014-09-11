@@ -18,8 +18,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 
-#ifndef BSPLINEBASIS1D_H
-#define BSPLINEBASIS1D_H
+#ifndef MS_BSPLINEBASIS1D_H
+#define MS_BSPLINEBASIS1D_H
 
 #include "generaldefinitions.h"
 
@@ -97,4 +97,4 @@ private:
 
 } // namespace MultivariateSplines
 
-#endif // BASIS1D_H
+#endif // MS_BSPLINEBASIS1D_H
