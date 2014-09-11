@@ -118,3 +118,6 @@ install(
     TARGETS multivariate-splines-static
     DESTINATION ${LIBRARY_DIRECTORY}
 )
+
+# Used to debug warnings
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-long-long -pedantic")
