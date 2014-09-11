@@ -290,7 +290,7 @@ void BSpline::computeKnotAverages()
 {
     // Calculate knot averages for each knot vector
     std::vector< DenseVector > knotAverages;
-    for (unsigned int i = 0; i < numVariables; i++)
+    for(unsigned int i = 0; i < numVariables; i++)
     {
         std::vector<double> knots = basis.getKnotVector(i);
         DenseVector mu; mu.setZero(basis.numBasisFunctions(i));
@@ -309,7 +309,7 @@ void BSpline::computeKnotAverages()
 
     // Calculate vectors of ones (with same length as corresponding knot average vector)
     std::vector<DenseVector> knotOnes;
-    for (unsigned int i = 0; i < numVariables; i++)
+    for(unsigned int i = 0; i < numVariables; i++)
     {
         DenseVector ones;
         ones.setOnes(knotAverages.at(i).rows());
@@ -321,7 +321,7 @@ void BSpline::computeKnotAverages()
     // TODO: Use DataTable to achieve the same pattern
     knotaverages.resize(numVariables, basis.numBasisFunctions());
 
-    for (unsigned int i = 0; i < numVariables; i++)
+    for(unsigned int i = 0; i < numVariables; i++)
     {
         DenseMatrix mu_ext(1,1); mu_ext(0,0) = 1;
         for (unsigned int j = 0; j < numVariables; j++)
@@ -493,14 +493,14 @@ bool BSpline::regularSequences(std::vector<double> &lb, std::vector<double> &ub)
         // in higher dimensions because reallocation is necessary. This can be prevented by
         // precomputing the number of nonzeros when preallocating memory (see myKroneckerProduct).
         int numKnotsLB = multiplicityTarget - basis.getKnotMultiplicity(dim, lb.at(dim));
-        if (numKnotsLB > 0)
+        if(numKnotsLB > 0)
         {
             if (!insertKnots(lb.at(dim), dim, numKnotsLB))
                 return false;
         }
 
         int numKnotsUB = multiplicityTarget - basis.getKnotMultiplicity(dim, ub.at(dim));
-        if (numKnotsUB > 0)
+        if(numKnotsUB > 0)
         {
             if (!insertKnots(ub.at(dim), dim, numKnotsUB))
                 return false;
