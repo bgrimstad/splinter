@@ -72,12 +72,12 @@ The output files should be in your build folder. If you wish to have them instal
 
 ##Options (both platforms)
 
-| Variable name     | Default value                   | Description                               |
-| ----------------- | ------------------------------- | ----------------------------------------- |
-| EIGEN_DIRECTORY   | UNIX: /usr/local/include/eigen3 | Path to the Eigen lib.                    |
-|                   | Windows: C:/Program Files/Eigen | Path to the Eigen lib.                    |
-| HEADER_DIRECTORY  | include                         | Where the headers should be installed.    |
-| LIBRARY_DIRECTORY | lib                             | Where to install the library file.        |
+| Variable name     | Default value                    | Description                               |
+| ----------------- | -------------------------------- | ----------------------------------------- |
+| EIGEN_DIRECTORY   | UNIX: /usr/local/include/eigen3  | Path to the Eigen lib.                    |
+|                   | Windows: C:/Program Files/eigen3 | Path to the Eigen lib.                    |
+| HEADER_DIRECTORY  | include                          | Where the headers should be installed.    |
+| LIBRARY_DIRECTORY | lib                              | Where to install the library file.        |
 
 These options go along with UNIX step #6 or Windows step #5.2, and are used like this:
 
