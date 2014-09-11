@@ -28,12 +28,12 @@ using std::endl;
 namespace MultivariateSplines
 {
 
-Basis1D::Basis1D(std::vector<double> &x, int degree)
+Basis1D::Basis1D(std::vector<double> &x, unsigned int degree)
     : Basis1D(x, degree, KnotSequenceType::FREE)
 {
 }
 
-Basis1D::Basis1D(std::vector<double> &x, int degree, KnotSequenceType knotSequenceType)
+Basis1D::Basis1D(std::vector<double> &x, unsigned int degree, KnotSequenceType knotSequenceType)
     : degree(degree),
       targetNumBasisfunctions(degree+1+2) // Minimum p+1
 {
@@ -62,17 +62,6 @@ Basis1D::Basis1D(std::vector<double> &x, int degree, KnotSequenceType knotSequen
 SparseVector Basis1D::evaluate(const double x) const
 {
     SparseVector basisvalues(numBasisFunctions());
-
-    //the following assumes regular sequence: test if x is at the end of the support,
-    //because the only the first/last basis is nonzero (and equal to one)
-    if (knots.front() == x)
-    {
-        // if evaluated at the end of the last interval
-        // set the last basisfunction equal to 1, all others are 0
-        basisvalues.reserve(1);
-        basisvalues.insert(0) = 1;
-        return basisvalues;
-    }
 
     if (knots.back() == x)
     {
@@ -146,7 +135,7 @@ SparseVector Basis1D::evaluateDerivative(double x, int r) const
 
     int knotIndex = indexHalfopenInterval(x);
 
-    if (0 <= knotIndex) // -1 if the x value was outside the knot range
+    if(0 <= knotIndex) // -1 if the x value was outside the knot range
     {
         // Algorithm 3.18 from Lyche and Moerken 2011
         SparseMatrix B(1,1);
@@ -200,15 +189,15 @@ DenseVector Basis1D::evaluateFirstDerivative(double x) const
     DenseVector values; values.setZero(numBasisFunctions());
 
     // Knot hack
-    if (knots.back() == x) x = x-1e-12;
+    if(knots.back() == x) x = x-1e-12;
 
     int first_knot =  indexHalfopenInterval(x);
 
-    if ( 0 <= first_knot ) //  -1 if the x value was outside the knot range
+    if(0 <= first_knot ) //  -1 if the x value was outside the knot range
     {
         std::vector<int> supportedBasisFunctions = indexSupportedBasisfunctions(x);
 
-        for (int i = supportedBasisFunctions.front(); i <= supportedBasisFunctions.back(); i++)
+        for(int i = supportedBasisFunctions.front(); i <= supportedBasisFunctions.back(); i++)
         {
             // Differentiate basis function
             // Equation 3.35 in Lyche & Moerken (2011)
@@ -248,7 +237,7 @@ SparseMatrix Basis1D::buildBasisMatrix(double x, int u, int k, bool diff) const
     SparseMatrix R(rows,cols);
     R.reserve(Eigen::VectorXi::Constant(cols,2));
 
-    for (int i = 0; i < rows; i++)
+    for(int i = 0; i < rows; i++)
     {
         double dk = knots.at(u+1+i) - knots.at(u+1+i-k);
         if (dk == 0)
@@ -257,7 +246,7 @@ SparseMatrix Basis1D::buildBasisMatrix(double x, int u, int k, bool diff) const
         }
         else
         {
-            if (diff)
+            if(diff)
             {
                 // Insert diagonal element
                 R.insert(i,i) = -1/dk;
@@ -287,9 +276,9 @@ SparseMatrix Basis1D::buildBasisMatrix(double x, int u, int k, bool diff) const
 
 double Basis1D::deBoorCox(double x, int i, int k) const
 {
-    if ( 0 == k )
+    if( 0 == k )
     {
-        if (inHalfopenInterval(x, knots.at(i), knots.at(i+1)))
+        if(inHalfopenInterval(x, knots.at(i), knots.at(i+1)))
         {
             return 1;
         }
@@ -314,7 +303,7 @@ double Basis1D::deBoorCox(double x, int i, int k) const
 
 double Basis1D::deBoorCoxCoeff(double x, double x_min, double x_max) const
 {
-    if (x_min < x_max && x_min <= x && x <= x_max)
+    if(x_min < x_max && x_min <= x && x <= x_max)
     {
         return (x - x_min)/(x_max - x_min);
     }
@@ -324,20 +313,23 @@ double Basis1D::deBoorCoxCoeff(double x, double x_min, double x_max) const
 // Insert knots and compute knot insertion matrix (to update control points)
 bool Basis1D::insertKnots(SparseMatrix &A, double tau, unsigned int multiplicity)
 {
-    if (!insideSupport(tau) || knotMultiplicity(tau) + multiplicity > degree + 1)
+    if(!insideSupport(tau) || knotMultiplicity(tau) + multiplicity > degree + 1)
         return false;
 
     // New knot vector
     int index = indexHalfopenInterval(tau);
 
+    if(index < 0)
+        return false;
+
     std::vector<double> extKnots = knots;
-    for (unsigned int i = 0; i < multiplicity; i++)
+    for(unsigned int i = 0; i < multiplicity; i++)
         extKnots.insert(extKnots.begin()+index+1, tau);
 
     assert(isKnotSequenceRegular(extKnots));
 
     // Return knot insertion matrix
-    if (!buildKnotInsertionMatrix(A, extKnots))
+    if(!buildKnotInsertionMatrix(A, extKnots))
         return false;
 
     // Update knots
@@ -352,7 +344,7 @@ bool Basis1D::refineKnots(SparseMatrix &A)
     std::vector<double> refinedKnots = knots;
 
     unsigned int targetNumKnots = targetNumBasisfunctions + degree + 1;
-    while (refinedKnots.size() < targetNumKnots)
+    while(refinedKnots.size() < targetNumKnots)
     {
         int index = indexLongestInterval(refinedKnots);
         double newKnot = (refinedKnots.at(index) + refinedKnots.at(index+1))/2.0;
@@ -362,7 +354,7 @@ bool Basis1D::refineKnots(SparseMatrix &A)
     assert(isKnotSequenceRegular(refinedKnots));
 
     // Return knot insertion matrix
-    if (!buildKnotInsertionMatrix(A, refinedKnots))
+    if(!buildKnotInsertionMatrix(A, refinedKnots))
         return false;
 
     // Update knots
@@ -385,14 +377,16 @@ bool Basis1D::buildKnotInsertionMatrix(SparseMatrix &A, const std::vector<double
     A.reserve(Eigen::VectorXi::Constant(n,degree+1));
 
     // Build A row-by-row
-    for (int i = 0; i < m; i++)
+    for(int i = 0; i < m; i++)
     {
         int u = indexHalfopenInterval(knotsAug.at(i));
+        if(u < 0)
+            return false;
 
         // Assuming that p > 0
         SparseMatrix R(1,1);
         R.insert(0,0) = 1;
-        for (int j = 1; j <= degree; j++)
+        for(unsigned int j = 1; j <= degree; j++)
         {
             SparseMatrix Ri = buildBasisMatrix(knotsAug.at(i+j), u, j);
             R = R*Ri;
@@ -405,9 +399,9 @@ bool Basis1D::buildKnotInsertionMatrix(SparseMatrix &A, const std::vector<double
         // Insert row values
         int j = u-degree;
         for (int k = 0; k < R.outerSize(); ++k)
-        for (SparseMatrix::InnerIterator it(R,k); it; ++it)
+        for(SparseMatrix::InnerIterator it(R,k); it; ++it)
         {
-            if (it.value() != 0)
+            if(it.value() != 0)
                 A.insert(i,j) = it.value(); //insert
             j++;
         }
@@ -425,7 +419,7 @@ int Basis1D::indexHalfopenInterval(double x) const
     //returns -1  if the x value is identical to the last knot
     //returns index of first nonzero interval otherwise
 
-    if (0 == knots.size() || x < knots.front() || x > knots.back())
+    if(0 == knots.size() || x < knots.front() || x > knots.back())
     {
         return -99;
     }
@@ -435,7 +429,7 @@ int Basis1D::indexHalfopenInterval(double x) const
         std::vector<double>::const_iterator iter = std::upper_bound(knots.begin(), knots.end(), x);
         int index = iter - knots.begin();
 
-        if (knots.end() ==  iter)
+        if(knots.end() ==  iter)
         {
             // NOTE: x is equal to or larger than the last knot.
             //  cout << "Value equal to the last knot. Treat as special case? Returning -1" << endl;
@@ -453,22 +447,21 @@ int Basis1D::indexHalfopenInterval(double x) const
 bool Basis1D::reduceSupport(double lb, double ub, SparseMatrix &A)
 {
     // Check bounds
-    if (lb < knots.front() || ub > knots.back())
+    if(lb < knots.front() || ub > knots.back())
     {
-        cout << "OUCH! Outside knots!" << endl;
         return false;
     }
 
-    int k = degree + 1;
+    unsigned int k = degree + 1;
 
     int index_lower = indexSupportedBasisfunctions(lb).front();
     int index_upper = indexSupportedBasisfunctions(ub).back();
 
     // Check lower bound index
-    int count = knotMultiplicity( knots.at(index_lower) );
+    unsigned int count = knotMultiplicity( knots.at(index_lower) );
     bool is_p_regular = (k == count);
 
-    if (!is_p_regular)
+    if(!is_p_regular)
     {
         int suggested_index = index_lower - 1;
         if (0 <= suggested_index)
@@ -485,7 +478,7 @@ bool Basis1D::reduceSupport(double lb, double ub, SparseMatrix &A)
     }
 
     // Check upper bound index
-    if (knotMultiplicity(ub) == k && knots.at(index_upper) == ub)
+    if(knotMultiplicity(ub) == k && knots.at(index_upper) == ub)
     {
         index_upper -= k;
     }
@@ -510,18 +503,18 @@ bool Basis1D::reduceSupport(double lb, double ub, SparseMatrix &A)
     return true;
 }
 
-double Basis1D::getKnotValue(int index) const
+double Basis1D::getKnotValue(unsigned int index) const
 {
-    if (index >= (int)knots.size())
+    if(index >= knots.size())
         return knots.back();
 
-    if (index < 0)
+    if(index < 0)
         return knots.front();
 
     return knots.at(index);
 }
 
-int Basis1D::knotMultiplicity(const double& tau) const
+unsigned int Basis1D::knotMultiplicity(const double& tau) const
 {
     return std::count(knots.begin(), knots.end(), tau);
 }
@@ -536,12 +529,12 @@ bool Basis1D::insideSupport(const double &x) const
     return (knots.front() <= x) && (x <= knots.back());
 }
 
-int Basis1D::numBasisFunctions() const
+unsigned int Basis1D::numBasisFunctions() const
 {
     return knots.size() - (degree + 1);
 }
 
-int Basis1D::numBasisFunctionsTarget() const
+unsigned int Basis1D::numBasisFunctionsTarget() const
 {
     return targetNumBasisfunctions;
 }
@@ -553,12 +546,12 @@ std::vector<int> Basis1D::indexSupportedBasisfunctions(double x) const
     if(insideSupport(x))
     {
         int last = indexHalfopenInterval(x);
-        if (last < 0)
+        if(last < 0)
         {
             last = knots.size() - 1 - (degree + 1);
         }
-        int first = std::max(last - degree, 0);
-        for (int i = first; i <= last; i++)
+        int first = std::max((int)(last - degree), 0);
+        for(int i = first; i <= last; i++)
         {
             ret.push_back(i);
         }
@@ -566,18 +559,18 @@ std::vector<int> Basis1D::indexSupportedBasisfunctions(double x) const
     return ret;
 }
 
-int Basis1D::indexLongestInterval() const
+unsigned int Basis1D::indexLongestInterval() const
 {
     return indexLongestInterval(knots);
 }
 
-int Basis1D::indexLongestInterval(const std::vector<double> &vec) const
+unsigned int Basis1D::indexLongestInterval(const std::vector<double> &vec) const
 {
     double longest = 0;
     double interval = 0;
     int index = 0;
 
-    for (unsigned int i = 0; i < vec.size() - 1; i++)
+    for(unsigned int i = 0; i < vec.size() - 1; i++)
     {
         interval = vec.at(i+1) - vec.at(i);
         if (longest < interval)
@@ -597,25 +590,25 @@ bool Basis1D::isKnotSequenceRegular() const
 bool Basis1D::isKnotSequenceRegular(const std::vector<double> &vec) const
 {
     // Check size
-    if (vec.size() < 2*(degree+1))
+    if(vec.size() < 2*(degree+1))
         return false;
 
     // Check first knots
-    if (std::count(vec.begin(), vec.begin()+degree+1, vec.front()) != degree+1)
+    if(std::count(vec.begin(), vec.begin()+degree+1, vec.front()) != degree+1)
         return false;
 
     // Check last knots
-    if (std::count(vec.end()-degree-1, vec.end(), vec.back()) != degree+1)
+    if(std::count(vec.end()-degree-1, vec.end(), vec.back()) != degree+1)
         return false;
 
     // Check order
-    if (!std::is_sorted(vec.begin(), vec.end()))
+    if(!std::is_sorted(vec.begin(), vec.end()))
         return false;
 
     // Check multiplicity of knots
-    for (std::vector<double>::const_iterator it = vec.begin(); it != vec.end(); ++it)
+    for(std::vector<double>::const_iterator it = vec.begin(); it != vec.end(); ++it)
     {
-        if (count(vec.begin(), vec.end(), *it) > degree+1)
+        if(count(vec.begin(), vec.end(), *it) > degree+1)
             return false;
     }
 
@@ -625,15 +618,15 @@ bool Basis1D::isKnotSequenceRegular(const std::vector<double> &vec) const
 bool Basis1D::isRefinement(const std::vector<double> &refinedKnots) const
 {
     // Check size
-    if (refinedKnots.size() < knots.size())
+    if(refinedKnots.size() < knots.size())
         return false;
 
     // Check that t is regular
-    if (!isKnotSequenceRegular(refinedKnots))
+    if(!isKnotSequenceRegular(refinedKnots))
         return false;
 
     // Check that each elements in tau occurs at least as man times in t
-    for (std::vector<double>::const_iterator it = knots.begin() ; it != knots.end(); ++it)
+    for(std::vector<double>::const_iterator it = knots.begin() ; it != knots.end(); ++it)
     {
         int m_tau = count(knots.begin(), knots.end(), *it);
         int m_t = count(refinedKnots.begin(), refinedKnots.end(), *it);
@@ -641,8 +634,8 @@ bool Basis1D::isRefinement(const std::vector<double> &refinedKnots) const
     }
 
     // Check that range is not changed
-    if (knots.front() != refinedKnots.front()) return false;
-    if (knots.back() != refinedKnots.back()) return false;
+    if(knots.front() != refinedKnots.front()) return false;
+    if(knots.back() != refinedKnots.back()) return false;
 
     return true;
 }
@@ -660,34 +653,34 @@ std::vector<double> Basis1D::knotSequenceRegular(std::vector<double> &X)
 
     // Multiplicity of the first and last knot.
     // basisDegree + 1 creates discontinuity that allows for interpolation at endpoints
-    int repeats_at_ends = degree + 1;
+    unsigned int repeats_at_ends = degree + 1;
 
     // Number of knots in a (p+1)-regular knot sequence
-    int num_knots = uniqueX.size() + 2*degree;
+    unsigned int num_knots = uniqueX.size() + 2*degree;
 
     std::vector<double> knots;
     it = uniqueX.begin();
 
     // Repeat first knot p + 1 times
-    for (int i = 0; i < repeats_at_ends; i++)
+    for(unsigned int i = 0; i < repeats_at_ends; i++)
     {
         knots.push_back(*it);
     }
 
     // Add unique knots
-    for (it = uniqueX.begin()+1; it < uniqueX.end()-1; it++)
+    for(it = uniqueX.begin()+1; it < uniqueX.end()-1; it++)
     {
         knots.push_back(*it);
     }
 
     // Repeat last knot p + 1 times
     it = uniqueX.end()-1; // Last element in uniqueX
-    for (int i = 0; i < repeats_at_ends; i++)
+    for(unsigned int i = 0; i < repeats_at_ends; i++)
     {
         knots.push_back(*it);
     }
 
-    assert(knots.size() == (unsigned)num_knots);
+    assert(knots.size() == num_knots);
 
     return knots;
 }
@@ -709,18 +702,18 @@ std::vector<double> Basis1D::knotSequenceFree(std::vector<double> &X)
     uniqueX.resize(distance(uniqueX.begin(),it));
 
     // Multiplicity of the first and last knot.
-    // basisDegree + 1 creates discontinuity that allows for interpolation at endpoints
+    // degree + 1 knots ensures interpolation at endpoints
     int repeats_at_ends = degree + 1;
 
     // Number of knots in a (p+1)-regular knot sequence
     // Ensures a square matrix when calculating the control points
-    int num_knots = uniqueX.size() + degree + 1;
+    unsigned int num_knots = uniqueX.size() + degree + 1;
 
     std::vector<double> knots;
     it = uniqueX.begin();
 
     // Repeat first x value p + 1 times
-    for (int i = 0; i < repeats_at_ends; i++)
+    for(int i = 0; i < repeats_at_ends; i++)
     {
         knots.push_back(*it);
     }
@@ -748,12 +741,12 @@ std::vector<double> Basis1D::knotSequenceFree(std::vector<double> &X)
 
     // Repeat last x value p + 1 times
     it = uniqueX.end()-1; // Last element in uniqueX
-    for (int i = 0; i < repeats_at_ends; i++)
+    for(int i = 0; i < repeats_at_ends; i++)
     {
         knots.push_back(*it);
     }
 
-    assert(knots.size() == (unsigned)num_knots);
+    assert(knots.size() == num_knots);
     return knots;
 }
 

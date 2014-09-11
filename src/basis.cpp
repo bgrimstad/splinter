@@ -32,19 +32,19 @@ Basis::Basis()
 {
 }
 
-Basis::Basis(std::vector< std::vector<double> > &X, std::vector<int> basisDegrees)
+Basis::Basis(std::vector< std::vector<double> > &X, std::vector<unsigned int> basisDegrees)
     : Basis(X, basisDegrees, KnotSequenceType::FREE)
 {
 }
 
-Basis::Basis(std::vector< std::vector<double> > &X, std::vector<int> basisDegrees, KnotSequenceType knotSequenceType)
+Basis::Basis(std::vector< std::vector<double> > &X, std::vector<unsigned int> basisDegrees, KnotSequenceType knotSequenceType)
 {
     assert(X.size() == basisDegrees.size());
 
     setUnivariateBases(X, basisDegrees, knotSequenceType);
 }
 
-void Basis::setUnivariateBases(std::vector< std::vector<double> > &X, std::vector<int> &basisDegrees, KnotSequenceType knotSequenceType)
+void Basis::setUnivariateBases(std::vector< std::vector<double> > &X, std::vector<unsigned int> &basisDegrees, KnotSequenceType knotSequenceType)
 {
     bases.clear();
     numVariables = X.size();
@@ -315,19 +315,19 @@ bool Basis::reduceSupport(std::vector<double>& lb, std::vector<double>& ub, Spar
     return true;
 }
 
-int Basis::getBasisDegree(int dim) const
+unsigned int Basis::getBasisDegree(unsigned int dim) const
 {
     return bases.at(dim).getBasisDegree();
 }
 
-int Basis::numBasisFunctions(int dim) const
+unsigned int Basis::numBasisFunctions(unsigned int dim) const
 {
     return bases.at(dim).numBasisFunctions();
 }
 
-int Basis::numBasisFunctions() const
+unsigned int Basis::numBasisFunctions() const
 {
-    int prod = 1;
+    unsigned int prod = 1;
     for (unsigned int dim = 0; dim < numVariables; dim++)
     {
         prod *= bases.at(dim).numBasisFunctions();
@@ -353,7 +353,7 @@ std::vector< std::vector<double> > Basis::getKnotVectors() const
     return knots;
 }
 
-int Basis::getKnotMultiplicity(const int& dim, const double& tau) const
+unsigned int Basis::getKnotMultiplicity(const unsigned int& dim, const double& tau) const
 {
     return bases.at(dim).knotMultiplicity(tau);
 }
@@ -363,7 +363,7 @@ double Basis::getKnotValue(int dim, int index) const
     return bases.at(dim).getKnotValue(index);
 }
 
-int Basis::getLargestKnotInterval(int dim) const
+unsigned int Basis::getLargestKnotInterval(unsigned int dim) const
 {
     return bases.at(dim).indexLongestInterval();
 }

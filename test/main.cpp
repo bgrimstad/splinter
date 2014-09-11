@@ -52,7 +52,7 @@ bool is_identical(DataTable &a, DataTable &b)
     auto ait = a.cbegin(), bit = b.cbegin();
     for(; ait != a.cend() && bit != b.cend(); ait++, bit++)
     {
-        for(int i = 0; i < a.getNumVariables(); i++)
+        for(unsigned int i = 0; i < a.getNumVariables(); i++)
         {
 //            std::cout << std::setprecision(SAVE_DOUBLE_PRECISION) << ait->getX().at(i) << " == " << std::setprecision(SAVE_DOUBLE_PRECISION) << bit->getX().at(i) << " ";
             if(!equalsWithinRange(ait->getX().at(i), bit->getX().at(i)))

@@ -18,8 +18,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 
-#ifndef SPLINE_H
-#define SPLINE_H
+#ifndef SPLINEINTERFACE_H
+#define SPLINEINTERFACE_H
 
 #include "generaldefinitions.h"
 
