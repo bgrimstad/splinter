@@ -281,7 +281,6 @@ void runExample()
 int main(int argc, char **argv)
 {
     runExample();
-    exit(1);
 
     cout << "test1(): " << (test1() ? "success" : "fail") << endl;
     cout << "test2(): " << (test2() ? "success" : "fail") << endl;
