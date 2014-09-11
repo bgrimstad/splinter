@@ -23,12 +23,27 @@ set(MULTIVARIATESPLINES_VERSION_MAJOR 0)
 set(MULTIVARIATESPLINES_VERSION_MINOR 1)
 set(MULTIVARIATESPLINES_VERSION ${MULTIVARIATESPLINES_VERSION_MAJOR}.${MULTIVARIATESPLINES_VERSION_MINOR})
 
-set(DEFAULT_EIGEN_DIRECTORY "/usr/local/include/eigen3")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+
+include("${CMAKE_SOURCE_DIR}/cmake/c11Support.cmake")
+
+if(UNIX)
+    set(DEFAULT_EIGEN_DIRECTORY "/usr/local/include/eigen3")
+elseif(WIN32)
+    # TODO: This surely can't be the most logical place to look for Eigen
+    set(DEFAULT_EIGEN_DIRECTORY "C:/Program Files/Eigen")
+endif(UNIX)
+
 set(DEFAULT_HEADER_DIRECTORY "include")
 set(DEFAULT_LIBRARY_DIRECTORY "lib")
 
 if(NOT EIGEN_DIRECTORY)
-    set(EIGEN_DIRECTORY ${DEFAULT_EIGEN_DIRECTORY})
+    find_package(Eigen3 REQUIRED) # Attempt to automatically locate Eigen
+    if(EIGEN3_FOUND)
+        set(EIGEN_DIRECTORY ${EIGEN3_INCLUDE_DIR})
+    else(EIGEN3_FOUND)
+        set(EIGEN_DIRECTORY ${DEFAULT_EIGEN_DIRECTORY})
+    endif(EIGEN3_FOUND)
 endif(NOT EIGEN_DIRECTORY)
 # CACHE STRING = Display the option with help text in CMakeCache.txt
 set(EIGEN_DIRECTORY ${EIGEN_DIRECTORY} CACHE STRING "Directory where the Eigen library is located.")
@@ -86,10 +101,6 @@ if(WIN32)
     set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++") # Necessary for test executable to work with MinGW
 endif()
 
-# Compiler flags
-add_definitions(
-    -std=c++11
-)
 
 # Install the header files
 install(
