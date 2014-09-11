@@ -8,8 +8,6 @@ There are two separate guides for compilation:
 
 Note that for both guides the same [options](#options-both-platforms) to CMake apply.
 
-CMake will try to automatically find where Eigen is installed, but if this fails you can specify it yourself with the option `EIGEN_DIRECTORY`. See [options](#options-both-platforms) for further information on how to use it.
-
 ##Compile on UNIX
 ####Requirements
 * [CMake](http://www.cmake.org/)
@@ -58,12 +56,11 @@ CMake will try to automatically find where Eigen is installed, but if this fails
 
 ##Options (both platforms)
 
-| Variable name     | Default value                   | Description                               |
-| ----------------- | ------------------------------- | ----------------------------------------- |
-| EIGEN_DIRECTORY   | UNIX: /usr/local/include/eigen3 | Path to the Eigen lib.                    |
-|                   | Windows: C:/Program Files/Eigen | Path to the Eigen lib.                    |
-| HEADER_DIRECTORY  | include                         | Where the headers should be installed.    |
-| LIBRARY_DIRECTORY | lib                             | Where to install the library file.        |
+| Variable name     | Default value                 | Description                               |
+| ----------------- | ----------------------------- | ----------------------------------------- |
+| EIGEN_DIRECTORY   | /usr/local/include/eigen3     | Path to the Eigen lib.                    |
+| HEADER_DIRECTORY  | include                       | Where the headers should be installed.    |
+| LIBRARY_DIRECTORY | lib                           | Where to install the library file.        |
 
 These options go along with UNIX step #6 or Windows step #5.2, and are used like this:
 
