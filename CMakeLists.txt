@@ -23,15 +23,24 @@ set(MULTIVARIATESPLINES_VERSION_MAJOR 0)
 set(MULTIVARIATESPLINES_VERSION_MINOR 1)
 set(MULTIVARIATESPLINES_VERSION ${MULTIVARIATESPLINES_VERSION_MAJOR}.${MULTIVARIATESPLINES_VERSION_MINOR})
 
-set(DEFAULT_EIGEN_DIRECTORY "/usr/local/include/eigen3")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+find_package(Eigen3 REQUIRED)
+#set(DEFAULT_EIGEN_DIRECTORY "/usr/local/include/eigen3")
+
+include("${CMAKE_SOURCE_DIR}/cmake/c11Support.cmake")
+# Compiler flags
+#add_definitions(
+#    -std=c++11
+#)
+
 set(DEFAULT_HEADER_DIRECTORY "include")
 set(DEFAULT_LIBRARY_DIRECTORY "lib")
 
-if(NOT EIGEN_DIRECTORY)
-    set(EIGEN_DIRECTORY ${DEFAULT_EIGEN_DIRECTORY})
-endif(NOT EIGEN_DIRECTORY)
+#if(NOT EIGEN_DIRECTORY)
+#    set(EIGEN_DIRECTORY ${DEFAULT_EIGEN_DIRECTORY})
+#endif(NOT EIGEN_DIRECTORY)
 # CACHE STRING = Display the option with help text in CMakeCache.txt
-set(EIGEN_DIRECTORY ${EIGEN_DIRECTORY} CACHE STRING "Directory where the Eigen library is located.")
+#set(EIGEN_DIRECTORY ${EIGEN_DIRECTORY} CACHE STRING "Directory where the Eigen library is located.")
 
 if(NOT HEADER_DIRECTORY)
     set(HEADER_DIRECTORY ${DEFAULT_HEADER_DIRECTORY})
@@ -48,7 +57,8 @@ set(LIBRARY_DIRECTORY ${LIBRARY_DIRECTORY} CACHE STRING "Absolute path, or, if r
 # These are the headers we need for compilation
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-include_directories(${EIGEN_DIRECTORY})
+#include_directories(${EIGEN_DIRECTORY})
+include_directories( ${EIGEN3_INCLUDE_DIR} )
 
 # These are the sources we need for compilation
 #aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/src SRC_LIST)
@@ -82,10 +92,7 @@ add_library(multivariate-splines-static STATIC ${SRC_LIST})
 add_executable("multivariate-splines-test" ${CMAKE_CURRENT_SOURCE_DIR}/test/main.cpp)
 target_link_libraries("multivariate-splines-test" multivariate-splines)
 
-# Compiler flags
-add_definitions(
-    -std=c++11
-)
+
 
 # Install the header files
 install(
