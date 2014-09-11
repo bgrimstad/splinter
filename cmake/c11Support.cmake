@@ -1,0 +1,15 @@
+# c++ 11
+#idemo postaviti compiler flags za razne kompalere
+if(CMAKE_BUILD_TOOL MATCHES "(msdev|devenv|nmake)")
+    add_definitions(/W4)
+    add_definitions(/MP)
+elseif (CMAKE_COMPILER_IS_GNUCXX)# OR CMAKE_COMPILER_IS_GNUC)
+  add_definitions(-std=c++0x)
+  add_definitions(-std=c++11)
+  add_definitions(-Wall)
+  add_definitions(-Wextra)
+  add_definitions(-pedantic)
+  #add_definitions(-pthread)
+  #else (CMAKE_BUILD_TOOL MATCHES "(msdev|devenv|nmake)")
+  #message(STATUS "Unknown build tool, cannot set warning flags for your")
+endif (CMAKE_BUILD_TOOL MATCHES "(msdev|devenv|nmake)") 
