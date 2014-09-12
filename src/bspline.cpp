@@ -40,7 +40,7 @@ BSpline::BSpline(DenseMatrix coefficients, std::vector< std::vector<double> > kn
     numVariables = knotSequences.size();
     assert(coefficients.rows() == 1);
 
-    basis = Basis(knotSequences, basisDegrees, KnotSequenceType::EXPLICIT);
+    basis = Basis(knotSequences, basisDegrees, KnotVectorType::EXPLICIT);
 
     computeKnotAverages();
 
@@ -63,18 +63,18 @@ BSpline::BSpline(DataTable &samples, BSplineType type = BSplineType::CUBIC_FREE)
     if(type == BSplineType::LINEAR)
     {
         std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 1);
-        basis = Basis(xdata, basisDegrees, KnotSequenceType::FREE);
+        basis = Basis(xdata, basisDegrees, KnotVectorType::FREE);
     }
     else if(type == BSplineType::CUBIC_FREE)
     {
         std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 3);
-        basis = Basis(xdata, basisDegrees, KnotSequenceType::FREE);
+        basis = Basis(xdata, basisDegrees, KnotVectorType::FREE);
     }
     else
     {
         // Default is CUBIC_FREE
         std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 3);
-        basis = Basis(xdata, basisDegrees, KnotSequenceType::FREE);
+        basis = Basis(xdata, basisDegrees, KnotVectorType::FREE);
     }
 
     // Calculate control points

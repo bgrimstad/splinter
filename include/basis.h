@@ -32,9 +32,9 @@ class Basis
 public:
     Basis();
     Basis(std::vector< std::vector<double> > &X, std::vector<unsigned int> basisDegrees);
-    Basis(std::vector< std::vector<double> > &X, std::vector<unsigned int> basisDegrees, KnotSequenceType knotSequenceType);
+    Basis(std::vector< std::vector<double> > &X, std::vector<unsigned int> basisDegrees, KnotVectorType knotVectorType);
 
-    void setUnivariateBases(std::vector< std::vector<double> > &X, std::vector<unsigned int> &basisDegrees, KnotSequenceType knotSequenceType);
+    void setUnivariateBases(std::vector< std::vector<double> > &X, std::vector<unsigned int> &basisDegrees, KnotVectorType knotVectorType);
 
     // Evaluation
     SparseVector eval(const DenseVector &x) const;

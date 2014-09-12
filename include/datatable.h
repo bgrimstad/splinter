@@ -27,8 +27,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 namespace MultivariateSplines
 {
 
-// TODO: namespace for interpolation classes
-
 #define SAVE_DOUBLE_PRECISION 17
 
 /*

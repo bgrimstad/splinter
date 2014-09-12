@@ -29,34 +29,38 @@ namespace MultivariateSplines
 {
 
 Basis1D::Basis1D(std::vector<double> &x, unsigned int degree)
-    : Basis1D(x, degree, KnotSequenceType::FREE)
+    : Basis1D(x, degree, KnotVectorType::FREE)
 {
 }
 
-Basis1D::Basis1D(std::vector<double> &x, unsigned int degree, KnotSequenceType knotSequenceType)
+Basis1D::Basis1D(std::vector<double> &x, unsigned int degree, KnotVectorType knotVectorType)
     : degree(degree),
       targetNumBasisfunctions(degree+1+2) // Minimum p+1
 {
-    if (knotSequenceType == KnotSequenceType::EXPLICIT)
+    if (knotVectorType == KnotVectorType::EXPLICIT)
     {
         knots = x;
     }
-    else if (knotSequenceType == KnotSequenceType::FREE)
+    else if (knotVectorType == KnotVectorType::FREE)
     {
-        knots = knotSequenceFree(x);
+        knots = knotVectorFree(x);
     }
-    else if (knotSequenceType == KnotSequenceType::REGULAR)
+    else if (knotVectorType == KnotVectorType::REGULAR)
     {
-        knots = knotSequenceRegular(x);
+        knots = knotVectorRegular(x);
+    }
+    else if (knotVectorType == KnotVectorType::EQUIDISTANT)
+    {
+        knots = knotVectorEquidistant(x);
     }
     else
     {
-        // Assuming a regular knot sequence is given
+        // Assuming a regular knot vector is given
         knots = x;
     }
 
     assert(degree > 0);
-    assert(isKnotSequenceRegular());
+    assert(isKnotVectorRegular());
 }
 
 SparseVector Basis1D::evaluate(const double x) const
@@ -83,7 +87,7 @@ SparseVector Basis1D::evaluate(const double x) const
         basisvalues.insert(*itr) = deBoorCox(x, *itr, degree);
     }
 
-//    // Must have regular knot sequence to do this - alternative evaluation using basis matrix
+//    // Must have regular knot vector to do this - alternative evaluation using basis matrix
 //    // Do knot hack
 //    int knotIndex = indexHalfopenInterval(x); // knot index
 //    if (knotIndex > 0)
@@ -326,7 +330,7 @@ bool Basis1D::insertKnots(SparseMatrix &A, double tau, unsigned int multiplicity
     for(unsigned int i = 0; i < multiplicity; i++)
         extKnots.insert(extKnots.begin()+index+1, tau);
 
-    assert(isKnotSequenceRegular(extKnots));
+    assert(isKnotVectorRegular(extKnots));
 
     // Return knot insertion matrix
     if(!buildKnotInsertionMatrix(A, extKnots))
@@ -351,7 +355,7 @@ bool Basis1D::refineKnots(SparseMatrix &A)
         refinedKnots.insert(lower_bound(refinedKnots.begin(), refinedKnots.end(), newKnot), newKnot);
     }
 
-    assert(isKnotSequenceRegular(refinedKnots));
+    assert(isKnotVectorRegular(refinedKnots));
 
     // Return knot insertion matrix
     if(!buildKnotInsertionMatrix(A, refinedKnots))
@@ -412,13 +416,12 @@ bool Basis1D::buildKnotInsertionMatrix(SparseMatrix &A, const std::vector<double
     return true;
 }
 
+/*
+ * Finds index i such that knots.at(i) <= x < knots.at(i+1)
+ * Returns false if x is outside support
+ */
 int Basis1D::indexHalfopenInterval(double x) const
 {
-    // Returns index i such that knots.at(i) <= x < knots.at(i+1)
-    //returns -99 if the x value is outside the knot range.
-    //returns -1  if the x value is identical to the last knot
-    //returns index of first nonzero interval otherwise
-
     if(0 == knots.size() || x < knots.front() || x > knots.back())
     {
         return -99;
@@ -582,12 +585,12 @@ unsigned int Basis1D::indexLongestInterval(const std::vector<double> &vec) const
     return index;
 }
 
-bool Basis1D::isKnotSequenceRegular() const
+bool Basis1D::isKnotVectorRegular() const
 {
-    return isKnotSequenceRegular(knots);
+    return isKnotVectorRegular(knots);
 }
 
-bool Basis1D::isKnotSequenceRegular(const std::vector<double> &vec) const
+bool Basis1D::isKnotVectorRegular(const std::vector<double> &vec) const
 {
     // Check size
     if(vec.size() < 2*(degree+1))
@@ -622,7 +625,7 @@ bool Basis1D::isRefinement(const std::vector<double> &refinedKnots) const
         return false;
 
     // Check that t is regular
-    if(!isKnotSequenceRegular(refinedKnots))
+    if(!isKnotVectorRegular(refinedKnots))
         return false;
 
     // Check that each elements in tau occurs at least as man times in t
@@ -641,28 +644,53 @@ bool Basis1D::isRefinement(const std::vector<double> &refinedKnots) const
 }
 
 /*
- * Repeats first and last knot p+1 times. Removes no knots.
+ * Creates a regular knot vector of n+p+1 equidistant knots,
+ * where the first and last knot is repeated p+1 times,
+ * and n is the number of unique values in x.
+ *
+ * This knot vector can be used for all degrees > 0.
  */
-std::vector<double> Basis1D::knotSequenceRegular(std::vector<double> &X)
+std::vector<double> Basis1D::knotVectorEquidistant(std::vector<double> &X) const
 {
     // Copy X -> sort -> remove duplicates -> resize = a sorted vector of unique values
     std::vector<double> uniqueX(X);
-    sort (uniqueX.begin(), uniqueX.end());
-    std::vector<double>::iterator it = unique_copy (uniqueX.begin(), uniqueX.end(), uniqueX.begin());
-    uniqueX.resize( distance(uniqueX.begin(),it) );
+    sort(uniqueX.begin(), uniqueX.end());
+    std::vector<double>::iterator it = unique_copy(uniqueX.begin(), uniqueX.end(), uniqueX.begin());
+    uniqueX.resize(distance(uniqueX.begin(),it));
 
-    // Multiplicity of the first and last knot.
-    // basisDegree + 1 creates discontinuity that allows for interpolation at endpoints
-    unsigned int repeats_at_ends = degree + 1;
+    // Minimum number of interpolation points
+    assert(uniqueX.size() >= degree + 1);
 
-    // Number of knots in a (p+1)-regular knot sequence
-    unsigned int num_knots = uniqueX.size() + 2*degree;
+    std::vector<double> knots;
+    for(unsigned int i = 0; i < degree; i++)
+        knots.push_back(uniqueX.front());
+
+    std::vector<double> equiKnots = linspace(uniqueX.front(), uniqueX.back(), uniqueX.size() - degree + 1);
+    for(auto it = equiKnots.begin(); it != equiKnots.end(); ++it)
+        knots.push_back(*it);
+
+    for(unsigned int i = 0; i < degree; i++)
+        knots.push_back(uniqueX.back());
+
+    return knots;
+}
+
+/*
+ * Repeats first and last knot p+1 times. Removes no knots.
+ */
+std::vector<double> Basis1D::knotVectorRegular(std::vector<double> &X) const
+{
+    // Copy X -> sort -> remove duplicates -> resize = a sorted vector of unique values
+    std::vector<double> uniqueX(X);
+    sort(uniqueX.begin(), uniqueX.end());
+    std::vector<double>::iterator it = unique_copy(uniqueX.begin(), uniqueX.end(), uniqueX.begin());
+    uniqueX.resize(distance(uniqueX.begin(),it));
 
     std::vector<double> knots;
     it = uniqueX.begin();
 
-    // Repeat first knot p + 1 times
-    for(unsigned int i = 0; i < repeats_at_ends; i++)
+    // Repeat first knot p + 1 times (for interpolation of start point)
+    for(unsigned int i = 0; i < degree + 1; i++)
     {
         knots.push_back(*it);
     }
@@ -673,23 +701,24 @@ std::vector<double> Basis1D::knotSequenceRegular(std::vector<double> &X)
         knots.push_back(*it);
     }
 
-    // Repeat last knot p + 1 times
+    // Repeat last knot p + 1 times (for interpolation of end point)
     it = uniqueX.end()-1; // Last element in uniqueX
-    for(unsigned int i = 0; i < repeats_at_ends; i++)
+    for(unsigned int i = 0; i < degree + 1; i++)
     {
         knots.push_back(*it);
     }
 
-    assert(knots.size() == num_knots);
+    // Number of knots in a (p+1)-regular knot vector
+    assert(knots.size() == uniqueX.size() + 2*degree);
 
     return knots;
 }
 
 /*
- * Free knot sequence for degrees 1 and 3 only.
+ * Free knot vector for degrees 1 and 3 only.
  * Example for degree=3 and x={a,b,c,d,e,f,g,h}: knots={a,a,a,a,c,d,e,f,h,h,h,h}
  */
-std::vector<double> Basis1D::knotSequenceFree(std::vector<double> &X)
+std::vector<double> Basis1D::knotVectorFree(std::vector<double> &X) const
 {
     // The minimum number of samples (independent of degree)
     // from which a free knot vector can be created is 4.
@@ -698,22 +727,14 @@ std::vector<double> Basis1D::knotSequenceFree(std::vector<double> &X)
     // Copy X -> sort -> remove duplicates -> resize = a sorted vector of unique values
     std::vector<double> uniqueX(X);
     sort(uniqueX.begin(), uniqueX.end());
-    std::vector<double>::iterator it = unique_copy (uniqueX.begin(), uniqueX.end(), uniqueX.begin());
+    std::vector<double>::iterator it = unique_copy(uniqueX.begin(), uniqueX.end(), uniqueX.begin());
     uniqueX.resize(distance(uniqueX.begin(),it));
-
-    // Multiplicity of the first and last knot.
-    // degree + 1 knots ensures interpolation at endpoints
-    int repeats_at_ends = degree + 1;
-
-    // Number of knots in a (p+1)-regular knot sequence
-    // Ensures a square matrix when calculating the control points
-    unsigned int num_knots = uniqueX.size() + degree + 1;
 
     std::vector<double> knots;
     it = uniqueX.begin();
 
-    // Repeat first x value p + 1 times
-    for(int i = 0; i < repeats_at_ends; i++)
+    // Repeat first x value p + 1 times (for interpolation of start point)
+    for(unsigned int i = 0; i < degree + 1; i++)
     {
         knots.push_back(*it);
     }
@@ -739,15 +760,29 @@ std::vector<double> Basis1D::knotSequenceFree(std::vector<double> &X)
         exit(1);
     }
 
-    // Repeat last x value p + 1 times
+    // Repeat last x value p + 1 times (for interpolation of end point)
     it = uniqueX.end()-1; // Last element in uniqueX
-    for(int i = 0; i < repeats_at_ends; i++)
+    for(unsigned int i = 0; i < degree + 1; i++)
     {
         knots.push_back(*it);
     }
 
-    assert(knots.size() == num_knots);
+    // Number of knots in a (p+1)-regular knot vector
+    // Ensures a square matrix when calculating the control points
+    assert(knots.size() == uniqueX.size() + degree + 1);
+
     return knots;
+}
+
+std::vector<double> Basis1D::linspace(double start, double stop, unsigned int points) const
+{
+    std::vector<double> ret;
+    double dx = 0;
+    if(points > 1)
+        dx = (stop - start)/(points-1);
+    for(unsigned int i = 0; i < points; ++i)
+        ret.push_back(start + i*dx);
+    return ret;
 }
 
 } // namespace MultivariateSplines

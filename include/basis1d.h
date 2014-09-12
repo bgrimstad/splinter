@@ -26,29 +26,30 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 namespace MultivariateSplines
 {
 
-enum class KnotSequenceType
+enum class KnotVectorType
 {
-    EXPLICIT, // Knot sequence is given (should be regular)
-    REGULAR,   // p+1-regular knots (knots are added if necessary)
-    FREE    // Knots for cubic spline interpolation with free end conditions
+    EXPLICIT,   // Knot sequence is explicitly given (it should be regular)
+    REGULAR,    // p+1-regular knots (knots are added if necessary)
+    FREE,       // Knots for cubic spline interpolation with free end conditions
+    EQUIDISTANT // Equidistant p+1-regular knot sequence for all degrees
 };
 
 class Basis1D
 {
 public:
     Basis1D(std::vector<double> &x, unsigned int degree);
-    Basis1D(std::vector<double> &x, unsigned int degree, KnotSequenceType knotSequenceType);
+    Basis1D(std::vector<double> &x, unsigned int degree, KnotVectorType knotVectorType);
 
     // Evaluation of basis functions
     SparseVector evaluate(const double x) const;
     SparseVector evaluateDerivative(double x, int r) const;
     DenseVector evaluateFirstDerivative(double x) const; // Depricated
 
-    // Knot sequence related
+    // Knot vector related
     bool refineKnots(SparseMatrix &A);
     bool insertKnots(SparseMatrix &A, double tau, unsigned int multiplicity = 1);
     // bool insertKnots(SparseMatrix &A, std::vector<tuple<double,int>> newKnots); // Add knots at several locations
-    unsigned int knotMultiplicity(const double &tau) const; // Returns the number of repetitions of tau in the knot sequence
+    unsigned int knotMultiplicity(const double &tau) const; // Returns the number of repetitions of tau in the knot vector
 
     // Support related
     bool insideSupport(const double &x) const;
@@ -81,13 +82,15 @@ private:
 
     // Helper functions
     bool inHalfopenInterval(double x, double x_min, double x_max) const;
+    std::vector<double> linspace(double start, double stop, unsigned int points) const;
 
-    // Knot sequence related
-    bool isKnotSequenceRegular() const;
-    bool isKnotSequenceRegular(const std::vector<double> &vec) const;
+    // Knot vector related
+    bool isKnotVectorRegular() const;
+    bool isKnotVectorRegular(const std::vector<double> &vec) const;
     bool isRefinement(const std::vector<double> &refinedKnots) const;
-    std::vector<double> knotSequenceRegular(std::vector<double>& X);
-    std::vector<double> knotSequenceFree(std::vector<double>& X);
+    std::vector<double> knotVectorEquidistant(std::vector<double> &X) const;
+    std::vector<double> knotVectorRegular(std::vector<double>& X) const;
+    std::vector<double> knotVectorFree(std::vector<double>& X) const;
 
     // Member variables
     unsigned int degree;
