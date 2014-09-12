@@ -4,5 +4,6 @@ TODO list:
 - Implement Jacobian and Hessian for radial basis function splines
 - Implement a proper preconditioning matrix for radial basis function weight computation
 - Consider implementing NURBS
+- Add more tests
 - Add exception handling
 - Improve the documentation
