@@ -47,11 +47,13 @@ class BSpline : public Spline
 public:
 
     // Construct B-spline from knot sequences, control coefficients (assumed vectorized), and basis degrees
-    //Bspline(std::vector<double> coefficients, std::vector<double> knotSequence, int basisDegrees);
-    //Bspline(std::vector<double> coefficients, std::vector< std::vector<double> > knotSequences, std::vector<int> basisDegrees);
+    //Bspline(std::vector<double> coefficients, std::vector<double> knotSequence, unsigned int basisDegrees);
+    //Bspline(std::vector<double> coefficients, std::vector< std::vector<double> > knotSequences, std::vector<unsigned int> basisDegrees);
     BSpline(DenseMatrix coefficients, std::vector< std::vector<double> > knotSequences, std::vector<unsigned int> basisDegrees);
 
     // Construct B-spline that interpolates the samples in DataTable
+    //BSpline(DataTable &samples, unsigned int basisDegree);
+    //BSpline(DataTable &samples, std::vector<unsigned int> basisDegrees);
     BSpline(DataTable &samples, BSplineType type);
 
     virtual BSpline* clone() const { return new BSpline(*this); }
