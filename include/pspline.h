@@ -18,8 +18,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 
-#ifndef PSPLINE_H
-#define PSPLINE_H
+#ifndef MS_PSPLINE_H
+#define MS_PSPLINE_H
 
 #include "bspline.h"
 
@@ -51,4 +51,4 @@ protected:
 
 } // namespace MultivariateSplines
 
-#endif // PSPLINE_H
+#endif // MS_PSPLINE_H

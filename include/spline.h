@@ -18,8 +18,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 
-#ifndef SPLINE_H
-#define SPLINE_H
+#ifndef MS_SPLINE_H
+#define MS_SPLINE_H
 
 #include "generaldefinitions.h"
 
@@ -53,4 +53,4 @@ public:
 
 } // namespace MultivariateSplines
 
-#endif // SPLINE_H
+#endif // MS_SPLINE_H

@@ -17,14 +17,35 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-
 #include "datatable.h"
+
+#include <string>
 
 #include <iomanip> // Set precision used by streams on double values
 #include <fstream>
 
 namespace MultivariateSplines
 {
+
+/*
+ * Workaround for https://gcc.gnu.org/bugzilla/show_bug.cgi?id=52015
+ * Basically, std::stod and std::stoi are deactivated on MinGW because of a bug
+ */
+//#if defined(__MINGW32__) || defined(__MINGW64__)
+#include <sstream>
+    auto stringToDouble = [](std::string s, std::string::size_type *sz)
+    {
+        double d;
+        std::stringstream ss(s); // Turn the string into a stream
+        ss >> d; // Convert
+        ss.str("");
+        ss << std::setprecision(SAVE_DOUBLE_PRECISION) << d;
+        *sz = ss.str().size() + 1;
+        return d;
+    };
+//#else
+    //auto stringToDouble = std::stod;
+//#endif
 
 DataTable::DataTable()
     : DataTable(false, false)
@@ -218,7 +239,7 @@ void DataTable::save(std::string fileName) const
 
     for(auto it = cbegin(); it != cend(); it++)
     {
-        for(int i = 0; i < numVariables; i++)
+        for(unsigned int i = 0; i < numVariables; i++)
         {
             outFile << std::setprecision(SAVE_DOUBLE_PRECISION) << it->getX().at(i) << " ";
         }
@@ -270,8 +291,8 @@ void DataTable::load(std::string fileName)
         if(state == 0)
         {
             std::string::size_type sz = 0;
-            nX = std::stoi(line, &sz);
-            nY = std::stoi(line.substr(sz));
+            nX = (int) round(stringToDouble(line, &sz));
+            nY = 1;
             state = 1;
         }
 
@@ -284,12 +305,12 @@ void DataTable::load(std::string fileName)
             for(int i = 0; i < nX; i++)
             {
                 line = line.substr(sz);
-                x.at(i) = std::stod(line, &sz);
+                x.at(i) = stringToDouble(line, &sz);
             }
             for(int j = 0; j < nY; j++)
             {
                 line = line.substr(sz);
-                y.at(j) = std::stod(line, &sz);
+                y.at(j) = stringToDouble(line, &sz);
             }
 
             addSample(x, y.at(0));

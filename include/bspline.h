@@ -18,8 +18,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 
-#ifndef BSPLINE_H
-#define BSPLINE_H
+#ifndef MS_BSPLINE_H
+#define MS_BSPLINE_H
 
 #include "datatable.h"
 #include "generaldefinitions.h"
@@ -49,7 +49,7 @@ public:
     // Construct B-spline from knot sequences, control coefficients (assumed vectorized), and basis degrees
     //Bspline(std::vector<double> coefficients, std::vector<double> knotSequence, int basisDegrees);
     //Bspline(std::vector<double> coefficients, std::vector< std::vector<double> > knotSequences, std::vector<int> basisDegrees);
-    BSpline(DenseMatrix coefficients, std::vector< std::vector<double> > knotSequences, std::vector<int> basisDegrees);
+    BSpline(DenseMatrix coefficients, std::vector< std::vector<double> > knotSequences, std::vector<unsigned int> basisDegrees);
 
     // Construct B-spline that interpolates the samples in DataTable
     BSpline(DataTable &samples, BSplineType type);
@@ -114,4 +114,4 @@ private:
 
 } // namespace MultivariateSplines
 
-#endif // BSPLINE_H
+#endif // MS_BSPLINE_H

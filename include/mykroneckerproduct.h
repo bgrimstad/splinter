@@ -18,8 +18,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 
-#ifndef MYKRONECKERPRODUCT_H
-#define MYKRONECKERPRODUCT_H
+#ifndef MS_MYKRONECKERPRODUCT_H
+#define MS_MYKRONECKERPRODUCT_H
 
 #include "generaldefinitions.h"
 
@@ -30,4 +30,4 @@ void myKroneckerProduct(const SparseMatrix &A, const SparseMatrix &B, SparseMatr
 
 } // namespace MultivariateSplines
 
-#endif // MYKRONECKERPRODUCT_H
+#endif // MS_MYKRONECKERPRODUCT_H

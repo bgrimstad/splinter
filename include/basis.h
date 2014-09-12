@@ -18,8 +18,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 
-#ifndef BASIS_H
-#define BASIS_H
+#ifndef MS_BSPLINEBASIS_H
+#define MS_BSPLINEBASIS_H
 
 #include "generaldefinitions.h"
 #include "basis1d.h"
@@ -31,10 +31,10 @@ class Basis
 {
 public:
     Basis();
-    Basis(std::vector< std::vector<double> > &X, std::vector<int> basisDegrees);
-    Basis(std::vector< std::vector<double> > &X, std::vector<int> basisDegrees, KnotSequenceType knotSequenceType);
+    Basis(std::vector< std::vector<double> > &X, std::vector<unsigned int> basisDegrees);
+    Basis(std::vector< std::vector<double> > &X, std::vector<unsigned int> basisDegrees, KnotSequenceType knotSequenceType);
 
-    void setUnivariateBases(std::vector< std::vector<double> > &X, std::vector<int> &basisDegrees, KnotSequenceType knotSequenceType);
+    void setUnivariateBases(std::vector< std::vector<double> > &X, std::vector<unsigned int> &basisDegrees, KnotSequenceType knotSequenceType);
 
     // Evaluation
     SparseVector eval(const DenseVector &x) const;
@@ -52,13 +52,13 @@ public:
     std::vector< std::vector<double> > getKnotVectors() const;
     std::vector<double> getKnotVector(int dim) const;
 
-    int getBasisDegree(int dim) const;
-    int numBasisFunctions() const;
-    int numBasisFunctions(int dim) const;
+    unsigned int getBasisDegree(unsigned int dim) const;
+    unsigned int numBasisFunctions() const;
+    unsigned int numBasisFunctions(unsigned int dim) const;
 
     double getKnotValue(int dim, int index) const;
-    int getKnotMultiplicity(const int& dim, const double &tau) const;
-    int getLargestKnotInterval(int dim) const;
+    unsigned int getKnotMultiplicity(const unsigned int& dim, const double &tau) const;
+    unsigned int getLargestKnotInterval(unsigned int dim) const;
 
     std::vector<int> getTensorIndexDimension() const;
     std::vector<int> getTensorIndexDimensionTarget() const;
@@ -78,4 +78,4 @@ private:
 
 } // namespace MultivariateSplines
 
-#endif // BASIS_H
+#endif // MS_BSPLINEBASIS_H

@@ -20,7 +20,7 @@ PSpline::PSpline(DataTable &samples, double lambda)
     numVariables = samples.getNumVariables();
 
     // Assuming a cubic spline
-    std::vector<int> basisDegrees(samples.getNumVariables(), 3);
+    std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 3);
     basis = Basis(xdata, basisDegrees, KnotSequenceType::FREE);
     computeControlPoints(samples);
 
@@ -90,6 +90,10 @@ void PSpline::computeControlPoints(const DataTable &samples)
         DenseMatrix Ld = L.toDense();
         DenseQR s;
         bool successfulSolve = (s.solve(Ld,Rx,Cx) && s.solve(Ld,Ry,Cy));
+        if(!successfulSolve)
+        {
+            cout << "Failed to solve for B-spline coefficients." << endl;
+        }
         assert(successfulSolve);
     }
 

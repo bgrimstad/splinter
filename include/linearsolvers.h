@@ -18,8 +18,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 
-#ifndef LINEARSOLVER_H
-#define LINEARSOLVER_H
+#ifndef MS_LINEARSOLVER_H
+#define MS_LINEARSOLVER_H
 
 #include "generaldefinitions.h"
 #include "Eigen/IterativeLinearSolvers"
@@ -163,4 +163,4 @@ private:
 
 } // namespace MultivariateSplines
 
-#endif // LINEARSOLVER_H
+#endif // MS_LINEARSOLVER_H

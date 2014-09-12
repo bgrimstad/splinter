@@ -18,8 +18,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 
-#ifndef BASIS1D_H
-#define BASIS1D_H
+#ifndef MS_BSPLINEBASIS1D_H
+#define MS_BSPLINEBASIS1D_H
 
 #include "generaldefinitions.h"
 
@@ -36,8 +36,8 @@ enum class KnotSequenceType
 class Basis1D
 {
 public:
-    Basis1D(std::vector<double> &x, int degree);
-    Basis1D(std::vector<double> &x, int degree, KnotSequenceType knotSequenceType);
+    Basis1D(std::vector<double> &x, unsigned int degree);
+    Basis1D(std::vector<double> &x, unsigned int degree, KnotSequenceType knotSequenceType);
 
     // Evaluation of basis functions
     SparseVector evaluate(const double x) const;
@@ -48,7 +48,7 @@ public:
     bool refineKnots(SparseMatrix &A);
     bool insertKnots(SparseMatrix &A, double tau, unsigned int multiplicity = 1);
     // bool insertKnots(SparseMatrix &A, std::vector<tuple<double,int>> newKnots); // Add knots at several locations
-    int knotMultiplicity(const double &tau) const; // Returns the number of repetitions of tau in the knot sequence
+    unsigned int knotMultiplicity(const double &tau) const; // Returns the number of repetitions of tau in the knot sequence
 
     // Support related
     bool insideSupport(const double &x) const;
@@ -56,16 +56,16 @@ public:
 
     // Getters
     std::vector<double> getKnotVector() const { return knots; }
-    int getBasisDegree() const { return degree; }
-    double getKnotValue(int index) const;
-    int numBasisFunctions() const;
-    int numBasisFunctionsTarget() const;
+    unsigned int getBasisDegree() const { return degree; }
+    double getKnotValue(unsigned int index) const;
+    unsigned int numBasisFunctions() const;
+    unsigned int numBasisFunctionsTarget() const;
 
     // Index getters
     std::vector<int> indexSupportedBasisfunctions(double x) const;
     int indexHalfopenInterval(double x) const;
-    int indexLongestInterval() const;
-    int indexLongestInterval(const std::vector<double> &vec) const;
+    unsigned int indexLongestInterval() const;
+    unsigned int indexLongestInterval(const std::vector<double> &vec) const;
 
 private:
 
@@ -90,11 +90,11 @@ private:
     std::vector<double> knotSequenceFree(std::vector<double>& X);
 
     // Member variables
-    int degree;
+    unsigned int degree;
     std::vector<double> knots;
-    int targetNumBasisfunctions;
+    unsigned int targetNumBasisfunctions;
 };
 
 } // namespace MultivariateSplines
 
-#endif // BASIS1D_H
+#endif // MS_BSPLINEBASIS1D_H
