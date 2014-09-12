@@ -48,7 +48,7 @@ void Basis::setUnivariateBases(std::vector< std::vector<double> > &X, std::vecto
 {
     bases.clear();
     numVariables = X.size();
-    for (unsigned int i = 0; i < numVariables; i++)
+    for(unsigned int i = 0; i < numVariables; i++)
     {
         bases.push_back(Basis1D(X.at(i), basisDegrees.at(i), knotVectorType));
     }
@@ -63,12 +63,12 @@ SparseVector Basis::eval(const DenseVector &x) const
     SparseMatrix tv2 = tv1;
 
     // Evaluate all basisfunctions in each dimension i and generate the tensor product of the function values
-    for (int dim = 0; dim < x.size(); dim++)
+    for(int dim = 0; dim < x.size(); dim++)
     {
         SparseVector xi = bases.at(dim).evaluate(x(dim));
 
         // Avoid matrix copy
-        if (dim % 2 == 0)
+        if(dim % 2 == 0)
         {
             tv1 = kroneckerProduct(tv2, xi); // tv1 = tv1 x xi
         }
@@ -93,11 +93,11 @@ DenseMatrix Basis::evalBasisJacobianOld(DenseVector &x) const
     DenseMatrix J; J.setZero(numBasisFunctions(), numVariables);
 
     // Calculate partial derivatives
-    for (unsigned int i = 0; i < numVariables; i++)
+    for(unsigned int i = 0; i < numVariables; i++)
     {
         // One column in basis jacobian
         DenseVector bi; bi.setOnes(1);
-        for (unsigned int j = 0; j < numVariables; j++)
+        for(unsigned int j = 0; j < numVariables; j++)
         {
             DenseVector temp = bi;
             DenseVector xi;
@@ -135,7 +135,7 @@ SparseMatrix Basis::evalBasisJacobian(DenseVector &x) const
         // One column in basis jacobian
         SparseMatrix Ji(1,1);
         Ji.insert(0,0) = 1;
-        for (unsigned int j = 0; j < numVariables; j++)
+        for(unsigned int j = 0; j < numVariables; j++)
         {
             SparseMatrix temp = Ji;
             SparseMatrix xi;
