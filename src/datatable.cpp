@@ -20,32 +20,76 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "datatable.h"
 
 #include <string>
-
-#include <iomanip> // Set precision used by streams on double values
 #include <fstream>
+#include <stdexcept>
+#include <limits>
 
 namespace MultivariateSplines
 {
 
-/*
- * Workaround for https://gcc.gnu.org/bugzilla/show_bug.cgi?id=52015
- * Basically, std::stod and std::stoi are deactivated on MinGW because of a bug
- */
-//#if defined(__MINGW32__) || defined(__MINGW64__)
-#include <sstream>
-    auto stringToDouble = [](std::string s, std::string::size_type *sz)
+//Simple definition of checked strto* functions according to the implementations of sto* C++11 functions at:
+//  http://msdn.microsoft.com/en-us/library/ee404775.aspx
+//  http://msdn.microsoft.com/en-us/library/ee404860.aspx
+//  https://gcc.gnu.org/svn/gcc/trunk/libstdc++-v3/include/bits/basic_string.h
+//  https://gcc.gnu.org/svn/gcc/trunk/libstdc++-v3/include/ext/string_conversions.h
+
+double checked_strtod(const char* _Str, char** _Eptr) {
+
+    double _Ret;
+    char* _EptrTmp;
+
+    errno = 0;
+
+    _Ret = std::strtod(_Str, &_EptrTmp);
+
+    if(_EptrTmp == _Str)
     {
-        double d;
-        std::stringstream ss(s); // Turn the string into a stream
-        ss >> d; // Convert
-        ss.str("");
-        ss << std::setprecision(SAVE_DOUBLE_PRECISION) << d;
-        *sz = ss.str().size() + 1;
-        return d;
-    };
-//#else
-    //auto stringToDouble = std::stod;
-//#endif
+        throw std::invalid_argument("strtod");
+    }
+    else if(errno == ERANGE)
+    {
+        throw std::out_of_range("strtod");
+    }
+    else
+    {
+        if(_Eptr != nullptr)
+        {
+            *_Eptr = _EptrTmp;
+        }
+
+        return _Ret;
+    }
+}
+
+int checked_strtol(const char* _Str, char** _Eptr, size_t _Base = 10) {
+
+    long _Ret;
+    char* _EptrTmp;
+
+    errno = 0;
+
+    _Ret = std::strtol(_Str, &_EptrTmp, _Base);
+
+    if(_EptrTmp == _Str)
+    {
+        throw std::invalid_argument("strtol");
+    }
+    else if(errno == ERANGE ||
+            (_Ret < std::numeric_limits<int>::min() || _Ret > std::numeric_limits<int>::max()))
+    {
+        throw std::out_of_range("strtol");
+    }
+    else
+    {
+        if(_Eptr != nullptr)
+        {
+            *_Eptr = _EptrTmp;
+        }
+
+        return _Ret;
+    }
+}
+
 
 DataTable::DataTable()
     : DataTable(false, false)
@@ -290,8 +334,7 @@ void DataTable::load(std::string fileName)
         // Reading number of dimensions
         if(state == 0)
         {
-            std::string::size_type sz = 0;
-            nX = (int) round(stringToDouble(line, &sz));
+            nX = checked_strtol(line.c_str(), nullptr, 10);
             nY = 1;
             state = 1;
         }
@@ -301,16 +344,19 @@ void DataTable::load(std::string fileName)
         {
             auto x = std::vector<double>(nX);
             auto y = std::vector<double>(nY);
-            std::string::size_type sz = 0;
+
+            const char* str = line.c_str();
+            char* nextStr = nullptr;
+
             for(int i = 0; i < nX; i++)
             {
-                line = line.substr(sz);
-                x.at(i) = stringToDouble(line, &sz);
+                x.at(i) = checked_strtod(str, &nextStr);
+                str = nextStr;
             }
             for(int j = 0; j < nY; j++)
             {
-                line = line.substr(sz);
-                y.at(j) = stringToDouble(line, &sz);
+                y.at(j) = checked_strtod(str, &nextStr);
+                str = nextStr;
             }
 
             addSample(x, y.at(0));
