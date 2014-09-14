@@ -260,6 +260,10 @@ std::vector<double> DataTable::getVectorY() const
 
 void DataTable::save(std::string fileName) const
 {
+
+    // To give a consistent format across all locales, use the C locale when saving and loading
+    std::locale current_locale = std::locale::global(std::locale("C"));
+
     std::ofstream outFile;
 
     try
@@ -302,10 +306,16 @@ void DataTable::save(std::string fileName) const
     {
         throw;
     }
+
+    std::locale::global(current_locale);
 }
 
 void DataTable::load(std::string fileName)
 {
+
+    // To give a consistent format across all locales, use the C locale when saving and loading
+    std::locale current_locale = std::locale::global(std::locale("C"));
+
     std::ifstream inFile;
 
     try
@@ -329,10 +339,12 @@ void DataTable::load(std::string fileName)
     {
         // Look for comment sign
         if(line.at(0) == '#')
+        {
             continue;
+        }
 
         // Reading number of dimensions
-        if(state == 0)
+        else if(state == 0)
         {
             nX = checked_strtol(line.c_str(), nullptr, 10);
             nY = 1;
@@ -372,6 +384,8 @@ void DataTable::load(std::string fileName)
     {
         throw;
     }
+
+    std::locale::global(current_locale);
 }
 
 /**************
