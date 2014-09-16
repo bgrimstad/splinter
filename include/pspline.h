@@ -35,8 +35,8 @@ class PSpline : public BSpline
 {
 public:
 
-    PSpline(DataTable &samples);
-    PSpline(DataTable &samples, double lambda);
+    PSpline(const DataTable &samples);
+    PSpline(const DataTable &samples, double lambda);
 
 protected:
 

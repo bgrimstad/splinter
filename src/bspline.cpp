@@ -50,7 +50,7 @@ BSpline::BSpline(DenseMatrix coefficients, std::vector< std::vector<double> > kn
 }
 
 // Constructors for interpolation of samples in DataTable
-BSpline::BSpline(DataTable &samples, BSplineType type = BSplineType::CUBIC_FREE)
+BSpline::BSpline(const DataTable &samples, BSplineType type = BSplineType::CUBIC_FREE)
 {
     // Check data
     assert(samples.isGridComplete());

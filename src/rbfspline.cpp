@@ -28,12 +28,12 @@ using std::endl;
 namespace MultivariateSplines
 {
 
-RBFSpline::RBFSpline(DataTable &samples, RadialBasisFunctionType type)
+RBFSpline::RBFSpline(const DataTable &samples, RadialBasisFunctionType type)
     : RBFSpline(samples, type, true)
 {
 }
 
-RBFSpline::RBFSpline(DataTable &samples, RadialBasisFunctionType type, bool normalized)
+RBFSpline::RBFSpline(const DataTable &samples, RadialBasisFunctionType type, bool normalized)
     : samples(samples),
       normalized(normalized),
       precondition(false),

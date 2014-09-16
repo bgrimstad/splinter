@@ -54,7 +54,7 @@ public:
     // Construct B-spline that interpolates the samples in DataTable
     //BSpline(DataTable &samples, unsigned int basisDegree);
     //BSpline(DataTable &samples, std::vector<unsigned int> basisDegrees);
-    BSpline(DataTable &samples, BSplineType type);
+    BSpline(const DataTable &samples, BSplineType type);
 
     virtual BSpline* clone() const { return new BSpline(*this); }
 

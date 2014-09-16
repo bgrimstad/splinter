@@ -106,8 +106,8 @@ class RBFSpline : public Spline
 {
 public:
 
-    RBFSpline(DataTable &samples, RadialBasisFunctionType type);
-    RBFSpline(DataTable &samples, RadialBasisFunctionType type, bool normalized);
+    RBFSpline(const DataTable &samples, RadialBasisFunctionType type);
+    RBFSpline(const DataTable &samples, RadialBasisFunctionType type, bool normalized);
 
     virtual RBFSpline* clone() const { return new RBFSpline(*this); }
 

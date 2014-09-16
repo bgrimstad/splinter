@@ -4,12 +4,12 @@
 namespace MultivariateSplines
 {
 
-PSpline::PSpline(DataTable &samples)
+PSpline::PSpline(const DataTable &samples)
     : PSpline(samples,0.03)
 {
 }
 
-PSpline::PSpline(DataTable &samples, double lambda)
+PSpline::PSpline(const DataTable &samples, double lambda)
     : lambda(lambda)
 {
     // Check data
