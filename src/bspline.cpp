@@ -99,6 +99,11 @@ double BSpline::eval(DenseVector &x) const
     return y(0);
 }
 
+/*
+ * Returns the Jacobian evaluated at x.
+ * The Jacobian is an 1 x n matrix,
+ * where n is the dimension of x.
+ */
 DenseMatrix BSpline::evalJacobian(DenseVector &x) const
 {
     if(valueInsideDomain(x))
@@ -130,13 +135,17 @@ DenseMatrix BSpline::evalJacobian(DenseVector &x) const
     else
     {
         cout << "Warning: evaluating Jacobian outside domain!" << endl;
-        exit(1);
         DenseMatrix y;
         y.setZero(1, numVariables);
         return y;
     }
 }
 
+/*
+ * Returns the Hessian evaluated at x.
+ * The Hessian is an n x n matrix,
+ * where n is the dimension of x.
+ */
 DenseMatrix BSpline::evalHessian(DenseVector &x) const
 {
     if(valueInsideDomain(x))
@@ -153,7 +162,6 @@ DenseMatrix BSpline::evalHessian(DenseVector &x) const
     else
     {
         cout << "Warning: evaluating Hessian outside domain!" << endl;
-        exit(1);
         DenseMatrix y;
         y.setZero(numVariables, numVariables);
         return y;
