@@ -1,15 +1,25 @@
+/*
+ * This file is part of the Multivariate Splines library.
+ * Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com)
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+
+
 #include "pspline.h"
 #include "include/linearsolvers.h"
 
 namespace MultivariateSplines
 {
 
-PSpline::PSpline(DataTable &samples)
+PSpline::PSpline(const DataTable &samples)
     : PSpline(samples,0.03)
 {
 }
 
-PSpline::PSpline(DataTable &samples, double lambda)
+PSpline::PSpline(const DataTable &samples, double lambda)
     : lambda(lambda)
 {
     // Check data

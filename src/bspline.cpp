@@ -1,20 +1,10 @@
 /*
-This file is part of the Multivariate Splines library.
-Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com)
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along
-with this program; if not, write to the Free Software Foundation, Inc.,
-51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * This file is part of the Multivariate Splines library.
+ * Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com)
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
 
@@ -50,7 +40,7 @@ BSpline::BSpline(DenseMatrix coefficients, std::vector< std::vector<double> > kn
 }
 
 // Constructors for interpolation of samples in DataTable
-BSpline::BSpline(DataTable &samples, BSplineType type = BSplineType::CUBIC_FREE)
+BSpline::BSpline(const DataTable &samples, BSplineType type = BSplineType::CUBIC_FREE)
 {
     // Check data
     assert(samples.isGridComplete());
@@ -109,6 +99,11 @@ double BSpline::eval(DenseVector &x) const
     return y(0);
 }
 
+/*
+ * Returns the Jacobian evaluated at x.
+ * The Jacobian is an 1 x n matrix,
+ * where n is the dimension of x.
+ */
 DenseMatrix BSpline::evalJacobian(DenseVector &x) const
 {
     if(valueInsideDomain(x))
@@ -140,13 +135,17 @@ DenseMatrix BSpline::evalJacobian(DenseVector &x) const
     else
     {
         cout << "Warning: evaluating Jacobian outside domain!" << endl;
-        exit(1);
         DenseMatrix y;
         y.setZero(1, numVariables);
         return y;
     }
 }
 
+/*
+ * Returns the Hessian evaluated at x.
+ * The Hessian is an n x n matrix,
+ * where n is the dimension of x.
+ */
 DenseMatrix BSpline::evalHessian(DenseVector &x) const
 {
     if(valueInsideDomain(x))
@@ -163,7 +162,6 @@ DenseMatrix BSpline::evalHessian(DenseVector &x) const
     else
     {
         cout << "Warning: evaluating Hessian outside domain!" << endl;
-        exit(1);
         DenseMatrix y;
         y.setZero(numVariables, numVariables);
         return y;
