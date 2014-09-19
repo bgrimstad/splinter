@@ -14,7 +14,7 @@
 #include "datatable.h"
 #include "generaldefinitions.h"
 #include "spline.h"
-#include "basis.h"
+#include "bsplinebasis.h"
 
 namespace MultivariateSplines
 {
@@ -78,7 +78,7 @@ protected:
 
     BSpline() {}
 
-    Basis basis;
+    BSplineBasis basis;
     DenseMatrix knotaverages; // One row per input
     DenseMatrix coefficients; // One row per output
 

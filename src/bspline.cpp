@@ -9,11 +9,10 @@
 
 
 #include "bspline.h"
+#include "include/bsplinebasis.h"
 #include "include/mykroneckerproduct.h"
 #include "unsupported/Eigen/KroneckerProduct"
 #include "include/linearsolvers.h"
-#include "include/basis.h"
-#include "include/basis1d.h"
 
 #include <iostream>
 
@@ -30,7 +29,7 @@ BSpline::BSpline(DenseMatrix coefficients, std::vector< std::vector<double> > kn
     numVariables = knotSequences.size();
     assert(coefficients.rows() == 1);
 
-    basis = Basis(knotSequences, basisDegrees, KnotVectorType::EXPLICIT);
+    basis = BSplineBasis(knotSequences, basisDegrees, KnotVectorType::EXPLICIT);
 
     computeKnotAverages();
 
@@ -53,18 +52,18 @@ BSpline::BSpline(const DataTable &samples, BSplineType type = BSplineType::CUBIC
     if(type == BSplineType::LINEAR)
     {
         std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 1);
-        basis = Basis(xdata, basisDegrees, KnotVectorType::FREE);
+        basis = BSplineBasis(xdata, basisDegrees, KnotVectorType::FREE);
     }
     else if(type == BSplineType::CUBIC_FREE)
     {
         std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 3);
-        basis = Basis(xdata, basisDegrees, KnotVectorType::FREE);
+        basis = BSplineBasis(xdata, basisDegrees, KnotVectorType::FREE);
     }
     else
     {
         // Default is CUBIC_FREE
         std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 3);
-        basis = Basis(xdata, basisDegrees, KnotVectorType::FREE);
+        basis = BSplineBasis(xdata, basisDegrees, KnotVectorType::FREE);
     }
 
     // Calculate control points

@@ -8,7 +8,7 @@
 */
 
 
-#include "include/basis.h"
+#include "include/bsplinebasis.h"
 #include "include/mykroneckerproduct.h"
 #include "unsupported/Eigen/KroneckerProduct"
 #include <iostream>
@@ -18,33 +18,33 @@ using std::endl;
 namespace MultivariateSplines
 {
 
-Basis::Basis()
+BSplineBasis::BSplineBasis()
 {
 }
 
-Basis::Basis(std::vector< std::vector<double> > &X, std::vector<unsigned int> basisDegrees)
-    : Basis(X, basisDegrees, KnotVectorType::FREE)
+BSplineBasis::BSplineBasis(std::vector< std::vector<double> > &X, std::vector<unsigned int> basisDegrees)
+    : BSplineBasis(X, basisDegrees, KnotVectorType::FREE)
 {
 }
 
-Basis::Basis(std::vector< std::vector<double> > &X, std::vector<unsigned int> basisDegrees, KnotVectorType knotVectorType)
+BSplineBasis::BSplineBasis(std::vector< std::vector<double> > &X, std::vector<unsigned int> basisDegrees, KnotVectorType knotVectorType)
 {
     assert(X.size() == basisDegrees.size());
 
     setUnivariateBases(X, basisDegrees, knotVectorType);
 }
 
-void Basis::setUnivariateBases(std::vector< std::vector<double> > &X, std::vector<unsigned int> &basisDegrees, KnotVectorType knotVectorType)
+void BSplineBasis::setUnivariateBases(std::vector< std::vector<double> > &X, std::vector<unsigned int> &basisDegrees, KnotVectorType knotVectorType)
 {
     bases.clear();
     numVariables = X.size();
     for(unsigned int i = 0; i < numVariables; i++)
     {
-        bases.push_back(Basis1D(X.at(i), basisDegrees.at(i), knotVectorType));
+        bases.push_back(BSplineBasis1D(X.at(i), basisDegrees.at(i), knotVectorType));
     }
 }
 
-SparseVector Basis::eval(const DenseVector &x) const
+SparseVector BSplineBasis::eval(const DenseVector &x) const
 {
     // Set correct starting size and values: one element of 1.
     SparseMatrix tv1(1,1);  //tv1.resize(1);
@@ -77,7 +77,7 @@ SparseVector Basis::eval(const DenseVector &x) const
 }
 
 // Old implementation of Jacobian
-DenseMatrix Basis::evalBasisJacobianOld(DenseVector &x) const
+DenseMatrix BSplineBasis::evalBasisJacobianOld(DenseVector &x) const
 {
     // Jacobian basis matrix
     DenseMatrix J; J.setZero(numBasisFunctions(), numVariables);
@@ -113,7 +113,7 @@ DenseMatrix Basis::evalBasisJacobianOld(DenseVector &x) const
     return J;
 }
 
-SparseMatrix Basis::evalBasisJacobian(DenseVector &x) const
+SparseMatrix BSplineBasis::evalBasisJacobian(DenseVector &x) const
 {
     // Jacobian basis matrix
     SparseMatrix J(numBasisFunctions(), numVariables);
@@ -159,7 +159,7 @@ SparseMatrix Basis::evalBasisJacobian(DenseVector &x) const
     return J;
 }
 
-SparseMatrix Basis::evalBasisHessian(DenseVector &x) const
+SparseMatrix BSplineBasis::evalBasisHessian(DenseVector &x) const
 {
     // Hessian basis matrix
     /* Hij = B1 x ... x DBi x ... x DBj x ... x Bn
@@ -224,7 +224,7 @@ SparseMatrix Basis::evalBasisHessian(DenseVector &x) const
     return H;
 }
 
-bool Basis::insertKnots(SparseMatrix &A, double tau, unsigned int dim, unsigned int multiplicity)
+bool BSplineBasis::insertKnots(SparseMatrix &A, double tau, unsigned int dim, unsigned int multiplicity)
 {
     A.resize(1,1);
     A.insert(0,0) = 1;
@@ -258,7 +258,7 @@ bool Basis::insertKnots(SparseMatrix &A, double tau, unsigned int dim, unsigned 
     return true;
 }
 
-bool Basis::refineKnots(SparseMatrix &A)
+bool BSplineBasis::refineKnots(SparseMatrix &A)
 {
     A.resize(1,1);
     A.insert(0,0) = 1;
@@ -280,7 +280,7 @@ bool Basis::refineKnots(SparseMatrix &A)
     return true;
 }
 
-bool Basis::reduceSupport(std::vector<double>& lb, std::vector<double>& ub, SparseMatrix &A)
+bool BSplineBasis::reduceSupport(std::vector<double>& lb, std::vector<double>& ub, SparseMatrix &A)
 {
     assert(lb.size() == ub.size());
     assert(lb.size() == numVariables);
@@ -305,17 +305,17 @@ bool Basis::reduceSupport(std::vector<double>& lb, std::vector<double>& ub, Spar
     return true;
 }
 
-unsigned int Basis::getBasisDegree(unsigned int dim) const
+unsigned int BSplineBasis::getBasisDegree(unsigned int dim) const
 {
     return bases.at(dim).getBasisDegree();
 }
 
-unsigned int Basis::numBasisFunctions(unsigned int dim) const
+unsigned int BSplineBasis::numBasisFunctions(unsigned int dim) const
 {
     return bases.at(dim).numBasisFunctions();
 }
 
-unsigned int Basis::numBasisFunctions() const
+unsigned int BSplineBasis::numBasisFunctions() const
 {
     unsigned int prod = 1;
     for(unsigned int dim = 0; dim < numVariables; dim++)
@@ -325,17 +325,17 @@ unsigned int Basis::numBasisFunctions() const
     return prod;
 }
 
-Basis1D Basis::getSingleBasis(int dim)
+BSplineBasis1D BSplineBasis::getSingleBasis(int dim)
 {
     return bases.at(dim);
 }
 
-std::vector<double> Basis::getKnotVector(int dim) const
+std::vector<double> BSplineBasis::getKnotVector(int dim) const
 {
     return bases.at(dim).getKnotVector();
 }
 
-std::vector< std::vector<double> > Basis::getKnotVectors() const
+std::vector< std::vector<double> > BSplineBasis::getKnotVectors() const
 {
     std::vector< std::vector<double> > knots;
     for(unsigned int i = 0; i < numVariables; i++)
@@ -343,22 +343,22 @@ std::vector< std::vector<double> > Basis::getKnotVectors() const
     return knots;
 }
 
-unsigned int Basis::getKnotMultiplicity(const unsigned int& dim, const double& tau) const
+unsigned int BSplineBasis::getKnotMultiplicity(const unsigned int& dim, const double& tau) const
 {
     return bases.at(dim).knotMultiplicity(tau);
 }
 
-double Basis::getKnotValue(int dim, int index) const
+double BSplineBasis::getKnotValue(int dim, int index) const
 {
     return bases.at(dim).getKnotValue(index);
 }
 
-unsigned int Basis::getLargestKnotInterval(unsigned int dim) const
+unsigned int BSplineBasis::getLargestKnotInterval(unsigned int dim) const
 {
     return bases.at(dim).indexLongestInterval();
 }
 
-std::vector<int> Basis::getTensorIndexDimension() const
+std::vector<int> BSplineBasis::getTensorIndexDimension() const
 {
     std::vector<int> ret;
     for(unsigned int dim = 0; dim < numVariables; dim++)
@@ -368,7 +368,7 @@ std::vector<int> Basis::getTensorIndexDimension() const
     return ret;
 }
 
-std::vector<int> Basis::getTensorIndexDimensionTarget() const
+std::vector<int> BSplineBasis::getTensorIndexDimensionTarget() const
 {
     std::vector<int> ret;
     for(unsigned int dim = 0; dim < numVariables; dim++)
@@ -378,7 +378,7 @@ std::vector<int> Basis::getTensorIndexDimensionTarget() const
     return ret;
 }
 
-int Basis::supportedPrInterval() const
+int BSplineBasis::supportedPrInterval() const
 {
     int ret = 1;
     for(unsigned int dim = 0; dim < numVariables; dim++)
@@ -388,7 +388,7 @@ int Basis::supportedPrInterval() const
     return ret;
 }
 
-bool Basis::valueInsideSupport(DenseVector &x) const
+bool BSplineBasis::valueInsideSupport(DenseVector &x) const
 {
     if(x.size() != numVariables)
     {
@@ -405,7 +405,7 @@ bool Basis::valueInsideSupport(DenseVector &x) const
     return true;
 }
 
-std::vector<double> Basis::getSupportLowerBound() const
+std::vector<double> BSplineBasis::getSupportLowerBound() const
 {
     std::vector<double> lb;
     for(unsigned int dim = 0; dim < numVariables; dim++)
@@ -416,7 +416,7 @@ std::vector<double> Basis::getSupportLowerBound() const
     return lb;
 }
 
-std::vector<double> Basis::getSupportUpperBound() const
+std::vector<double> BSplineBasis::getSupportUpperBound() const
 {
     std::vector<double> ub;
     for(unsigned int dim = 0; dim < numVariables; dim++)

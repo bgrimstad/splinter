@@ -33,7 +33,6 @@ bool equalsWithinRange(double a, double b, double margin = 0.0)
     return b - margin <= a && a <= b + margin;
 }
 
-
 bool is_identical(DataTable &a, DataTable &b)
 {
     if(a.getNumVariables() != b.getNumVariables())
@@ -59,7 +58,6 @@ bool is_identical(DataTable &a, DataTable &b)
 
     return ait == a.cend() && bit == b.cend();
 }
-
 
 bool test1()
 {
