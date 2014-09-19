@@ -171,6 +171,7 @@ SparseVector Basis1D::evaluateDerivative(double x, int r) const
         cout << knotIndex << endl;
         cout << x << " knotseq " << knots.front() << "/" << knots.back() << endl;
         cout << "Delta knot: " << std::setprecision(10) << knots.back()-knots.front() << endl;
+
         SparseVector DB(numBasisFunctions());
         return DB;
     }
@@ -746,8 +747,7 @@ std::vector<double> Basis1D::knotVectorFree(std::vector<double> &X) const
     }
     else
     {
-        cout << "Only degree 1 and 3 is supported for free knot vectors!" << endl;
-        exit(1);
+        throw Exception("Basis1D::knotVectorFree: Only degree 1 and 3 is supported for free knot vectors!");
     }
 
     // Repeat last x value p + 1 times (for interpolation of end point)

@@ -11,9 +11,6 @@
 #include "include/basis.h"
 #include "include/mykroneckerproduct.h"
 #include "unsupported/Eigen/KroneckerProduct"
-#include <iostream>
-using std::cout;
-using std::endl;
 
 namespace MultivariateSplines
 {
@@ -93,7 +90,7 @@ DenseMatrix Basis::evalBasisJacobianOld(DenseVector &x) const
             DenseVector xi;
             if(j == i)
             {
-                // Differentiated basis 
+                // Differentiated basis
                 xi = bases.at(j).evaluateFirstDerivative(x(j));
             }
             else

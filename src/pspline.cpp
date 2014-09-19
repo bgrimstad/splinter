@@ -99,12 +99,12 @@ void PSpline::computeControlPoints(const DataTable &samples)
         cout << "Computing B-spline control points using dense solver." << endl;
         DenseMatrix Ld = L.toDense();
         DenseQR s;
-        bool successfulSolve = (s.solve(Ld,Rx,Cx) && s.solve(Ld,Ry,Cy));
+        bool successfulSolve = s.solve(Ld, Rx, Cx) && s.solve(Ld, Ry, Cy);
+
         if(!successfulSolve)
         {
-            cout << "Failed to solve for B-spline coefficients." << endl;
+            throw Exception("PSpline::computeControlPoints: Failed to solve for B-spline coefficients.");
         }
-        assert(successfulSolve);
     }
 
     coefficients = Cy.transpose();

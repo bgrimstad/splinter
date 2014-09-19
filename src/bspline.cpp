@@ -231,10 +231,9 @@ bool BSpline::reduceDomain(std::vector<double> lb, std::vector<double> ub, bool 
 
     for(unsigned int dim = 0; dim < numVariables; dim++)
     {
-        if(ub.at(dim) - lb.at(dim) <  minDistance)
+        if(ub.at(dim) - lb.at(dim) < minDistance)
         {
-            cout << "Cannot reduce B-spline domain: inconsistent bounds!" << endl;
-            return false;
+            throw Exception("BSpline::reduceDomain: Cannot reduce B-spline domain: inconsistent bounds!");
         }
         if(su.at(dim) - ub.at(dim) > minDistance)
         {
@@ -251,32 +250,21 @@ bool BSpline::reduceDomain(std::vector<double> lb, std::vector<double> ub, bool 
 
     if(isStrictSubset)
     {
-        if (regularKnotsequences)
+        if (regularKnotsequences && !regularSequences(sl, su))
         {
-            if (!regularSequences(sl, su))
-            {
-                cout << "Failed to regularize knot vectors!" << endl;
-                exit(1);
-                return false;
-            }
+            throw Exception("BSpline::reduceDomain: Failed to regularize knot vectors!");
         }
 
         // Remove knots and control points that are unsupported with the new bounds
         if(!removeUnsupportedBasisFunctions(sl, su))
         {
-            cout << "Failed to remove unsupported basis functions!" << endl;
-            exit(1);
+            throw Exception("BSpline::reduceDomain: Failed to remove unsupported basis functions!");
         }
 
         // Refine knots
-        if(refineKnotsequences)
+        if(refineKnotsequences && !refineKnotSequences())
         {
-            if(!refineKnotSequences())
-            {
-                cout << "Failed to refine knot vectors!" << endl;
-                exit(1);
-                return false;
-            }
+            throw Exception("BSpline::reduceDomain: Failed to refine knot vectors!");
         }
     }
 

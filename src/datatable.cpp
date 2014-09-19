@@ -178,10 +178,9 @@ void DataTable::initDataStructures()
 
 void DataTable::gridCompleteGuard() const
 {
-    if(!isGridComplete() && !allowIncompleteGrid)
+    if(!(isGridComplete() || allowIncompleteGrid))
     {
-        std::cout << "The grid is not complete yet!" << std::endl;
-        exit(1);
+        throw Exception("DataTable::gridCompleteGuard: The grid is not complete yet!");
     }
 }
 

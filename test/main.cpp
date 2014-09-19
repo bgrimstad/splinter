@@ -282,7 +282,7 @@ void runExample()
     cout << "-------------------------------------------"           << endl;
 }
 
-int main(int argc, char **argv)
+void run_tests()
 {
     runExample();
 
@@ -292,6 +292,22 @@ int main(int argc, char **argv)
     cout << "test4(): " << (test4() ? "success" : "fail") << endl;
     cout << "test5(): " << (test5() ? "success" : "fail") << endl;
     cout << "test6(): " << (test6() ? "success" : "fail") << endl;
+}
+
+int main(int argc, char **argv)
+{
+    try
+    {
+        run_tests();
+    }
+    catch(MultivariateSplines::Exception& e)
+    {
+        cout << "MS Exception - " << e.what() << endl;
+    }
+    catch(std::exception& e)
+    {
+        cout << "std::exception - " << e.what() << endl;
+    }
 
     return 0;
 }
