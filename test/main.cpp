@@ -243,15 +243,20 @@ void runExample()
     DataTable samples;
 
     // Sample function
+    double x_l = 0;
+    double x_u = 2;
+    int num_samples = 20;
+    double delta_x = (x_u - x_l)/(num_samples-1);
     DenseVector x(2);
     double y;
-    for(int i = 0; i < 20; i++)
+
+    for(int i = 0; i < num_samples; i++)
     {
-        for(int j = 0; j < 20; j++)
+        for(int j = 0; j < num_samples; j++)
         {
             // Sample function at x
-            x(0) = i*0.1;
-            x(1) = j*0.1;
+            x(0) = x_l + i*delta_x;
+            x(1) = x_l + j*delta_x;
             y = f(x);
 
             // Store sample
@@ -261,6 +266,7 @@ void runExample()
 
     // Build B-splines that interpolate the samples
     BSpline bspline1(samples, BSplineType::LINEAR);
+    BSpline bspline2(samples, BSplineType::QUADRATIC_FREE);
     BSpline bspline3(samples, BSplineType::CUBIC_FREE);
 
     // Build penalized B-spline (P-spline) that smooths the samples
@@ -269,15 +275,68 @@ void runExample()
     // Build radial basis function spline that interpolate the samples
     RBFSpline rbfspline(samples, RadialBasisFunctionType::THIN_PLATE_SPLINE);
 
+    // Evaluate the splines at x = (0,0)
+    x(0) = 0; x(1) = 0;
+
+    cout << endl << endl;
+    cout << "Evaluating splines at grid point x = [0,0]"        << endl;
+    cout << "-------------------------------------------"       << endl;
+    cout << "Function y(x):         "   << f(x)                 << endl;
+    cout << "Linear B-spline:       "   << bspline1.eval(x)     << endl;
+    cout << "Quadratic B-spline:    "   << bspline2.eval(x)     << endl;
+    cout << "Cubic B-spline:        "   << bspline3.eval(x)     << endl;
+    cout << "P-spline:              "   << pspline.eval(x)      << endl;
+    cout << "Thin-plate spline:     "   << rbfspline.eval(x)    << endl;
+    cout << "-------------------------------------------"       << endl;
+
     // Evaluate the splines at x = (1,1)
     x(0) = 1; x(1) = 1;
-    cout << "-------------------------------------------"           << endl;
-    cout << "Function at x:             "   << f(x)                 << endl;
-    cout << "Linear B-spline at x:      "   << bspline1.eval(x)     << endl;
-    cout << "Cubic B-spline at x:       "   << bspline3.eval(x)     << endl;
-    cout << "P-spline at x:             "   << pspline.eval(x)      << endl;
-    cout << "Thin-plate spline at x:    "   << rbfspline.eval(x)    << endl;
-    cout << "-------------------------------------------"           << endl;
+
+    cout << endl << endl;
+    cout << "Evaluating splines at x = [1,1]"                   << endl;
+    cout << "-------------------------------------------"       << endl;
+    cout << "Function y(x):         "   << f(x)                 << endl;
+    cout << "Linear B-spline:       "   << bspline1.eval(x)     << endl;
+    cout << "Quadratic B-spline:    "   << bspline2.eval(x)     << endl;
+    cout << "Cubic B-spline:        "   << bspline3.eval(x)     << endl;
+    cout << "P-spline:              "   << pspline.eval(x)      << endl;
+    cout << "Thin-plate spline:     "   << rbfspline.eval(x)    << endl;
+    cout << "-------------------------------------------"       << endl;
+
+    // Evaluate error norm
+    std::vector<double> e_max(5,0.0);
+    int num_samples_2 = 200;
+    double delta_x_2 = (x_u - x_l)/(num_samples_2-1);
+
+    for(int i = 0; i < num_samples_2; i++)
+    {
+        for(int j = 0; j < num_samples_2; j++)
+        {
+            // Sample function at x
+            x(0) = i*delta_x_2;
+            x(1) = j*delta_x_2;
+            y = f(x);
+
+            e_max.at(0) = std::max(e_max.at(0), std::abs(bspline1.eval(x) - y));
+            e_max.at(1) = std::max(e_max.at(1), std::abs(bspline2.eval(x) - y));
+            e_max.at(2) = std::max(e_max.at(2), std::abs(bspline3.eval(x) - y));
+            e_max.at(3) = std::max(e_max.at(3), std::abs(pspline.eval(x) - y));
+            e_max.at(4) = std::max(e_max.at(4), std::abs(rbfspline.eval(x) - y));
+
+        }
+    }
+
+    cout << endl << endl;
+    cout << "Evaluating spline errors (using max norm)  "   << endl;
+    cout << "-------------------------------------------"   << endl;
+    cout << "Linear B-spline:      "   << e_max.at(0)       << endl;
+    cout << "Quadratic B-spline:   "   << e_max.at(1)       << endl;
+    cout << "Cubic B-spline:       "   << e_max.at(2)       << endl;
+    cout << "P-spline:             "   << e_max.at(3)       << endl;
+    cout << "Thin-plate spline:    "   << e_max.at(4)       << endl;
+    cout << "-------------------------------------------"   << endl;
+    cout << endl << endl;
+
 }
 
 int main(int argc, char **argv)

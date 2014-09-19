@@ -701,20 +701,21 @@ std::vector<double> BSplineBasis1D::knotVectorRegular(std::vector<double> &X) co
 }
 
 /*
- * Free knot vector for degrees 1 and 3 only.
+ * Free knot vector for degrees 1, 2, and 3 only.
+ * The free knot vector ensure that the first and last knot is repeated p + 1 times,
+ * and that the total number of knots is n + p + 1.
  * Example for degree=3 and x={a,b,c,d,e,f,g,h}: knots={a,a,a,a,c,d,e,f,h,h,h,h}
  */
 std::vector<double> BSplineBasis1D::knotVectorFree(std::vector<double> &X) const
 {
-    // The minimum number of samples (independent of degree)
-    // from which a free knot vector can be created is 4.
-    assert(X.size() >= 4);
-
     // Copy X -> sort -> remove duplicates -> resize = a sorted vector of unique values
     std::vector<double> uniqueX(X);
     sort(uniqueX.begin(), uniqueX.end());
     std::vector<double>::iterator it = unique_copy(uniqueX.begin(), uniqueX.end(), uniqueX.begin());
     uniqueX.resize(distance(uniqueX.begin(),it));
+
+    // The minimum number of samples from which a free knot vector can be created
+    assert(uniqueX.size() >= degree+1);
 
     std::vector<double> knots;
     it = uniqueX.begin();
@@ -727,14 +728,23 @@ std::vector<double> BSplineBasis1D::knotVectorFree(std::vector<double> &X) const
 
     if(degree == 1)
     {
+        // No knots removed
         for (it = uniqueX.begin()+1; it < uniqueX.end()-1; it++)
+        {
+            knots.push_back(*it);
+        }
+    }
+    else if(degree == 2)
+    {
+        // First knot removed
+        for (it = uniqueX.begin()+2; it < uniqueX.end()-1; it++)
         {
             knots.push_back(*it);
         }
     }
     else if(degree == 3)
     {
-        // Copy all but the second and last x value
+        // First and last knot removed
         for (it = uniqueX.begin()+2; it < uniqueX.end()-2; it++)
         {
             knots.push_back(*it);
@@ -743,6 +753,7 @@ std::vector<double> BSplineBasis1D::knotVectorFree(std::vector<double> &X) const
     else
     {
         cout << "Only degree 1 and 3 is supported for free knot vectors!" << endl;
+        // Throw exception
         exit(1);
     }
 

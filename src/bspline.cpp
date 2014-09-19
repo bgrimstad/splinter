@@ -54,6 +54,11 @@ BSpline::BSpline(const DataTable &samples, BSplineType type = BSplineType::CUBIC
         std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 1);
         basis = BSplineBasis(xdata, basisDegrees, KnotVectorType::FREE);
     }
+    else if(type == BSplineType::QUADRATIC_FREE)
+    {
+        std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 2);
+        basis = BSplineBasis(xdata, basisDegrees, KnotVectorType::FREE);
+    }
     else if(type == BSplineType::CUBIC_FREE)
     {
         std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 3);
@@ -89,6 +94,7 @@ double BSpline::eval(DenseVector &x) const
     if(!valueInsideDomain(x))
     {
         cout << "Tried to evaluate B-spline outside its domain!" << endl;
+        cout << x << endl;
         return 0.0;
         // TODO: throw exception
     }

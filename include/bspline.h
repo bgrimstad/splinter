@@ -23,6 +23,7 @@ namespace MultivariateSplines
 enum class BSplineType
 {
     LINEAR,             // Piecewise linear interpolation. Interpolates all points.
+    QUADRATIC_FREE,     // Quadratic spline with free end conditions.
     //CUBIC_HERMITE,    // Cubic spline with Hermite end conditions. Interpolates all points. Not implemented.
     //CUBIC_NATURAL,    // Cubic spline with Natural end conditions. Interpolates all points. Ensures second derivative of B-spline is zero at end points. Not implemented.
     CUBIC_FREE          // Cubic spline with Free end conditions. Interpolates all points. Ensures p'th derivative continuous at x(2) and x(n-1). p+1-regular knot sequence with two deleted knots.
