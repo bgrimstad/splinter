@@ -42,7 +42,7 @@ public:
     }
 
 private:
-    double tol = 1.0 / std::numeric_limits<double>::epsilon(); // Relative error tolerance
+    double tol = 1e-12; // Relative error tolerance
 
     virtual bool doSolve(const lhs &A, const rhs &b, rhs &x) const = 0;
 
