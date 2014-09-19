@@ -47,7 +47,7 @@ public:
     unsigned int numBasisFunctions(unsigned int dim) const;
 
     double getKnotValue(int dim, int index) const;
-    unsigned int getKnotMultiplicity(const unsigned int& dim, const double &tau) const;
+    unsigned int getKnotMultiplicity(unsigned int dim, double tau) const;
     unsigned int getLargestKnotInterval(unsigned int dim) const;
 
     std::vector<int> getTensorIndexDimension() const;

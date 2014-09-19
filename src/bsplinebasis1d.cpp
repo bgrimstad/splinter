@@ -513,7 +513,7 @@ bool BSplineBasis1D::inHalfopenInterval(double x, double x_min, double x_max) co
     return (x_min <= x) && (x < x_max);
 }
 
-bool BSplineBasis1D::insideSupport(const double &x) const
+bool BSplineBasis1D::insideSupport(double x) const
 {
     return (knots.front() <= x) && (x <= knots.back());
 }

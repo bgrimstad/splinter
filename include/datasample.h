@@ -39,7 +39,7 @@ private:
     std::vector<double> x;
     double y;
 
-    void setData(const std::vector<double> &x, const double &y);
+    void setData(const std::vector<double> &x, double y);
 };
 
 } // namespace MultivariateSplines

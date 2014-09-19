@@ -43,7 +43,7 @@ public:
 
     // Support related
     void supportHack(double &x) const;
-    bool insideSupport(const double &x) const;
+    bool insideSupport(double x) const;
     bool reduceSupport(double lb, double ub, SparseMatrix &A);
 
     // Getters

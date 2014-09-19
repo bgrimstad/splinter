@@ -343,7 +343,7 @@ std::vector< std::vector<double> > BSplineBasis::getKnotVectors() const
     return knots;
 }
 
-unsigned int BSplineBasis::getKnotMultiplicity(const unsigned int& dim, const double& tau) const
+unsigned int BSplineBasis::getKnotMultiplicity(unsigned int dim, double tau) const
 {
     return bases.at(dim).knotMultiplicity(tau);
 }
