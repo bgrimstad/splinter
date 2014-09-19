@@ -322,7 +322,6 @@ void runExample()
             e_max.at(2) = std::max(e_max.at(2), std::abs(bspline3.eval(x) - y));
             e_max.at(3) = std::max(e_max.at(3), std::abs(pspline.eval(x) - y));
             e_max.at(4) = std::max(e_max.at(4), std::abs(rbfspline.eval(x) - y));
-
         }
     }
 
