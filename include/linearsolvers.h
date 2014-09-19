@@ -18,9 +18,6 @@
 namespace MultivariateSplines
 {
 
-using std::cout;
-using std::endl;
-
 template<class lhs, class rhs>
 class LinearSolver
 {

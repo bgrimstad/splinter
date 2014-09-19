@@ -11,8 +11,11 @@
 #ifndef MS_GENERALDEFINITIONS_H
 #define MS_GENERALDEFINITIONS_H
 
-#include <iostream>
-#include <iomanip>
+#ifndef NDEBUG
+    #include <iostream>
+    #include <iomanip>
+#endif // NDEBUG
+
 #include <exception>
 #include <stdexcept>
 

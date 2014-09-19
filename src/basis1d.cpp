@@ -12,9 +12,6 @@
 #include <iostream>
 #include <algorithm>
 
-using std::cout;
-using std::endl;
-
 namespace MultivariateSplines
 {
 
@@ -167,10 +164,13 @@ SparseVector Basis1D::evaluateDerivative(double x, int r) const
     }
     else
     {
-        cout << "Knot index not good!" << endl;
-        cout << knotIndex << endl;
-        cout << x << " knotseq " << knots.front() << "/" << knots.back() << endl;
-        cout << "Delta knot: " << std::setprecision(10) << knots.back()-knots.front() << endl;
+
+#ifndef NDEBUG
+        std::cout << "Knot index not good!" << std::endl;
+        std::cout << knotIndex << std::endl;
+        std::cout << x << " knotseq " << knots.front() << "/" << knots.back() << std::endl;
+        std::cout << "Delta knot: " << std::setprecision(10) << knots.back()-knots.front() << std::endl;
+#endif // NDEBUG
 
         SparseVector DB(numBasisFunctions());
         return DB;
@@ -464,9 +464,13 @@ bool Basis1D::reduceSupport(double lb, double ub, SparseMatrix &A)
         }
         else
         {
-            cout << "\n\n----------------adjust_index_for_domain_reduction-----------------" << endl;
-            cout << "Error: not enough knots to guarantee controlpoint convergence" << endl;
-            cout << "----------------adjust_index_for_domain_reduction-----------------\n\n" << endl;
+
+#ifndef NDEBUG
+            std::cout << "\n\n----------------adjust_index_for_domain_reduction-----------------" << std::endl;
+            std::cout << "Error: not enough knots to guarantee controlpoint convergence" << std::endl;
+            std::cout << "----------------adjust_index_for_domain_reduction-----------------\n\n" << std::endl;
+#endif // NDEBUG
+
             return false;
         }
     }

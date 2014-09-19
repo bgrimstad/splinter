@@ -11,6 +11,8 @@
 
 #include <string>
 #include <fstream>
+#include <iomanip>
+
 #include <stdexcept>
 #include <limits>
 
@@ -129,8 +131,11 @@ void DataTable::addSample(const DataSample &sample)
     {
         if(!allowDuplicates)
         {
+#ifndef NDEBUG
             std::cout << "Discarding duplicate sample because allowDuplicates is false!" << std::endl;
             std::cout << "Initialise with DataTable(true) to set it to true." << std::endl;
+#endif // NDEBUG
+
             return;
         }
 
@@ -375,36 +380,6 @@ void DataTable::load(std::string fileName)
     }
 
     std::locale::global(current_locale);
-}
-
-/**************
- * Debug code *
- **************/
-void DataTable::printSamples() const
-{
-    for(auto &sample : samples)
-    {
-        std::cout << sample << std::endl;
-    }
-}
-
-void DataTable::printGrid() const
-{
-    std::cout << "===== Printing grid =====" << std::endl;
-
-    unsigned int i = 0;
-    for(auto &variable : grid)
-    {
-        std::cout << "x" << i++ << "(" << variable.size() << "): ";
-        for(double value : variable)
-        {
-            std::cout << value << " ";
-        }
-        std::cout << std::endl;
-    }
-
-    std::cout << "Unique samples added: " << samples.size() << std::endl;
-    std::cout << "Samples required: " << getNumSamplesRequired() << std::endl;
 }
 
 } // namespace MultivariateSplines

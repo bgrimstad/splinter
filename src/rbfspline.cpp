@@ -12,9 +12,6 @@
 #include "include/linearsolvers.h"
 #include "Eigen/SVD"
 
-using std::cout;
-using std::endl;
-
 namespace MultivariateSplines
 {
 
@@ -63,7 +60,7 @@ RBFSpline::RBFSpline(const DataTable &samples, RadialBasisFunctionType type, boo
      */
     //SparseMatrix A(numSamples,numSamples);
     //A.reserve(numSamples*numSamples);
-    DenseMatrix A; A.setZero(numSamples,numSamples);
+    DenseMatrix A; A.setZero(numSamples, numSamples);
     DenseMatrix b; b.setZero(numSamples,1);
 
     int i=0;
@@ -103,7 +100,9 @@ RBFSpline::RBFSpline(const DataTable &samples, RadialBasisFunctionType type, boo
         b = bp;
     }
 
-    cout << "Computing RBF weights using dense solver." << endl;
+#ifndef NDEBUG
+    std::cout << "Computing RBF weights using dense solver." << std::endl;
+#endif // NDEBUG
 
     // SVD analysis
     Eigen::JacobiSVD<DenseMatrix> svd(A, Eigen::ComputeThinU | Eigen::ComputeThinV);
@@ -111,15 +110,20 @@ RBFSpline::RBFSpline(const DataTable &samples, RadialBasisFunctionType type, boo
     double svalmax = svals(0);
     double svalmin = svals(svals.rows()-1);
     double rcondnum = (svalmax <= 0.0 || svalmin <= 0.0) ? 0.0 : svalmin/svalmax;
-    //cout << "The reciprocal of the condition number is: " << rcondnum << endl;
-    //cout << "Largest/smallest singular value: " << svalmax << " / " << svalmin << endl;
+
+#ifndef NDEBUG
+    std::cout << "The reciprocal of the condition number is: " << rcondnum << std::endl;
+    std::cout << "Largest/smallest singular value: " << svalmax << " / " << svalmin << std::endl;
+#endif // NDEBUG
 
     // Solve for weights
     weights = svd.solve(b);
 
-    // Compute error
+#ifndef NDEBUG
+    // Compute error. If it is used later on, move this statement above the NDEBUG
     double err = (A*weights - b).norm() / b.norm();
-    cout << "Error: " << err << endl;
+    std::cout << "Error: " << std::setprecision(10) << err << std::endl;
+#endif // NDEBUG
 
 //    // Alternative solver
 //    DenseQR s;
@@ -140,7 +144,7 @@ double RBFSpline::eval(DenseVector &x) const
 double RBFSpline::eval(std::vector<double> &x) const
 {
     assert(x.size() == dim);
-    double fval, sum=0, sumw=0;
+    double fval, sum = 0, sumw = 0;
     int i = 0;
     std::multiset<DataSample>::const_iterator it;
     for (it = samples.cbegin(); it != samples.cend(); ++it, ++i)
