@@ -385,7 +385,7 @@ int BSplineBasis::supportedPrInterval() const
     return ret;
 }
 
-bool BSplineBasis::valueInsideSupport(DenseVector &x) const
+bool BSplineBasis::insideSupport(DenseVector &x) const
 {
     if(x.size() != numVariables)
     {

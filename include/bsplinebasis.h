@@ -54,7 +54,7 @@ public:
     std::vector<int> getTensorIndexDimensionTarget() const;
     int supportedPrInterval() const;
 
-    bool valueInsideSupport(DenseVector &x) const;
+    bool insideSupport(DenseVector &x) const;
     std::vector<double> getSupportLowerBound() const;
     std::vector<double> getSupportUpperBound() const;
 

@@ -101,7 +101,7 @@ private:
     bool refineKnotSequences(); // All knots in one shabang
 
     // Helper functions
-    bool valueInsideDomain(DenseVector x) const;
+    bool pointInDomain(DenseVector x) const;
 
 };
 

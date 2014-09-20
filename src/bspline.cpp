@@ -88,14 +88,15 @@ void BSpline::init()
 
 double BSpline::eval(DenseVector &x) const
 {
-    if(!valueInsideDomain(x))
+    if(!pointInDomain(x))
     {
 #ifndef NDEBUG
-        std::cout << "Tried to evaluate B-spline outside its domain!" << std::endl;
-        std::cout << x << std::endl;
+        std::cout << "BSpline::eval: Tried to evaluate B-spline outside its domain!" << std::endl;
 #endif // NDEBUG
 
-        throw Exception("BSpline::eval: Tried to evaluate B-spline outside its domain!");
+        //throw Exception("BSpline::eval: Tried to evaluate B-spline outside its domain!");
+        // Return zero
+        return 0.0;
     }
 
     SparseVector tensorvalues = basis.eval(x);
@@ -110,41 +111,41 @@ double BSpline::eval(DenseVector &x) const
  */
 DenseMatrix BSpline::evalJacobian(DenseVector &x) const
 {
-    if(valueInsideDomain(x))
-    {
-//        Timer timer;
-//        timer.start();
-
-        DenseMatrix Bi = basis.evalBasisJacobianOld(x);
-//        timer.stop();
-//        cout << "Time old Jacobian: " << timer.getMicroSeconds() << endl;
-//        timer.reset();
-//        timer.start();
-//        SparseMatrix Ji = basis.evaluateBasisJacobian(x);
-//        timer.stop();
-//        cout << "Time new Jacobian: " << timer.getMicroSeconds() << endl;
-        // New Jacobian is about 5 times slower at this point...
-
-//        // Test difference in Jacobians
-//        DenseMatrix dJ = Bi - Ji;
-//        DenseVector errorVec = dJ.rowwise().maxCoeff();
-//        DenseVector error = errorVec.colwise().maxCoeff();
-
-//        if (abs(error(0)) > 1e-10) cout << "NOTABLE DIFFERENCE IN JACOBIANS: " << abs(error(0)) << endl;
-//        cout << abs(error(0)) << endl;
-//        assert(abs(error(0)) < 1e-10);
-
-        return coefficients*Bi;
-    }
-    else
+    if(!pointInDomain(x))
     {
 #ifndef NDEBUG
-        std::cout << "Warning: evaluating Jacobian outside domain!" << std::endl;
+        std::cout << "BSpline::eval: Tried to evaluate Jacobian outside the B-spline domain!"<< std::endl;
 #endif // NDEBUG
+
+        // Return zero vector
         DenseMatrix y;
         y.setZero(1, numVariables);
         return y;
     }
+
+//    Timer timer;
+//    timer.start();
+
+    DenseMatrix Bi = basis.evalBasisJacobianOld(x);
+//    timer.stop();
+//    cout << "Time old Jacobian: " << timer.getMicroSeconds() << endl;
+//    timer.reset();
+//    timer.start();
+//    SparseMatrix Ji = basis.evaluateBasisJacobian(x);
+//    timer.stop();
+//    cout << "Time new Jacobian: " << timer.getMicroSeconds() << endl;
+//    // New Jacobian is about 5 times slower at this point...
+
+//    // Test difference in Jacobians
+//    DenseMatrix dJ = Bi - Ji;
+//    DenseVector errorVec = dJ.rowwise().maxCoeff();
+//    DenseVector error = errorVec.colwise().maxCoeff();
+
+//    if (abs(error(0)) > 1e-10) cout << "NOTABLE DIFFERENCE IN JACOBIANS: " << abs(error(0)) << endl;
+//    cout << abs(error(0)) << endl;
+//    assert(abs(error(0)) < 1e-10);
+
+    return coefficients*Bi;
 }
 
 /*
@@ -154,27 +155,26 @@ DenseMatrix BSpline::evalJacobian(DenseVector &x) const
  */
 DenseMatrix BSpline::evalHessian(DenseVector &x) const
 {
-    if(valueInsideDomain(x))
-    {
-        DenseMatrix H;
-        H.setZero(1,1);
-        DenseMatrix identity = DenseMatrix::Identity(numVariables,numVariables);
-        DenseMatrix caug;
-        caug = kroneckerProduct(identity, coefficients);
-        DenseMatrix DB = basis.evalBasisHessian(x);
-        H = caug*DB;
-        return H;
-    }
-    else
+    if(!pointInDomain(x))
     {
 #ifndef NDEBUG
-        std::cout << "Warning: evaluating Hessian outside domain!" << std::endl;
+        std::cout << "BSpline::eval: Tried to evaluate Hessian outside the B-spline domain!"<< std::endl;
 #endif // NDEBUG
 
+        // Return zero matrix
         DenseMatrix y;
         y.setZero(numVariables, numVariables);
         return y;
     }
+
+    DenseMatrix H;
+    H.setZero(1,1);
+    DenseMatrix identity = DenseMatrix::Identity(numVariables,numVariables);
+    DenseMatrix caug;
+    caug = kroneckerProduct(identity, coefficients);
+    DenseMatrix DB = basis.evalBasisHessian(x);
+    H = caug*DB;
+    return H;
 }
 
 std::vector< std::vector<double> > BSpline::getKnotVectors() const
@@ -222,9 +222,9 @@ bool BSpline::checkControlPoints() const
     return true;
 }
 
-bool BSpline::valueInsideDomain(DenseVector x) const
+bool BSpline::pointInDomain(DenseVector x) const
 {
-    return basis.valueInsideSupport(x);
+    return basis.insideSupport(x);
 }
 
 bool BSpline::reduceDomain(std::vector<double> lb, std::vector<double> ub, bool regularKnotsequences, bool refineKnotsequences)
