@@ -416,9 +416,7 @@ int BSplineBasis1D::indexHalfopenInterval(double x) const
 {
     if(x < knots.front() || x > knots.back())
     {
-        // TODO: throw an exception
-        cout << "x outside knot interval!" << endl;
-        return -99;
+        throw Exception("BSplineBasis1D::indexHalfopenInterval: x outside knot interval!");
     }
 
     // Find first knot that is larger than x
@@ -501,9 +499,10 @@ bool BSplineBasis1D::reduceSupport(double lb, double ub, SparseMatrix &A)
 
 double BSplineBasis1D::getKnotValue(unsigned int index) const
 {
-    // TODO: throw exception here
     if(index >= knots.size())
-        return knots.back();
+    {
+        throw Exception("BSplineBasis1D:getKnotValue: Invalid knot index - Out of Range");
+    }
 
     return knots.at(index);
 }
@@ -757,7 +756,7 @@ std::vector<double> BSplineBasis1D::knotVectorFree(std::vector<double> &X) const
     }
     else
     {
-        throw Exception("Basis1D::knotVectorFree: Only degree 1 and 3 is supported for free knot vectors!");
+        throw Exception("BSplineBasis1D::knotVectorFree: Only degree 1 and 3 is supported for free knot vectors!");
     }
 
     // Repeat last x value p + 1 times (for interpolation of end point)
