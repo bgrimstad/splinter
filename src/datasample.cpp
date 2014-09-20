@@ -35,7 +35,7 @@ DataSample::DataSample(DenseVector x, double y)
     setData(newX, y);
 }
 
-void DataSample::setData(const std::vector<double> &x, const double &y)
+void DataSample::setData(const std::vector<double> &x, double y)
 {
     this->x = x;
     this->y = y;

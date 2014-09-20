@@ -59,25 +59,25 @@ include_directories(${EIGEN_DIRECTORY})
 # These are the sources we need for compilation
 #aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/src SRC_LIST)
 set(SRC_LIST
-    include/basis.h
-    include/basis1d.h
+    include/spline.h
     include/bspline.h
+    include/bsplinebasis.h
+    include/bsplinebasis1d.h
+    include/pspline.h
+    include/rbfspline.h
     include/datasample.h
     include/datatable.h
     include/generaldefinitions.h
     include/linearsolvers.h
     include/mykroneckerproduct.h
-    include/pspline.h
-    include/rbfspline.h
-    include/spline.h
-    src/basis.cpp
-    src/basis1d.cpp
     src/bspline.cpp
+    src/bsplinebasis.cpp
+    src/bsplinebasis1d.cpp
+    src/pspline.cpp
+    src/rbfspline.cpp
     src/datasample.cpp
     src/datatable.cpp
     src/mykroneckerproduct.cpp
-    src/pspline.cpp
-    src/rbfspline.cpp
 )
 
 # Add output library: add_library(libname [SHARED | STATIC] sourcelist)

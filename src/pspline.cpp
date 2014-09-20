@@ -31,7 +31,7 @@ PSpline::PSpline(const DataTable &samples, double lambda)
 
     // Assuming a cubic spline
     std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 3);
-    basis = Basis(xdata, basisDegrees, KnotVectorType::FREE);
+    basis = BSplineBasis(xdata, basisDegrees, KnotVectorType::FREE);
     computeControlPoints(samples);
 
     init();

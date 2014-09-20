@@ -12,17 +12,17 @@
 #define MS_BSPLINEBASIS_H
 
 #include "generaldefinitions.h"
-#include "basis1d.h"
+#include "bsplinebasis1d.h"
 
 namespace MultivariateSplines
 {
 
-class Basis
+class BSplineBasis
 {
 public:
-    Basis();
-    Basis(std::vector< std::vector<double> > &X, std::vector<unsigned int> basisDegrees);
-    Basis(std::vector< std::vector<double> > &X, std::vector<unsigned int> basisDegrees, KnotVectorType knotVectorType);
+    BSplineBasis();
+    BSplineBasis(std::vector< std::vector<double> > &X, std::vector<unsigned int> basisDegrees);
+    BSplineBasis(std::vector< std::vector<double> > &X, std::vector<unsigned int> basisDegrees, KnotVectorType knotVectorType);
 
     void setUnivariateBases(std::vector< std::vector<double> > &X, std::vector<unsigned int> &basisDegrees, KnotVectorType knotVectorType);
 
@@ -38,7 +38,7 @@ public:
     //bool insertKnots(SparseMatrix &A, std::vector<std::tuple<double,int,int>> tau, unsigned int dim, unsigned int multiplicity = 1);
 
     // Getters
-    Basis1D getSingleBasis(int dim);
+    BSplineBasis1D getSingleBasis(int dim);
     std::vector< std::vector<double> > getKnotVectors() const;
     std::vector<double> getKnotVector(int dim) const;
 
@@ -47,7 +47,7 @@ public:
     unsigned int numBasisFunctions(unsigned int dim) const;
 
     double getKnotValue(int dim, int index) const;
-    unsigned int getKnotMultiplicity(const unsigned int& dim, const double &tau) const;
+    unsigned int getKnotMultiplicity(unsigned int dim, double tau) const;
     unsigned int getLargestKnotInterval(unsigned int dim) const;
 
     std::vector<int> getTensorIndexDimension() const;
@@ -62,7 +62,7 @@ public:
     bool reduceSupport(std::vector<double>& lb, std::vector<double>& ub, SparseMatrix &A);
 
 private:
-    std::vector<Basis1D> bases;
+    std::vector<BSplineBasis1D> bases;
     unsigned int numVariables;
 };
 

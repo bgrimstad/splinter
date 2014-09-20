@@ -24,14 +24,14 @@ enum class KnotVectorType
     EQUIDISTANT // Equidistant p+1-regular knot sequence for all degrees
 };
 
-class Basis1D
+class BSplineBasis1D
 {
 public:
-    Basis1D(std::vector<double> &x, unsigned int degree);
-    Basis1D(std::vector<double> &x, unsigned int degree, KnotVectorType knotVectorType);
+    BSplineBasis1D(std::vector<double> &x, unsigned int degree);
+    BSplineBasis1D(std::vector<double> &x, unsigned int degree, KnotVectorType knotVectorType);
 
     // Evaluation of basis functions
-    SparseVector evaluate(const double x) const;
+    SparseVector evaluate(double x) const;
     SparseVector evaluateDerivative(double x, int r) const;
     DenseVector evaluateFirstDerivative(double x) const; // Depricated
 
@@ -39,10 +39,11 @@ public:
     bool refineKnots(SparseMatrix &A);
     bool insertKnots(SparseMatrix &A, double tau, unsigned int multiplicity = 1);
     // bool insertKnots(SparseMatrix &A, std::vector<tuple<double,int>> newKnots); // Add knots at several locations
-    unsigned int knotMultiplicity(const double &tau) const; // Returns the number of repetitions of tau in the knot vector
+    unsigned int knotMultiplicity(double tau) const; // Returns the number of repetitions of tau in the knot vector
 
     // Support related
-    bool insideSupport(const double &x) const;
+    void supportHack(double &x) const;
+    bool insideSupport(double x) const;
     bool reduceSupport(double lb, double ub, SparseMatrix &A);
 
     // Getters
