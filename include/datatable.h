@@ -14,6 +14,8 @@
 #include <set>
 #include "datasample.h"
 
+#include <ostream>
+
 namespace MultivariateSplines
 {
 
@@ -60,8 +62,34 @@ public:
     /*
      * Debug
      */
-    void printSamples() const;  // Print point and values for all samples
-    void printGrid() const;     // Print the grid (that we know of so far)
+    template <typename _Char>
+    void printSamples(std::basic_ostream<_Char>& out) const
+    {
+        for(auto &sample : samples)
+        {
+            out << sample << std::endl;
+        }
+    }
+
+    template <typename _Char>
+    void printGrid(std::basic_ostream<_Char>& out) const
+    {
+        out << "===== Printing grid =====" << std::endl;
+
+        unsigned int i = 0;
+        for(auto &variable : grid)
+        {
+            out << 'x' << i++ << '(' << variable.size() << "): ";
+            for(double value : variable)
+            {
+                out << value << ' ';
+            }
+            out << std::endl;
+        }
+
+        out << "Unique samples added: " << samples.size() << std::endl;
+        out << "Samples required: " << getNumSamplesRequired() << std::endl;
+    }
 
     bool isGridComplete() const;
 

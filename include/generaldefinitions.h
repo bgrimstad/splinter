@@ -11,8 +11,13 @@
 #ifndef MS_GENERALDEFINITIONS_H
 #define MS_GENERALDEFINITIONS_H
 
-#include <iostream>
-#include <iomanip>
+#ifndef NDEBUG
+    #include <iostream>
+    #include <iomanip>
+#endif // NDEBUG
+
+#include <exception>
+#include <stdexcept>
 
 #include <vector>
 #include <Eigen/Dense>
@@ -28,6 +33,24 @@ typedef Eigen::SparseVector<double> SparseVector;
 // Eigen matrices
 typedef Eigen::MatrixXd DenseMatrix;
 typedef Eigen::SparseMatrix<double> SparseMatrix; // declares a column-major sparse matrix type of double
+
+class Exception : public std::exception
+{
+private:
+    std::string __what;
+
+public:
+
+    Exception(const std::string& what)
+        : __what(what)
+    {
+    }
+
+    const char* what() const throw()
+    {
+        return this->__what.c_str();
+    }
+};
 
 } // namespace MultivariateSplines
 

@@ -5,3 +5,7 @@ test*.datatable
 *.a
 .idea/
 build/
+*.cbp
+*.save
+*.layout
+*.depends

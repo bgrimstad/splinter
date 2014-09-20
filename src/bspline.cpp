@@ -16,9 +16,6 @@
 
 #include <iostream>
 
-using std::cout;
-using std::endl;
-
 namespace MultivariateSplines
 {
 
@@ -93,10 +90,12 @@ double BSpline::eval(DenseVector &x) const
 {
     if(!valueInsideDomain(x))
     {
-        cout << "Tried to evaluate B-spline outside its domain!" << endl;
-        cout << x << endl;
-        return 0.0;
-        // TODO: throw exception
+#ifndef NDEBUG
+        std::cout << "Tried to evaluate B-spline outside its domain!" << std::endl;
+        std::cout << x << std::endl;
+#endif // NDEBUG
+
+        throw Exception("BSpline::eval: Tried to evaluate B-spline outside its domain!");
     }
 
     SparseVector tensorvalues = basis.eval(x);
@@ -139,7 +138,9 @@ DenseMatrix BSpline::evalJacobian(DenseVector &x) const
     }
     else
     {
-        cout << "Warning: evaluating Jacobian outside domain!" << endl;
+#ifndef NDEBUG
+        std::cout << "Warning: evaluating Jacobian outside domain!" << std::endl;
+#endif // NDEBUG
         DenseMatrix y;
         y.setZero(1, numVariables);
         return y;
@@ -166,7 +167,10 @@ DenseMatrix BSpline::evalHessian(DenseVector &x) const
     }
     else
     {
-        cout << "Warning: evaluating Hessian outside domain!" << endl;
+#ifndef NDEBUG
+        std::cout << "Warning: evaluating Hessian outside domain!" << std::endl;
+#endif // NDEBUG
+
         DenseMatrix y;
         y.setZero(numVariables, numVariables);
         return y;
@@ -236,10 +240,9 @@ bool BSpline::reduceDomain(std::vector<double> lb, std::vector<double> ub, bool 
 
     for(unsigned int dim = 0; dim < numVariables; dim++)
     {
-        if(ub.at(dim) - lb.at(dim) <  minDistance)
+        if(ub.at(dim) - lb.at(dim) < minDistance)
         {
-            cout << "Cannot reduce B-spline domain: inconsistent bounds!" << endl;
-            return false;
+            throw Exception("BSpline::reduceDomain: Cannot reduce B-spline domain: inconsistent bounds!");
         }
         if(su.at(dim) - ub.at(dim) > minDistance)
         {
@@ -256,32 +259,21 @@ bool BSpline::reduceDomain(std::vector<double> lb, std::vector<double> ub, bool 
 
     if(isStrictSubset)
     {
-        if (regularKnotsequences)
+        if (regularKnotsequences && !regularSequences(sl, su))
         {
-            if (!regularSequences(sl, su))
-            {
-                cout << "Failed to regularize knot vectors!" << endl;
-                exit(1);
-                return false;
-            }
+            throw Exception("BSpline::reduceDomain: Failed to regularize knot vectors!");
         }
 
         // Remove knots and control points that are unsupported with the new bounds
         if(!removeUnsupportedBasisFunctions(sl, su))
         {
-            cout << "Failed to remove unsupported basis functions!" << endl;
-            exit(1);
+            throw Exception("BSpline::reduceDomain: Failed to remove unsupported basis functions!");
         }
 
         // Refine knots
-        if(refineKnotsequences)
+        if(refineKnotsequences && !refineKnotSequences())
         {
-            if(!refineKnotSequences())
-            {
-                cout << "Failed to refine knot vectors!" << endl;
-                exit(1);
-                return false;
-            }
+            throw Exception("BSpline::reduceDomain: Failed to refine knot vectors!");
         }
     }
 
@@ -366,7 +358,10 @@ void BSpline::computeControlPoints(const DataTable &samples)
 
     if(!solveAsDense)
     {
-        cout << "Computing B-spline control points using sparse solver." << endl;
+#ifndef NDEBUG
+        std::cout << "Computing B-spline control points using sparse solver." << std::endl;
+#endif // NDEBUG
+
         SparseLU s;
         bool successfulSolve = (s.solve(A,Bx,Cx) && s.solve(A,By,Cy));
 
@@ -375,15 +370,17 @@ void BSpline::computeControlPoints(const DataTable &samples)
 
     if(solveAsDense)
     {
-        cout << "Computing B-spline control points using dense solver." << endl;
+#ifndef NDEBUG
+        std::cout << "Computing B-spline control points using dense solver." << std::endl;
+#endif // NDEBUG
+
         DenseMatrix Ad = A.toDense();
         DenseQR s;
         bool successfulSolve = (s.solve(Ad,Bx,Cx) && s.solve(Ad,By,Cy));
         if(!successfulSolve)
         {
-            cout << "Failed to solve for B-spline coefficients." << endl;
+            throw Exception("BSpline::computeControlPoints: Failed to solve for B-spline coefficients.");
         }
-        assert(successfulSolve);
     }
 
     coefficients = Cy.transpose();

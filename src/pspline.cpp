@@ -87,7 +87,10 @@ void PSpline::computeControlPoints(const DataTable &samples)
 
     if (!solveAsDense)
     {
-        cout << "Computing B-spline control points using sparse solver." << endl;
+#ifndef NDEBUG
+        std::cout << "Computing B-spline control points using sparse solver." << std::endl;
+#endif // NDEBUG
+
         SparseLU s;
         bool successfulSolve = (s.solve(L,Rx,Cx) && s.solve(L,Ry,Cy));
 
@@ -96,15 +99,18 @@ void PSpline::computeControlPoints(const DataTable &samples)
 
     if (solveAsDense)
     {
-        cout << "Computing B-spline control points using dense solver." << endl;
+#ifndef NDEBUG
+        std::cout << "Computing B-spline control points using dense solver." << std::endl;
+#endif // NDEBUG
+
         DenseMatrix Ld = L.toDense();
         DenseQR s;
-        bool successfulSolve = (s.solve(Ld,Rx,Cx) && s.solve(Ld,Ry,Cy));
+        bool successfulSolve = s.solve(Ld, Rx, Cx) && s.solve(Ld, Ry, Cy);
+
         if(!successfulSolve)
         {
-            cout << "Failed to solve for B-spline coefficients." << endl;
+            throw Exception("PSpline::computeControlPoints: Failed to solve for B-spline coefficients.");
         }
-        assert(successfulSolve);
     }
 
     coefficients = Cy.transpose();

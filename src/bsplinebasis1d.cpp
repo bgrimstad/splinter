@@ -12,9 +12,6 @@
 #include <iostream>
 #include <algorithm>
 
-using std::cout;
-using std::endl;
-
 namespace MultivariateSplines
 {
 
@@ -156,10 +153,14 @@ SparseVector BSplineBasis1D::evaluateDerivative(double x, int r) const
     }
     else
     {
-        cout << "Knot index not good!" << endl;
-        cout << knotIndex << endl;
-        cout << x << " knotseq " << knots.front() << "/" << knots.back() << endl;
-        cout << "Delta knot: " << std::setprecision(10) << knots.back()-knots.front() << endl;
+
+#ifndef NDEBUG
+        std::cout << "Knot index not good!" << std::endl;
+        std::cout << knotIndex << std::endl;
+        std::cout << x << " knotseq " << knots.front() << "/" << knots.back() << std::endl;
+        std::cout << "Delta knot: " << std::setprecision(10) << knots.back()-knots.front() << std::endl;
+#endif // NDEBUG
+
         SparseVector DB(numBasisFunctions());
         return DB;
     }
@@ -415,9 +416,7 @@ int BSplineBasis1D::indexHalfopenInterval(double x) const
 {
     if(x < knots.front() || x > knots.back())
     {
-        // TODO: throw an exception
-        cout << "x outside knot interval!" << endl;
-        return -99;
+        throw Exception("BSplineBasis1D::indexHalfopenInterval: x outside knot interval!");
     }
 
     // Find first knot that is larger than x
@@ -461,9 +460,13 @@ bool BSplineBasis1D::reduceSupport(double lb, double ub, SparseMatrix &A)
         }
         else
         {
-            cout << "\n\n----------------adjust_index_for_domain_reduction-----------------" << endl;
-            cout << "Error: not enough knots to guarantee controlpoint convergence" << endl;
-            cout << "----------------adjust_index_for_domain_reduction-----------------\n\n" << endl;
+
+#ifndef NDEBUG
+            std::cout << "\n\n----------------adjust_index_for_domain_reduction-----------------" << std::endl;
+            std::cout << "Error: not enough knots to guarantee controlpoint convergence" << std::endl;
+            std::cout << "----------------adjust_index_for_domain_reduction-----------------\n\n" << std::endl;
+#endif // NDEBUG
+
             return false;
         }
     }
@@ -496,9 +499,10 @@ bool BSplineBasis1D::reduceSupport(double lb, double ub, SparseMatrix &A)
 
 double BSplineBasis1D::getKnotValue(unsigned int index) const
 {
-    // TODO: throw exception here
     if(index >= knots.size())
-        return knots.back();
+    {
+        throw Exception("BSplineBasis1D:getKnotValue: Invalid knot index - Out of Range");
+    }
 
     return knots.at(index);
 }
@@ -752,9 +756,7 @@ std::vector<double> BSplineBasis1D::knotVectorFree(std::vector<double> &X) const
     }
     else
     {
-        cout << "Only degree 1 and 3 is supported for free knot vectors!" << endl;
-        // Throw exception
-        exit(1);
+        throw Exception("BSplineBasis1D::knotVectorFree: Only degree 1 and 3 is supported for free knot vectors!");
     }
 
     // Repeat last x value p + 1 times (for interpolation of end point)
