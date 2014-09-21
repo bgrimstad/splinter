@@ -20,13 +20,13 @@ namespace MultivariateSplines
 {
 
 // Constructor for explicitly given multivariate B-splines
-BSpline::BSpline(DenseMatrix coefficients, std::vector< std::vector<double> > knotSequences, std::vector<unsigned int> basisDegrees)
+BSpline::BSpline(DenseMatrix coefficients, std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees)
     : coefficients(coefficients)
 {
-    numVariables = knotSequences.size();
+    numVariables = knotVectors.size();
     assert(coefficients.rows() == 1);
 
-    basis = BSplineBasis(knotSequences, basisDegrees, KnotVectorType::EXPLICIT);
+    basis = BSplineBasis(knotVectors, basisDegrees, KnotVectorType::EXPLICIT);
 
     computeKnotAverages();
 
@@ -81,7 +81,7 @@ void BSpline::init()
     bool initialKnotRefinement = false;
     if(initialKnotRefinement)
     {
-        refineKnotSequences();
+        refineKnotVectors();
         checkControlPoints();
     }
 }
@@ -94,7 +94,6 @@ double BSpline::eval(DenseVector &x) const
         std::cout << "BSpline::eval: Tried to evaluate B-spline outside its domain!" << std::endl;
 #endif // NDEBUG
 
-        //throw Exception("BSpline::eval: Tried to evaluate B-spline outside its domain!");
         // Return zero
         return 0.0;
     }
@@ -227,7 +226,7 @@ bool BSpline::pointInDomain(DenseVector x) const
     return basis.insideSupport(x);
 }
 
-bool BSpline::reduceDomain(std::vector<double> lb, std::vector<double> ub, bool regularKnotsequences, bool refineKnotsequences)
+bool BSpline::reduceDomain(std::vector<double> lb, std::vector<double> ub, bool doRegularizeKnotVectors, bool doRefineKnotVectors)
 {
     if(lb.size() != numVariables || ub.size() != numVariables)
         return false;
@@ -261,7 +260,7 @@ bool BSpline::reduceDomain(std::vector<double> lb, std::vector<double> ub, bool 
 
     if(isStrictSubset)
     {
-        if (regularKnotsequences && !regularSequences(sl, su))
+        if (doRegularizeKnotVectors && !regularizeKnotVectors(sl, su))
         {
             throw Exception("BSpline::reduceDomain: Failed to regularize knot vectors!");
         }
@@ -273,7 +272,7 @@ bool BSpline::reduceDomain(std::vector<double> lb, std::vector<double> ub, bool 
         }
 
         // Refine knots
-        if(refineKnotsequences && !refineKnotSequences())
+        if(doRefineKnotVectors && !refineKnotVectors())
         {
             throw Exception("BSpline::reduceDomain: Failed to refine knot vectors!");
         }
@@ -461,7 +460,7 @@ bool BSpline::insertKnots(double tau, unsigned int dim, unsigned int multiplicit
     return true;
 }
 
-bool BSpline::refineKnotSequences()
+bool BSpline::refineKnotVectors()
 {
     // Compute knot insertion matrix
     SparseMatrix A;
@@ -477,9 +476,8 @@ bool BSpline::refineKnotSequences()
 }
 
 // NOTE: Do this lower in the hierarchy so that all knots can be added at once
-bool BSpline::regularSequences(std::vector<double> &lb, std::vector<double> &ub)
+bool BSpline::regularizeKnotVectors(std::vector<double> &lb, std::vector<double> &ub)
 {
-//    assert(checkBsplinedata(knotsequences, controlpoints));
     // Add and remove controlpoints and knots to make the b-spline p-regular with support [lb, ub]
     if(!(lb.size() == numVariables && ub.size() == numVariables))
         return false;
@@ -520,7 +518,6 @@ bool BSpline::regularSequences(std::vector<double> &lb, std::vector<double> &ub)
 //        }
     }
 
-//    assert(checkBsplinedata(knotsequences, controlpoints));
     return true;
 }
 

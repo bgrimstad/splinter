@@ -37,10 +37,10 @@ class BSpline : public Spline
 {
 public:
 
-    // Construct B-spline from knot sequences, control coefficients (assumed vectorized), and basis degrees
-    //Bspline(std::vector<double> coefficients, std::vector<double> knotSequence, unsigned int basisDegrees);
-    //Bspline(std::vector<double> coefficients, std::vector< std::vector<double> > knotSequences, std::vector<unsigned int> basisDegrees);
-    BSpline(DenseMatrix coefficients, std::vector< std::vector<double> > knotSequences, std::vector<unsigned int> basisDegrees);
+    // Construct B-spline from knot vectors, control coefficients (assumed vectorized), and basis degrees
+    //Bspline(std::vector<double> coefficients, std::vector<double> knotVectors, unsigned int basisDegrees);
+    //Bspline(std::vector<double> coefficients, std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees);
+    BSpline(DenseMatrix coefficients, std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees);
 
     // Construct B-spline that interpolates the samples in DataTable
     //BSpline(DataTable &samples, unsigned int basisDegree);
@@ -71,7 +71,7 @@ public:
     bool checkControlPoints() const;
 
     // B-spline operations
-    bool reduceDomain(std::vector<double> lb, std::vector<double> ub, bool regularKnotsequences = true, bool refineKnotsequences = false);
+    bool reduceDomain(std::vector<double> lb, std::vector<double> ub, bool doRegularizeKnotVectors = true, bool doRefineKnotVectors = false);
 
     bool insertKnots(double tau, unsigned int dim, unsigned int multiplicity = 1); // TODO: move back to private
 
@@ -94,11 +94,11 @@ protected:
 private:
 
     // Domain reduction
-    bool regularSequences(std::vector<double> &lb, std::vector<double> &ub);
+    bool regularizeKnotVectors(std::vector<double> &lb, std::vector<double> &ub);
     bool removeUnsupportedBasisFunctions(std::vector<double> &lb, std::vector<double> &ub);
 
     // Knot insertion and refinement
-    bool refineKnotSequences(); // All knots in one shabang
+    bool refineKnotVectors(); // All knots in one shabang
 
     // Helper functions
     bool pointInDomain(DenseVector x) const;
