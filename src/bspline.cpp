@@ -122,27 +122,19 @@ DenseMatrix BSpline::evalJacobian(DenseVector &x) const
         return y;
     }
 
-//    Timer timer;
-//    timer.start();
-
-    DenseMatrix Bi = basis.evalBasisJacobianOld(x);
-//    timer.stop();
-//    cout << "Time old Jacobian: " << timer.getMicroSeconds() << endl;
-//    timer.reset();
-//    timer.start();
-//    SparseMatrix Ji = basis.evalBasisJacobian(x);
-//    timer.stop();
-//    cout << "Time new Jacobian: " << timer.getMicroSeconds() << endl;
-//    // New Jacobian is about 5 times slower at this point...
+    DenseMatrix Bi = basis.evalBasisJacobianOld(x); // Old Jacobian implementation
+    //SparseMatrix Ji = basis.evalBasisJacobian(x);   // New Jacobian implementation
 
 //    // Test difference in Jacobians
-//    DenseMatrix dJ = Bi - Ji;
+//    DenseMatrix Jid(Ji);
+//    DenseMatrix dJ = Bi - Jid;
 //    DenseVector errorVec = dJ.rowwise().maxCoeff();
 //    DenseVector error = errorVec.colwise().maxCoeff();
-
-//    if (abs(error(0)) > 1e-10) cout << "NOTABLE DIFFERENCE IN JACOBIANS: " << abs(error(0)) << endl;
-//    cout << abs(error(0)) << endl;
-//    assert(abs(error(0)) < 1e-10);
+//    if (std::abs(error(0)) > 1e-10)
+//    {
+//        std::cout << "NOTABLE DIFFERENCE IN JACOBIANS: " << std::abs(error(0)) << std::endl;
+//        exit(1);
+//    }
 
     return coefficients*Bi;
 }

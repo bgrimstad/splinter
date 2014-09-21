@@ -128,13 +128,11 @@ SparseVector BSplineBasis1D::evaluateDerivative(double x, int r) const
     // From row vector to extended column vector
     SparseVector DB(numBasisFunctions());
     DB.reserve(p+1);
-    int i = knotIndex-p;
+    int i = knotIndex-p; // First insertion index
     for(int k = 0; k < B.outerSize(); ++k)
     for(SparseMatrix::InnerIterator it(B,k); it; ++it)
     {
-        if(it.value() != 0)
-            DB.insert(i) = it.value();
-        i++;
+        DB.insert(i+it.col()) = it.value();
     }
 
     return DB;
@@ -212,26 +210,14 @@ SparseMatrix BSplineBasis1D::buildBasisMatrix(double x, unsigned int u, unsigned
             }
             else
             {
-                /*
-                 * TODO: Something funny happens here!
-                 * When the if-sentences are included
-                 * the knot insertion algorithm becomes incorrect...
-                 * This is strange because the matrix is sparse:
-                 * inserting or not inserting a zero element
-                 * should not change the matrix!
-                 * NOTE: The basis matrix is only used by
-                 * the knot insertion algorithm
-                 * which is used by the domain reduction algorithm...
-                 */
-
                 // Insert diagonal element
                 double a = (knots.at(u+1+i) - x)/dk;
-                //if(a != 0)
+                if(a != 0)
                     R.insert(i,i) = a;
 
                 // Insert super-diagonal element
                 double b = (x - knots.at(u+1+i-k))/dk;
-                //if(b != 0)
+                if(b != 0)
                     R.insert(i,i+1) = b;
             }
         }
@@ -366,13 +352,11 @@ bool BSplineBasis1D::buildKnotInsertionMatrix(SparseMatrix &A, const std::vector
         }
 
         // Insert row values
-        int j = u-degree;
+        int j = u-degree; // First insertion index
         for(int k = 0; k < R.outerSize(); ++k)
         for(SparseMatrix::InnerIterator it(R,k); it; ++it)
         {
-            if(it.value() != 0)
-                A.insert(i,j) = it.value(); //insert
-            j++;
+            A.insert(i,j+it.col()) = it.value();
         }
     }
 
