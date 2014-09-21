@@ -66,7 +66,7 @@ private:
     double deBoorCoxCoeff(double x, double x_min, double x_max) const;
 
     // Builds basis matrix for alternative evaluation of basis functions
-    SparseMatrix buildBasisMatrix(double x, int u, int k, bool diff = false) const;
+    SparseMatrix buildBasisMatrix(double x, unsigned int u, unsigned int k, bool diff = false) const;
 
     // Builds knot insertion matrix
     bool buildKnotInsertionMatrix(SparseMatrix &A, const std::vector<double> &refinedKnots) const;

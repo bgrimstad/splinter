@@ -71,7 +71,7 @@ public:
     bool checkControlPoints() const;
 
     // B-spline operations
-    bool reduceDomain(std::vector<double> lb, std::vector<double> ub, bool regularKnotsequences = true, bool refineKnotsequences = true);
+    bool reduceDomain(std::vector<double> lb, std::vector<double> ub, bool regularKnotsequences = true, bool refineKnotsequences = false);
 
     bool insertKnots(double tau, unsigned int dim, unsigned int multiplicity = 1); // TODO: move back to private
 

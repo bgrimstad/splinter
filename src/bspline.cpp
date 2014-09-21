@@ -236,21 +236,23 @@ bool BSpline::reduceDomain(std::vector<double> lb, std::vector<double> ub, bool 
     std::vector<double> su = basis.getSupportUpperBound();
 
     bool isStrictSubset = false;
-    double minDistance = 0; //1e-6; // TODO: Set to zero, B-spline constraint class is responsible
 
     for(unsigned int dim = 0; dim < numVariables; dim++)
     {
-        if(ub.at(dim) - lb.at(dim) < minDistance)
+        if(ub.at(dim) <= lb.at(dim)
+            || lb.at(dim) >= su.at(dim)
+            || ub.at(dim) <= sl.at(dim))
         {
-            throw Exception("BSpline::reduceDomain: Cannot reduce B-spline domain: inconsistent bounds!");
+            throw Exception("BSpline::reduceDomain: Cannot reduce B-spline domain to zero!");
         }
-        if(su.at(dim) - ub.at(dim) > minDistance)
+
+        if(su.at(dim) > ub.at(dim))
         {
             isStrictSubset = true;
             su.at(dim) = ub.at(dim);
         }
 
-        if(lb.at(dim) - sl.at(dim) > minDistance)
+        if(lb.at(dim) > sl.at(dim))
         {
             isStrictSubset = true;
             sl.at(dim) = lb.at(dim);
@@ -495,14 +497,14 @@ bool BSpline::regularSequences(std::vector<double> &lb, std::vector<double> &ub)
         int numKnotsLB = multiplicityTarget - basis.getKnotMultiplicity(dim, lb.at(dim));
         if(numKnotsLB > 0)
         {
-            if (!insertKnots(lb.at(dim), dim, numKnotsLB))
+            if(!insertKnots(lb.at(dim), dim, numKnotsLB))
                 return false;
         }
 
         int numKnotsUB = multiplicityTarget - basis.getKnotMultiplicity(dim, ub.at(dim));
         if(numKnotsUB > 0)
         {
-            if (!insertKnots(ub.at(dim), dim, numKnotsUB))
+            if(!insertKnots(ub.at(dim), dim, numKnotsUB))
                 return false;
         }
 

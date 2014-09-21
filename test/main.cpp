@@ -229,6 +229,16 @@ bool test6()
     return is_identical(table, loadedTable);
 }
 
+std::vector<double> linspace(double start, double stop, unsigned int points)
+{
+    std::vector<double> ret;
+    double dx = 0;
+    if(points > 1)
+        dx = (stop - start)/(points-1);
+    for(unsigned int i = 0; i < points; ++i)
+        ret.push_back(start + i*dx);
+    return ret;
+}
 
 // Six-hump camelback function
 double f(DenseVector x)
@@ -243,20 +253,18 @@ void runExample()
     DataTable samples;
 
     // Sample function
-    double x_l = 0;
-    double x_u = 2;
-    int num_samples = 20;
-    double delta_x = (x_u - x_l)/(num_samples-1);
+    auto x0_vec = linspace(0, 2, 20);
+    auto x1_vec = linspace(0, 2, 20);
     DenseVector x(2);
     double y;
 
-    for(int i = 0; i < num_samples; i++)
+    for(auto x0 : x0_vec)
     {
-        for(int j = 0; j < num_samples; j++)
+        for(auto x1 : x1_vec)
         {
             // Sample function at x
-            x(0) = x_l + i*delta_x;
-            x(1) = x_l + j*delta_x;
+            x(0) = x0;
+            x(1) = x1;
             y = f(x);
 
             // Store sample
@@ -304,17 +312,17 @@ void runExample()
     cout << "-------------------------------------------"       << endl;
 
     // Evaluate error norm
-    std::vector<double> e_max(5,0.0);
-    int num_samples_2 = 200;
-    double delta_x_2 = (x_u - x_l)/(num_samples_2-1);
+    auto x0_vec_2 = linspace(0, 2, 200);
+    auto x1_vec_2 = linspace(0, 2, 200);
+    std::vector<double> e_max(5, 0.0);
 
-    for(int i = 0; i < num_samples_2; i++)
+    for(auto x0 : x0_vec_2)
     {
-        for(int j = 0; j < num_samples_2; j++)
+        for(auto x1 : x1_vec_2)
         {
             // Sample function at x
-            x(0) = i*delta_x_2;
-            x(1) = j*delta_x_2;
+            x(0) = x0;
+            x(1) = x1;
             y = f(x);
 
             e_max.at(0) = std::max(e_max.at(0), std::abs(bspline1.eval(x) - y));
@@ -334,20 +342,135 @@ void runExample()
     cout << "P-spline:             "   << e_max.at(3)       << endl;
     cout << "Thin-plate spline:    "   << e_max.at(4)       << endl;
     cout << "-------------------------------------------"   << endl;
-    cout << endl << endl;
+}
 
+bool compareBSplines(BSpline &bs, const BSpline &bs_orig)
+{
+    auto lb = bs.getDomainLowerBound();
+    auto ub = bs.getDomainUpperBound();
+
+    auto x0_vec = linspace(lb.at(0), ub.at(0), 10);
+    auto x1_vec = linspace(lb.at(1), ub.at(1), 10);
+
+    DenseVector x(2);
+    for(auto x0 : x0_vec)
+    {
+        for(auto x1 : x1_vec)
+        {
+            x(0) = x0;
+            x(1) = x1;
+
+            double yb = bs.eval(x);
+            double yb_orig = bs_orig.eval(x);
+            if(std::abs(yb-yb_orig) > 1e-8)
+            {
+                cout << yb << endl;
+                cout << yb_orig << endl;
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+bool domainReductionTest(BSpline &bs, const BSpline &bs_orig)
+{
+    if(bs.getNumVariables() != 2 || bs_orig.getNumVariables() != 2)
+        return false;
+
+    // Check for error
+    if(!compareBSplines(bs, bs_orig))
+        return false;
+
+    auto lb = bs.getDomainLowerBound();
+    auto ub = bs.getDomainUpperBound();
+
+    bool flag = false;
+    unsigned int index = 0;
+    for(; index < lb.size(); index++)
+    {
+        if(ub.at(index)-lb.at(index) > 1e-1)
+        {
+            flag = true;
+            break;
+        }
+    }
+
+    if(flag)
+    {
+        auto split = (ub.at(index) + lb.at(index))/2;
+
+        auto lb2 = lb;
+        auto ub2 = ub; ub2.at(index) = split;
+        BSpline bs2(bs);
+        bs2.reduceDomain(lb2, ub2);
+
+        auto lb3 = lb; lb3.at(index) = split;
+        auto ub3 = ub;
+        BSpline bs3(bs);
+        bs3.reduceDomain(lb3, ub3);
+
+        return (domainReductionTest(bs2,bs_orig) && domainReductionTest(bs3,bs_orig));
+    }
+
+    return true;
+}
+
+void runRecursiveDomainReductionTest()
+{
+    cout << endl << endl;
+    cout << "Starting recursive domain reduction test..." << endl;
+
+    // Create new DataTable to manage samples
+    DataTable samples;
+
+    // Sample function
+    auto x0_vec = linspace(0,2,20);
+    auto x1_vec = linspace(0,2,20);
+    DenseVector x(2);
+    double y;
+
+    for(auto x0 : x0_vec)
+    {
+        for(auto x1 : x1_vec)
+        {
+            // Sample function at x
+            x(0) = x0;
+            x(1) = x1;
+            y = f(x);
+
+            // Store sample
+            samples.addSample(x,y);
+        }
+    }
+
+    // Build B-splines that interpolate the samples
+//    BSpline bspline(samples, BSplineType::LINEAR);
+//    BSpline bspline(samples, BSplineType::QUADRATIC_FREE);
+    BSpline bspline(samples, BSplineType::CUBIC_FREE);
+
+    if(domainReductionTest(bspline,bspline))
+        cout << "Test finished successfully!" << endl;
+    else
+        cout << "Test failed!" << endl;
 }
 
 void run_tests()
 {
     runExample();
 
-    cout << "test1(): " << (test1() ? "success" : "fail") << endl;
-    cout << "test2(): " << (test2() ? "success" : "fail") << endl;
-    cout << "test3(): " << (test3() ? "success" : "fail") << endl;
-    cout << "test4(): " << (test4() ? "success" : "fail") << endl;
-    cout << "test5(): " << (test5() ? "success" : "fail") << endl;
-    cout << "test6(): " << (test6() ? "success" : "fail") << endl;
+    runRecursiveDomainReductionTest();
+
+    cout << endl << endl;
+    cout << "Testing load and save functionality:       "   << endl;
+    cout << "-------------------------------------------"   << endl;
+    cout << "test1(): " << (test1() ? "success" : "fail")   << endl;
+    cout << "test2(): " << (test2() ? "success" : "fail")   << endl;
+    cout << "test3(): " << (test3() ? "success" : "fail")   << endl;
+    cout << "test4(): " << (test4() ? "success" : "fail")   << endl;
+    cout << "test5(): " << (test5() ? "success" : "fail")   << endl;
+    cout << "test6(): " << (test6() ? "success" : "fail")   << endl;
 }
 
 int main(int argc, char **argv)
