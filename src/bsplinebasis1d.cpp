@@ -150,7 +150,7 @@ DenseVector BSplineBasis1D::evaluateFirstDerivative(double x) const
 
     std::vector<int> supportedBasisFunctions = indexSupportedBasisfunctions(x);
 
-    for(int i = supportedBasisFunctions.front(); i <= supportedBasisFunctions.back(); i++)
+    for(int i : supportedBasisFunctions)
     {
         // Differentiate basis function
         // Equation 3.35 in Lyche & Moerken (2011)
@@ -216,6 +216,9 @@ SparseMatrix BSplineBasis1D::buildBasisMatrix(double x, unsigned int u, unsigned
                  * TODO: Something funny happens here!
                  * When the if-sentences are included
                  * the knot insertion algorithm becomes incorrect...
+                 * This is strange because the matrix is sparse:
+                 * inserting or not inserting a zero element
+                 * should not change the matrix!
                  * NOTE: The basis matrix is only used by
                  * the knot insertion algorithm
                  * which is used by the domain reduction algorithm...
@@ -388,7 +391,7 @@ bool BSplineBasis1D::buildKnotInsertionMatrix(SparseMatrix &A, const std::vector
 void BSplineBasis1D::supportHack(double &x) const
 {
     if(x == knots.back())
-        x -= 1e-12;
+        x -= std::numeric_limits<double>::epsilon();
 }
 
 /*

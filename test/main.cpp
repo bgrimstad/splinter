@@ -456,9 +456,131 @@ void runRecursiveDomainReductionTest()
         cout << "Test failed!" << endl;
 }
 
+void testSplineDerivative()
+{
+    cout << endl << endl;
+    cout << "Testing spline derivative..." << endl;
+
+    // Create new DataTable to manage samples
+    DataTable samples;
+
+    // Sample function
+    double x0_lb = 0;
+    double x0_ub = 2;
+    double x1_lb = 0;
+    double x1_ub = 2;
+
+    auto x0_vec = linspace(x0_lb, x0_ub, 20);
+    auto x1_vec = linspace(x1_lb, x1_ub, 20);
+    DenseVector x(2);
+    double y;
+
+    for(auto x0 : x0_vec)
+    {
+        for(auto x1 : x1_vec)
+        {
+            // Sample function at x
+            x(0) = x0;
+            x(1) = x1;
+            y = f(x);
+
+            // Store sample
+            samples.addSample(x,y);
+        }
+    }
+
+    // Build B-splines that interpolate the samples
+//    BSpline bspline(samples, BSplineType::LINEAR);
+//    BSpline bspline(samples, BSplineType::QUADRATIC_FREE);
+    BSpline bspline(samples, BSplineType::CUBIC_FREE);
+
+    auto x0_vec_2 = linspace(x0_lb, x0_ub, 200);
+    auto x1_vec_2 = linspace(x1_lb, x1_ub, 200);
+
+    double tol = 1e-4;  // Absolute error tolerance
+    double h = 1e-8;    // Finite difference step length
+    double x0_diff, x1_diff;
+
+    for(auto x0 : x0_vec_2)
+    {
+        for(auto x1 : x1_vec_2)
+        {
+            x(0) = x0;
+            x(1) = x1;
+
+            DenseMatrix dfdx = bspline.evalJacobian(x);
+            if(dfdx.cols() != 2)
+            {
+                cout << "Test failed - check Jacobian size!" << endl;
+                return;
+            }
+
+            // Finite difference in x0
+            if(x(0) == x0_ub)
+            {
+                // Backward diff
+                DenseVector dx1f = x;
+                DenseVector dx1b = x; dx1b(0) = x(0)-h;
+                x0_diff = (bspline.eval(dx1f) - bspline.eval(dx1b))/h;
+            }
+            else if(x(0) == x0_lb)
+            {
+                // Forward diff
+                DenseVector dx1f = x; dx1f(0) = x(0)+h;
+                DenseVector dx1b = x;
+                x0_diff = (bspline.eval(dx1f) - bspline.eval(dx1b))/h;
+            }
+            else
+            {
+                // Central diff
+                DenseVector dx1f = x; dx1f(0) = x(0)+h/2;
+                DenseVector dx1b = x; dx1b(0) = x(0)-h/2;
+                x0_diff = (bspline.eval(dx1f) - bspline.eval(dx1b))/h;
+            }
+
+            // Finite difference in x1
+            if(x(1) == x1_ub)
+            {
+                // Backward diff
+                DenseVector dx2f = x;
+                DenseVector dx2b = x; dx2b(1) = x(1)-h;
+                x1_diff = (bspline.eval(dx2f) - bspline.eval(dx2b))/h;
+            }
+            else if(x(1) == x1_lb)
+            {
+                // Forward diff
+                DenseVector dx2f = x; dx2f(1) = x(1)+h;
+                DenseVector dx2b = x;
+                x1_diff = (bspline.eval(dx2f) - bspline.eval(dx2b))/h;
+            }
+            else
+            {
+                // Central diff
+                DenseVector dx2f = x; dx2f(1) = x(1)+h/2;
+                DenseVector dx2b = x; dx2b(1) = x(1)-h/2;
+                x1_diff = (bspline.eval(dx2f) - bspline.eval(dx2b))/h;
+            }
+
+            if(std::abs(dfdx(0) - x0_diff) > tol
+                || std::abs(dfdx(1) - x1_diff) > tol)
+            {
+                cout << x0 << ", " << x1 << endl;
+                cout << dfdx(0) - x0_diff << endl;
+                cout << dfdx(1) - x1_diff << endl;
+                cout << "Test failed! 2" << endl;
+                return;
+            }
+        }
+    }
+
+    cout << "Test finished successfully!" << endl;
+}
+
 void run_tests()
 {
     runExample();
+
+    testSplineDerivative();
 
     runRecursiveDomainReductionTest();
 

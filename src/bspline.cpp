@@ -130,7 +130,7 @@ DenseMatrix BSpline::evalJacobian(DenseVector &x) const
 //    cout << "Time old Jacobian: " << timer.getMicroSeconds() << endl;
 //    timer.reset();
 //    timer.start();
-//    SparseMatrix Ji = basis.evaluateBasisJacobian(x);
+//    SparseMatrix Ji = basis.evalBasisJacobian(x);
 //    timer.stop();
 //    cout << "Time new Jacobian: " << timer.getMicroSeconds() << endl;
 //    // New Jacobian is about 5 times slower at this point...
