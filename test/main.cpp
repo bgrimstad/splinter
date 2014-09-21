@@ -567,7 +567,7 @@ void testSplineDerivative()
                 cout << x0 << ", " << x1 << endl;
                 cout << dfdx(0) - x0_diff << endl;
                 cout << dfdx(1) - x1_diff << endl;
-                cout << "Test failed! 2" << endl;
+                cout << "Test failed - check Jacobian!" << endl;
                 return;
             }
         }
