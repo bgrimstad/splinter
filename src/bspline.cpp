@@ -243,7 +243,7 @@ bool BSpline::reduceDomain(std::vector<double> lb, std::vector<double> ub, bool 
             || lb.at(dim) >= su.at(dim)
             || ub.at(dim) <= sl.at(dim))
         {
-            throw Exception("BSpline::reduceDomain: Cannot reduce B-spline domain to zero!");
+            throw Exception("BSpline::reduceDomain: Cannot reduce B-spline domain to empty set!");
         }
 
         if(su.at(dim) > ub.at(dim))
