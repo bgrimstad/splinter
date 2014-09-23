@@ -16,7 +16,7 @@ namespace MultivariateSplines
 {
 
 RBFSpline::RBFSpline(const DataTable &samples, RadialBasisFunctionType type)
-    : RBFSpline(samples, type, true)
+    : RBFSpline(samples, type, false)
 {
 }
 
@@ -64,15 +64,14 @@ RBFSpline::RBFSpline(const DataTable &samples, RadialBasisFunctionType type, boo
     DenseMatrix b; b.setZero(numSamples,1);
 
     int i=0;
-    std::multiset<DataSample>::const_iterator it1, it2;
-    for (it1 = samples.cbegin(); it1 != samples.cend(); ++it1, ++i)
+    for(auto it1 = samples.cbegin(); it1 != samples.cend(); ++it1, ++i)
     {
         double sum = 0;
         int j=0;
-        for (it2 = samples.cbegin(); it2 != samples.cend(); ++it2, ++j)
+        for(auto it2 = samples.cbegin(); it2 != samples.cend(); ++it2, ++j)
         {
             double val = fn->eval(dist(*it1, *it2));
-            if (val != 0)
+            if(val != 0)
             {
                 //A.insert(i,j) = val;
                 A(i,j) = val;
@@ -80,9 +79,9 @@ RBFSpline::RBFSpline(const DataTable &samples, RadialBasisFunctionType type, boo
             }
         }
 
-        double val = (*it1).getY();
-        if (normalized) b(i) = sum*val;
-        else b(i) = val;
+        double y = (*it1).getY();
+        if(normalized) b(i) = sum*y;
+        else b(i) = y;
     }
 
     //A.makeCompressed();
@@ -133,27 +132,67 @@ RBFSpline::RBFSpline(const DataTable &samples, RadialBasisFunctionType type, boo
     // NOTE: Tried using experimental GMRES solver in Eigen, but it did not work very well.
 }
 
-double RBFSpline::eval(DenseVector &x) const
+double RBFSpline::eval(DenseVector x) const
 {
     std::vector<double> y;
-    for (int i=0; i<x.rows(); i++)
+    for(int i=0; i<x.rows(); i++)
         y.push_back(x(i));
     return eval(y);
 }
 
-double RBFSpline::eval(std::vector<double> &x) const
+double RBFSpline::eval(std::vector<double> x) const
 {
     assert(x.size() == dim);
     double fval, sum = 0, sumw = 0;
     int i = 0;
-    std::multiset<DataSample>::const_iterator it;
-    for (it = samples.cbegin(); it != samples.cend(); ++it, ++i)
+    for(auto it = samples.cbegin(); it != samples.cend(); ++it, ++i)
     {
         fval = fn->eval(dist(x,(*it).getX()));
         sumw += weights(i)*fval;
         sum += fval;
     }
     return normalized ? sumw/sum : sumw;
+}
+
+/*
+ * TODO:
+ * 1) implement for normalized RBF splines,
+ * 2) test for errors
+ */
+DenseMatrix RBFSpline::evalJacobian(DenseVector x) const
+{
+    if(normalized)
+        throw Exception("RBFSpline::evalJacobian: Jacobian not implemented for normalized RBF splines.");
+
+    std::vector<double> x_vec;
+    for(unsigned int i = 0; i<x.size(); i++)
+        x_vec.push_back(x(i));
+
+    DenseMatrix jac;
+    jac.setZero(1,dim);
+
+    for(unsigned int i = 0; i < dim; i++)
+    {
+        double sum = 0;
+        int j = 0;
+        for(auto it = samples.cbegin(); it != samples.cend(); ++it, ++j)
+        {
+            // Sample
+            auto s_vec = (*it).getX();
+
+            // Distance from sample
+            double r = dist(x_vec, s_vec);
+            double ri = x_vec.at(i) - s_vec.at(i);
+
+            double dfdr = fn->evalDerivative(r);
+
+            if(r != 0)
+                sum += weights(j)*dfdr*ri/r;
+        }
+
+        jac(i) = sum;
+    }
+    return jac;
 }
 
 /*
@@ -169,15 +208,14 @@ DenseMatrix RBFSpline::computePreconditionMatrix() const
     int sigma = std::max(1.0, std::floor(0.1*numSamples)); // Local points to consider
 
     int i=0;
-    std::multiset<DataSample>::const_iterator it1, it2;
-    for(it1 = samples.cbegin(); it1 != samples.cend(); ++it1, ++i)
+    for(auto it1 = samples.cbegin(); it1 != samples.cend(); ++it1, ++i)
     {
         Point p1((*it1).getX());
 
         // Shift data using p1 as origin
         std::vector<Point> shifted_points;
         int j=0;
-        for(it2 = samples.cbegin(); it2 != samples.cend(); ++it2, ++j)
+        for(auto it2 = samples.cbegin(); it2 != samples.cend(); ++it2, ++j)
         {
             Point p2((*it2).getX());
             Point p3(p2-p1);
@@ -237,7 +275,7 @@ DenseMatrix RBFSpline::computePreconditionMatrix() const
 
         for(unsigned int j=0; j<numSamples; j++)
         {
-            std::vector<int>::iterator it = find(indices.begin(),indices.end(),j);
+            auto it = find(indices.begin(),indices.end(),j);
             if(it!=indices.end())
             {
                 int k = it - indices.begin();
@@ -255,11 +293,11 @@ DenseMatrix RBFSpline::computePreconditionMatrix() const
 /*
  * Computes Euclidean distance ||x-y||
  */
-double RBFSpline::dist(const std::vector<double> x, const std::vector<double> y) const
+double RBFSpline::dist(std::vector<double> x, std::vector<double> y) const
 {
     assert(x.size() == y.size());
     double sum = 0.0;
-    for (unsigned int i=0; i<x.size(); i++)
+    for(unsigned int i=0; i<x.size(); i++)
         sum += (x.at(i)-y.at(i))*(x.at(i)-y.at(i));
     return std::sqrt(sum);
 }
@@ -267,12 +305,12 @@ double RBFSpline::dist(const std::vector<double> x, const std::vector<double> y)
 /*
  * Computes Euclidean distance ||x-y||
  */
-double RBFSpline::dist(const DataSample &x, const DataSample &y) const
+double RBFSpline::dist(DataSample x, DataSample y) const
 {
     return dist(x.getX(), y.getX());
 }
 
-bool RBFSpline::dist_sort(const DataSample &x, const DataSample &y) const
+bool RBFSpline::dist_sort(DataSample x, DataSample y) const
 {
     std::vector<double> zeros(x.getDimX(), 0);
     DataSample origin(zeros, 0.0);

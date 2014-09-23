@@ -36,7 +36,7 @@ public:
     RadialBasisFunction() : e(1.0) {}
     RadialBasisFunction(double e) : e(e) {}
     virtual double eval(double r) const = 0;
-    // virtual double grad(double r) const = 0; // TODO: implement gradient
+    virtual double evalDerivative(double r) const = 0;
 protected:
     double e;
 };
@@ -48,6 +48,10 @@ public:
     {
         return (r<=0.0) ? 0.0 : r*r*std::log(r);
     }
+    double evalDerivative(double r) const
+    {
+        return (r<=0.0) ? 0.0 : r*(2*log(r) + 1);
+    }
 };
 
 class Multiquadric : public RadialBasisFunction
@@ -56,6 +60,10 @@ public:
     double eval(double r) const
     {
         return std::sqrt(1.0 + e*e*r*r);
+    }
+    double evalDerivative(double r) const
+    {
+        return e*e*r/std::sqrt(1 + e*e*r*r);
     }
 };
 
@@ -66,6 +74,10 @@ public:
     {
         return 1.0/std::sqrt(1.0 + e*e*r*r);
     }
+    double evalDerivative(double r) const
+    {
+        return -e*e*r/(std::sqrt(1 + e*e*r*r)*(1 + e*e*r*r));
+    }
 };
 
 class InverseQuadric : public RadialBasisFunction
@@ -75,6 +87,10 @@ public:
     {
         return 1.0/(1.0 + e*e*r*r);
     }
+    double evalDerivative(double r) const
+    {
+        return -2*e*e*r/((1 + e*e*r*r)*(1 + e*e*r*r));
+    }
 };
 
 class Gaussian : public RadialBasisFunction
@@ -83,6 +99,10 @@ public:
     double eval(double r) const
     {
         return std::exp(-e*e*r*r);
+    }
+    double evalDerivative(double r) const
+    {
+        return -2*e*e*r*std::exp(-e*e*r*r);
     }
 };
 
@@ -101,11 +121,11 @@ public:
 
     virtual RBFSpline* clone() const { return new RBFSpline(*this); }
 
-    double eval(DenseVector &x) const;
-    double eval(std::vector<double> &x) const;
+    double eval(DenseVector x) const;
+    double eval(std::vector<double> x) const;
 
-    DenseMatrix evalJacobian(DenseVector &x) const {}; // TODO: implement via RBF_fn
-    DenseMatrix evalHessian(DenseVector &x) const {}; // TODO: implement via RBF_fn
+    DenseMatrix evalJacobian(DenseVector x) const; // TODO: implement via RBF_fn
+    DenseMatrix evalHessian(DenseVector x) const {}; // TODO: implement via RBF_fn
     //    std::vector<double> getDomainUpperBound() const;
     //    std::vector<double> getDomainLowerBound() const;
 
@@ -123,9 +143,9 @@ private:
 
     DenseMatrix computePreconditionMatrix() const;
 
-    double dist(const std::vector<double> x, const std::vector<double> y) const;
-    double dist(const DataSample &x, const DataSample &y) const;
-    bool dist_sort(const DataSample &x, const DataSample &y) const;
+    double dist(std::vector<double> x, std::vector<double> y) const;
+    double dist(DataSample x, DataSample y) const;
+    bool dist_sort(DataSample x, DataSample y) const;
 
 };
 

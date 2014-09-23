@@ -490,9 +490,10 @@ void testSplineDerivative()
     }
 
     // Build B-splines that interpolate the samples
-//    BSpline bspline(samples, BSplineType::LINEAR);
-//    BSpline bspline(samples, BSplineType::QUADRATIC_FREE);
-    BSpline bspline(samples, BSplineType::CUBIC_FREE);
+//    BSpline spline(samples, BSplineType::LINEAR);
+//    BSpline spline(samples, BSplineType::QUADRATIC_FREE);
+    //BSpline spline(samples, BSplineType::CUBIC_FREE);
+    RBFSpline spline(samples, RadialBasisFunctionType::THIN_PLATE_SPLINE);
 
     auto x0_vec_2 = linspace(x0_lb, x0_ub, 200);
     auto x1_vec_2 = linspace(x1_lb, x1_ub, 200);
@@ -508,7 +509,7 @@ void testSplineDerivative()
             x(0) = x0;
             x(1) = x1;
 
-            DenseMatrix dfdx = bspline.evalJacobian(x);
+            DenseMatrix dfdx = spline.evalJacobian(x);
             if(dfdx.cols() != 2)
             {
                 cout << "Test failed - check Jacobian size!" << endl;
@@ -521,21 +522,21 @@ void testSplineDerivative()
                 // Backward diff
                 DenseVector dx1f = x;
                 DenseVector dx1b = x; dx1b(0) = x(0)-h;
-                x0_diff = (bspline.eval(dx1f) - bspline.eval(dx1b))/h;
+                x0_diff = (spline.eval(dx1f) - spline.eval(dx1b))/h;
             }
             else if(x(0) == x0_lb)
             {
                 // Forward diff
                 DenseVector dx1f = x; dx1f(0) = x(0)+h;
                 DenseVector dx1b = x;
-                x0_diff = (bspline.eval(dx1f) - bspline.eval(dx1b))/h;
+                x0_diff = (spline.eval(dx1f) - spline.eval(dx1b))/h;
             }
             else
             {
                 // Central diff
                 DenseVector dx1f = x; dx1f(0) = x(0)+h/2;
                 DenseVector dx1b = x; dx1b(0) = x(0)-h/2;
-                x0_diff = (bspline.eval(dx1f) - bspline.eval(dx1b))/h;
+                x0_diff = (spline.eval(dx1f) - spline.eval(dx1b))/h;
             }
 
             // Finite difference in x1
@@ -544,21 +545,21 @@ void testSplineDerivative()
                 // Backward diff
                 DenseVector dx2f = x;
                 DenseVector dx2b = x; dx2b(1) = x(1)-h;
-                x1_diff = (bspline.eval(dx2f) - bspline.eval(dx2b))/h;
+                x1_diff = (spline.eval(dx2f) - spline.eval(dx2b))/h;
             }
             else if(x(1) == x1_lb)
             {
                 // Forward diff
                 DenseVector dx2f = x; dx2f(1) = x(1)+h;
                 DenseVector dx2b = x;
-                x1_diff = (bspline.eval(dx2f) - bspline.eval(dx2b))/h;
+                x1_diff = (spline.eval(dx2f) - spline.eval(dx2b))/h;
             }
             else
             {
                 // Central diff
                 DenseVector dx2f = x; dx2f(1) = x(1)+h/2;
                 DenseVector dx2b = x; dx2b(1) = x(1)-h/2;
-                x1_diff = (bspline.eval(dx2f) - bspline.eval(dx2b))/h;
+                x1_diff = (spline.eval(dx2f) - spline.eval(dx2b))/h;
             }
 
             if(std::abs(dfdx(0) - x0_diff) > tol

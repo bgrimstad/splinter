@@ -52,9 +52,9 @@ public:
     void init();
 
     // Evaluation of B-spline
-    double eval(DenseVector &x) const;
-    DenseMatrix evalJacobian(DenseVector &x) const;
-    DenseMatrix evalHessian(DenseVector &x) const;
+    double eval(DenseVector x) const;
+    DenseMatrix evalJacobian(DenseVector x) const;
+    DenseMatrix evalHessian(DenseVector x) const;
 
     // Getters
     unsigned int getNumVariables() const { return numVariables; }

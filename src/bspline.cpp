@@ -86,7 +86,7 @@ void BSpline::init()
     }
 }
 
-double BSpline::eval(DenseVector &x) const
+double BSpline::eval(DenseVector x) const
 {
     if(!pointInDomain(x))
     {
@@ -108,7 +108,7 @@ double BSpline::eval(DenseVector &x) const
  * The Jacobian is an 1 x n matrix,
  * where n is the dimension of x.
  */
-DenseMatrix BSpline::evalJacobian(DenseVector &x) const
+DenseMatrix BSpline::evalJacobian(DenseVector x) const
 {
     if(!pointInDomain(x))
     {
@@ -144,7 +144,7 @@ DenseMatrix BSpline::evalJacobian(DenseVector &x) const
  * The Hessian is an n x n matrix,
  * where n is the dimension of x.
  */
-DenseMatrix BSpline::evalHessian(DenseVector &x) const
+DenseMatrix BSpline::evalHessian(DenseVector x) const
 {
     if(!pointInDomain(x))
     {
@@ -188,8 +188,8 @@ DenseMatrix BSpline::getControlPoints() const
     int nc = coefficients.cols();
     DenseMatrix controlPoints(numVariables + 1, nc);
 
-    controlPoints.block(0,          0, numVariables,   nc) = knotaverages;
-    controlPoints.block(numVariables,  0, 1,           nc) = coefficients;
+    controlPoints.block(0, 0, numVariables, nc) = knotaverages;
+    controlPoints.block(numVariables, 0, 1, nc) = coefficients;
 
     return controlPoints;
 }
@@ -199,8 +199,8 @@ void BSpline::setControlPoints(DenseMatrix &controlPoints)
     assert(controlPoints.rows() == numVariables + 1);
     int nc = controlPoints.cols();
 
-    knotaverages = controlPoints.block(0,          0, numVariables,    nc);
-    coefficients = controlPoints.block(numVariables,  0, 1,            nc);
+    knotaverages = controlPoints.block(0, 0, numVariables, nc);
+    coefficients = controlPoints.block(numVariables, 0, 1, nc);
 
     checkControlPoints();
 }
