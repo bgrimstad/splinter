@@ -375,7 +375,7 @@ bool BSplineBasis1D::buildKnotInsertionMatrix(SparseMatrix &A, const std::vector
 void BSplineBasis1D::supportHack(double &x) const
 {
     if(x == knots.back())
-        x *= (1-std::numeric_limits<double>::epsilon());
+        x = std::nextafter(x, std::numeric_limits<double>::lowest());
 }
 
 /*

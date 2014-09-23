@@ -489,7 +489,7 @@ void testSplineDerivative()
         }
     }
 
-    // Build B-splines that interpolate the samples
+    // Build spline that interpolate the samples
 //    BSpline spline(samples, BSplineType::LINEAR);
 //    BSpline spline(samples, BSplineType::QUADRATIC_FREE);
     //BSpline spline(samples, BSplineType::CUBIC_FREE);
