@@ -155,15 +155,10 @@ double RBFSpline::eval(std::vector<double> x) const
 }
 
 /*
- * TODO:
- * 1) implement for normalized RBF splines,
- * 2) test for errors
+ * TODO: test for errors
  */
 DenseMatrix RBFSpline::evalJacobian(DenseVector x) const
 {
-    if(normalized)
-        throw Exception("RBFSpline::evalJacobian: Jacobian not implemented for normalized RBF splines.");
-
     std::vector<double> x_vec;
     for(unsigned int i = 0; i<x.size(); i++)
         x_vec.push_back(x(i));
@@ -173,7 +168,11 @@ DenseMatrix RBFSpline::evalJacobian(DenseVector x) const
 
     for(unsigned int i = 0; i < dim; i++)
     {
+        double sumw = 0;
+        double sumw_d = 0;
         double sum = 0;
+        double sum_d = 0;
+
         int j = 0;
         for(auto it = samples.cbegin(); it != samples.cend(); ++it, ++j)
         {
@@ -184,13 +183,25 @@ DenseMatrix RBFSpline::evalJacobian(DenseVector x) const
             double r = dist(x_vec, s_vec);
             double ri = x_vec.at(i) - s_vec.at(i);
 
+            // Evaluate RBF and its derivative at r
+            double f = fn->eval(r);
             double dfdr = fn->evalDerivative(r);
 
+            sum += f;
+            sumw += weights(j)*f;
+
+            // TODO: check if this assumption is correct
             if(r != 0)
-                sum += weights(j)*dfdr*ri/r;
+            {
+                sum_d += dfdr*ri/r;
+                sumw_d += weights(j)*dfdr*ri/r;
+            }
         }
 
-        jac(i) = sum;
+        if(normalized)
+            jac(i) = (sum*sumw_d - sum_d*sumw)/(sum*sum);
+        else
+            jac(i) = sumw_d;
     }
     return jac;
 }

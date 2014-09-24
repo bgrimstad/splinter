@@ -7,7 +7,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-
 #include <vector>
 #include <datatable.h>
 #include <sstream>
@@ -492,8 +491,9 @@ void testSplineDerivative()
     // Build spline that interpolate the samples
 //    BSpline spline(samples, BSplineType::LINEAR);
 //    BSpline spline(samples, BSplineType::QUADRATIC_FREE);
-    //BSpline spline(samples, BSplineType::CUBIC_FREE);
+//    BSpline spline(samples, BSplineType::CUBIC_FREE);
     RBFSpline spline(samples, RadialBasisFunctionType::THIN_PLATE_SPLINE);
+//    RBFSpline spline(samples, RadialBasisFunctionType::MULTIQUADRIC);
 
     auto x0_vec_2 = linspace(x0_lb, x0_ub, 200);
     auto x1_vec_2 = linspace(x1_lb, x1_ub, 200);
