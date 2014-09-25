@@ -90,12 +90,7 @@ double BSpline::eval(DenseVector x) const
 {
     if(!pointInDomain(x))
     {
-#ifndef NDEBUG
-        std::cout << "BSpline::eval: Tried to evaluate B-spline outside its domain!" << std::endl;
-#endif // NDEBUG
-
-        // Return zero
-        return 0.0;
+        throw Exception("BSpline::eval: Evaluation at point outside domain.");
     }
 
     SparseVector tensorvalues = basis.eval(x);
@@ -112,14 +107,7 @@ DenseMatrix BSpline::evalJacobian(DenseVector x) const
 {
     if(!pointInDomain(x))
     {
-#ifndef NDEBUG
-        std::cout << "BSpline::eval: Tried to evaluate Jacobian outside the B-spline domain!"<< std::endl;
-#endif // NDEBUG
-
-        // Return zero vector
-        DenseMatrix y;
-        y.setZero(1, numVariables);
-        return y;
+        throw Exception("BSpline::evalJacobian: Evaluation at point outside domain.");
     }
 
     DenseMatrix Bi = basis.evalBasisJacobianOld(x); // Old Jacobian implementation
@@ -147,15 +135,8 @@ DenseMatrix BSpline::evalJacobian(DenseVector x) const
 DenseMatrix BSpline::evalHessian(DenseVector x) const
 {
     if(!pointInDomain(x))
-    {
-#ifndef NDEBUG
-        std::cout << "BSpline::eval: Tried to evaluate Hessian outside the B-spline domain!"<< std::endl;
-#endif // NDEBUG
-
-        // Return zero matrix
-        DenseMatrix y;
-        y.setZero(numVariables, numVariables);
-        return y;
+    {        
+        throw Exception("BSpline::evalHessian: Evaluation at point outside domain.");
     }
 
     DenseMatrix H;

@@ -57,6 +57,7 @@ RBFSpline::RBFSpline(const DataTable &samples, RadialBasisFunctionType type, boo
      * NOTE: the system is dense and by default badly conditioned.
      * It should be solved by a specialized solver such as GMRES
      * with preconditioning (e.g. ACBF) as in matlab.
+     * NOTE: Consider trying the Łukaszyk–Karmowski metric (for two variables)
      */
     //SparseMatrix A(numSamples,numSamples);
     //A.reserve(numSamples*numSamples);
