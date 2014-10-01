@@ -612,7 +612,14 @@ std::vector<double> BSplineBasis1D::knotVectorEquidistant(std::vector<double> &X
     uniqueX.resize(distance(uniqueX.begin(),it));
 
     // Minimum number of interpolation points
-    assert(uniqueX.size() >= degree + 1);
+    if(uniqueX.size() < degree+1)
+    {
+        std::ostringstream e;
+        e << "BSplineBasis1D::knotVectorFree: Only " << uniqueX.size()
+          << " unique interpolation points are given. A minimum of degree+1 = " << degree+1
+          << " unique points are required to build a B-spline basis of degree " << degree << ".";
+        throw Exception(e.str());
+    }
 
     std::vector<double> knots;
     for(unsigned int i = 0; i < degree; i++)
@@ -682,7 +689,14 @@ std::vector<double> BSplineBasis1D::knotVectorFree(std::vector<double> &X) const
     uniqueX.resize(distance(uniqueX.begin(),it));
 
     // The minimum number of samples from which a free knot vector can be created
-    assert(uniqueX.size() >= degree+1);
+    if(uniqueX.size() < degree+1)
+    {
+        std::ostringstream e;
+        e << "BSplineBasis1D::knotVectorFree: Only " << uniqueX.size()
+          << " unique interpolation points are given. A minimum of degree+1 = " << degree+1
+          << " unique points are required to build a B-spline basis of degree " << degree << ".";
+        throw Exception(e.str());
+    }
 
     std::vector<double> knots;
     it = uniqueX.begin();
@@ -719,7 +733,7 @@ std::vector<double> BSplineBasis1D::knotVectorFree(std::vector<double> &X) const
     }
     else
     {
-        throw Exception("BSplineBasis1D::knotVectorFree: Only degree 1 and 3 is supported for free knot vectors!");
+        throw Exception("BSplineBasis1D::knotVectorFree: A free knot vector is only supported by degrees 1, 2, and 3!");
     }
 
     // Repeat last x value p + 1 times (for interpolation of end point)

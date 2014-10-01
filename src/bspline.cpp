@@ -39,7 +39,10 @@ BSpline::BSpline(DenseMatrix coefficients, std::vector< std::vector<double> > kn
 BSpline::BSpline(const DataTable &samples, BSplineType type = BSplineType::CUBIC_FREE)
 {
     // Check data
-    assert(samples.isGridComplete());
+    if(!samples.isGridComplete())
+    {
+        throw Exception("BSpline::BSpline: Cannot create B-spline from irregular (incomplete) grid.");
+    }
 
     numVariables = samples.getNumVariables();
 
