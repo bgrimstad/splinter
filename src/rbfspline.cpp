@@ -80,7 +80,7 @@ RBFSpline::RBFSpline(const DataTable &samples, RadialBasisFunctionType type, boo
             }
         }
 
-        double y = (*it1).getY();
+        double y = it1->getY();
         if(normalized) b(i) = sum*y;
         else b(i) = y;
     }
@@ -148,7 +148,7 @@ double RBFSpline::eval(std::vector<double> x) const
     int i = 0;
     for(auto it = samples.cbegin(); it != samples.cend(); ++it, ++i)
     {
-        fval = fn->eval(dist(x,(*it).getX()));
+        fval = fn->eval(dist(x,it->getX()));
         sumw += weights(i)*fval;
         sum += fval;
     }
@@ -178,7 +178,7 @@ double RBFSpline::eval(std::vector<double> x) const
 //        for(auto it = samples.cbegin(); it != samples.cend(); ++it, ++j)
 //        {
 //            // Sample
-//            auto s_vec = (*it).getX();
+//            auto s_vec = it->getX();
 
 //            // Distance from sample
 //            double r = dist(x_vec, s_vec);
@@ -222,14 +222,14 @@ DenseMatrix RBFSpline::computePreconditionMatrix() const
     int i=0;
     for(auto it1 = samples.cbegin(); it1 != samples.cend(); ++it1, ++i)
     {
-        Point p1((*it1).getX());
+        Point p1(it1->getX());
 
         // Shift data using p1 as origin
         std::vector<Point> shifted_points;
         int j=0;
         for(auto it2 = samples.cbegin(); it2 != samples.cend(); ++it2, ++j)
         {
-            Point p2((*it2).getX());
+            Point p2(it2->getX());
             Point p3(p2-p1);
             p3.setIndex(j); // store index with point
             shifted_points.push_back(p3);
