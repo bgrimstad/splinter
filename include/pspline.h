@@ -8,8 +8,8 @@
 */
 
 
-#ifndef PSPLINE_H
-#define PSPLINE_H
+#ifndef MS_PSPLINE_H
+#define MS_PSPLINE_H
 
 #include "bspline.h"
 
@@ -25,8 +25,8 @@ class PSpline : public BSpline
 {
 public:
 
-    PSpline(DataTable &samples);
-    PSpline(DataTable &samples, double lambda);
+    PSpline(const DataTable &samples);
+    PSpline(const DataTable &samples, double lambda);
 
 protected:
 
@@ -41,4 +41,4 @@ protected:
 
 } // namespace MultivariateSplines
 
-#endif // PSPLINE_H
+#endif // MS_PSPLINE_H

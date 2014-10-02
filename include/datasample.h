@@ -8,8 +8,8 @@
 */
 
 
-#ifndef DATASAMPLE_H
-#define DATASAMPLE_H
+#ifndef MS_DATASAMPLE_H
+#define MS_DATASAMPLE_H
 
 #include "generaldefinitions.h"
 
@@ -39,9 +39,9 @@ private:
     std::vector<double> x;
     double y;
 
-    void setData(const std::vector<double> &x, const double &y);
+    void setData(const std::vector<double> &x, double y);
 };
 
 } // namespace MultivariateSplines
 
-#endif // DATASAMPLE_H
+#endif // MS_DATASAMPLE_H

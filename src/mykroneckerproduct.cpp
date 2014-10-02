@@ -13,6 +13,13 @@
 namespace MultivariateSplines
 {
 
+/* 
+ * Implementation of Kronecker product. 
+ * Eigen has an implementation of the Kronecker product,
+ * but it is very slow due to poor memory reserving.
+ * See: https://forum.kde.org/viewtopic.php?f=74&t=106955&p=309990&hilit=kronecker#p309990
+ * When Eigen update their implementation, and officially support it, we switch to that.
+ */
 void myKroneckerProduct(const SparseMatrix &A, const SparseMatrix &B, SparseMatrix &AB)
 {
     AB.resize(A.rows()*B.rows(), A.cols()*B.cols());
@@ -84,7 +91,6 @@ void myKroneckerProduct(const SparseMatrix &A, const SparseMatrix &B, SparseMatr
         }
     }
     AB.makeCompressed();
-    AB.finalize();
 }
 
 } // namespace MultivariateSplines

@@ -14,12 +14,12 @@
 namespace MultivariateSplines
 {
 
-PSpline::PSpline(DataTable &samples)
+PSpline::PSpline(const DataTable &samples)
     : PSpline(samples,0.03)
 {
 }
 
-PSpline::PSpline(DataTable &samples, double lambda)
+PSpline::PSpline(const DataTable &samples, double lambda)
     : lambda(lambda)
 {
     // Check data
@@ -30,8 +30,8 @@ PSpline::PSpline(DataTable &samples, double lambda)
     numVariables = samples.getNumVariables();
 
     // Assuming a cubic spline
-    std::vector<int> basisDegrees(samples.getNumVariables(), 3);
-    basis = Basis(xdata, basisDegrees, KnotSequenceType::FREE);
+    std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 3);
+    basis = BSplineBasis(xdata, basisDegrees, KnotVectorType::FREE);
     computeControlPoints(samples);
 
     init();
@@ -87,7 +87,10 @@ void PSpline::computeControlPoints(const DataTable &samples)
 
     if (!solveAsDense)
     {
-        cout << "Computing B-spline control points using sparse solver." << endl;
+#ifndef NDEBUG
+        std::cout << "Computing B-spline control points using sparse solver." << std::endl;
+#endif // NDEBUG
+
         SparseLU s;
         bool successfulSolve = (s.solve(L,Rx,Cx) && s.solve(L,Ry,Cy));
 
@@ -96,11 +99,18 @@ void PSpline::computeControlPoints(const DataTable &samples)
 
     if (solveAsDense)
     {
-        cout << "Computing B-spline control points using dense solver." << endl;
+#ifndef NDEBUG
+        std::cout << "Computing B-spline control points using dense solver." << std::endl;
+#endif // NDEBUG
+
         DenseMatrix Ld = L.toDense();
         DenseQR s;
-        bool successfulSolve = (s.solve(Ld,Rx,Cx) && s.solve(Ld,Ry,Cy));
-        assert(successfulSolve);
+        bool successfulSolve = s.solve(Ld, Rx, Cx) && s.solve(Ld, Ry, Cy);
+
+        if(!successfulSolve)
+        {
+            throw Exception("PSpline::computeControlPoints: Failed to solve for B-spline coefficients.");
+        }
     }
 
     coefficients = Cy.transpose();

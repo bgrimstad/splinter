@@ -12,18 +12,15 @@
 #include "include/linearsolvers.h"
 #include "Eigen/SVD"
 
-using std::cout;
-using std::endl;
-
 namespace MultivariateSplines
 {
 
-RBFSpline::RBFSpline(DataTable &samples, RadialBasisFunctionType type)
-    : RBFSpline(samples, type, true)
+RBFSpline::RBFSpline(const DataTable &samples, RadialBasisFunctionType type)
+    : RBFSpline(samples, type, false)
 {
 }
 
-RBFSpline::RBFSpline(DataTable &samples, RadialBasisFunctionType type, bool normalized)
+RBFSpline::RBFSpline(const DataTable &samples, RadialBasisFunctionType type, bool normalized)
     : samples(samples),
       normalized(normalized),
       precondition(false),
@@ -60,22 +57,22 @@ RBFSpline::RBFSpline(DataTable &samples, RadialBasisFunctionType type, bool norm
      * NOTE: the system is dense and by default badly conditioned.
      * It should be solved by a specialized solver such as GMRES
      * with preconditioning (e.g. ACBF) as in matlab.
+     * NOTE: Consider trying the Łukaszyk–Karmowski metric (for two variables)
      */
     //SparseMatrix A(numSamples,numSamples);
     //A.reserve(numSamples*numSamples);
-    DenseMatrix A; A.setZero(numSamples,numSamples);
+    DenseMatrix A; A.setZero(numSamples, numSamples);
     DenseMatrix b; b.setZero(numSamples,1);
 
     int i=0;
-    std::multiset<DataSample>::const_iterator it1, it2;
-    for (it1 = samples.cbegin(); it1 != samples.cend(); ++it1, ++i)
+    for(auto it1 = samples.cbegin(); it1 != samples.cend(); ++it1, ++i)
     {
         double sum = 0;
         int j=0;
-        for (it2 = samples.cbegin(); it2 != samples.cend(); ++it2, ++j)
+        for(auto it2 = samples.cbegin(); it2 != samples.cend(); ++it2, ++j)
         {
             double val = fn->eval(dist(*it1, *it2));
-            if (val != 0)
+            if(val != 0)
             {
                 //A.insert(i,j) = val;
                 A(i,j) = val;
@@ -83,9 +80,9 @@ RBFSpline::RBFSpline(DataTable &samples, RadialBasisFunctionType type, bool norm
             }
         }
 
-        double val = (*it1).getY();
-        if (normalized) b(i) = sum*val;
-        else b(i) = val;
+        double y = it1->getY();
+        if(normalized) b(i) = sum*y;
+        else b(i) = y;
     }
 
     //A.makeCompressed();
@@ -103,6 +100,9 @@ RBFSpline::RBFSpline(DataTable &samples, RadialBasisFunctionType type, bool norm
         b = bp;
     }
 
+#ifndef NDEBUG
+    std::cout << "Computing RBF weights using dense solver." << std::endl;
+#endif // NDEBUG
 
     // SVD analysis
     Eigen::JacobiSVD<DenseMatrix> svd(A, Eigen::ComputeThinU | Eigen::ComputeThinV);
@@ -110,16 +110,20 @@ RBFSpline::RBFSpline(DataTable &samples, RadialBasisFunctionType type, bool norm
     double svalmax = svals(0);
     double svalmin = svals(svals.rows()-1);
     double rcondnum = (svalmax <= 0.0 || svalmin <= 0.0) ? 0.0 : svalmin/svalmax;
-    //cout << "The reciprocal of the condition number is: " << rcondnum << endl;
-    //cout << "Largest/smallest singular value: " << svalmax << " / " << svalmin << endl;
+
+#ifndef NDEBUG
+    std::cout << "The reciprocal of the condition number is: " << rcondnum << std::endl;
+    std::cout << "Largest/smallest singular value: " << svalmax << " / " << svalmin << std::endl;
+#endif // NDEBUG
 
     // Solve for weights
-    cout << "Computing RBF weights using dense solver." << endl;
     weights = svd.solve(b);
 
-    // Compute error
+#ifndef NDEBUG
+    // Compute error. If it is used later on, move this statement above the NDEBUG
     double err = (A*weights - b).norm() / b.norm();
-    cout << "Error: " << err << endl;
+    std::cout << "Error: " << std::setprecision(10) << err << std::endl;
+#endif // NDEBUG
 
 //    // Alternative solver
 //    DenseQR s;
@@ -129,28 +133,79 @@ RBFSpline::RBFSpline(DataTable &samples, RadialBasisFunctionType type, bool norm
     // NOTE: Tried using experimental GMRES solver in Eigen, but it did not work very well.
 }
 
-double RBFSpline::eval(DenseVector &x) const
+double RBFSpline::eval(DenseVector x) const
 {
     std::vector<double> y;
-    for (int i=0; i<x.rows(); i++)
+    for(int i=0; i<x.rows(); i++)
         y.push_back(x(i));
     return eval(y);
 }
 
-double RBFSpline::eval(std::vector<double> &x) const
+double RBFSpline::eval(std::vector<double> x) const
 {
     assert(x.size() == dim);
-    double fval, sum=0, sumw=0;
+    double fval, sum = 0, sumw = 0;
     int i = 0;
-    std::multiset<DataSample>::const_iterator it;
-    for (it = samples.cbegin(); it != samples.cend(); ++it, ++i)
+    for(auto it = samples.cbegin(); it != samples.cend(); ++it, ++i)
     {
-        fval = fn->eval(dist(x,(*it).getX()));
+        fval = fn->eval(dist(x,it->getX()));
         sumw += weights(i)*fval;
         sum += fval;
     }
     return normalized ? sumw/sum : sumw;
 }
+
+/*
+ * TODO: test for errors
+ */
+//DenseMatrix RBFSpline::evalJacobian(DenseVector x) const
+//{
+//    std::vector<double> x_vec;
+//    for(unsigned int i = 0; i<x.size(); i++)
+//        x_vec.push_back(x(i));
+
+//    DenseMatrix jac;
+//    jac.setZero(1,dim);
+
+//    for(unsigned int i = 0; i < dim; i++)
+//    {
+//        double sumw = 0;
+//        double sumw_d = 0;
+//        double sum = 0;
+//        double sum_d = 0;
+
+//        int j = 0;
+//        for(auto it = samples.cbegin(); it != samples.cend(); ++it, ++j)
+//        {
+//            // Sample
+//            auto s_vec = it->getX();
+
+//            // Distance from sample
+//            double r = dist(x_vec, s_vec);
+//            double ri = x_vec.at(i) - s_vec.at(i);
+
+//            // Evaluate RBF and its derivative at r
+//            double f = fn->eval(r);
+//            double dfdr = fn->evalDerivative(r);
+
+//            sum += f;
+//            sumw += weights(j)*f;
+
+//            // TODO: check if this assumption is correct
+//            if(r != 0)
+//            {
+//                sum_d += dfdr*ri/r;
+//                sumw_d += weights(j)*dfdr*ri/r;
+//            }
+//        }
+
+//        if(normalized)
+//            jac(i) = (sum*sumw_d - sum_d*sumw)/(sum*sum);
+//        else
+//            jac(i) = sumw_d;
+//    }
+//    return jac;
+//}
 
 /*
  * Calculate precondition matrix
@@ -165,17 +220,16 @@ DenseMatrix RBFSpline::computePreconditionMatrix() const
     int sigma = std::max(1.0, std::floor(0.1*numSamples)); // Local points to consider
 
     int i=0;
-    std::multiset<DataSample>::const_iterator it1, it2;
-    for(it1 = samples.cbegin(); it1 != samples.cend(); ++it1, ++i)
+    for(auto it1 = samples.cbegin(); it1 != samples.cend(); ++it1, ++i)
     {
-        Point p1((*it1).getX());
+        Point p1(it1->getX());
 
         // Shift data using p1 as origin
         std::vector<Point> shifted_points;
         int j=0;
-        for(it2 = samples.cbegin(); it2 != samples.cend(); ++it2, ++j)
+        for(auto it2 = samples.cbegin(); it2 != samples.cend(); ++it2, ++j)
         {
-            Point p2((*it2).getX());
+            Point p2(it2->getX());
             Point p3(p2-p1);
             p3.setIndex(j); // store index with point
             shifted_points.push_back(p3);
@@ -233,7 +287,7 @@ DenseMatrix RBFSpline::computePreconditionMatrix() const
 
         for(unsigned int j=0; j<numSamples; j++)
         {
-            std::vector<int>::iterator it = find(indices.begin(),indices.end(),j);
+            auto it = find(indices.begin(),indices.end(),j);
             if(it!=indices.end())
             {
                 int k = it - indices.begin();
@@ -251,11 +305,11 @@ DenseMatrix RBFSpline::computePreconditionMatrix() const
 /*
  * Computes Euclidean distance ||x-y||
  */
-double RBFSpline::dist(const std::vector<double> x, const std::vector<double> y) const
+double RBFSpline::dist(std::vector<double> x, std::vector<double> y) const
 {
     assert(x.size() == y.size());
     double sum = 0.0;
-    for (unsigned int i=0; i<x.size(); i++)
+    for(unsigned int i=0; i<x.size(); i++)
         sum += (x.at(i)-y.at(i))*(x.at(i)-y.at(i));
     return std::sqrt(sum);
 }
@@ -263,12 +317,12 @@ double RBFSpline::dist(const std::vector<double> x, const std::vector<double> y)
 /*
  * Computes Euclidean distance ||x-y||
  */
-double RBFSpline::dist(const DataSample &x, const DataSample &y) const
+double RBFSpline::dist(DataSample x, DataSample y) const
 {
     return dist(x.getX(), y.getX());
 }
 
-bool RBFSpline::dist_sort(const DataSample &x, const DataSample &y) const
+bool RBFSpline::dist_sort(DataSample x, DataSample y) const
 {
     std::vector<double> zeros(x.getDimX(), 0);
     DataSample origin(zeros, 0.0);
