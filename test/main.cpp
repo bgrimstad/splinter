@@ -491,8 +491,8 @@ void testSplineDerivative()
     // Build spline that interpolate the samples
 //    BSpline spline(samples, BSplineType::LINEAR);
 //    BSpline spline(samples, BSplineType::QUADRATIC_FREE);
-//    BSpline spline(samples, BSplineType::CUBIC_FREE);
-    RBFSpline spline(samples, RadialBasisFunctionType::THIN_PLATE_SPLINE);
+    BSpline spline(samples, BSplineType::CUBIC_FREE);
+//    RBFSpline spline(samples, RadialBasisFunctionType::THIN_PLATE_SPLINE);
 //    RBFSpline spline(samples, RadialBasisFunctionType::MULTIQUADRIC);
 
     auto x0_vec_2 = linspace(x0_lb, x0_ub, 200);
