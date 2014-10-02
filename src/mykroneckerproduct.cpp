@@ -91,7 +91,6 @@ void myKroneckerProduct(const SparseMatrix &A, const SparseMatrix &B, SparseMatr
         }
     }
     AB.makeCompressed();
-    AB.finalize();
 }
 
 } // namespace MultivariateSplines
