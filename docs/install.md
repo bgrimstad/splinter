@@ -66,7 +66,10 @@ CMake will try to automatically find where Eigen is installed, but if this fails
 The output files should be in your build folder. If you wish to have them installed you can type "mingw32-make install".
 
 ####Troubleshooting
-`fatal error: Eigen/Dense: No such file or directory`: The compiler could not find Eigen. You either need to install Eigen, and then run step #6 again (with `-DEIGEN_DIRECTORY="/path/to/eigen"` if Eigen did not install to the default directory (/usr/local/include/eigen3)).
+`fatal error: Eigen/Dense: No such file or directory`: The compiler could not find Eigen. You either need to install Eigen, and then run step #6 again (with `-DEIGEN_DIRECTORY="/path/to/eigen"` if Eigen did not install to the default directory (C:/Program Files/eigen3)).
+
+`cc1plus.exe:-1: error: out of memory allocating (...)`: There is a bug with MinGW that causes this error. The newest version we've found that correctly compiles the library can be found [here](http://sourceforge.net/projects/mingwbuilds/files/host-windows/releases/4.7.0/64-bit/threads-posix/sjlj/). If that doesn't work, you can try [this one](https://code.google.com/p/mingw-builds/downloads/detail?name=x86_64-mingw32-gcc-4.7.0-release-c%2Cc%2B%2B%2Cfortran-sjlj.zip&can=2&q=). To install those alternative MinGW versions you can just delete everything in C:\mingw and replace it with what you find in the archives you downloaded.
+Note: Somehow the 32-bit version of 4.7.0 will compile the library, but crashes at runtime. If you know a workaround for this issue, please contact us or send us a pull request with the workaround!
 
 ---
 

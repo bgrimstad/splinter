@@ -10,9 +10,9 @@ project(multivariate-splines)
 cmake_minimum_required(VERSION 2.8)
 set(CMAKE_BUILD_TYPE Release)
 
-set(MULTIVARIATESPLINES_VERSION_MAJOR 0)
+set(MULTIVARIATESPLINES_VERSION_MAJOR 1)
 set(MULTIVARIATESPLINES_VERSION_MINOR 1)
-set(MULTIVARIATESPLINES_VERSION ${MULTIVARIATESPLINES_VERSION_MAJOR}.${MULTIVARIATESPLINES_VERSION_MINOR})
+set(MULTIVARIATESPLINES_VERSION -${MULTIVARIATESPLINES_VERSION_MAJOR}-${MULTIVARIATESPLINES_VERSION_MINOR})
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
@@ -81,12 +81,12 @@ set(SRC_LIST
 )
 
 # Add output library: add_library(libname [SHARED | STATIC] sourcelist)
-add_library(multivariate-splines SHARED ${SRC_LIST})
-add_library(multivariate-splines-static STATIC ${SRC_LIST})
+add_library(multivariate-splines${MULTIVARIATESPLINES_VERSION} SHARED ${SRC_LIST})
+add_library(multivariate-splines-static${MULTIVARIATESPLINES_VERSION} STATIC ${SRC_LIST})
 
 # Testing executable
 add_executable("multivariate-splines-test" ${CMAKE_CURRENT_SOURCE_DIR}/test/main.cpp)
-target_link_libraries("multivariate-splines-test" multivariate-splines-static)
+target_link_libraries("multivariate-splines-test" multivariate-splines-static${MULTIVARIATESPLINES_VERSION})
 
 if(WIN32)
     set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++") # Necessary for test executable to work with MinGW
@@ -101,12 +101,12 @@ install(
 
 # Install the shared library file
 install(
-    TARGETS multivariate-splines
+    TARGETS multivariate-splines${MULTIVARIATESPLINES_VERSION}
     DESTINATION ${LIBRARY_DIRECTORY}
 )
 # Install the static library file
 install(
-    TARGETS multivariate-splines-static
+    TARGETS multivariate-splines-static${MULTIVARIATESPLINES_VERSION}
     DESTINATION ${LIBRARY_DIRECTORY}
 )
 

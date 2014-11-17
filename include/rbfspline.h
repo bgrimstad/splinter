@@ -124,7 +124,7 @@ public:
     double eval(DenseVector x) const;
     double eval(std::vector<double> x) const;
 
-    DenseMatrix evalJacobian(DenseVector x) const; // TODO: implement via RBF_fn
+    DenseMatrix evalJacobian(DenseVector x) const {}; // TODO: implement via RBF_fn
     DenseMatrix evalHessian(DenseVector x) const {}; // TODO: implement via RBF_fn
     //    std::vector<double> getDomainUpperBound() const;
     //    std::vector<double> getDomainLowerBound() const;

@@ -1,9 +1,11 @@
 TODO list:
+- Implement save/load functionality for splines
 - Open for interpolating with B-splines of any degree
 - Implement more end conditions for cubic B-splines (Hermite, natural, and periodic)
+- Implement NURBS
 - Implement Hessian for radial basis function splines
 - Test Jacobian for radial basis function splines
 - Implement a proper preconditioning matrix for radial basis function weight computation
-- Consider implementing NURBS
+- Implement Kriging interpolation
 - Organize the testing code and add more tests 
 - Improve the documentation
