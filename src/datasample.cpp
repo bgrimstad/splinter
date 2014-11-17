@@ -45,11 +45,11 @@ bool DataSample::operator<(const DataSample &rhs) const
 {
     assert(this->getDimX() == rhs.getDimX());
 
-    for(unsigned int i = 0; i < this->getDimX(); i++)
+    for (unsigned int i = 0; i < this->getDimX(); i++)
     {
-        if(x.at(i) < rhs.getX().at(i))
+        if (x.at(i) < rhs.getX().at(i))
             return true;
-        else if(x.at(i) > rhs.getX().at(i))
+        else if (x.at(i) > rhs.getX().at(i))
             return false;
     }
 
@@ -61,9 +61,9 @@ std::ostream &operator<<(std::ostream &outputStream, const DataSample &sample)
     outputStream << "Sample: (";
 
     bool firstLoop = true;
-    for(auto &coordinate : sample.getX())
+    for (auto &coordinate : sample.getX())
     {
-        if(!firstLoop)
+        if (!firstLoop)
             outputStream << ", ";
 
         outputStream << coordinate;

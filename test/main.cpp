@@ -34,21 +34,21 @@ bool equalsWithinRange(double a, double b, double margin = 0.0)
 
 bool is_identical(DataTable &a, DataTable &b)
 {
-    if(a.getNumVariables() != b.getNumVariables())
+    if (a.getNumVariables() != b.getNumVariables())
         return false;
 
     auto ait = a.cbegin(), bit = b.cbegin();
-    for(; ait != a.cend() && bit != b.cend(); ait++, bit++)
+    for (; ait != a.cend() && bit != b.cend(); ait++, bit++)
     {
-        for(unsigned int i = 0; i < a.getNumVariables(); i++)
+        for (unsigned int i = 0; i < a.getNumVariables(); i++)
         {
 //            std::cout << std::setprecision(SAVE_DOUBLE_PRECISION) << ait->getX().at(i) << " == " << std::setprecision(SAVE_DOUBLE_PRECISION) << bit->getX().at(i) << " ";
-            if(!equalsWithinRange(ait->getX().at(i), bit->getX().at(i)))
+            if (!equalsWithinRange(ait->getX().at(i), bit->getX().at(i)))
                 return false;
         }
 
 //            std::cout << std::setprecision(SAVE_DOUBLE_PRECISION) << ait->getY().at(j) << " == " << std::setprecision(SAVE_DOUBLE_PRECISION) << bit->getY().at(j) << " ";
-        if(!equalsWithinRange(ait->getY(), bit->getY()))
+        if (!equalsWithinRange(ait->getY(), bit->getY()))
             return false;
 //        std::cout << std::endl;
     }
@@ -64,7 +64,7 @@ bool test1()
 
     auto x = std::vector<double>(1);
     double y;
-    for(double i = -0.3; i <= 0.3; i += 0.04)
+    for (double i = -0.3; i <= 0.3; i += 0.04)
     {
         x.at(0) = i;
         y = 2 * i;
@@ -87,9 +87,9 @@ bool test2()
 
     auto x = std::vector<double>(2);
     double y;
-    for(double i = -0.3; i <= 0.3; i += 0.04)
+    for (double i = -0.3; i <= 0.3; i += 0.04)
     {
-        for(double j = -0.4; j <= 1.0; j += 0.08)
+        for (double j = -0.4; j <= 1.0; j += 0.08)
         {
             x.at(0) = i;
             x.at(1) = j;
@@ -114,7 +114,7 @@ bool test3()
 
     auto x = std::vector<double>(2);
     double y;
-    for(double i = -0.3; i <= 0.3; i += 0.04)
+    for (double i = -0.3; i <= 0.3; i += 0.04)
     {
         for(double j = -0.4; j <= 1.0; j += 0.03)
         {
@@ -142,7 +142,7 @@ bool test4()
     auto x = std::vector<double>(4);
     double y;
     int j = 0;
-    for(double i = std::numeric_limits<double>::lowest(), k = std::numeric_limits<double>::max();
+    for (double i = std::numeric_limits<double>::lowest(), k = std::numeric_limits<double>::max();
         j < 10000;
         i = nextafter(i, std::numeric_limits<double>::max()), k = nextafter(k, std::numeric_limits<double>::lowest()))
     {
@@ -168,11 +168,11 @@ bool test5()
 
     auto x = std::vector<double>(3);
     double y;
-    for(double i = -0.0001; i <= 0.0001; i += 0.000001)
+    for (double i = -0.0001; i <= 0.0001; i += 0.000001)
     {
-        for(double j = -0.01; j <= 0.01; j += 0.001)
+        for (double j = -0.01; j <= 0.01; j += 0.001)
         {
-            for(double k = -0.01; k <= 0.01; k += 0.001)
+            for (double k = -0.01; k <= 0.01; k += 0.001)
             {
                 x.at(0) = i;
                 x.at(1) = j;
@@ -199,13 +199,13 @@ bool test6()
 
     auto x = std::vector<double>(4);
     double y;
-    for(double i = -0.0001; i <= 0.0001; i += 0.000001)
+    for (double i = -0.0001; i <= 0.0001; i += 0.000001)
     {
-        for(double j = -0.01; j <= 0.01; j += 0.001)
+        for (double j = -0.01; j <= 0.01; j += 0.001)
         {
-            for(double k = -0.01; k <= 0.01; k += 0.001)
+            for (double k = -0.01; k <= 0.01; k += 0.001)
             {
-                for(double l = -100000.0; l < 0.0; l += 13720.0)
+                for (double l = -100000.0; l < 0.0; l += 13720.0)
                 {
                     x.at(0) = i;
                     x.at(1) = j;
@@ -234,7 +234,7 @@ std::vector<double> linspace(double start, double stop, unsigned int points)
     double dx = 0;
     if(points > 1)
         dx = (stop - start)/(points-1);
-    for(unsigned int i = 0; i < points; ++i)
+    for (unsigned int i = 0; i < points; ++i)
         ret.push_back(start + i*dx);
     return ret;
 }
@@ -257,9 +257,9 @@ void runExample()
     DenseVector x(2);
     double y;
 
-    for(auto x0 : x0_vec)
+    for (auto x0 : x0_vec)
     {
-        for(auto x1 : x1_vec)
+        for (auto x1 : x1_vec)
         {
             // Sample function at x
             x(0) = x0;
@@ -315,9 +315,9 @@ void runExample()
     auto x1_vec_2 = linspace(0, 2, 200);
     std::vector<double> e_max(5, 0.0);
 
-    for(auto x0 : x0_vec_2)
+    for (auto x0 : x0_vec_2)
     {
-        for(auto x1 : x1_vec_2)
+        for (auto x1 : x1_vec_2)
         {
             // Sample function at x
             x(0) = x0;
@@ -352,16 +352,16 @@ bool compareBSplines(BSpline &bs, const BSpline &bs_orig)
     auto x1_vec = linspace(lb.at(1), ub.at(1), 10);
 
     DenseVector x(2);
-    for(auto x0 : x0_vec)
+    for (auto x0 : x0_vec)
     {
-        for(auto x1 : x1_vec)
+        for (auto x1 : x1_vec)
         {
             x(0) = x0;
             x(1) = x1;
 
             double yb = bs.eval(x);
             double yb_orig = bs_orig.eval(x);
-            if(std::abs(yb-yb_orig) > 1e-8)
+            if (std::abs(yb-yb_orig) > 1e-8)
             {
                 cout << yb << endl;
                 cout << yb_orig << endl;
@@ -375,11 +375,11 @@ bool compareBSplines(BSpline &bs, const BSpline &bs_orig)
 
 bool domainReductionTest(BSpline &bs, const BSpline &bs_orig)
 {
-    if(bs.getNumVariables() != 2 || bs_orig.getNumVariables() != 2)
+    if (bs.getNumVariables() != 2 || bs_orig.getNumVariables() != 2)
         return false;
 
     // Check for error
-    if(!compareBSplines(bs, bs_orig))
+    if (!compareBSplines(bs, bs_orig))
         return false;
 
     auto lb = bs.getDomainLowerBound();
@@ -387,16 +387,16 @@ bool domainReductionTest(BSpline &bs, const BSpline &bs_orig)
 
     bool flag = false;
     unsigned int index = 0;
-    for(; index < lb.size(); index++)
+    for (; index < lb.size(); index++)
     {
-        if(ub.at(index)-lb.at(index) > 1e-1)
+        if (ub.at(index)-lb.at(index) > 1e-1)
         {
             flag = true;
             break;
         }
     }
 
-    if(flag)
+    if (flag)
     {
         auto split = (ub.at(index) + lb.at(index))/2;
 
@@ -430,9 +430,9 @@ void runRecursiveDomainReductionTest()
     DenseVector x(2);
     double y;
 
-    for(auto x0 : x0_vec)
+    for (auto x0 : x0_vec)
     {
-        for(auto x1 : x1_vec)
+        for (auto x1 : x1_vec)
         {
             // Sample function at x
             x(0) = x0;
@@ -449,7 +449,7 @@ void runRecursiveDomainReductionTest()
 //    BSpline bspline(samples, BSplineType::QUADRATIC_FREE);
     BSpline bspline(samples, BSplineType::CUBIC_FREE);
 
-    if(domainReductionTest(bspline,bspline))
+    if (domainReductionTest(bspline,bspline))
         cout << "Test finished successfully!" << endl;
     else
         cout << "Test failed!" << endl;
@@ -474,9 +474,9 @@ void testSplineDerivative()
     DenseVector x(2);
     double y;
 
-    for(auto x0 : x0_vec)
+    for (auto x0 : x0_vec)
     {
-        for(auto x1 : x1_vec)
+        for (auto x1 : x1_vec)
         {
             // Sample function at x
             x(0) = x0;
@@ -502,29 +502,29 @@ void testSplineDerivative()
     double h = 1e-8;    // Finite difference step length
     double x0_diff, x1_diff;
 
-    for(auto x0 : x0_vec_2)
+    for (auto x0 : x0_vec_2)
     {
-        for(auto x1 : x1_vec_2)
+        for (auto x1 : x1_vec_2)
         {
             x(0) = x0;
             x(1) = x1;
 
             DenseMatrix dfdx = spline.evalJacobian(x);
-            if(dfdx.cols() != 2)
+            if (dfdx.cols() != 2)
             {
                 cout << "Test failed - check Jacobian size!" << endl;
                 return;
             }
 
             // Finite difference in x0
-            if(x(0) == x0_ub)
+            if (x(0) == x0_ub)
             {
                 // Backward diff
                 DenseVector dx1f = x;
                 DenseVector dx1b = x; dx1b(0) = x(0)-h;
                 x0_diff = (spline.eval(dx1f) - spline.eval(dx1b))/h;
             }
-            else if(x(0) == x0_lb)
+            else if (x(0) == x0_lb)
             {
                 // Forward diff
                 DenseVector dx1f = x; dx1f(0) = x(0)+h;
@@ -540,14 +540,14 @@ void testSplineDerivative()
             }
 
             // Finite difference in x1
-            if(x(1) == x1_ub)
+            if (x(1) == x1_ub)
             {
                 // Backward diff
                 DenseVector dx2f = x;
                 DenseVector dx2b = x; dx2b(1) = x(1)-h;
                 x1_diff = (spline.eval(dx2f) - spline.eval(dx2b))/h;
             }
-            else if(x(1) == x1_lb)
+            else if (x(1) == x1_lb)
             {
                 // Forward diff
                 DenseVector dx2f = x; dx2f(1) = x(1)+h;
@@ -562,7 +562,7 @@ void testSplineDerivative()
                 x1_diff = (spline.eval(dx2f) - spline.eval(dx2b))/h;
             }
 
-            if(std::abs(dfdx(0) - x0_diff) > tol
+            if (std::abs(dfdx(0) - x0_diff) > tol
                 || std::abs(dfdx(1) - x1_diff) > tol)
             {
                 cout << x0 << ", " << x1 << endl;
@@ -602,11 +602,11 @@ int main(int argc, char **argv)
     {
         run_tests();
     }
-    catch(MultivariateSplines::Exception& e)
+    catch (MultivariateSplines::Exception& e)
     {
         cout << "MS Exception - " << e.what() << endl;
     }
-    catch(std::exception& e)
+    catch (std::exception& e)
     {
         cout << "std::exception - " << e.what() << endl;
     }

@@ -34,11 +34,11 @@ double checked_strtod(const char* _Str, char** _Eptr) {
 
     _Ret = std::strtod(_Str, &_EptrTmp);
 
-    if(_EptrTmp == _Str)
+    if (_EptrTmp == _Str)
     {
         throw std::invalid_argument("strtod");
     }
-    else if(errno == ERANGE)
+    else if (errno == ERANGE)
     {
         throw std::out_of_range("strtod");
     }
@@ -62,18 +62,18 @@ int checked_strtol(const char* _Str, char** _Eptr, size_t _Base = 10) {
 
     _Ret = std::strtol(_Str, &_EptrTmp, _Base);
 
-    if(_EptrTmp == _Str)
+    if (_EptrTmp == _Str)
     {
         throw std::invalid_argument("strtol");
     }
-    else if(errno == ERANGE ||
+    else if (errno == ERANGE ||
             (_Ret < std::numeric_limits<int>::min() || _Ret > std::numeric_limits<int>::max()))
     {
         throw std::out_of_range("strtol");
     }
     else
     {
-        if(_Eptr != nullptr)
+        if (_Eptr != nullptr)
         {
             *_Eptr = _EptrTmp;
         }
@@ -118,7 +118,7 @@ void DataTable::addSample(DenseVector x, double y)
 
 void DataTable::addSample(const DataSample &sample)
 {
-    if(getNumSamples() == 0)
+    if (getNumSamples() == 0)
     {
         numVariables = sample.getDimX();
         initDataStructures();
@@ -127,9 +127,9 @@ void DataTable::addSample(const DataSample &sample)
     assert(sample.getDimX() == numVariables); // All points must have the same dimension
 
     // Check if the sample has been added already
-    if(samples.count(sample) > 0)
+    if (samples.count(sample) > 0)
     {
-        if(!allowDuplicates)
+        if (!allowDuplicates)
         {
 #ifndef NDEBUG
             std::cout << "Discarding duplicate sample because allowDuplicates is false!" << std::endl;
@@ -149,7 +149,7 @@ void DataTable::addSample(const DataSample &sample)
 
 void DataTable::recordGridPoint(const DataSample &sample)
 {
-    for(unsigned int i = 0; i < getNumVariables(); i++)
+    for (unsigned int i = 0; i < getNumVariables(); i++)
     {
         grid.at(i).insert(sample.getX().at(i));
     }
@@ -159,7 +159,7 @@ unsigned int DataTable::getNumSamplesRequired() const
 {
     unsigned long samplesRequired = 1;
     unsigned int i = 0;
-    for(auto &variable : grid)
+    for (auto &variable : grid)
     {
         samplesRequired *= (unsigned long) variable.size();
         i++;
@@ -175,7 +175,7 @@ bool DataTable::isGridComplete() const
 
 void DataTable::initDataStructures()
 {
-    for(unsigned int i = 0; i < getNumVariables(); i++)
+    for (unsigned int i = 0; i < getNumVariables(); i++)
     {
         grid.push_back(std::set<double>());
     }
@@ -183,7 +183,7 @@ void DataTable::initDataStructures()
 
 void DataTable::gridCompleteGuard() const
 {
-    if(!(isGridComplete() || allowIncompleteGrid))
+    if (!(isGridComplete() || allowIncompleteGrid))
     {
         throw Exception("DataTable::gridCompleteGuard: The grid is not complete yet!");
     }
@@ -215,7 +215,7 @@ std::vector< std::vector<double> > DataTable::getTableX() const
 
     // Initialize table
     std::vector<std::vector<double>> table;
-    for(unsigned int i = 0; i < numVariables; i++)
+    for (unsigned int i = 0; i < numVariables; i++)
     {
         std::vector<double> xi(getNumSamples(), 0.0);
         table.push_back(xi);
@@ -223,7 +223,7 @@ std::vector< std::vector<double> > DataTable::getTableX() const
 
     // Fill table with values
     int i = 0;
-    for(auto &sample : samples)
+    for (auto &sample : samples)
     {
         std::vector<double> x = sample.getX();
 
@@ -241,7 +241,7 @@ std::vector< std::vector<double> > DataTable::getTableX() const
 std::vector<double> DataTable::getVectorY() const
 {
     std::vector<double> y;
-    for(std::multiset<DataSample>::const_iterator it = cbegin(); it != cend(); ++it)
+    for (std::multiset<DataSample>::const_iterator it = cbegin(); it != cend(); ++it)
     {
         y.push_back(it->getY());
     }
@@ -264,7 +264,7 @@ void DataTable::save(std::string fileName) const
     {
         outFile.open(fileName);
     }
-    catch(const std::ios_base::failure &e)
+    catch (const std::ios_base::failure &e)
     {
         throw;
     }
@@ -279,9 +279,9 @@ void DataTable::save(std::string fileName) const
     outFile << "# xDim: " << numVariables << '\n';
     outFile << numVariables << " " << 1 << '\n';
 
-    for(auto it = cbegin(); it != cend(); it++)
+    for (auto it = cbegin(); it != cend(); it++)
     {
-        for(unsigned int i = 0; i < numVariables; i++)
+        for (unsigned int i = 0; i < numVariables; i++)
         {
             outFile << std::setprecision(SAVE_DOUBLE_PRECISION) << it->getX().at(i) << " ";
         }
@@ -296,7 +296,7 @@ void DataTable::save(std::string fileName) const
     {
         outFile.close();
     }
-    catch(const std::ios_base::failure &e)
+    catch (const std::ios_base::failure &e)
     {
         throw;
     }
@@ -316,7 +316,7 @@ void DataTable::load(std::string fileName)
     {
         inFile.open(fileName);
     }
-    catch(const std::ios_base::failure &e)
+    catch (const std::ios_base::failure &e)
     {
         throw;
     }
@@ -329,16 +329,16 @@ void DataTable::load(std::string fileName)
 
     int nX, nY;
     int state = 0;
-    while(std::getline(inFile, line))
+    while (std::getline(inFile, line))
     {
         // Look for comment sign
-        if(line.at(0) == '#')
+        if (line.at(0) == '#')
         {
             continue;
         }
 
         // Reading number of dimensions
-        else if(state == 0)
+        else if (state == 0)
         {
             nX = checked_strtol(line.c_str(), nullptr, 10);
             nY = 1;
@@ -346,7 +346,7 @@ void DataTable::load(std::string fileName)
         }
 
         // Reading samples
-        else if(state == 1)
+        else if (state == 1)
         {
             auto x = std::vector<double>(nX);
             auto y = std::vector<double>(nY);
@@ -354,12 +354,12 @@ void DataTable::load(std::string fileName)
             const char* str = line.c_str();
             char* nextStr = nullptr;
 
-            for(int i = 0; i < nX; i++)
+            for (int i = 0; i < nX; i++)
             {
                 x.at(i) = checked_strtod(str, &nextStr);
                 str = nextStr;
             }
-            for(int j = 0; j < nY; j++)
+            for (int j = 0; j < nY; j++)
             {
                 y.at(j) = checked_strtod(str, &nextStr);
                 str = nextStr;
