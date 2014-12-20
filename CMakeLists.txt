@@ -69,6 +69,7 @@ set(SRC_LIST
     include/datatable.h
     include/generaldefinitions.h
     include/linearsolvers.h
+    include/serialize.h
     include/mykroneckerproduct.h
     src/bspline.cpp
     src/bsplinebasis.cpp
