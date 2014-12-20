@@ -13,7 +13,7 @@
 #include "include/mykroneckerproduct.h"
 #include "unsupported/Eigen/KroneckerProduct"
 #include "include/linearsolvers.h"
-
+#include "serialize.h"
 #include <iostream>
 
 namespace MultivariateSplines
@@ -77,6 +77,11 @@ BSpline::BSpline(const DataTable &samples, BSplineType type = BSplineType::CUBIC
     init();
 
     checkControlPoints();
+}
+
+BSpline::BSpline(const std::string fileName)
+{
+    load(fileName);
 }
 
 void BSpline::init()
@@ -514,6 +519,43 @@ bool BSpline::removeUnsupportedBasisFunctions(std::vector<double> &lb, std::vect
     knotaverages = knotaverages*A;
 
     return true;
+}
+
+void BSpline::save(const std::string fileName) const
+{
+    // Serialize
+    StreamType stream;
+    serialize(numVariables, stream);
+    serialize(coefficients, stream);
+    serialize(basis.getKnotVectors(), stream);
+    serialize(basis.getBasisDegrees(), stream);
+
+    // Save stream to file
+    save_to_file(fileName, stream);
+}
+
+void BSpline::load(const std::string fileName)
+{
+    // Load stream from file
+    StreamType stream = load_from_file(fileName);
+
+    // Deserialize
+    auto it = stream.cbegin();
+    numVariables = deserialize<unsigned int>(it, stream.cend());
+    coefficients = deserialize<DenseMatrix>(it, stream.cend());
+    auto knotVectors = deserialize<std::vector<std::vector<double>>>(it, stream.cend());
+    auto basisDegrees = deserialize<std::vector<unsigned int>>(it, stream.cend());
+
+    loadBasis(knotVectors, basisDegrees);
+}
+
+void BSpline::loadBasis(std::vector<std::vector<double>> knotVectors, std::vector<unsigned int> basisDegrees)
+{
+    assert(coefficients.rows() == 1);
+    basis = BSplineBasis(knotVectors, basisDegrees, KnotVectorType::EXPLICIT);
+    computeKnotAverages();
+    init();
+    checkControlPoints();
 }
 
 } // namespace MultivariateSplines

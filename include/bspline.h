@@ -30,22 +30,27 @@ enum class BSplineType
     //CUBIC_PERIODIC,   // Cubic spline with Periodic end conditions. Not implemented.
 };
 
-/*
+/**
  * Class that implements the multivariate tensor product B-spline
  */
 class BSpline : public Spline
 {
 public:
 
-    // Construct B-spline from knot vectors, control coefficients (assumed vectorized), and basis degrees
-    //Bspline(std::vector<double> coefficients, std::vector<double> knotVectors, unsigned int basisDegrees);
-    //Bspline(std::vector<double> coefficients, std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees);
+    /**
+     * Construct B-spline from knot vectors, control coefficients (assumed vectorized), and basis degrees
+     */
     BSpline(DenseMatrix coefficients, std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees);
 
-    // Construct B-spline that interpolates the samples in DataTable
-    //BSpline(DataTable &samples, unsigned int basisDegree);
-    //BSpline(DataTable &samples, std::vector<unsigned int> basisDegrees);
+    /**
+     * Construct B-spline that interpolates the samples in DataTable
+     */
     BSpline(const DataTable &samples, BSplineType type);
+
+    /**
+     * Construct B-spline from file
+     */
+    BSpline(const std::string fileName);
 
     virtual BSpline* clone() const { return new BSpline(*this); }
 
@@ -75,6 +80,8 @@ public:
 
     bool insertKnots(double tau, unsigned int dim, unsigned int multiplicity = 1); // TODO: move back to private
 
+    void save(const std::string fileName) const override;
+
 protected:
 
     BSpline() {}
@@ -103,6 +110,8 @@ private:
     // Helper functions
     bool pointInDomain(DenseVector x) const;
 
+    void load(const std::string fileName) override;
+    void loadBasis(std::vector<std::vector<double>> knotVectors, std::vector<unsigned int> basisDegrees);
 };
 
 } // namespace MultivariateSplines

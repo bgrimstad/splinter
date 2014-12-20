@@ -37,6 +37,8 @@
 #include <cassert>
 #include <fstream>
 
+namespace MultivariateSplines {
+
 typedef std::vector<uint8_t> StreamType;
 
 template <class T>
@@ -279,5 +281,7 @@ StreamType load_from_file(std::string filename)
 
     return sresult;
 }
+
+} // namespace MultivariateSplines
 
 #endif // MS_SERIALIZE_H

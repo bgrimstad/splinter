@@ -302,6 +302,14 @@ bool BSplineBasis::reduceSupport(std::vector<double>& lb, std::vector<double>& u
     return true;
 }
 
+std::vector<unsigned int> BSplineBasis::getBasisDegrees() const
+{
+    std::vector<unsigned int> degrees;
+    for (const auto& basis : bases)
+        degrees.push_back(basis.getBasisDegree());
+    return degrees;
+}
+
 unsigned int BSplineBasis::getBasisDegree(unsigned int dim) const
 {
     return bases.at(dim).getBasisDegree();

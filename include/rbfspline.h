@@ -131,6 +131,9 @@ public:
 
     unsigned int getNumVariables() const { return dim; }
 
+    void save(const std::string fileName) const override {}
+    void load(const std::string fileName) override {}
+
 private:
 
     const DataTable samples;
