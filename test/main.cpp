@@ -373,6 +373,36 @@ bool compareBSplines(BSpline &bs, const BSpline &bs_orig)
     return true;
 }
 
+bool saveTest1()
+{
+    // Create new DataTable to manage samples
+    DataTable samples;
+    // Sample function
+    auto x0_vec = linspace(0, 2, 20);
+    auto x1_vec = linspace(0, 2, 20);
+    DenseVector x(2);
+    double y;
+    for (auto x0 : x0_vec)
+    {
+        for (auto x1 : x1_vec)
+        {
+            // Sample function at x
+            x(0) = x0;
+            x(1) = x1;
+            y = f(x);
+            // Store sample
+            samples.addSample(x,y);
+        }
+    }
+    // Build B-splines that interpolate the samples
+    BSpline bspline(samples, BSplineType::LINEAR);
+    bspline.save("saveTest1.bspline");
+    BSpline loadedBspline("saveTest1.bspline");
+    remove("saveTest1.bspline");
+    return compareBSplines(bspline, loadedBspline);
+}
+
+
 bool domainReductionTest(BSpline &bs, const BSpline &bs_orig)
 {
     if (bs.getNumVariables() != 2 || bs_orig.getNumVariables() != 2)
@@ -594,6 +624,7 @@ void run_tests()
     cout << "test4(): " << (test4() ? "success" : "fail")   << endl;
     cout << "test5(): " << (test5() ? "success" : "fail")   << endl;
     cout << "test6(): " << (test6() ? "success" : "fail")   << endl;
+    cout << "saveTest1(): " << (saveTest1() ? "success" : "fail")   << endl;
 }
 
 int main(int argc, char **argv)
