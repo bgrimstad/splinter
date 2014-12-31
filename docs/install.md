@@ -35,7 +35,7 @@ CMake will try to automatically find where Eigen is installed, but if this fails
 
 ##Compile on Windows
 
-1. Clone https://github.com/bgrimstad/multivariate-bsplines
+1. Clone https://github.com/bgrimstad/multivariate-splines
 2. Download [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page).
   1. Extract the zip-file into a new folder, and write down the location of that folder
 3. Download and install [CMake](http://www.cmake.org/download/).
