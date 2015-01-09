@@ -8,7 +8,7 @@
 
 project(multivariate-splines)
 cmake_minimum_required(VERSION 2.8)
-set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_BUILD_TYPE Debug)
 
 set(MULTIVARIATESPLINES_VERSION_MAJOR 1)
 set(MULTIVARIATESPLINES_VERSION_MINOR 1)
@@ -88,6 +88,10 @@ add_library(multivariate-splines-static${MULTIVARIATESPLINES_VERSION} STATIC ${S
 # Testing executable
 add_executable("multivariate-splines-test" ${CMAKE_CURRENT_SOURCE_DIR}/test/main.cpp)
 target_link_libraries("multivariate-splines-test" multivariate-splines-static${MULTIVARIATESPLINES_VERSION})
+
+# Serialize testing executable
+add_executable("multivariate-splines-serialize-test" ${CMAKE_CURRENT_SOURCE_DIR}/test/serialize.cpp)
+target_link_libraries("multivariate-splines-serialize-test" multivariate-splines-static${MULTIVARIATESPLINES_VERSION})
 
 if(WIN32)
     set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++") # Necessary for test executable to work with MinGW

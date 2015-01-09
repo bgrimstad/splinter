@@ -36,6 +36,7 @@
 #include <Eigen/Dense>
 #include <cassert>
 #include <fstream>
+#include <include/datatable.h>
 
 namespace MultivariateSplines {
 
@@ -62,6 +63,29 @@ namespace detail
             size += sizeof(obj.cols());
             size += obj.rows()*obj.cols()*sizeof(T);
             return size;
+        }
+    };
+
+    /**
+     * Specialization for DataTable. Represented by storing the number of
+     * samples followed by the DataSamples.
+     */
+    template <>
+    struct get_size_helper<DataTable> {
+        static size_t value(const DataTable& table) {
+            size_t val = get_size(table.getNumSamples());
+            val += table.getNumSamples() * get_size(*table.getSamples().cbegin());
+            return val;
+        }
+    };
+
+    /**
+     * Specialization for DataSample.
+     */
+    template <>
+    struct get_size_helper<DataSample> {
+        static size_t value(const DataSample& sample) {
+            return get_size(sample.getX()) + get_size(sample.getY());
         }
     };
 
@@ -112,6 +136,23 @@ namespace detail
                 for (int j = 0; j < obj.cols(); ++j) {
                     serializer(obj(i,j), res);
                 }
+            }
+        }
+    };
+
+    /**
+     * Serialization of DataTable.
+     */
+    template <>
+    struct serialize_helper<DataTable> {
+        static void apply(const DataTable& table, StreamType::iterator& res) {
+            // Store number of samples
+            serializer(table.getNumSamples(), res);
+
+            // Store the samples
+            for(auto it = table.getSamples().cbegin(); it != table.getSamples().cend(); it++) {
+                serializer(it->getX(), res);
+                serializer(it->getY(), res);
             }
         }
     };
@@ -207,7 +248,7 @@ namespace detail
     * Deserialization for Eigen dense matrices.
     *
     * We read the first size_t values for number of rows and columns,
-    * then we read the matrix elements by iterating over rows, then columns.
+    * then we read the matrix elements doubleby iterating over rows, then columns.
     */
     template <class T>
     struct deserialize_helper<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>> {
@@ -232,6 +273,27 @@ namespace detail
 
             }
             return mat;
+        }
+    };
+
+
+    /**
+    * Deserialization for DataTables.
+    */
+    template <>
+    struct deserialize_helper<DataTable> {
+        static DataTable apply(StreamType::const_iterator& begin, StreamType::const_iterator end) {
+            // Number of samples
+            unsigned int numSamples = deserialize_helper<unsigned int>::apply(begin, end);
+
+            DataTable table;
+            for(unsigned int i = 0; i < numSamples; i++) {
+                auto x = deserialize_helper<std::vector<double>>::apply(begin, end);
+                auto y = deserialize_helper<double>::apply(begin, end);
+                table.addSample(x, y);
+            }
+
+            return table;
         }
     };
 
@@ -271,7 +333,11 @@ StreamType load_from_file(std::string filename)
     std::vector<char> result(pos);
 
     ifs.seekg(0, std::ios::beg);
-    ifs.read(&result[0], pos);
+
+    // http://www.cplusplus.com/reference/vector/vector/data/
+    // Elements of the vector are guaranteed to be stored in a contiguous array,
+    // *result.data() can therefore be treated as an array of the same type as the vector
+    ifs.read(result.data(), pos);
     assert(ifs);
 
     // Convert from char to uint_8 vector
