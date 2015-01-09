@@ -48,6 +48,7 @@ public:
 
     unsigned int getNumVariables() const {return numVariables;}
     unsigned int getNumSamples() const {return samples.size();}
+    const std::multiset<DataSample>& getSamples() const {return samples;}
 
     std::vector<std::set<double>> getGrid() const { return grid; }
     std::vector< std::vector<double> > getTableX() const;
