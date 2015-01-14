@@ -86,6 +86,7 @@ set(STATIC_LIBRARY multivariate-splines-static-${MULTIVARIATESPLINES_VERSION})
 
 set(SHARED_LIBRARY_TEST "multivariate-splines-shared-test")
 set(STATIC_LIBRARY_TEST "multivariate-splines-static-test")
+set(SERIALIZE_TEST "multivariate-splines-serialize-test")
 
 # Add output library: add_library(libname [SHARED | STATIC] sourcelist)
 add_library(${SHARED_LIBRARY} SHARED ${SRC_LIST})
@@ -98,8 +99,8 @@ add_executable(${STATIC_LIBRARY_TEST} ${CMAKE_CURRENT_SOURCE_DIR}/test/main.cpp)
 target_link_libraries(${STATIC_LIBRARY_TEST} ${STATIC_LIBRARY})
 
 # Serialize testing executable
-add_executable("multivariate-splines-serialize-test" ${CMAKE_CURRENT_SOURCE_DIR}/test/serialize.cpp)
-target_link_libraries("multivariate-splines-serialize-test" multivariate-splines-static${MULTIVARIATESPLINES_VERSION})
+add_executable(${SERIALIZE_TEST} ${CMAKE_CURRENT_SOURCE_DIR}/test/serialize.cpp)
+target_link_libraries(${SERIALIZE_TEST} ${STATIC_LIBRARY})
 
 # Install the header files
 install(
