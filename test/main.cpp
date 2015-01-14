@@ -20,231 +20,13 @@
 #include "bspline.h"
 #include "pspline.h"
 #include "rbfspline.h"
+#include "testingutilities.h"
 
 using std::cout;
 using std::endl;
 
 using namespace MultivariateSplines;
 
-// Checks if a is within margin of b
-bool equalsWithinRange(double a, double b, double margin = 0.0)
-{
-    return b - margin <= a && a <= b + margin;
-}
-
-bool is_identical(DataTable &a, DataTable &b)
-{
-    if (a.getNumVariables() != b.getNumVariables())
-        return false;
-
-    auto ait = a.cbegin(), bit = b.cbegin();
-    for (; ait != a.cend() && bit != b.cend(); ait++, bit++)
-    {
-        for (unsigned int i = 0; i < a.getNumVariables(); i++)
-        {
-//            std::cout << std::setprecision(SAVE_DOUBLE_PRECISION) << ait->getX().at(i) << " == " << std::setprecision(SAVE_DOUBLE_PRECISION) << bit->getX().at(i) << " ";
-            if (!equalsWithinRange(ait->getX().at(i), bit->getX().at(i)))
-                return false;
-        }
-
-//            std::cout << std::setprecision(SAVE_DOUBLE_PRECISION) << ait->getY().at(j) << " == " << std::setprecision(SAVE_DOUBLE_PRECISION) << bit->getY().at(j) << " ";
-        if (!equalsWithinRange(ait->getY(), bit->getY()))
-            return false;
-//        std::cout << std::endl;
-    }
-
-//    std::cout << "Finished comparing samples..." << std::endl;
-
-    return ait == a.cend() && bit == b.cend();
-}
-
-bool test1()
-{
-    DataTable table;
-
-    auto x = std::vector<double>(1);
-    double y;
-    for (double i = -0.3; i <= 0.3; i += 0.04)
-    {
-        x.at(0) = i;
-        y = 2 * i;
-        table.addSample(x, y);
-    }
-
-    table.save("test1.datatable");
-
-    DataTable loadedTable;
-    loadedTable.load("test1.datatable");
-
-    remove("test1.datatable");
-
-    return is_identical(table, loadedTable);
-}
-
-bool test2()
-{
-    DataTable table;
-
-    auto x = std::vector<double>(2);
-    double y;
-    for (double i = -0.3; i <= 0.3; i += 0.04)
-    {
-        for (double j = -0.4; j <= 1.0; j += 0.08)
-        {
-            x.at(0) = i;
-            x.at(1) = j;
-            y = i * j;
-            table.addSample(x, y);
-        }
-    }
-
-    table.save("test2.datatable");
-
-    DataTable loadedTable;
-    loadedTable.load("test2.datatable");
-
-    remove("test2.datatable");
-
-    return is_identical(table, loadedTable);
-}
-
-bool test3()
-{
-    DataTable table;
-
-    auto x = std::vector<double>(2);
-    double y;
-    for (double i = -0.3; i <= 0.3; i += 0.04)
-    {
-        for(double j = -0.4; j <= 1.0; j += 0.03)
-        {
-            x.at(0) = i;
-            x.at(1) = j;
-            y = i * j;
-            table.addSample(x, y);
-        }
-    }
-
-    table.save("test3.datatable");
-
-    DataTable loadedTable;
-    loadedTable.load("test3.datatable");
-
-    remove("test3.datatable");
-
-    return is_identical(table, loadedTable);
-}
-
-bool test4()
-{
-    DataTable table;
-
-    auto x = std::vector<double>(4);
-    double y;
-    int j = 0;
-    for (double i = std::numeric_limits<double>::lowest(), k = std::numeric_limits<double>::max();
-        j < 10000;
-        i = nextafter(i, std::numeric_limits<double>::max()), k = nextafter(k, std::numeric_limits<double>::lowest()))
-    {
-        x.at(0) = i;
-        y = k;
-        table.addSample(x, y);
-        j++;
-    }
-
-    table.save("test4.datatable");
-
-    DataTable loadedTable;
-    loadedTable.load("test4.datatable");
-
-    remove("test4.datatable");
-
-    return is_identical(table, loadedTable);
-}
-
-bool test5()
-{
-    DataTable table;
-
-    auto x = std::vector<double>(3);
-    double y;
-    for (double i = -0.0001; i <= 0.0001; i += 0.000001)
-    {
-        for (double j = -0.01; j <= 0.01; j += 0.001)
-        {
-            for (double k = -0.01; k <= 0.01; k += 0.001)
-            {
-                x.at(0) = i;
-                x.at(1) = j;
-                x.at(2) = k;
-                y = i * j;
-                table.addSample(x, y);
-            }
-        }
-    }
-
-    table.save("test5.datatable");
-
-    DataTable loadedTable;
-    loadedTable.load("test5.datatable");
-
-    remove("test5.datatable");
-
-    return is_identical(table, loadedTable);
-}
-
-bool test6()
-{
-    DataTable table;
-
-    auto x = std::vector<double>(4);
-    double y;
-    for (double i = -0.0001; i <= 0.0001; i += 0.000001)
-    {
-        for (double j = -0.01; j <= 0.01; j += 0.001)
-        {
-            for (double k = -0.01; k <= 0.01; k += 0.001)
-            {
-                for (double l = -100000.0; l < 0.0; l += 13720.0)
-                {
-                    x.at(0) = i;
-                    x.at(1) = j;
-                    x.at(2) = k;
-                    x.at(3) = l;
-                    y = i * j;
-                    table.addSample(x, y);
-                }
-            }
-        }
-    }
-
-    table.save("test6.datatable");
-
-    DataTable loadedTable;
-    loadedTable.load("test6.datatable");
-
-    remove("test6.datatable");
-
-    return is_identical(table, loadedTable);
-}
-
-std::vector<double> linspace(double start, double stop, unsigned int points)
-{
-    std::vector<double> ret;
-    double dx = 0;
-    if(points > 1)
-        dx = (stop - start)/(points-1);
-    for (unsigned int i = 0; i < points; ++i)
-        ret.push_back(start + i*dx);
-    return ret;
-}
-
-// Six-hump camelback function
-double f(DenseVector x)
-{
-    assert(x.rows() == 2);
-    return (4 - 2.1*x(0)*x(0) + (1/3.)*x(0)*x(0)*x(0)*x(0))*x(0)*x(0) + x(0)*x(1) + (-4 + 4*x(1)*x(1))*x(1)*x(1);
-}
 
 void runExample()
 {
@@ -264,7 +46,7 @@ void runExample()
             // Sample function at x
             x(0) = x0;
             x(1) = x1;
-            y = f(x);
+            y = sixHumpCamelBack(x);
 
             // Store sample
             samples.addSample(x,y);
@@ -288,7 +70,7 @@ void runExample()
     cout << endl << endl;
     cout << "Evaluating splines at grid point x = [0,0]"        << endl;
     cout << "-------------------------------------------"       << endl;
-    cout << "Function y(x):         "   << f(x)                 << endl;
+    cout << "Function y(x):         "   << sixHumpCamelBack(x)  << endl;
     cout << "Linear B-spline:       "   << bspline1.eval(x)     << endl;
     cout << "Quadratic B-spline:    "   << bspline2.eval(x)     << endl;
     cout << "Cubic B-spline:        "   << bspline3.eval(x)     << endl;
@@ -302,7 +84,7 @@ void runExample()
     cout << endl << endl;
     cout << "Evaluating splines at x = [1,1]"                   << endl;
     cout << "-------------------------------------------"       << endl;
-    cout << "Function y(x):         "   << f(x)                 << endl;
+    cout << "Function y(x):         "   << sixHumpCamelBack(x)  << endl;
     cout << "Linear B-spline:       "   << bspline1.eval(x)     << endl;
     cout << "Quadratic B-spline:    "   << bspline2.eval(x)     << endl;
     cout << "Cubic B-spline:        "   << bspline3.eval(x)     << endl;
@@ -322,7 +104,7 @@ void runExample()
             // Sample function at x
             x(0) = x0;
             x(1) = x1;
-            y = f(x);
+            y = sixHumpCamelBack(x);
 
             e_max.at(0) = std::max(e_max.at(0), std::abs(bspline1.eval(x) - y));
             e_max.at(1) = std::max(e_max.at(1), std::abs(bspline2.eval(x) - y));
@@ -342,66 +124,6 @@ void runExample()
     cout << "Thin-plate spline:    "   << e_max.at(4)       << endl;
     cout << "-------------------------------------------"   << endl;
 }
-
-bool compareBSplines(BSpline &bs, const BSpline &bs_orig)
-{
-    auto lb = bs.getDomainLowerBound();
-    auto ub = bs.getDomainUpperBound();
-
-    auto x0_vec = linspace(lb.at(0), ub.at(0), 10);
-    auto x1_vec = linspace(lb.at(1), ub.at(1), 10);
-
-    DenseVector x(2);
-    for (auto x0 : x0_vec)
-    {
-        for (auto x1 : x1_vec)
-        {
-            x(0) = x0;
-            x(1) = x1;
-
-            double yb = bs.eval(x);
-            double yb_orig = bs_orig.eval(x);
-            if (std::abs(yb-yb_orig) > 1e-8)
-            {
-                cout << yb << endl;
-                cout << yb_orig << endl;
-                return false;
-            }
-        }
-    }
-
-    return true;
-}
-
-bool saveTest1()
-{
-    // Create new DataTable to manage samples
-    DataTable samples;
-    // Sample function
-    auto x0_vec = linspace(0, 2, 20);
-    auto x1_vec = linspace(0, 2, 20);
-    DenseVector x(2);
-    double y;
-    for (auto x0 : x0_vec)
-    {
-        for (auto x1 : x1_vec)
-        {
-            // Sample function at x
-            x(0) = x0;
-            x(1) = x1;
-            y = f(x);
-            // Store sample
-            samples.addSample(x,y);
-        }
-    }
-    // Build B-splines that interpolate the samples
-    BSpline bspline(samples, BSplineType::LINEAR);
-    bspline.save("saveTest1.bspline");
-    BSpline loadedBspline("saveTest1.bspline");
-    remove("saveTest1.bspline");
-    return compareBSplines(bspline, loadedBspline);
-}
-
 
 bool domainReductionTest(BSpline &bs, const BSpline &bs_orig)
 {
@@ -467,7 +189,7 @@ void runRecursiveDomainReductionTest()
             // Sample function at x
             x(0) = x0;
             x(1) = x1;
-            y = f(x);
+            y = sixHumpCamelBack(x);
 
             // Store sample
             samples.addSample(x,y);
@@ -511,7 +233,7 @@ void testSplineDerivative()
             // Sample function at x
             x(0) = x0;
             x(1) = x1;
-            y = f(x);
+            y = sixHumpCamelBack(x);
 
             // Store sample
             samples.addSample(x,y);
@@ -614,17 +336,6 @@ void run_tests()
     testSplineDerivative();
 
     runRecursiveDomainReductionTest();
-
-    cout << endl << endl;
-    cout << "Testing load and save functionality:       "   << endl;
-    cout << "-------------------------------------------"   << endl;
-    cout << "test1(): " << (test1() ? "success" : "fail")   << endl;
-    cout << "test2(): " << (test2() ? "success" : "fail")   << endl;
-    cout << "test3(): " << (test3() ? "success" : "fail")   << endl;
-    cout << "test4(): " << (test4() ? "success" : "fail")   << endl;
-    cout << "test5(): " << (test5() ? "success" : "fail")   << endl;
-    cout << "test6(): " << (test6() ? "success" : "fail")   << endl;
-    cout << "saveTest1(): " << (saveTest1() ? "success" : "fail")   << endl;
 }
 
 int main(int argc, char **argv)
