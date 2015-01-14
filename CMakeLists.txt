@@ -99,7 +99,7 @@ target_link_libraries(${STATIC_LIBRARY_TEST} ${STATIC_LIBRARY})
 
 # Serialize testing executable
 add_executable("multivariate-splines-serialize-test" ${CMAKE_CURRENT_SOURCE_DIR}/test/serialize.cpp)
-target_link_libraries("multivariate-splines-serialize-test" ${STATIC_LIBRARY})
+target_link_libraries("multivariate-splines-serialize-test" multivariate-splines-static${MULTIVARIATESPLINES_VERSION})
 
 # Install the header files
 install(
