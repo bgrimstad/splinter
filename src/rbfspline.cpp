@@ -65,14 +65,14 @@ RBFSpline::RBFSpline(const DataTable &samples, RadialBasisFunctionType type, boo
     DenseMatrix b; b.setZero(numSamples,1);
 
     int i=0;
-    for(auto it1 = samples.cbegin(); it1 != samples.cend(); ++it1, ++i)
+    for (auto it1 = samples.cbegin(); it1 != samples.cend(); ++it1, ++i)
     {
         double sum = 0;
         int j=0;
-        for(auto it2 = samples.cbegin(); it2 != samples.cend(); ++it2, ++j)
+        for (auto it2 = samples.cbegin(); it2 != samples.cend(); ++it2, ++j)
         {
             double val = fn->eval(dist(*it1, *it2));
-            if(val != 0)
+            if (val != 0)
             {
                 //A.insert(i,j) = val;
                 A(i,j) = val;
@@ -81,13 +81,13 @@ RBFSpline::RBFSpline(const DataTable &samples, RadialBasisFunctionType type, boo
         }
 
         double y = it1->getY();
-        if(normalized) b(i) = sum*y;
+        if (normalized) b(i) = sum*y;
         else b(i) = y;
     }
 
     //A.makeCompressed();
 
-    if(precondition)
+    if (precondition)
     {
         // Calcualte precondition matrix P
         DenseMatrix P = computePreconditionMatrix();
@@ -136,7 +136,7 @@ RBFSpline::RBFSpline(const DataTable &samples, RadialBasisFunctionType type, boo
 double RBFSpline::eval(DenseVector x) const
 {
     std::vector<double> y;
-    for(int i=0; i<x.rows(); i++)
+    for (int i=0; i<x.rows(); i++)
         y.push_back(x(i));
     return eval(y);
 }
@@ -146,7 +146,7 @@ double RBFSpline::eval(std::vector<double> x) const
     assert(x.size() == dim);
     double fval, sum = 0, sumw = 0;
     int i = 0;
-    for(auto it = samples.cbegin(); it != samples.cend(); ++it, ++i)
+    for (auto it = samples.cbegin(); it != samples.cend(); ++it, ++i)
     {
         fval = fn->eval(dist(x,it->getX()));
         sumw += weights(i)*fval;
@@ -161,13 +161,13 @@ double RBFSpline::eval(std::vector<double> x) const
 //DenseMatrix RBFSpline::evalJacobian(DenseVector x) const
 //{
 //    std::vector<double> x_vec;
-//    for(unsigned int i = 0; i<x.size(); i++)
+//    for (unsigned int i = 0; i<x.size(); i++)
 //        x_vec.push_back(x(i));
 
 //    DenseMatrix jac;
 //    jac.setZero(1,dim);
 
-//    for(unsigned int i = 0; i < dim; i++)
+//    for (unsigned int i = 0; i < dim; i++)
 //    {
 //        double sumw = 0;
 //        double sumw_d = 0;
@@ -175,7 +175,7 @@ double RBFSpline::eval(std::vector<double> x) const
 //        double sum_d = 0;
 
 //        int j = 0;
-//        for(auto it = samples.cbegin(); it != samples.cend(); ++it, ++j)
+//        for (auto it = samples.cbegin(); it != samples.cend(); ++it, ++j)
 //        {
 //            // Sample
 //            auto s_vec = it->getX();
@@ -192,14 +192,14 @@ double RBFSpline::eval(std::vector<double> x) const
 //            sumw += weights(j)*f;
 
 //            // TODO: check if this assumption is correct
-//            if(r != 0)
+//            if (r != 0)
 //            {
 //                sum_d += dfdr*ri/r;
 //                sumw_d += weights(j)*dfdr*ri/r;
 //            }
 //        }
 
-//        if(normalized)
+//        if (normalized)
 //            jac(i) = (sum*sumw_d - sum_d*sumw)/(sum*sum);
 //        else
 //            jac(i) = sumw_d;
@@ -220,14 +220,14 @@ DenseMatrix RBFSpline::computePreconditionMatrix() const
     int sigma = std::max(1.0, std::floor(0.1*numSamples)); // Local points to consider
 
     int i=0;
-    for(auto it1 = samples.cbegin(); it1 != samples.cend(); ++it1, ++i)
+    for (auto it1 = samples.cbegin(); it1 != samples.cend(); ++it1, ++i)
     {
         Point p1(it1->getX());
 
         // Shift data using p1 as origin
         std::vector<Point> shifted_points;
         int j=0;
-        for(auto it2 = samples.cbegin(); it2 != samples.cend(); ++it2, ++j)
+        for (auto it2 = samples.cbegin(); it2 != samples.cend(); ++it2, ++j)
         {
             Point p2(it2->getX());
             Point p3(p2-p1);
@@ -239,7 +239,7 @@ DenseMatrix RBFSpline::computePreconditionMatrix() const
         // Find sigma closest points to p1
         std::vector<Point> points;
         std::vector<int> indices;
-        for(int j=0; j<sigma; j++)
+        for (int j=0; j<sigma; j++)
         {
             Point p(shifted_points.at(j));
             indices.push_back(p.getIndex());
@@ -251,7 +251,7 @@ DenseMatrix RBFSpline::computePreconditionMatrix() const
         }
 
         // Add some points far away from p1 and preferably scattered around the domain boundary
-        for(int k=0; k<1; k++)
+        for (int k=0; k<1; k++)
         {
             Point p(shifted_points.at(shifted_points.size()-1-k));
             indices.push_back(p.getIndex());
@@ -269,9 +269,9 @@ DenseMatrix RBFSpline::computePreconditionMatrix() const
 
         assert(points.front().getIndex() == i);
 
-        for(int k1=0; k1<m; k1++)
+        for (int k1=0; k1<m; k1++)
         {
-            for(int k2=0; k2<m; k2++)
+            for (int k2=0; k2<m; k2++)
             {
                 Point p = points.at(k1) - points.at(k2);
                 B(k1,k2) = fn->eval(p.dist());
@@ -285,10 +285,10 @@ DenseMatrix RBFSpline::computePreconditionMatrix() const
         w = svd.solve(e);
         //assert(svd.info() == Eigen::Success);
 
-        for(unsigned int j=0; j<numSamples; j++)
+        for (unsigned int j=0; j<numSamples; j++)
         {
             auto it = find(indices.begin(),indices.end(),j);
-            if(it!=indices.end())
+            if (it!=indices.end())
             {
                 int k = it - indices.begin();
 
@@ -309,7 +309,7 @@ double RBFSpline::dist(std::vector<double> x, std::vector<double> y) const
 {
     assert(x.size() == y.size());
     double sum = 0.0;
-    for(unsigned int i=0; i<x.size(); i++)
+    for (unsigned int i=0; i<x.size(); i++)
         sum += (x.at(i)-y.at(i))*(x.at(i)-y.at(i));
     return std::sqrt(sum);
 }

@@ -35,7 +35,7 @@ void BSplineBasis::setUnivariateBases(std::vector< std::vector<double> > &X, std
 {
     bases.clear();
     numVariables = X.size();
-    for(unsigned int i = 0; i < numVariables; i++)
+    for (unsigned int i = 0; i < numVariables; i++)
     {
         bases.push_back(BSplineBasis1D(X.at(i), basisDegrees.at(i), knotVectorType));
     }
@@ -50,12 +50,12 @@ SparseVector BSplineBasis::eval(const DenseVector &x) const
     SparseMatrix tv2 = tv1;
 
     // Evaluate all basisfunctions in each dimension i and generate the tensor product of the function values
-    for(int dim = 0; dim < x.size(); dim++)
+    for (int dim = 0; dim < x.size(); dim++)
     {
         SparseVector xi = bases.at(dim).evaluate(x(dim));
 
         // Avoid matrix copy
-        if(dim % 2 == 0)
+        if (dim % 2 == 0)
         {
             tv1 = kroneckerProduct(tv2, xi); // tv1 = tv1 x xi
         }
@@ -66,7 +66,7 @@ SparseVector BSplineBasis::eval(const DenseVector &x) const
     }
 
     // Return correct vector
-    if(tv1.size() == numBasisFunctions())
+    if (tv1.size() == numBasisFunctions())
     {
         return tv1;
     }
@@ -80,15 +80,15 @@ DenseMatrix BSplineBasis::evalBasisJacobianOld(DenseVector &x) const
     DenseMatrix J; J.setZero(numBasisFunctions(), numVariables);
 
     // Calculate partial derivatives
-    for(unsigned int i = 0; i < numVariables; i++)
+    for (unsigned int i = 0; i < numVariables; i++)
     {
         // One column in basis jacobian
         DenseVector bi; bi.setOnes(1);
-        for(unsigned int j = 0; j < numVariables; j++)
+        for (unsigned int j = 0; j < numVariables; j++)
         {
             DenseVector temp = bi;
             DenseVector xi;
-            if(j == i)
+            if (j == i)
             {
                 // Differentiated basis
                 xi = bases.at(j).evaluateFirstDerivative(x(j));
@@ -117,16 +117,16 @@ SparseMatrix BSplineBasis::evalBasisJacobian(DenseVector &x) const
     //J.setZero(numBasisFunctions(), numInputs);
 
     // Calculate partial derivatives
-    for(unsigned int i = 0; i < numVariables; i++)
+    for (unsigned int i = 0; i < numVariables; i++)
     {
         // One column in basis jacobian
         SparseMatrix Ji(1,1);
         Ji.insert(0,0) = 1;
-        for(unsigned int j = 0; j < numVariables; j++)
+        for (unsigned int j = 0; j < numVariables; j++)
         {
             SparseMatrix temp = Ji;
             SparseMatrix xi;
-            if(j == i)
+            if (j == i)
             {
                 // Differentiated basis
                 xi = bases.at(j).evaluateDerivative(x(j),1);
@@ -142,10 +142,10 @@ SparseMatrix BSplineBasis::evalBasisJacobian(DenseVector &x) const
         }
 
         // Fill out column
-        for(int k = 0; k < Ji.outerSize(); ++k)
-        for(SparseMatrix::InnerIterator it(Ji,k); it; ++it)
+        for (int k = 0; k < Ji.outerSize(); ++k)
+        for (SparseMatrix::InnerIterator it(Ji,k); it; ++it)
         {
-            if(it.value() != 0)
+            if (it.value() != 0)
                 J.insert(it.row(),i) = it.value();
         }
         //J.block(0,i,Ji.rows(),1) = bi.block(0,0,Ji.rows(),1);
@@ -174,24 +174,24 @@ SparseMatrix BSplineBasis::evalBasisHessian(DenseVector &x) const
     // Calculate partial derivatives
     // Utilizing that Hessian is symmetric
     // Filling out lower left triangular
-    for(unsigned int i = 0; i < numVariables; i++) // row
+    for (unsigned int i = 0; i < numVariables; i++) // row
     {
-        for(unsigned int j = 0; j <= i; j++) // col
+        for (unsigned int j = 0; j <= i; j++) // col
         {
             // One column in basis jacobian
             SparseMatrix Hi(1,1);
             Hi.insert(0,0) = 1;
 
-            for(unsigned int k = 0; k < numVariables; k++)
+            for (unsigned int k = 0; k < numVariables; k++)
             {
                 SparseMatrix temp = Hi;
                 SparseMatrix Bk;
-                if(i == j && k == i)
+                if (i == j && k == i)
                 {
                     // Diagonal element
                     Bk = bases.at(k).evaluateDerivative(x(k),2);
                 }
-                else if(k == i || k == j)
+                else if (k == i || k == j)
                 {
                     Bk = bases.at(k).evaluateDerivative(x(k),1);
                 }
@@ -203,10 +203,10 @@ SparseMatrix BSplineBasis::evalBasisHessian(DenseVector &x) const
             }
 
             // Fill out column
-            for(int k = 0; k < Hi.outerSize(); ++k)
-            for(SparseMatrix::InnerIterator it(Hi,k); it; ++it)
+            for (int k = 0; k < Hi.outerSize(); ++k)
+            for (SparseMatrix::InnerIterator it(Hi,k); it; ++it)
             {
-                if(it.value() != 0)
+                if (it.value() != 0)
                 {
                     int row = i*numBasisFunctions()+it.row();
                     int col = j;
@@ -227,12 +227,12 @@ bool BSplineBasis::insertKnots(SparseMatrix &A, double tau, unsigned int dim, un
     A.insert(0,0) = 1;
 
     // Calculate multivariate knot insertion matrix
-    for(unsigned int i = 0; i < numVariables; i++)
+    for (unsigned int i = 0; i < numVariables; i++)
     {
         SparseMatrix temp = A;
         SparseMatrix Ai;
 
-        if(i == dim)
+        if (i == dim)
         {
             // Build knot insertion matrix
             if (!bases.at(i).insertKnots(Ai, tau, multiplicity))
@@ -260,12 +260,12 @@ bool BSplineBasis::refineKnots(SparseMatrix &A)
     A.resize(1,1);
     A.insert(0,0) = 1;
 
-    for(unsigned int i = 0; i < numVariables; i++)
+    for (unsigned int i = 0; i < numVariables; i++)
     {
         SparseMatrix temp = A;
         SparseMatrix Ai;
 
-        if(!bases.at(i).refineKnots(Ai))
+        if (!bases.at(i).refineKnots(Ai))
             return false;
 
         //A = kroneckerProduct(temp, Ai);
@@ -285,12 +285,12 @@ bool BSplineBasis::reduceSupport(std::vector<double>& lb, std::vector<double>& u
     A.resize(1,1);
     A.insert(0,0) = 1;
 
-    for(unsigned int i = 0; i < numVariables; i++)
+    for (unsigned int i = 0; i < numVariables; i++)
     {
         SparseMatrix temp = A;
         SparseMatrix Ai;
 
-        if(!bases.at(i).reduceSupport(lb.at(i), ub.at(i), Ai))
+        if (!bases.at(i).reduceSupport(lb.at(i), ub.at(i), Ai))
             return false;
 
         //A = kroneckerProduct(temp, Ai);
@@ -300,6 +300,14 @@ bool BSplineBasis::reduceSupport(std::vector<double>& lb, std::vector<double>& u
     A.makeCompressed();
 
     return true;
+}
+
+std::vector<unsigned int> BSplineBasis::getBasisDegrees() const
+{
+    std::vector<unsigned int> degrees;
+    for (const auto& basis : bases)
+        degrees.push_back(basis.getBasisDegree());
+    return degrees;
 }
 
 unsigned int BSplineBasis::getBasisDegree(unsigned int dim) const
@@ -335,7 +343,7 @@ std::vector<double> BSplineBasis::getKnotVector(int dim) const
 std::vector< std::vector<double> > BSplineBasis::getKnotVectors() const
 {
     std::vector< std::vector<double> > knots;
-    for(unsigned int i = 0; i < numVariables; i++)
+    for (unsigned int i = 0; i < numVariables; i++)
         knots.push_back(bases.at(i).getKnotVector());
     return knots;
 }
@@ -358,7 +366,7 @@ unsigned int BSplineBasis::getLargestKnotInterval(unsigned int dim) const
 std::vector<int> BSplineBasis::getTensorIndexDimension() const
 {
     std::vector<int> ret;
-    for(unsigned int dim = 0; dim < numVariables; dim++)
+    for (unsigned int dim = 0; dim < numVariables; dim++)
     {
         ret.push_back(bases.at(dim).numBasisFunctions());
     }
@@ -368,7 +376,7 @@ std::vector<int> BSplineBasis::getTensorIndexDimension() const
 std::vector<int> BSplineBasis::getTensorIndexDimensionTarget() const
 {
     std::vector<int> ret;
-    for(unsigned int dim = 0; dim < numVariables; dim++)
+    for (unsigned int dim = 0; dim < numVariables; dim++)
     {
         ret.push_back(bases.at(dim).numBasisFunctionsTarget() );
     }
@@ -378,7 +386,7 @@ std::vector<int> BSplineBasis::getTensorIndexDimensionTarget() const
 int BSplineBasis::supportedPrInterval() const
 {
     int ret = 1;
-    for(unsigned int dim = 0; dim < numVariables; dim++)
+    for (unsigned int dim = 0; dim < numVariables; dim++)
     {
         ret *= (bases.at(dim).getBasisDegree() + 1);
     }
@@ -387,14 +395,14 @@ int BSplineBasis::supportedPrInterval() const
 
 bool BSplineBasis::insideSupport(DenseVector &x) const
 {
-    if(x.size() != numVariables)
+    if (x.size() != numVariables)
     {
         return false;
     }
 
-    for(unsigned int dim = 0; dim < numVariables; dim++)
+    for (unsigned int dim = 0; dim < numVariables; dim++)
     {
-        if(!bases.at(dim).insideSupport(x(dim)))
+        if (!bases.at(dim).insideSupport(x(dim)))
         {
             return false;
         }
@@ -405,7 +413,7 @@ bool BSplineBasis::insideSupport(DenseVector &x) const
 std::vector<double> BSplineBasis::getSupportLowerBound() const
 {
     std::vector<double> lb;
-    for(unsigned int dim = 0; dim < numVariables; dim++)
+    for (unsigned int dim = 0; dim < numVariables; dim++)
     {
         std::vector<double> knots = bases.at(dim).getKnotVector();
         lb.push_back(knots.front());
@@ -416,7 +424,7 @@ std::vector<double> BSplineBasis::getSupportLowerBound() const
 std::vector<double> BSplineBasis::getSupportUpperBound() const
 {
     std::vector<double> ub;
-    for(unsigned int dim = 0; dim < numVariables; dim++)
+    for (unsigned int dim = 0; dim < numVariables; dim++)
     {
         std::vector<double> knots = bases.at(dim).getKnotVector();
         ub.push_back(knots.back());

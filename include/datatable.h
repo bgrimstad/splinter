@@ -19,8 +19,6 @@
 namespace MultivariateSplines
 {
 
-#define SAVE_DOUBLE_PRECISION 17
-
 /*
  * DataTable is a class for storing multidimensional data samples (x,y).
  * The samples are stored in a continuously sorted table.
@@ -29,8 +27,10 @@ class DataTable
 {
 public:
     DataTable();
+    DataTable(const char *fileName);
     DataTable(bool allowDuplicates);
     DataTable(bool allowDuplicates, bool allowIncompleteGrid);
+    DataTable(const std::string fileName); // Load DataTable from file
 
     /*
      * Functions for adding a sample (x,y)
@@ -48,16 +48,11 @@ public:
 
     unsigned int getNumVariables() const {return numVariables;}
     unsigned int getNumSamples() const {return samples.size();}
+    const std::multiset<DataSample>& getSamples() const {return samples;}
 
     std::vector<std::set<double>> getGrid() const { return grid; }
     std::vector< std::vector<double> > getTableX() const;
     std::vector<double> getVectorY() const;
-
-    /*
-     * Save and load functionality
-     */
-    void save(std::string fileName) const;  // Throws std::ios_base::failure
-    void load(std::string fileName);        // Throws std::ios_base::failure
 
     /*
      * Debug
@@ -93,6 +88,8 @@ public:
 
     bool isGridComplete() const;
 
+    void save(const std::string fileName) const;
+
 private:
     bool allowDuplicates;
     bool allowIncompleteGrid;
@@ -110,6 +107,8 @@ private:
     // Used by functions that require the grid to be complete before they start their operation
     // This function prints a message and exits the program if the grid is not complete.
     void gridCompleteGuard() const;
+
+    void load(const std::string fileName);
 };
 
 } // namespace MultivariateSplines

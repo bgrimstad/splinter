@@ -13,7 +13,7 @@
 #include "include/mykroneckerproduct.h"
 #include "unsupported/Eigen/KroneckerProduct"
 #include "include/linearsolvers.h"
-
+#include "serialize.h"
 #include <iostream>
 
 namespace MultivariateSplines
@@ -39,7 +39,7 @@ BSpline::BSpline(DenseMatrix coefficients, std::vector< std::vector<double> > kn
 BSpline::BSpline(const DataTable &samples, BSplineType type = BSplineType::CUBIC_FREE)
 {
     // Check data
-    if(!samples.isGridComplete())
+    if (!samples.isGridComplete())
     {
         throw Exception("BSpline::BSpline: Cannot create B-spline from irregular (incomplete) grid.");
     }
@@ -49,17 +49,17 @@ BSpline::BSpline(const DataTable &samples, BSplineType type = BSplineType::CUBIC
     std::vector< std::vector<double> > xdata = samples.getTableX();
 
     // Set multivariate basis
-    if(type == BSplineType::LINEAR)
+    if (type == BSplineType::LINEAR)
     {
         std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 1);
         basis = BSplineBasis(xdata, basisDegrees, KnotVectorType::FREE);
     }
-    else if(type == BSplineType::QUADRATIC_FREE)
+    else if (type == BSplineType::QUADRATIC_FREE)
     {
         std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 2);
         basis = BSplineBasis(xdata, basisDegrees, KnotVectorType::FREE);
     }
-    else if(type == BSplineType::CUBIC_FREE)
+    else if (type == BSplineType::CUBIC_FREE)
     {
         std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 3);
         basis = BSplineBasis(xdata, basisDegrees, KnotVectorType::FREE);
@@ -79,10 +79,15 @@ BSpline::BSpline(const DataTable &samples, BSplineType type = BSplineType::CUBIC
     checkControlPoints();
 }
 
+BSpline::BSpline(const std::string fileName)
+{
+    load(fileName);
+}
+
 void BSpline::init()
 {
     bool initialKnotRefinement = false;
-    if(initialKnotRefinement)
+    if (initialKnotRefinement)
     {
         refineKnotVectors();
         checkControlPoints();
@@ -91,7 +96,7 @@ void BSpline::init()
 
 double BSpline::eval(DenseVector x) const
 {
-    if(!pointInDomain(x))
+    if (!pointInDomain(x))
     {
         throw Exception("BSpline::eval: Evaluation at point outside domain.");
     }
@@ -108,7 +113,7 @@ double BSpline::eval(DenseVector x) const
  */
 DenseMatrix BSpline::evalJacobian(DenseVector x) const
 {
-    if(!pointInDomain(x))
+    if (!pointInDomain(x))
     {
         throw Exception("BSpline::evalJacobian: Evaluation at point outside domain.");
     }
@@ -137,7 +142,7 @@ DenseMatrix BSpline::evalJacobian(DenseVector x) const
  */
 DenseMatrix BSpline::evalHessian(DenseVector x) const
 {
-    if(!pointInDomain(x))
+    if (!pointInDomain(x))
     {        
         throw Exception("BSpline::evalHessian: Evaluation at point outside domain.");
     }
@@ -204,7 +209,7 @@ bool BSpline::pointInDomain(DenseVector x) const
 
 bool BSpline::reduceDomain(std::vector<double> lb, std::vector<double> ub, bool doRegularizeKnotVectors, bool doRefineKnotVectors)
 {
-    if(lb.size() != numVariables || ub.size() != numVariables)
+    if (lb.size() != numVariables || ub.size() != numVariables)
         return false;
 
     std::vector<double> sl = basis.getSupportLowerBound();
@@ -212,22 +217,22 @@ bool BSpline::reduceDomain(std::vector<double> lb, std::vector<double> ub, bool 
 
     bool isStrictSubset = false;
 
-    for(unsigned int dim = 0; dim < numVariables; dim++)
+    for (unsigned int dim = 0; dim < numVariables; dim++)
     {
-        if(ub.at(dim) <= lb.at(dim)
+        if (ub.at(dim) <= lb.at(dim)
             || lb.at(dim) >= su.at(dim)
             || ub.at(dim) <= sl.at(dim))
         {
             throw Exception("BSpline::reduceDomain: Cannot reduce B-spline domain to empty set!");
         }
 
-        if(su.at(dim) > ub.at(dim))
+        if (su.at(dim) > ub.at(dim))
         {
             isStrictSubset = true;
             su.at(dim) = ub.at(dim);
         }
 
-        if(lb.at(dim) > sl.at(dim))
+        if (lb.at(dim) > sl.at(dim))
         {
             isStrictSubset = true;
             sl.at(dim) = lb.at(dim);
@@ -242,13 +247,13 @@ bool BSpline::reduceDomain(std::vector<double> lb, std::vector<double> ub, bool 
         }
 
         // Remove knots and control points that are unsupported with the new bounds
-        if(!removeUnsupportedBasisFunctions(sl, su))
+        if (!removeUnsupportedBasisFunctions(sl, su))
         {
             throw Exception("BSpline::reduceDomain: Failed to remove unsupported basis functions!");
         }
 
         // Refine knots
-        if(doRefineKnotVectors && !refineKnotVectors())
+        if (doRefineKnotVectors && !refineKnotVectors())
         {
             throw Exception("BSpline::reduceDomain: Failed to refine knot vectors!");
         }
@@ -262,7 +267,7 @@ void BSpline::computeKnotAverages()
 {
     // Calculate knot averages for each knot vector
     std::vector< DenseVector > knotAverages;
-    for(unsigned int i = 0; i < numVariables; i++)
+    for (unsigned int i = 0; i < numVariables; i++)
     {
         std::vector<double> knots = basis.getKnotVector(i);
         DenseVector mu; mu.setZero(basis.numBasisFunctions(i));
@@ -281,7 +286,7 @@ void BSpline::computeKnotAverages()
 
     // Calculate vectors of ones (with same length as corresponding knot average vector)
     std::vector<DenseVector> knotOnes;
-    for(unsigned int i = 0; i < numVariables; i++)
+    for (unsigned int i = 0; i < numVariables; i++)
     {
         DenseVector ones;
         ones.setOnes(knotAverages.at(i).rows());
@@ -293,13 +298,13 @@ void BSpline::computeKnotAverages()
     // TODO: Use DataTable to achieve the same pattern
     knotaverages.resize(numVariables, basis.numBasisFunctions());
 
-    for(unsigned int i = 0; i < numVariables; i++)
+    for (unsigned int i = 0; i < numVariables; i++)
     {
         DenseMatrix mu_ext(1,1); mu_ext(0,0) = 1;
         for (unsigned int j = 0; j < numVariables; j++)
         {
             DenseMatrix temp = mu_ext;
-            if(i == j)
+            if (i == j)
                 mu_ext = Eigen::kroneckerProduct(temp, knotAverages.at(j));
             else
                 mu_ext = Eigen::kroneckerProduct(temp, knotOnes.at(j));
@@ -333,7 +338,7 @@ void BSpline::computeControlPoints(const DataTable &samples)
 
     bool solveAsDense = (numEquations < maxNumEquations);
 
-    if(!solveAsDense)
+    if (!solveAsDense)
     {
 #ifndef NDEBUG
         std::cout << "Computing B-spline control points using sparse solver." << std::endl;
@@ -345,7 +350,7 @@ void BSpline::computeControlPoints(const DataTable &samples)
         solveAsDense = !successfulSolve;
     }
 
-    if(solveAsDense)
+    if (solveAsDense)
     {
 #ifndef NDEBUG
         std::cout << "Computing B-spline control points using dense solver." << std::endl;
@@ -354,7 +359,7 @@ void BSpline::computeControlPoints(const DataTable &samples)
         DenseMatrix Ad = A.toDense();
         DenseQR s;
         bool successfulSolve = (s.solve(Ad,Bx,Cx) && s.solve(Ad,By,Cy));
-        if(!successfulSolve)
+        if (!successfulSolve)
         {
             throw Exception("BSpline::computeControlPoints: Failed to solve for B-spline coefficients.");
         }
@@ -375,11 +380,11 @@ void BSpline::computeBasisFunctionMatrix(const DataTable &samples, SparseMatrix 
     A.reserve(DenseVector::Constant(numSamples, nnzPrCol)); // TODO: should reserve nnz per row!
 
     int i = 0;
-    for(auto it = samples.cbegin(); it != samples.cend(); ++it, ++i)
+    for (auto it = samples.cbegin(); it != samples.cend(); ++it, ++i)
     {
         DenseVector xi(numVariables);
         std::vector<double> xv = it->getX();
-        for(unsigned int j = 0; j < numVariables; ++j)
+        for (unsigned int j = 0; j < numVariables; ++j)
         {
             xi(j) = xv.at(j);
         }
@@ -404,11 +409,11 @@ void BSpline::controlPointEquationRHS(const DataTable &samples, DenseMatrix &Bx,
     By.resize(numSamples, 1);
 
     int i = 0;
-    for(auto it = samples.cbegin(); it != samples.cend(); ++it, ++i)
+    for (auto it = samples.cbegin(); it != samples.cend(); ++it, ++i)
     {
         std::vector<double> x = it->getX();
 
-        for(unsigned int j = 0; j < x.size(); ++j)
+        for (unsigned int j = 0; j < x.size(); ++j)
         {
             Bx(i,j) = x.at(j);
         }
@@ -420,12 +425,12 @@ void BSpline::controlPointEquationRHS(const DataTable &samples, DenseMatrix &Bx,
 bool BSpline::insertKnots(double tau, unsigned int dim, unsigned int multiplicity)
 {
     // Test multiplicity at knot
-    if(basis.getKnotMultiplicity(dim, tau) + multiplicity > basis.getBasisDegree(dim) + 1)
+    if (basis.getKnotMultiplicity(dim, tau) + multiplicity > basis.getBasisDegree(dim) + 1)
         return false;
 
     // Insert knots and compute knot insertion matrix
     SparseMatrix A;
-    if(!basis.insertKnots(A, tau, dim, multiplicity))
+    if (!basis.insertKnots(A, tau, dim, multiplicity))
         return false;
 
     // Update control points
@@ -440,7 +445,7 @@ bool BSpline::refineKnotVectors()
 {
     // Compute knot insertion matrix
     SparseMatrix A;
-    if(!basis.refineKnots(A))
+    if (!basis.refineKnots(A))
         return false;
 
     // Update control points
@@ -455,10 +460,10 @@ bool BSpline::refineKnotVectors()
 bool BSpline::regularizeKnotVectors(std::vector<double> &lb, std::vector<double> &ub)
 {
     // Add and remove controlpoints and knots to make the b-spline p-regular with support [lb, ub]
-    if(!(lb.size() == numVariables && ub.size() == numVariables))
+    if (!(lb.size() == numVariables && ub.size() == numVariables))
         return false;
 
-    for(unsigned int dim = 0; dim < numVariables; dim++)
+    for (unsigned int dim = 0; dim < numVariables; dim++)
     {
         unsigned int multiplicityTarget = basis.getBasisDegree(dim) + 1;
 
@@ -476,9 +481,9 @@ bool BSpline::regularizeKnotVectors(std::vector<double> &lb, std::vector<double>
         }
 
         int numKnotsUB = multiplicityTarget - basis.getKnotMultiplicity(dim, ub.at(dim));
-        if(numKnotsUB > 0)
+        if (numKnotsUB > 0)
         {
-            if(!insertKnots(ub.at(dim), dim, numKnotsUB))
+            if (!insertKnots(ub.at(dim), dim, numKnotsUB))
                 return false;
         }
 
@@ -503,10 +508,10 @@ bool BSpline::removeUnsupportedBasisFunctions(std::vector<double> &lb, std::vect
     assert(ub.size() == numVariables);
 
     SparseMatrix A;
-    if(!basis.reduceSupport(lb, ub, A))
+    if (!basis.reduceSupport(lb, ub, A))
         return false;
 
-    if(coefficients.cols() != A.rows())
+    if (coefficients.cols() != A.rows())
         return false;
 
     // Remove unsupported control points (basis functions)
@@ -514,6 +519,43 @@ bool BSpline::removeUnsupportedBasisFunctions(std::vector<double> &lb, std::vect
     knotaverages = knotaverages*A;
 
     return true;
+}
+
+void BSpline::save(const std::string fileName) const
+{
+    // Serialize
+    StreamType stream;
+    serialize(numVariables, stream);
+    serialize(coefficients, stream);
+    serialize(basis.getKnotVectors(), stream);
+    serialize(basis.getBasisDegrees(), stream);
+
+    // Save stream to file
+    save_to_file(fileName, stream);
+}
+
+void BSpline::load(const std::string fileName)
+{
+    // Load stream from file
+    StreamType stream = load_from_file(fileName);
+
+    // Deserialize
+    auto it = stream.cbegin();
+    numVariables = deserialize<unsigned int>(it, stream.cend());
+    coefficients = deserialize<DenseMatrix>(it, stream.cend());
+    auto knotVectors = deserialize<std::vector<std::vector<double>>>(it, stream.cend());
+    auto basisDegrees = deserialize<std::vector<unsigned int>>(it, stream.cend());
+
+    loadBasis(knotVectors, basisDegrees);
+}
+
+void BSpline::loadBasis(std::vector<std::vector<double>> knotVectors, std::vector<unsigned int> basisDegrees)
+{
+    assert(coefficients.rows() == 1);
+    basis = BSplineBasis(knotVectors, basisDegrees, KnotVectorType::EXPLICIT);
+    computeKnotAverages();
+    init();
+    checkControlPoints();
 }
 
 } // namespace MultivariateSplines

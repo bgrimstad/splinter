@@ -11,8 +11,8 @@ cmake_minimum_required(VERSION 2.8)
 set(CMAKE_BUILD_TYPE Release)
 
 set(MULTIVARIATESPLINES_VERSION_MAJOR 1)
-set(MULTIVARIATESPLINES_VERSION_MINOR 1)
-set(MULTIVARIATESPLINES_VERSION ${MULTIVARIATESPLINES_VERSION_MAJOR}.${MULTIVARIATESPLINES_VERSION_MINOR})
+set(MULTIVARIATESPLINES_VERSION_MINOR 2)
+set(MULTIVARIATESPLINES_VERSION ${MULTIVARIATESPLINES_VERSION_MAJOR}-${MULTIVARIATESPLINES_VERSION_MINOR})
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
@@ -55,8 +55,9 @@ set(LIBRARY_DIRECTORY ${LIBRARY_DIRECTORY} CACHE STRING "Absolute path, or, if r
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${EIGEN_DIRECTORY})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/test)
 
-# These are the sources we need for compilation
+# These are the sources we need for compilation of the library (not the testing executables)
 #aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/src SRC_LIST)
 set(SRC_LIST
     include/spline.h
@@ -69,6 +70,7 @@ set(SRC_LIST
     include/datatable.h
     include/generaldefinitions.h
     include/linearsolvers.h
+    include/serialize.h
     include/mykroneckerproduct.h
     src/bspline.cpp
     src/bsplinebasis.cpp
@@ -80,18 +82,27 @@ set(SRC_LIST
     src/mykroneckerproduct.cpp
 )
 
+set(SHARED_LIBRARY multivariate-splines-${MULTIVARIATESPLINES_VERSION})
+set(STATIC_LIBRARY multivariate-splines-static-${MULTIVARIATESPLINES_VERSION})
+
+set(SHARED_LIBRARY_TEST "multivariate-splines-shared-test")
+set(STATIC_LIBRARY_TEST "multivariate-splines-static-test")
+set(SERIALIZE_TEST "multivariate-splines-serialize-test")
+set(TESTING_UTILITIES ${CMAKE_CURRENT_SOURCE_DIR}/test/testingutilities.cpp)
+
 # Add output library: add_library(libname [SHARED | STATIC] sourcelist)
-add_library(multivariate-splines.${MULTIVARIATESPLINES_VERSION} SHARED ${SRC_LIST})
-add_library(multivariate-splines-static.${MULTIVARIATESPLINES_VERSION} STATIC ${SRC_LIST})
+add_library(${SHARED_LIBRARY} SHARED ${SRC_LIST})
+add_library(${STATIC_LIBRARY} STATIC ${SRC_LIST})
 
-# Testing executable
-add_executable("multivariate-splines-test" ${CMAKE_CURRENT_SOURCE_DIR}/test/main.cpp)
-target_link_libraries("multivariate-splines-test" multivariate-splines-static.${MULTIVARIATESPLINES_VERSION})
+# Testing executables
+add_executable(${SHARED_LIBRARY_TEST} ${CMAKE_CURRENT_SOURCE_DIR}/test/main.cpp ${TESTING_UTILITIES})
+target_link_libraries(${SHARED_LIBRARY_TEST} ${SHARED_LIBRARY})
+add_executable(${STATIC_LIBRARY_TEST} ${CMAKE_CURRENT_SOURCE_DIR}/test/main.cpp ${TESTING_UTILITIES})
+target_link_libraries(${STATIC_LIBRARY_TEST} ${STATIC_LIBRARY})
 
-if(WIN32)
-    set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++") # Necessary for test executable to work with MinGW
-endif()
-
+# Serialize testing executable
+add_executable(${SERIALIZE_TEST} ${CMAKE_CURRENT_SOURCE_DIR}/test/serialize.cpp ${TESTING_UTILITIES})
+target_link_libraries(${SERIALIZE_TEST} ${STATIC_LIBRARY})
 
 # Install the header files
 install(
@@ -101,12 +112,12 @@ install(
 
 # Install the shared library file
 install(
-    TARGETS multivariate-splines.${MULTIVARIATESPLINES_VERSION}
+    TARGETS ${SHARED_LIBRARY}
     DESTINATION ${LIBRARY_DIRECTORY}
 )
 # Install the static library file
 install(
-    TARGETS multivariate-splines-static.${MULTIVARIATESPLINES_VERSION}
+    TARGETS ${STATIC_LIBRARY}
     DESTINATION ${LIBRARY_DIRECTORY}
 )
 
