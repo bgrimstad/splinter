@@ -73,8 +73,12 @@ namespace detail
     template <>
     struct get_size_helper<DataTable> {
         static size_t value(const DataTable& table) {
-            size_t val = get_size(table.getNumSamples());
-            val += table.getNumSamples() * get_size(*table.getSamples().cbegin());
+            auto numSamples = table.getNumSamples();
+            size_t val = get_size(numSamples);
+            // Number of samples multiplied by the size of the first sample
+            if(numSamples > 0) {
+                val += numSamples * get_size(*table.getSamples().cbegin());
+            }
             return val;
         }
     };
