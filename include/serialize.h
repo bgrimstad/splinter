@@ -36,7 +36,8 @@
 #include <Eigen/Dense>
 #include <cassert>
 #include <fstream>
-#include <include/datatable.h>
+#include <set>
+#include <datasample.h>
 
 namespace MultivariateSplines {
 
@@ -67,23 +68,6 @@ namespace detail
     };
 
     /**
-     * Specialization for DataTable. Represented by storing the number of
-     * samples followed by the DataSamples.
-     */
-    template <>
-    struct get_size_helper<DataTable> {
-        static size_t value(const DataTable& table) {
-            auto numSamples = table.getNumSamples();
-            size_t val = get_size(numSamples);
-            // Number of samples multiplied by the size of the first sample
-            if(numSamples > 0) {
-                val += numSamples * get_size(*table.getSamples().cbegin());
-            }
-            return val;
-        }
-    };
-
-    /**
      * Specialization for DataSample.
      */
     template <>
@@ -101,6 +85,32 @@ namespace detail
     template <class T>
     struct get_size_helper<std::vector<T>> {
         static size_t value(const std::vector<T>& obj) {
+            return std::accumulate(obj.begin(), obj.end(), sizeof(size_t),
+                [](const size_t& acc, const T& cur) { return acc+get_size(cur); });
+        }
+    };
+
+    /**
+    * Specialization for generic std::multiset<T>. A multiset is represented
+    * in the stream by storing the number of elements (m.size()) followed
+    * by the serialized elements (notice that we can have nested structures).
+    */
+    template <class T>
+    struct get_size_helper<std::multiset<T>> {
+        static size_t value(const std::multiset<T>& obj) {
+            return std::accumulate(obj.begin(), obj.end(), sizeof(size_t),
+                [](const size_t& acc, const T& cur) { return acc+get_size(cur); });
+        }
+    };
+
+    /**
+    * Specialization for generic std::set<T>. A multiset is represented
+    * in the stream by storing the number of elements (s.size()) followed
+    * by the serialized elements (notice that we can have nested structures).
+    */
+    template <class T>
+    struct get_size_helper<std::set<T>> {
+        static size_t value(const std::set<T>& obj) {
             return std::accumulate(obj.begin(), obj.end(), sizeof(size_t),
                 [](const size_t& acc, const T& cur) { return acc+get_size(cur); });
         }
@@ -145,19 +155,13 @@ namespace detail
     };
 
     /**
-     * Serialization of DataTable.
+     * Serialization of DataSample.
      */
     template <>
-    struct serialize_helper<DataTable> {
-        static void apply(const DataTable& table, StreamType::iterator& res) {
-            // Store number of samples
-            serializer(table.getNumSamples(), res);
-
-            // Store the samples
-            for(auto it = table.getSamples().cbegin(); it != table.getSamples().cend(); it++) {
-                serializer(it->getX(), res);
-                serializer(it->getY(), res);
-            }
+    struct serialize_helper<DataSample> {
+        static void apply(const DataSample& sample, StreamType::iterator& res) {
+            serializer(sample.getX(), res);
+            serializer(sample.getY(), res);
         }
     };
 
@@ -165,6 +169,24 @@ namespace detail
     struct serialize_helper<std::vector<T>> {
         static void apply(const std::vector<T>& obj, StreamType::iterator& res) {
             // Store the number of vector elements first
+            serializer(obj.size(), res);
+            for (const auto& cur : obj) { serializer(cur, res); }
+        }
+    };
+
+    template <class T>
+    struct serialize_helper<std::multiset<T>> {
+        static void apply(const std::multiset<T>& obj, StreamType::iterator& res) {
+            // Store the number of multiset elements first
+            serializer(obj.size(), res);
+            for (const auto& cur : obj) { serializer(cur, res); }
+        }
+    };
+
+    template <class T>
+    struct serialize_helper<std::set<T>> {
+        static void apply(const std::set<T>& obj, StreamType::iterator& res) {
+            // Store the number of set elements first
             serializer(obj.size(), res);
             for (const auto& cur : obj) { serializer(cur, res); }
         }
@@ -249,6 +271,53 @@ namespace detail
     };
 
     /**
+    * Deserialization for multiset types.
+    *
+    * We read the first size_t value which contains the number of elements
+    * and then recursively read each of them.
+    */
+    template <class T>
+    struct deserialize_helper<std::multiset<T>> {
+        static std::multiset<T> apply(StreamType::const_iterator& begin,
+                                    StreamType::const_iterator end)
+        {
+            // Retrieve the number of elements
+            size_t size = deserialize_helper<size_t>::apply(begin, end);
+
+            std::multiset<T> multiset;
+            for (size_t i = 0; i < size; ++i)
+            {
+                multiset.insert(deserialize_helper<T>::apply(begin, end));
+            }
+
+            return multiset;
+        }
+    };
+
+    /**
+    * Deserialization for set types.
+    *
+    * We read the first size_t value which contains the number of elements
+    * and then recursively read each of them.
+    */
+    template <class T>
+    struct deserialize_helper<std::set<T>> {
+        static std::set<T> apply(StreamType::const_iterator& begin,
+                                    StreamType::const_iterator end)
+        {
+            // Retrieve the number of elements
+            size_t size = deserialize_helper<size_t>::apply(begin, end);
+
+            std::set<T> set;
+            for (size_t i = 0; i < size; ++i)
+            {
+                set.insert(deserialize_helper<T>::apply(begin, end));
+            }
+            return set;
+        }
+    };
+
+    /**
     * Deserialization for Eigen dense matrices.
     *
     * We read the first size_t values for number of rows and columns,
@@ -282,22 +351,17 @@ namespace detail
 
 
     /**
-    * Deserialization for DataTables.
+    * Deserialization for DataSample.
     */
     template <>
-    struct deserialize_helper<DataTable> {
-        static DataTable apply(StreamType::const_iterator& begin, StreamType::const_iterator end) {
-            // Number of samples
-            unsigned int numSamples = deserialize_helper<unsigned int>::apply(begin, end);
+    struct deserialize_helper<DataSample> {
+        static DataSample apply(StreamType::const_iterator& begin, StreamType::const_iterator end) {
+            auto x = deserialize_helper<std::vector<double>>::apply(begin, end);
+            auto y = deserialize_helper<double>::apply(begin, end);
 
-            DataTable table;
-            for(unsigned int i = 0; i < numSamples; i++) {
-                auto x = deserialize_helper<std::vector<double>>::apply(begin, end);
-                auto y = deserialize_helper<double>::apply(begin, end);
-                table.addSample(x, y);
-            }
+            DataSample sample(x, y);
 
-            return table;
+            return sample;
         }
     };
 
@@ -318,7 +382,7 @@ inline T deserialize(const StreamType& res) {
 /**
  * Save serialized stream to file
  */
-void save_to_file(std::string filename, StreamType data)
+inline void save_to_file(std::string filename, StreamType data)
 {
     std::fstream fs(filename, std::fstream::out | std::fstream::binary);
 
@@ -329,7 +393,7 @@ void save_to_file(std::string filename, StreamType data)
 /**
  * Loads serialized stream from file
  */
-StreamType load_from_file(std::string filename)
+inline StreamType load_from_file(std::string filename)
 {
     std::ifstream ifs(filename, std::ios::binary | std::ios::ate);
     std::ifstream::pos_type pos = ifs.tellg();

@@ -15,76 +15,18 @@
 
 #include <stdexcept>
 #include <limits>
+#include <serialize.h>
 
 namespace MultivariateSplines
 {
 
-//Simple definition of checked strto* functions according to the implementations of sto* C++11 functions at:
-//  http://msdn.microsoft.com/en-us/library/ee404775.aspx
-//  http://msdn.microsoft.com/en-us/library/ee404860.aspx
-//  https://gcc.gnu.org/svn/gcc/trunk/libstdc++-v3/include/bits/basic_string.h
-//  https://gcc.gnu.org/svn/gcc/trunk/libstdc++-v3/include/ext/string_conversions.h
-
-double checked_strtod(const char* _Str, char** _Eptr) {
-
-    double _Ret;
-    char* _EptrTmp;
-
-    errno = 0;
-
-    _Ret = std::strtod(_Str, &_EptrTmp);
-
-    if (_EptrTmp == _Str)
-    {
-        throw std::invalid_argument("strtod");
-    }
-    else if (errno == ERANGE)
-    {
-        throw std::out_of_range("strtod");
-    }
-    else
-    {
-        if(_Eptr != nullptr)
-        {
-            *_Eptr = _EptrTmp;
-        }
-
-        return _Ret;
-    }
-}
-
-int checked_strtol(const char* _Str, char** _Eptr, size_t _Base = 10) {
-
-    long _Ret;
-    char* _EptrTmp;
-
-    errno = 0;
-
-    _Ret = std::strtol(_Str, &_EptrTmp, _Base);
-
-    if (_EptrTmp == _Str)
-    {
-        throw std::invalid_argument("strtol");
-    }
-    else if (errno == ERANGE ||
-            (_Ret < std::numeric_limits<int>::min() || _Ret > std::numeric_limits<int>::max()))
-    {
-        throw std::out_of_range("strtol");
-    }
-    else
-    {
-        if (_Eptr != nullptr)
-        {
-            *_Eptr = _EptrTmp;
-        }
-
-        return _Ret;
-    }
-}
-
-
 DataTable::DataTable()
     : DataTable(false, false)
+{
+}
+
+DataTable::DataTable(const char *fileName)
+    : DataTable(std::string(fileName))
 {
 }
 
@@ -99,6 +41,11 @@ DataTable::DataTable(bool allowDuplicates, bool allowIncompleteGrid)
       numDuplicates(0),
       numVariables(0)
 {
+}
+
+DataTable::DataTable(const std::string fileName)
+{
+    load(fileName);
 }
 
 void DataTable::addSample(double x, double y)
@@ -189,6 +136,32 @@ void DataTable::gridCompleteGuard() const
     }
 }
 
+void DataTable::save(const std::string fileName) const
+{
+    StreamType stream;
+    serialize(allowDuplicates, stream);
+    serialize(allowIncompleteGrid, stream);
+    serialize(numDuplicates, stream);
+    serialize(numVariables, stream);
+    serialize(samples, stream);
+    serialize(grid, stream);
+
+    save_to_file(fileName, stream);
+}
+
+void DataTable::load(const std::string fileName)
+{
+    StreamType stream = load_from_file(fileName);
+
+    auto it = stream.cbegin();
+    allowDuplicates = deserialize<bool>(it, stream.cend());
+    allowIncompleteGrid = deserialize<bool>(it, stream.cend());
+    numDuplicates = deserialize<unsigned int>(it, stream.cend());
+    numVariables = deserialize<unsigned int>(it, stream.cend());
+    samples = deserialize<std::multiset<DataSample>>(it, stream.cend());
+    grid = deserialize<std::vector<std::set<double>>>(it, stream.cend());
+}
+
 /***********
  * Getters *
  ***********/
@@ -246,140 +219,6 @@ std::vector<double> DataTable::getVectorY() const
         y.push_back(it->getY());
     }
     return y;
-}
-
-/*****************
- * Save and load *
- *****************/
-
-void DataTable::save(std::string fileName) const
-{
-
-    // To give a consistent format across all locales, use the C locale when saving and loading
-    std::locale current_locale = std::locale::global(std::locale("C"));
-
-    std::ofstream outFile;
-
-    try
-    {
-        outFile.open(fileName);
-    }
-    catch (const std::ios_base::failure &e)
-    {
-        throw;
-    }
-
-    // If this function is still alive the file must be open,
-    // no need to call is_open()
-
-    // Write header
-    outFile << "# Saved DataTable" << '\n';
-    outFile << "# Number of samples: " << getNumSamples() << '\n';
-    outFile << "# Complete grid: " << (isGridComplete() ? "yes" : "no") << '\n';
-    outFile << "# xDim: " << numVariables << '\n';
-    outFile << numVariables << " " << 1 << '\n';
-
-    for (auto it = cbegin(); it != cend(); it++)
-    {
-        for (unsigned int i = 0; i < numVariables; i++)
-        {
-            outFile << std::setprecision(SAVE_DOUBLE_PRECISION) << it->getX().at(i) << " ";
-        }
-
-        outFile << std::setprecision(SAVE_DOUBLE_PRECISION) << it->getY();
-
-        outFile << '\n';
-    }
-
-    // close() also flushes
-    try
-    {
-        outFile.close();
-    }
-    catch (const std::ios_base::failure &e)
-    {
-        throw;
-    }
-
-    std::locale::global(current_locale);
-}
-
-void DataTable::load(std::string fileName)
-{
-
-    // To give a consistent format across all locales, use the C locale when saving and loading
-    std::locale current_locale = std::locale::global(std::locale("C"));
-
-    std::ifstream inFile;
-
-    try
-    {
-        inFile.open(fileName);
-    }
-    catch (const std::ios_base::failure &e)
-    {
-        throw;
-    }
-
-    // If this function is still alive the file must be open,
-    // no need to call is_open()
-
-    // Skip past comments
-    std::string line;
-
-    int nX, nY;
-    int state = 0;
-    while (std::getline(inFile, line))
-    {
-        // Look for comment sign
-        if (line.at(0) == '#')
-        {
-            continue;
-        }
-
-        // Reading number of dimensions
-        else if (state == 0)
-        {
-            nX = checked_strtol(line.c_str(), nullptr, 10);
-            nY = 1;
-            state = 1;
-        }
-
-        // Reading samples
-        else if (state == 1)
-        {
-            auto x = std::vector<double>(nX);
-            auto y = std::vector<double>(nY);
-
-            const char* str = line.c_str();
-            char* nextStr = nullptr;
-
-            for (int i = 0; i < nX; i++)
-            {
-                x.at(i) = checked_strtod(str, &nextStr);
-                str = nextStr;
-            }
-            for (int j = 0; j < nY; j++)
-            {
-                y.at(j) = checked_strtod(str, &nextStr);
-                str = nextStr;
-            }
-
-            addSample(x, y.at(0));
-        }
-    }
-
-    // close() also flushes
-    try
-    {
-        inFile.close();
-    }
-    catch(const std::ios_base::failure &e)
-    {
-        throw;
-    }
-
-    std::locale::global(current_locale);
 }
 
 } // namespace MultivariateSplines

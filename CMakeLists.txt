@@ -8,7 +8,7 @@
 
 project(multivariate-splines)
 cmake_minimum_required(VERSION 2.8)
-set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Release)
 
 set(MULTIVARIATESPLINES_VERSION_MAJOR 1)
 set(MULTIVARIATESPLINES_VERSION_MINOR 2)
@@ -55,8 +55,9 @@ set(LIBRARY_DIRECTORY ${LIBRARY_DIRECTORY} CACHE STRING "Absolute path, or, if r
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${EIGEN_DIRECTORY})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/test)
 
-# These are the sources we need for compilation
+# These are the sources we need for compilation of the library (not the testing executables)
 #aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/src SRC_LIST)
 set(SRC_LIST
     include/spline.h
@@ -87,19 +88,20 @@ set(STATIC_LIBRARY multivariate-splines-static-${MULTIVARIATESPLINES_VERSION})
 set(SHARED_LIBRARY_TEST "multivariate-splines-shared-test")
 set(STATIC_LIBRARY_TEST "multivariate-splines-static-test")
 set(SERIALIZE_TEST "multivariate-splines-serialize-test")
+set(TESTING_UTILITIES ${CMAKE_CURRENT_SOURCE_DIR}/test/testingutilities.cpp)
 
 # Add output library: add_library(libname [SHARED | STATIC] sourcelist)
 add_library(${SHARED_LIBRARY} SHARED ${SRC_LIST})
 add_library(${STATIC_LIBRARY} STATIC ${SRC_LIST})
 
 # Testing executables
-add_executable(${SHARED_LIBRARY_TEST} ${CMAKE_CURRENT_SOURCE_DIR}/test/main.cpp)
+add_executable(${SHARED_LIBRARY_TEST} ${CMAKE_CURRENT_SOURCE_DIR}/test/main.cpp ${TESTING_UTILITIES})
 target_link_libraries(${SHARED_LIBRARY_TEST} ${SHARED_LIBRARY})
-add_executable(${STATIC_LIBRARY_TEST} ${CMAKE_CURRENT_SOURCE_DIR}/test/main.cpp)
+add_executable(${STATIC_LIBRARY_TEST} ${CMAKE_CURRENT_SOURCE_DIR}/test/main.cpp ${TESTING_UTILITIES})
 target_link_libraries(${STATIC_LIBRARY_TEST} ${STATIC_LIBRARY})
 
 # Serialize testing executable
-add_executable(${SERIALIZE_TEST} ${CMAKE_CURRENT_SOURCE_DIR}/test/serialize.cpp)
+add_executable(${SERIALIZE_TEST} ${CMAKE_CURRENT_SOURCE_DIR}/test/serialize.cpp ${TESTING_UTILITIES})
 target_link_libraries(${SERIALIZE_TEST} ${STATIC_LIBRARY})
 
 # Install the header files
