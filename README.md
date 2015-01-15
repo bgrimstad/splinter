@@ -27,7 +27,7 @@ Best regards,
 Bjarne Grimstad  (bjarne.grimstad@gmail.com)
 
 ###Requirements for use
-* [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page) (tested with versions 3.2.1 and 3.2.2)
+* [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page) (tested with versions 3.2.1, 3.2.2 and 3.2.3)
 
 
 ###Guides
