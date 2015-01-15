@@ -68,8 +68,9 @@ The output files should be in your build folder. If you wish to have them instal
 ####Troubleshooting
 `fatal error: Eigen/Dense: No such file or directory`: The compiler could not find Eigen. You either need to install Eigen, and then run step #6 again (with `-DEIGEN_DIRECTORY="/path/to/eigen"` if Eigen did not install to the default directory (C:/Program Files/eigen3)).
 
-`cc1plus.exe:-1: error: out of memory allocating (...)`: There is a bug with MinGW that causes this error. The newest version we've found that correctly compiles the library can be found [here](http://sourceforge.net/projects/mingwbuilds/files/host-windows/releases/4.7.0/64-bit/threads-posix/sjlj/). If that doesn't work, you can try [this one](https://code.google.com/p/mingw-builds/downloads/detail?name=x86_64-mingw32-gcc-4.7.0-release-c%2Cc%2B%2B%2Cfortran-sjlj.zip&can=2&q=). To install those alternative MinGW versions you can just delete everything in C:\mingw and replace it with what you find in the archives you downloaded.
-Note: Somehow the 32-bit version of 4.7.0 will compile the library, but crashes at runtime. If you know a workaround for this issue, please contact us or send us a pull request with the workaround!
+If using MSVC and you get compile errors, that might be because of the version of Eigen you are using. We've found that the library compiles and runs fine with [this](http://bitbucket.org/eigen/eigen/get/3.2.3.zip) version of Eigen.
+
+`cc1plus.exe:-1: error: out of memory allocating (...).`: You need to use GCC version 4.7.0, as later versions introduce this bug. [This](https://code.google.com/p/mingw-builds/downloads/detail?name=x86_64-mingw32-gcc-4.7.0-release-c%2Cc%2B%2B%2Cfortran-sjlj.zip&can=2&q=) version of MinGW should be able to compile the library. To install this version of MinGW you can just delete everything in C:\mingw and replace it with what you find in the archive you downloaded.
 
 ---
 
