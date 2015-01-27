@@ -159,7 +159,7 @@ bool serializeDataTable6()
         {
             for (double k = -0.01; k <= 0.01; k += 0.001)
             {
-                for (double l = -100000.0; l < 0.0; l += 13720.0)
+                for (double l = -100000.0; l < -60000.0; l += 13720.0)
                 {
                     x.at(0) = i;
                     x.at(1) = j;
