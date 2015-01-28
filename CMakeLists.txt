@@ -1,3 +1,17 @@
+IF(BIICODE)
+  INCLUDE(biicode/cmake/tools)
+
+  # Initializes block variables
+  INIT_BIICODE_BLOCK()
+  
+  # Include base block dir
+  ADD_BIICODE_TARGETS()
+
+  # Calling specific macro to activate c++11 flags
+  ACTIVATE_CPP11(INTERFACE ${BII_BLOCK_TARGET})
+
+ELSE()
+
 # This file is part of the Multivariate Splines library.
 # Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com)
 #
@@ -127,3 +141,5 @@ install(
 
 # Used to debug warnings
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-long-long -pedantic")
+
+ENDIF()
