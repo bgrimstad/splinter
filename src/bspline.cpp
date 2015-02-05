@@ -162,6 +162,11 @@ std::vector< std::vector<double> > BSpline::getKnotVectors() const
     return basis.getKnotVectors();
 }
 
+std::vector<unsigned int> BSpline::getBasisDegrees() const
+{
+    return basis.getBasisDegrees();
+}
+
 std::vector<double> BSpline::getDomainUpperBound() const
 {
     return basis.getSupportUpperBound();
