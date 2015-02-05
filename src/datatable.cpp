@@ -200,7 +200,7 @@ std::vector< std::vector<double> > DataTable::getTableX() const
     {
         std::vector<double> x = sample.getX();
 
-        for(unsigned int j = 0; j < numVariables; j++)
+        for (unsigned int j = 0; j < numVariables; j++)
         {
             table.at(j).at(i) = x.at(j);
         }

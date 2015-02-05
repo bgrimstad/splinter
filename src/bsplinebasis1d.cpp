@@ -46,8 +46,12 @@ BSplineBasis1D::BSplineBasis1D(std::vector<double> &x, unsigned int degree, Knot
         knots = x;
     }
 
-    assert(degree > 0);
-    assert(isKnotVectorRegular());
+    if (degree <= 0)
+        throw Exception("BSplineBasis1D::BSplineBasis1D: Cannot create B-spline basis functions of degree <= 0.");
+
+    // NOTE: this exception is too strict (multiple start and end knots should not be required)
+    if (!isKnotVectorRegular())
+        throw Exception("BSplineBasis1D::BSplineBasis1D: Knot vector is not regular.");
 }
 
 SparseVector BSplineBasis1D::evaluate(double x) const
@@ -212,12 +216,12 @@ SparseMatrix BSplineBasis1D::buildBasisMatrix(double x, unsigned int u, unsigned
             {
                 // Insert diagonal element
                 double a = (knots.at(u+1+i) - x)/dk;
-                if(a != 0)
+                if (a != 0)
                     R.insert(i,i) = a;
 
                 // Insert super-diagonal element
                 double b = (x - knots.at(u+1+i-k))/dk;
-                if(b != 0)
+                if (b != 0)
                     R.insert(i,i+1) = b;
             }
         }
@@ -274,7 +278,7 @@ bool BSplineBasis1D::insertKnots(SparseMatrix &A, double tau, unsigned int multi
     int index = indexHalfopenInterval(tau);
 
     std::vector<double> extKnots = knots;
-    for(unsigned int i = 0; i < multiplicity; i++)
+    for (unsigned int i = 0; i < multiplicity; i++)
         extKnots.insert(extKnots.begin()+index+1, tau);
 
     assert(isKnotVectorRegular(extKnots));
@@ -564,7 +568,7 @@ bool BSplineBasis1D::isKnotVectorRegular(const std::vector<double> &vec) const
     // Check multiplicity of knots
     for (std::vector<double>::const_iterator it = vec.begin(); it != vec.end(); ++it)
     {
-        if(count(vec.begin(), vec.end(), *it) > degree+1)
+        if (count(vec.begin(), vec.end(), *it) > degree+1)
             return false;
     }
 

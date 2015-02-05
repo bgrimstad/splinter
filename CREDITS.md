@@ -1,3 +1,4 @@
+### CREDITS
 The following persons are credited for their contributions to the Multivariate Splines library:
 - Anders Sandnes for his major contributions to the first drafts of the B-spline implementation.
 - Patrick Robertson for his implementation of the penalized B-spline (P-spline).

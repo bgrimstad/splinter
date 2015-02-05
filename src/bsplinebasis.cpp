@@ -26,7 +26,8 @@ BSplineBasis::BSplineBasis(std::vector< std::vector<double> > &X, std::vector<un
 
 BSplineBasis::BSplineBasis(std::vector< std::vector<double> > &X, std::vector<unsigned int> basisDegrees, KnotVectorType knotVectorType)
 {
-    assert(X.size() == basisDegrees.size());
+    if (X.size() != basisDegrees.size())
+        throw Exception("BSplineBasis::BSplineBasis: Incompatible sizes. Number of knot vectors is not equal to size of degree vector.");
 
     setUnivariateBases(X, basisDegrees, knotVectorType);
 }
@@ -323,7 +324,7 @@ unsigned int BSplineBasis::numBasisFunctions(unsigned int dim) const
 unsigned int BSplineBasis::numBasisFunctions() const
 {
     unsigned int prod = 1;
-    for(unsigned int dim = 0; dim < numVariables; dim++)
+    for (unsigned int dim = 0; dim < numVariables; dim++)
     {
         prod *= bases.at(dim).numBasisFunctions();
     }

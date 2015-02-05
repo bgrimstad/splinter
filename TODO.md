@@ -1,5 +1,5 @@
-TODO list:
-- Improve constructors of BSpline (use exceptions instead of asserts)
+### TODO list
+- Improve constructors of BSpline
 - Implement save/load functionality for rbfsplines
 - Open for interpolating with B-splines of any degree
 - Implement more end conditions for cubic B-splines (Hermite, natural, and periodic)

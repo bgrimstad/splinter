@@ -24,7 +24,9 @@ BSpline::BSpline(DenseMatrix coefficients, std::vector< std::vector<double> > kn
     : coefficients(coefficients)
 {
     numVariables = knotVectors.size();
-    assert(coefficients.rows() == 1);
+
+    if (coefficients.rows() != 1)
+        throw Exception("BSpline::BSpline: coefficient matrix can only have one row!");
 
     basis = BSplineBasis(knotVectors, basisDegrees, KnotVectorType::EXPLICIT);
 
@@ -40,9 +42,7 @@ BSpline::BSpline(const DataTable &samples, BSplineType type = BSplineType::CUBIC
 {
     // Check data
     if (!samples.isGridComplete())
-    {
         throw Exception("BSpline::BSpline: Cannot create B-spline from irregular (incomplete) grid.");
-    }
 
     numVariables = samples.getNumVariables();
 
@@ -196,10 +196,12 @@ void BSpline::setControlPoints(DenseMatrix &controlPoints)
 
 bool BSpline::checkControlPoints() const
 {
-    assert(coefficients.cols() == knotaverages.cols());
-    assert(knotaverages.rows() == numVariables);
-    assert(coefficients.rows() == 1);
-    return true;
+    if (coefficients.cols() != knotaverages.cols())
+        throw Exception("BSpline::checkControlPoints: Inconsistent size of coeffients and knot averages matrices.");
+    if (knotaverages.rows() != numVariables)
+        throw Exception("BSpline::checkControlPoints: Inconsistent size of knot averages matrix.");
+    if (coefficients.rows() != 1)
+        throw Exception("BSpline::checkControlPoints: Coefficients matrix does not have one row.");
 }
 
 bool BSpline::pointInDomain(DenseVector x) const
@@ -239,7 +241,7 @@ bool BSpline::reduceDomain(std::vector<double> lb, std::vector<double> ub, bool 
         }
     }
 
-    if(isStrictSubset)
+    if (isStrictSubset)
     {
         if (doRegularizeKnotVectors && !regularizeKnotVectors(sl, su))
         {
@@ -474,9 +476,9 @@ bool BSpline::regularizeKnotVectors(std::vector<double> &lb, std::vector<double>
         // in higher dimensions because reallocation is necessary. This can be prevented by
         // precomputing the number of nonzeros when preallocating memory (see myKroneckerProduct).
         int numKnotsLB = multiplicityTarget - basis.getKnotMultiplicity(dim, lb.at(dim));
-        if(numKnotsLB > 0)
+        if (numKnotsLB > 0)
         {
-            if(!insertKnots(lb.at(dim), dim, numKnotsLB))
+            if (!insertKnots(lb.at(dim), dim, numKnotsLB))
                 return false;
         }
 

@@ -164,7 +164,7 @@ public:
     {
         // Compare dist to origin
         assert(getDim() == rhs.getDim());
-        if(dist() < rhs.dist())
+        if (dist() < rhs.dist())
             return true;
         return false;
     }
@@ -217,7 +217,7 @@ public:
     {
         assert(getDim() == rhs.getDim());
         double sum = 0;
-        for(unsigned int i=0; i<getDim(); i++)
+        for (unsigned int i=0; i<getDim(); i++)
             sum += (p.at(i)-rhs.getPoint().at(i))*(p.at(i)-rhs.getPoint().at(i));
         return std::sqrt(sum);
     }

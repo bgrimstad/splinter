@@ -60,7 +60,7 @@ public:
     template <typename _Char>
     void printSamples(std::basic_ostream<_Char>& out) const
     {
-        for(auto &sample : samples)
+        for (auto &sample : samples)
         {
             out << sample << std::endl;
         }
@@ -72,10 +72,10 @@ public:
         out << "===== Printing grid =====" << std::endl;
 
         unsigned int i = 0;
-        for(auto &variable : grid)
+        for (auto &variable : grid)
         {
             out << 'x' << i++ << '(' << variable.size() << "): ";
-            for(double value : variable)
+            for (double value : variable)
             {
                 out << value << ' ';
             }

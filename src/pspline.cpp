@@ -107,7 +107,7 @@ void PSpline::computeControlPoints(const DataTable &samples)
         DenseQR s;
         bool successfulSolve = s.solve(Ld, Rx, Cx) && s.solve(Ld, Ry, Cy);
 
-        if(!successfulSolve)
+        if (!successfulSolve)
         {
             throw Exception("PSpline::computeControlPoints: Failed to solve for B-spline coefficients.");
         }

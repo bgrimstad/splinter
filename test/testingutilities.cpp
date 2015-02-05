@@ -81,7 +81,7 @@ std::vector<double> linspace(double start, double stop, unsigned int points)
 {
     std::vector<double> ret;
     double dx = 0;
-    if(points > 1)
+    if (points > 1)
         dx = (stop - start)/(points-1);
     for (unsigned int i = 0; i < points; ++i)
         ret.push_back(start + i*dx);
