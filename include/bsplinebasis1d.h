@@ -50,8 +50,8 @@ public:
     std::vector<double> getKnotVector() const { return knots; }
     unsigned int getBasisDegree() const { return degree; }
     double getKnotValue(unsigned int index) const;
-    unsigned int numBasisFunctions() const;
-    unsigned int numBasisFunctionsTarget() const;
+    unsigned int getNumBasisFunctions() const;
+    unsigned int getNumBasisFunctionsTarget() const;
 
     // Index getters
     std::vector<int> indexSupportedBasisfunctions(double x) const;

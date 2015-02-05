@@ -157,6 +157,14 @@ DenseMatrix BSpline::evalHessian(DenseVector x) const
     return H;
 }
 
+std::vector<unsigned int> BSpline::getNumBasisFunctions() const
+{
+    std::vector<unsigned int> ret;
+    for (uint i = 0; i < numVariables; i++)
+        ret.push_back(basis.getNumBasisFunctions(i));
+    return ret;
+}
+
 std::vector< std::vector<double> > BSpline::getKnotVectors() const
 {
     return basis.getKnotVectors();
@@ -277,9 +285,9 @@ void BSpline::computeKnotAverages()
     for (unsigned int i = 0; i < numVariables; i++)
     {
         std::vector<double> knots = basis.getKnotVector(i);
-        DenseVector mu; mu.setZero(basis.numBasisFunctions(i));
+        DenseVector mu; mu.setZero(basis.getNumBasisFunctions(i));
 
-        for (unsigned int j = 0; j < basis.numBasisFunctions(i); j++)
+        for (unsigned int j = 0; j < basis.getNumBasisFunctions(i); j++)
         {
             double knotAvg = 0;
             for (unsigned int k = j+1; k <= j+basis.getBasisDegree(i); k++)
@@ -303,7 +311,7 @@ void BSpline::computeKnotAverages()
     // Fill knot average matrix one row at the time
     // NOTE: Must have same pattern as samples in DataTable
     // TODO: Use DataTable to achieve the same pattern
-    knotaverages.resize(numVariables, basis.numBasisFunctions());
+    knotaverages.resize(numVariables, basis.getNumBasisFunctions());
 
     for (unsigned int i = 0; i < numVariables; i++)
     {
@@ -316,12 +324,12 @@ void BSpline::computeKnotAverages()
             else
                 mu_ext = Eigen::kroneckerProduct(temp, knotOnes.at(j));
         }
-        assert(mu_ext.rows() == basis.numBasisFunctions());
-        knotaverages.block(i,0,1,basis.numBasisFunctions()) = mu_ext.transpose();
+        assert(mu_ext.rows() == basis.getNumBasisFunctions());
+        knotaverages.block(i,0,1,basis.getNumBasisFunctions()) = mu_ext.transpose();
     }
 
 
-    assert(knotaverages.rows() == numVariables && knotaverages.cols() == basis.numBasisFunctions());
+    assert(knotaverages.rows() == numVariables && knotaverages.cols() == basis.getNumBasisFunctions());
 }
 
 void BSpline::computeControlPoints(const DataTable &samples)
@@ -383,7 +391,7 @@ void BSpline::computeBasisFunctionMatrix(const DataTable &samples, SparseMatrix 
 
     int nnzPrCol = basis.supportedPrInterval();
 
-    A.resize(numSamples, basis.numBasisFunctions());
+    A.resize(numSamples, basis.getNumBasisFunctions());
     A.reserve(DenseVector::Constant(numSamples, nnzPrCol)); // TODO: should reserve nnz per row!
 
     int i = 0;

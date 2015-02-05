@@ -44,15 +44,14 @@ public:
 
     std::vector<unsigned int> getBasisDegrees() const;
     unsigned int getBasisDegree(unsigned int dim) const;
-    unsigned int numBasisFunctions() const;
-    unsigned int numBasisFunctions(unsigned int dim) const;
+    unsigned int getNumBasisFunctions() const;
+    unsigned int getNumBasisFunctions(unsigned int dim) const;
+    std::vector<unsigned int> getNumBasisFunctionsTarget() const;
 
     double getKnotValue(int dim, int index) const;
     unsigned int getKnotMultiplicity(unsigned int dim, double tau) const;
     unsigned int getLargestKnotInterval(unsigned int dim) const;
 
-    std::vector<int> getTensorIndexDimension() const;
-    std::vector<int> getTensorIndexDimensionTarget() const;
     int supportedPrInterval() const;
 
     bool insideSupport(DenseVector &x) const;

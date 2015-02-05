@@ -123,28 +123,28 @@ void PSpline::getSecondOrderFiniteDifferenceMatrix(SparseMatrix &D)
 {
 
     // Number of (total) basis functions - defines the number of columns in D
-    int numCols = basis.numBasisFunctions();
+    int numCols = basis.getNumBasisFunctions();
 
-    // Number of basis functions (and coefficients) in each dimension
-    std::vector < int > dims = basis.getTensorIndexDimension();
+    // Number of basis functions (and coefficients) in each variable
+    std::vector<unsigned int> dims;
+    for (uint i = 0; i < numVariables; i++)
+        dims.push_back(basis.getNumBasisFunctions(i));
+
     std::reverse(dims.begin(), dims.end());
 
-    // Number of variables
-    int vars = dims.size();
-
-    for (int i=0; i < vars; i++)
+    for (int i=0; i < numVariables; i++)
     {
-        // Need at least three coefficients in each dimension
+        // Need at least three coefficients in each variable
         assert(basis.numBasisFunctions(i) >= 3);
     }
 
     // Number of rows in D and in each block
     int numRows = 0;
     std::vector< int > numBlkRows;
-    for (int i = 0; i < vars; i++)
+    for (int i = 0; i < numVariables; i++)
     {
         int prod = 1;
-        for (int j = 0; j < vars; j++)
+        for (int j = 0; j < numVariables; j++)
         {
             if (i == j)
                 prod *= (dims[j] - 2);
@@ -157,11 +157,11 @@ void PSpline::getSecondOrderFiniteDifferenceMatrix(SparseMatrix &D)
 
     // Resize and initialize D
     D.resize(numRows, numCols);                         // Resize (transpose because of reservation fn)
-    D.reserve(DenseVector::Constant(numCols,2*vars));   // D has no more than two elems per col per dim
+    D.reserve(DenseVector::Constant(numCols,2*numVariables));   // D has no more than two elems per col per dim
 
     int i = 0;                                          // Row index
     // Loop though each dimension (each dimension has its own block)
-    for (int d = 0; d < vars; d++)
+    for (int d = 0; d < numVariables; d++)
     {
         // Calculate left and right products
         int leftProd = 1;
@@ -170,7 +170,7 @@ void PSpline::getSecondOrderFiniteDifferenceMatrix(SparseMatrix &D)
         {
             leftProd *= dims[k];
         }
-        for (int k = d+1; k < vars; k++)
+        for (int k = d+1; k < numVariables; k++)
         {
             rightProd *= dims[k];
         }

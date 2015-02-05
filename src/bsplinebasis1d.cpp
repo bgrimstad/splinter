@@ -56,7 +56,7 @@ BSplineBasis1D::BSplineBasis1D(std::vector<double> &x, unsigned int degree, Knot
 
 SparseVector BSplineBasis1D::evaluate(double x) const
 {
-    SparseVector basisvalues(numBasisFunctions());
+    SparseVector basisvalues(getNumBasisFunctions());
 
     supportHack(x);
 
@@ -99,7 +99,7 @@ SparseVector BSplineBasis1D::evaluateDerivative(double x, int r) const
     if (!(p >= r+1))
     {
         // Return zero-gradient
-        SparseVector DB(numBasisFunctions());
+        SparseVector DB(getNumBasisFunctions());
         return DB;
     }
 
@@ -130,7 +130,7 @@ SparseVector BSplineBasis1D::evaluateDerivative(double x, int r) const
     assert(B.cols() == p+1);
 
     // From row vector to extended column vector
-    SparseVector DB(numBasisFunctions());
+    SparseVector DB(getNumBasisFunctions());
     DB.reserve(p+1);
     int i = knotIndex-p; // First insertion index
     for (int k = 0; k < B.outerSize(); ++k)
@@ -146,7 +146,7 @@ SparseVector BSplineBasis1D::evaluateDerivative(double x, int r) const
 DenseVector BSplineBasis1D::evaluateFirstDerivative(double x) const
 {
     DenseVector values;
-    values.setZero(numBasisFunctions());
+    values.setZero(getNumBasisFunctions());
 
     supportHack(x);
 
@@ -489,12 +489,12 @@ bool BSplineBasis1D::insideSupport(double x) const
     return (knots.front() <= x) && (x <= knots.back());
 }
 
-unsigned int BSplineBasis1D::numBasisFunctions() const
+unsigned int BSplineBasis1D::getNumBasisFunctions() const
 {
     return knots.size() - (degree + 1);
 }
 
-unsigned int BSplineBasis1D::numBasisFunctionsTarget() const
+unsigned int BSplineBasis1D::getNumBasisFunctionsTarget() const
 {
     return targetNumBasisfunctions;
 }

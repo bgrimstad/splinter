@@ -67,7 +67,7 @@ SparseVector BSplineBasis::eval(const DenseVector &x) const
     }
 
     // Return correct vector
-    if (tv1.size() == numBasisFunctions())
+    if (tv1.size() == getNumBasisFunctions())
     {
         return tv1;
     }
@@ -78,7 +78,7 @@ SparseVector BSplineBasis::eval(const DenseVector &x) const
 DenseMatrix BSplineBasis::evalBasisJacobianOld(DenseVector &x) const
 {
     // Jacobian basis matrix
-    DenseMatrix J; J.setZero(numBasisFunctions(), numVariables);
+    DenseMatrix J; J.setZero(getNumBasisFunctions(), numVariables);
 
     // Calculate partial derivatives
     for (unsigned int i = 0; i < numVariables; i++)
@@ -114,7 +114,7 @@ DenseMatrix BSplineBasis::evalBasisJacobianOld(DenseVector &x) const
 SparseMatrix BSplineBasis::evalBasisJacobian(DenseVector &x) const
 {
     // Jacobian basis matrix
-    SparseMatrix J(numBasisFunctions(), numVariables);
+    SparseMatrix J(getNumBasisFunctions(), numVariables);
     //J.setZero(numBasisFunctions(), numInputs);
 
     // Calculate partial derivatives
@@ -169,7 +169,7 @@ SparseMatrix BSplineBasis::evalBasisHessian(DenseVector &x) const
      * so that basis hessian H is in R^(numBasisFunctions*numInputs x numInputs)
      * The real B-spline Hessian is calculated as (c^T x 1^(numInputs x 1))*H
      */
-    SparseMatrix H(numBasisFunctions()*numVariables, numVariables);
+    SparseMatrix H(getNumBasisFunctions()*numVariables, numVariables);
     //H.setZero(numBasisFunctions()*numInputs, numInputs);
 
     // Calculate partial derivatives
@@ -209,7 +209,7 @@ SparseMatrix BSplineBasis::evalBasisHessian(DenseVector &x) const
             {
                 if (it.value() != 0)
                 {
-                    int row = i*numBasisFunctions()+it.row();
+                    int row = i*getNumBasisFunctions()+it.row();
                     int col = j;
                     H.insert(row,col) = it.value();
                 }
@@ -242,7 +242,7 @@ bool BSplineBasis::insertKnots(SparseMatrix &A, double tau, unsigned int dim, un
         else
         {
             // No insertion - identity matrix
-            int m = bases.at(i).numBasisFunctions();
+            int m = bases.at(i).getNumBasisFunctions();
             Ai.resize(m,m);
             Ai.setIdentity();
         }
@@ -316,17 +316,17 @@ unsigned int BSplineBasis::getBasisDegree(unsigned int dim) const
     return bases.at(dim).getBasisDegree();
 }
 
-unsigned int BSplineBasis::numBasisFunctions(unsigned int dim) const
+unsigned int BSplineBasis::getNumBasisFunctions(unsigned int dim) const
 {
-    return bases.at(dim).numBasisFunctions();
+    return bases.at(dim).getNumBasisFunctions();
 }
 
-unsigned int BSplineBasis::numBasisFunctions() const
+unsigned int BSplineBasis::getNumBasisFunctions() const
 {
     unsigned int prod = 1;
     for (unsigned int dim = 0; dim < numVariables; dim++)
     {
-        prod *= bases.at(dim).numBasisFunctions();
+        prod *= bases.at(dim).getNumBasisFunctions();
     }
     return prod;
 }
@@ -364,22 +364,12 @@ unsigned int BSplineBasis::getLargestKnotInterval(unsigned int dim) const
     return bases.at(dim).indexLongestInterval();
 }
 
-std::vector<int> BSplineBasis::getTensorIndexDimension() const
+std::vector<unsigned int> BSplineBasis::getNumBasisFunctionsTarget() const
 {
-    std::vector<int> ret;
+    std::vector<unsigned int> ret;
     for (unsigned int dim = 0; dim < numVariables; dim++)
     {
-        ret.push_back(bases.at(dim).numBasisFunctions());
-    }
-    return ret;
-}
-
-std::vector<int> BSplineBasis::getTensorIndexDimensionTarget() const
-{
-    std::vector<int> ret;
-    for (unsigned int dim = 0; dim < numVariables; dim++)
-    {
-        ret.push_back(bases.at(dim).numBasisFunctionsTarget() );
+        ret.push_back(bases.at(dim).getNumBasisFunctionsTarget() );
     }
     return ret;
 }
