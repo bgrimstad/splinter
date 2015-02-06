@@ -230,48 +230,36 @@ bool BSpline::reduceDomain(std::vector<double> lb, std::vector<double> ub, bool 
     std::vector<double> sl = basis.getSupportLowerBound();
     std::vector<double> su = basis.getSupportUpperBound();
 
-    bool isStrictSubset = false;
-
     for (unsigned int dim = 0; dim < numVariables; dim++)
     {
-        if (ub.at(dim) <= lb.at(dim)
-            || lb.at(dim) >= su.at(dim)
-            || ub.at(dim) <= sl.at(dim))
-        {
+        // Check if new domain is empty
+        if (ub.at(dim) <= lb.at(dim) || lb.at(dim) >= su.at(dim) || ub.at(dim) <= sl.at(dim))
             throw Exception("BSpline::reduceDomain: Cannot reduce B-spline domain to empty set!");
-        }
 
-        if (su.at(dim) > ub.at(dim))
-        {
-            isStrictSubset = true;
-            su.at(dim) = ub.at(dim);
-        }
+        // Check if new domain is a strict subset
+        if (su.at(dim) < ub.at(dim) || sl.at(dim) > lb.at(dim))
+            throw Exception("BSpline::reduceDomain: Cannot expand B-spline domain!");
 
-        if (lb.at(dim) > sl.at(dim))
-        {
-            isStrictSubset = true;
-            sl.at(dim) = lb.at(dim);
-        }
+        // Tightest possible
+        sl.at(dim) = lb.at(dim);
+        su.at(dim) = ub.at(dim);
     }
 
-    if (isStrictSubset)
+    if (doRegularizeKnotVectors && !regularizeKnotVectors(sl, su))
     {
-        if (doRegularizeKnotVectors && !regularizeKnotVectors(sl, su))
-        {
-            throw Exception("BSpline::reduceDomain: Failed to regularize knot vectors!");
-        }
+        throw Exception("BSpline::reduceDomain: Failed to regularize knot vectors!");
+    }
 
-        // Remove knots and control points that are unsupported with the new bounds
-        if (!removeUnsupportedBasisFunctions(sl, su))
-        {
-            throw Exception("BSpline::reduceDomain: Failed to remove unsupported basis functions!");
-        }
+    // Remove knots and control points that are unsupported with the new bounds
+    if (!removeUnsupportedBasisFunctions(sl, su))
+    {
+        throw Exception("BSpline::reduceDomain: Failed to remove unsupported basis functions!");
+    }
 
-        // Refine knots
-        if (doRefineKnotVectors && !refineKnotVectors())
-        {
-            throw Exception("BSpline::reduceDomain: Failed to refine knot vectors!");
-        }
+    // Refine knots
+    if (doRefineKnotVectors && !refineKnotVectors())
+    {
+        throw Exception("BSpline::reduceDomain: Failed to refine knot vectors!");
     }
 
     return true;
