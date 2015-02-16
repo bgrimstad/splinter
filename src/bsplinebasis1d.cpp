@@ -281,7 +281,8 @@ bool BSplineBasis1D::insertKnots(SparseMatrix &A, double tau, unsigned int multi
     for (unsigned int i = 0; i < multiplicity; i++)
         extKnots.insert(extKnots.begin()+index+1, tau);
 
-    assert(isKnotVectorRegular(extKnots));
+    if (!isKnotVectorRegular(extKnots))
+        throw Exception("BSplineBasis1D::insertKnots: New knot vector is not regular!");
 
     // Return knot insertion matrix
     if (!buildKnotInsertionMatrix(A, extKnots))
@@ -303,16 +304,15 @@ bool BSplineBasis1D::refineKnots(SparseMatrix &A)
     {
         int index = indexLongestInterval(refinedKnots);
         double newKnot = (refinedKnots.at(index) + refinedKnots.at(index+1))/2.0;
-        refinedKnots.insert(lower_bound(refinedKnots.begin(), refinedKnots.end(), newKnot), newKnot);
+        refinedKnots.insert(std::lower_bound(refinedKnots.begin(), refinedKnots.end(), newKnot), newKnot);
     }
 
-    assert(isKnotVectorRegular(refinedKnots) && isRefinement(refinedKnots));
+    if (!isKnotVectorRegular(refinedKnots) || !isRefinement(refinedKnots))
+        throw Exception("BSplineBasis1D::refineKnots: New knot vector is not a proper refinement!");
 
     // Return knot insertion matrix
     if (!buildKnotInsertionMatrix(A, refinedKnots))
-    {
         return false;
-    }
 
     // Update knots
     knots = refinedKnots;
@@ -323,9 +323,7 @@ bool BSplineBasis1D::refineKnots(SparseMatrix &A)
 bool BSplineBasis1D::buildKnotInsertionMatrix(SparseMatrix &A, const std::vector<double> &refinedKnots) const
 {
     if (!isRefinement(refinedKnots))
-    {
-        throw Exception("BSplineBasis1D::buildKnotInsertionMatrix: New knot vector is not a proper refinement of the old!");
-    }
+        throw Exception("BSplineBasis1D::buildKnotInsertionMatrix: New knot vector is not a proper refinement!");
 
     std::vector<double> knotsAug = refinedKnots;
     unsigned int n = knots.size() - degree - 1;
@@ -389,9 +387,7 @@ void BSplineBasis1D::supportHack(double &x) const
 int BSplineBasis1D::indexHalfopenInterval(double x) const
 {
     if (x < knots.front() || x > knots.back())
-    {
         throw Exception("BSplineBasis1D::indexHalfopenInterval: x outside knot interval!");
-    }
 
     // Find first knot that is larger than x
     std::vector<double>::const_iterator it = std::upper_bound(knots.begin(), knots.end(), x);
@@ -405,9 +401,7 @@ bool BSplineBasis1D::reduceSupport(double lb, double ub, SparseMatrix &A)
 {
     // Check bounds
     if (lb < knots.front() || ub > knots.back())
-    {
         return false;
-    }
 
     unsigned int k = degree + 1;
 
