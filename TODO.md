@@ -3,6 +3,7 @@
 - Implement save/load functionality for rbfsplines
 - Open for interpolating with B-splines of any degree
 - Implement more end conditions for cubic B-splines (Hermite, natural, and periodic)
+- Implement MBA algorithm to allow for scattered data interpolation with multilevel B-Splines
 - Implement NURBS
 - Implement Hessian for radial basis function splines
 - Test Jacobian for radial basis function splines
