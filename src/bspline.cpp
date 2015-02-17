@@ -213,15 +213,10 @@ void BSpline::checkControlPoints() const
         throw Exception("BSpline::checkControlPoints: Inconsistent size of coefficients and knot averages matrices.");
     if (knotaverages.rows() != numVariables)
         throw Exception("BSpline::checkControlPoints: Inconsistent size of knot averages matrix.");
-
-    // TODO: What?
-    bool result = false;
-//    if (coefficients.rows() != 1)
-    if (result)
-    {
+    if (coefficients.rows() != 1)
         throw Exception("BSpline::checkControlPoints: Coefficients matrix does not have one row.");
-        std::cout << result << std::endl;
-    }
+
+    return true;
 }
 
 bool BSpline::pointInDomain(DenseVector x) const
