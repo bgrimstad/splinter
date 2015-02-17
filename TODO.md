@@ -11,3 +11,5 @@
 - Implement Kriging interpolation
 - Organize the testing code and add more tests 
 - Improve the documentation
+- Test executable runtime speed on different compilers
+- Check that all non-void functions actually return a value (Clang 3.5 can produce illegal executables if they don't)
