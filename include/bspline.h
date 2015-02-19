@@ -73,7 +73,7 @@ public:
     // Control point related
     void setControlPoints(DenseMatrix &controlPoints);
     DenseMatrix getControlPoints() const;
-    bool checkControlPoints() const;
+    void checkControlPoints() const;
 
     // B-spline operations
     bool reduceDomain(std::vector<double> lb, std::vector<double> ub, bool doRegularizeKnotVectors = true, bool doRefineKnotVectors = false);

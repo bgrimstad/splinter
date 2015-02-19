@@ -207,7 +207,7 @@ void BSpline::setControlPoints(DenseMatrix &controlPoints)
     checkControlPoints();
 }
 
-bool BSpline::checkControlPoints() const
+void BSpline::checkControlPoints() const
 {
     if (coefficients.cols() != knotaverages.cols())
         throw Exception("BSpline::checkControlPoints: Inconsistent size of coefficients and knot averages matrices.");
