@@ -84,7 +84,7 @@ public:
 
 protected:
 
-    BSpline() {}
+    BSpline() : numVariables(0) {}
 
     BSplineBasis basis;
     DenseMatrix knotaverages; // One row per input
