@@ -36,6 +36,7 @@
 #include <Eigen/Dense>
 #include <cassert>
 #include <fstream>
+#include <numeric>
 #include <set>
 #include <datasample.h>
 

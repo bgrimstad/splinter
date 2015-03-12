@@ -127,3 +127,5 @@ install(
 
 # Used to debug warnings
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-long-long -pedantic")
+# Need to specify c++ std on OSX Yosemite
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-long-long -std=c++11")
