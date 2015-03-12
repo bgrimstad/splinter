@@ -37,6 +37,7 @@ public:
     RadialBasisFunction(double e) : e(e) {}
     virtual double eval(double r) const = 0;
     virtual double evalDerivative(double r) const = 0;
+    virtual ~RadialBasisFunction() {}
 protected:
     double e;
 };
