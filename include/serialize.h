@@ -36,6 +36,7 @@
 #include <Eigen/Dense>
 #include <cassert>
 #include <fstream>
+#include <numeric>
 #include <set>
 #include <datasample.h>
 
@@ -134,7 +135,7 @@ inline size_t get_size(const T& obj) {
 namespace detail
 {
     template <class T>
-    class serialize_helper;
+    struct serialize_helper;
 
     template <class T>
     void serializer(const T& obj, StreamType::iterator&);
