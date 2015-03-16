@@ -30,6 +30,7 @@ public:
     SparseVector eval(const DenseVector &x) const;
     SparseMatrix evalBasisJacobian(DenseVector &x) const;
     DenseMatrix evalBasisJacobianOld(DenseVector &x) const; // Depricated
+    DenseMatrix evalBasisJacobianFast(DenseVector &x) const; // Depricated
     SparseMatrix evalBasisHessian(DenseVector &x) const;
 
     // Knot insertion
