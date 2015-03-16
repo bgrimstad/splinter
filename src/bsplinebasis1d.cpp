@@ -460,11 +460,6 @@ bool BSplineBasis1D::reduceSupport(double lb, double ub, SparseMatrix &A)
 
 double BSplineBasis1D::getKnotValue(unsigned int index) const
 {
-    if (index >= knots.size())
-    {
-        throw Exception("BSplineBasis1D:getKnotValue: Invalid knot index - Out of Range");
-    }
-
     return knots.at(index);
 }
 
