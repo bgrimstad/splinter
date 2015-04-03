@@ -132,7 +132,7 @@ void PSpline::getSecondOrderFiniteDifferenceMatrix(SparseMatrix &D)
 
     std::reverse(dims.begin(), dims.end());
 
-    for (int i=0; i < numVariables; i++)
+    for (unsigned int i=0; i < numVariables; i++)
     {
         // Need at least three coefficients in each variable
         assert(basis.getNumBasisFunctions(i) >= 3);
@@ -141,10 +141,10 @@ void PSpline::getSecondOrderFiniteDifferenceMatrix(SparseMatrix &D)
     // Number of rows in D and in each block
     int numRows = 0;
     std::vector< int > numBlkRows;
-    for (int i = 0; i < numVariables; i++)
+    for (unsigned int i = 0; i < numVariables; i++)
     {
         int prod = 1;
-        for (int j = 0; j < numVariables; j++)
+        for (unsigned int j = 0; j < numVariables; j++)
         {
             if (i == j)
                 prod *= (dims[j] - 2);
@@ -161,16 +161,16 @@ void PSpline::getSecondOrderFiniteDifferenceMatrix(SparseMatrix &D)
 
     int i = 0;                                          // Row index
     // Loop though each dimension (each dimension has its own block)
-    for (int d = 0; d < numVariables; d++)
+    for (unsigned int d = 0; d < numVariables; d++)
     {
         // Calculate left and right products
         int leftProd = 1;
         int rightProd = 1;
-        for (int k = 0; k < d; k++)
+        for (unsigned int k = 0; k < d; k++)
         {
             leftProd *= dims[k];
         }
-        for (int k = d+1; k < numVariables; k++)
+        for (unsigned int k = d+1; k < numVariables; k++)
         {
             rightProd *= dims[k];
         }
@@ -181,7 +181,7 @@ void PSpline::getSecondOrderFiniteDifferenceMatrix(SparseMatrix &D)
             // Start column of current subblock
             int blkBaseCol = j*leftProd*dims[d];
             // Block rows [I -2I I] of subblock
-            for (int l = 0; l < (dims[d] - 2); l++)
+            for (unsigned int l = 0; l < (dims[d] - 2); l++)
             {
                 // Special case for first dimension
                 if (d == 0)

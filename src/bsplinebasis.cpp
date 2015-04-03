@@ -67,7 +67,7 @@ SparseVector BSplineBasis::eval(const DenseVector &x) const
     }
 
     // Return correct vector
-    if (tv1.size() == getNumBasisFunctions())
+    if (tv1.size() == (int)getNumBasisFunctions())
     {
         return tv1;
     }
