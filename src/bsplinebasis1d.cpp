@@ -7,7 +7,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-
 #include "include/bsplinebasis1d.h"
 #include <iostream>
 #include <algorithm>
@@ -285,8 +284,7 @@ bool BSplineBasis1D::insertKnots(SparseMatrix &A, double tau, unsigned int multi
         throw Exception("BSplineBasis1D::insertKnots: New knot vector is not regular!");
 
     // Return knot insertion matrix
-    if (!buildKnotInsertionMatrix(A, extKnots))
-        return false;
+    A = buildKnotInsertionMatrix(extKnots);
 
     // Update knots
     knots = extKnots;
@@ -294,7 +292,7 @@ bool BSplineBasis1D::insertKnots(SparseMatrix &A, double tau, unsigned int multi
     return true;
 }
 
-bool BSplineBasis1D::refineKnots(SparseMatrix &A)
+SparseMatrix BSplineBasis1D::refineKnots()
 {
     // Build refine knot vector
     std::vector<double> refinedKnots = knots;
@@ -311,13 +309,12 @@ bool BSplineBasis1D::refineKnots(SparseMatrix &A)
         throw Exception("BSplineBasis1D::refineKnots: New knot vector is not a proper refinement!");
 
     // Return knot insertion matrix
-    if (!buildKnotInsertionMatrix(A, refinedKnots))
-        return false;
+    SparseMatrix A = buildKnotInsertionMatrix(refinedKnots);
 
     // Update knots
     knots = refinedKnots;
 
-    return true;
+    return A;
 }
 
 SparseMatrix BSplineBasis1D::refineKnotsLocally(double x)
@@ -354,9 +351,7 @@ SparseMatrix BSplineBasis1D::refineKnotsLocally(double x)
         throw Exception("BSplineBasis1D::refineKnotsLocally: New knot vector is not a proper refinement!");
 
     // Return knot insertion matrix
-    SparseMatrix A;
-    if (!buildKnotInsertionMatrix(A, refinedKnots))
-        throw Exception("BSplineBasis1D::refineKnotsLocally: Could not build knot insertion matrix!");
+    SparseMatrix A = buildKnotInsertionMatrix(refinedKnots);
 
     // Update knots
     knots = refinedKnots;
@@ -364,7 +359,7 @@ SparseMatrix BSplineBasis1D::refineKnotsLocally(double x)
     return A;
 }
 
-bool BSplineBasis1D::buildKnotInsertionMatrix(SparseMatrix &A, const std::vector<double> &refinedKnots) const
+SparseMatrix BSplineBasis1D::buildKnotInsertionMatrix(const std::vector<double> &refinedKnots) const
 {
     if (!isRefinement(refinedKnots))
         throw Exception("BSplineBasis1D::buildKnotInsertionMatrix: New knot vector is not a proper refinement!");
@@ -373,8 +368,8 @@ bool BSplineBasis1D::buildKnotInsertionMatrix(SparseMatrix &A, const std::vector
     unsigned int n = knots.size() - degree - 1;
     unsigned int m = knotsAug.size() - degree - 1;
 
-    //SparseMatrix A(m,n);
-    A.resize(m,n);
+    SparseMatrix A(m,n);
+    //A.resize(m,n);
     A.reserve(Eigen::VectorXi::Constant(n,degree+1));
 
     // Build A row-by-row
@@ -392,7 +387,7 @@ bool BSplineBasis1D::buildKnotInsertionMatrix(SparseMatrix &A, const std::vector
         }
 
         // Size check
-        if (R.rows() != 1 || R.cols() != degree+1)
+        if (R.rows() != 1 || R.cols() != (int)degree+1)
         {
             throw Exception("BSplineBasis1D::buildKnotInsertionMatrix: Incorrect matrix dimensions!");
         }
@@ -408,7 +403,7 @@ bool BSplineBasis1D::buildKnotInsertionMatrix(SparseMatrix &A, const std::vector
 
     A.makeCompressed();
 
-    return true;
+    return A;
 }
 
 /*

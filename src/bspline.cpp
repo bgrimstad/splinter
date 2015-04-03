@@ -257,9 +257,9 @@ bool BSpline::reduceDomain(std::vector<double> lb, std::vector<double> ub, bool 
     }
 
     // Refine knots
-    if (doRefineKnotVectors && !refineKnotVectors())
+    if (doRefineKnotVectors)
     {
-        throw Exception("BSpline::reduceDomain: Failed to refine knot vectors!");
+        refineKnotVectors();
     }
 
     return true;
@@ -455,22 +455,17 @@ bool BSpline::insertKnots(double tau, unsigned int dim, unsigned int multiplicit
     return true;
 }
 
-bool BSpline::refineKnotVectors()
+void BSpline::refineKnotVectors()
 {
     // Compute knot insertion matrix
-    SparseMatrix A;
-    if (!basis.refineKnots(A))
-        return false;
+    SparseMatrix A = basis.refineKnots();
 
     // Update control points
     assert(A.cols() == coefficients.cols());
     coefficients = coefficients*A.transpose();
     knotaverages = knotaverages*A.transpose();
-
-    return true;
 }
 
-// NOTE: Do this lower in the hierarchy so that all knots can be added at once
 bool BSpline::regularizeKnotVectors(std::vector<double> &lb, std::vector<double> &ub)
 {
     // Add and remove controlpoints and knots to make the b-spline p-regular with support [lb, ub]
@@ -500,17 +495,6 @@ bool BSpline::regularizeKnotVectors(std::vector<double> &lb, std::vector<double>
             if (!insertKnots(ub.at(dim), dim, numKnotsUB))
                 return false;
         }
-
-        // Old insertion method: inserts one knot at the time
-//        while (basis.getKnotMultiplicity(dim, lb.at(dim)) < multiplicityTarget)
-//        {
-//            insertKnots(lb.at(dim), dim);
-//        }
-
-//        while (basis.getKnotMultiplicity(dim, ub.at(dim)) < multiplicityTarget)
-//        {
-//            insertKnots(ub.at(dim), dim);
-//        }
     }
 
     return true;

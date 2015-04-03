@@ -7,7 +7,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-
 #ifndef MS_BSPLINEBASIS1D_H
 #define MS_BSPLINEBASIS1D_H
 
@@ -36,7 +35,7 @@ public:
     DenseVector evaluateFirstDerivative(double x) const; // Depricated
 
     // Knot vector related
-    bool refineKnots(SparseMatrix &A);
+    SparseMatrix refineKnots();
     SparseMatrix refineKnotsLocally(double x);
     bool insertKnots(SparseMatrix &A, double tau, unsigned int multiplicity = 1);
     // bool insertKnots(SparseMatrix &A, std::vector<tuple<double,int>> newKnots); // Add knots at several locations
@@ -70,7 +69,7 @@ private:
     SparseMatrix buildBasisMatrix(double x, unsigned int u, unsigned int k, bool diff = false) const;
 
     // Builds knot insertion matrix
-    bool buildKnotInsertionMatrix(SparseMatrix &A, const std::vector<double> &refinedKnots) const;
+    SparseMatrix buildKnotInsertionMatrix(const std::vector<double> &refinedKnots) const;
 
     // Helper functions
     bool inHalfopenInterval(double x, double x_min, double x_max) const;

@@ -108,7 +108,7 @@ private:
     bool removeUnsupportedBasisFunctions(std::vector<double> &lb, std::vector<double> &ub);
 
     // Knot insertion and refinement
-    bool refineKnotVectors(); // All knots in one shabang
+    void refineKnotVectors(); // All knots in one shabang
 
     // Helper functions
     bool pointInDomain(DenseVector x) const;

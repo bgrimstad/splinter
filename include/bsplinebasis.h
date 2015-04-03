@@ -34,7 +34,7 @@ public:
     SparseMatrix evalBasisHessian(DenseVector &x) const;
 
     // Knot vector manipulation
-    bool refineKnots(SparseMatrix &A);
+    SparseMatrix refineKnots();
     SparseMatrix refineKnotsLocally(DenseVector x);
     bool insertKnots(SparseMatrix &A, double tau, unsigned int dim, unsigned int multiplicity = 1);
 
