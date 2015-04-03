@@ -22,7 +22,7 @@ BSplineBasis1D::BSplineBasis1D(std::vector<double> &x, unsigned int degree)
 
 BSplineBasis1D::BSplineBasis1D(std::vector<double> &x, unsigned int degree, KnotVectorType knotVectorType)
     : degree(degree),
-      targetNumBasisfunctions(degree+1+2) // Minimum p+1
+      targetNumBasisfunctions((degree+1)+10) // Minimum p+1
 {
     if (knotVectorType == KnotVectorType::EXPLICIT)
     {
