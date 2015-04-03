@@ -331,7 +331,6 @@ void testSplineDerivative()
 
 double kroneckerTestFunction(DenseVector x)
 {
-    int dim = 4;
     assert(x.rows() == dim);
 
     double y = 1 + (.1 + 0.5*x(0) - x(0)*x(0) - 0.33*x(0)*x(0)*x(0))*(.1 + 0.5*x(1) - x(1)*x(1) - 2*x(1)*x(1)*x(1))*(.1 - 0.5*x(2) + x(2)*x(2) + 2*x(2)*x(2)*x(2))*(.1 - 0.5*x(3) + x(3)*x(3) + 2*x(3)*x(3)*x(3));
@@ -347,8 +346,6 @@ double kroneckerTestFunction(DenseVector x)
  */
 void kroneckerTest()
 {
-    int dim = 4;
-
     std::vector<double> lb = {-1,-1,-1,-1};
     std::vector<double> ub = {2,2,2,2};
 
