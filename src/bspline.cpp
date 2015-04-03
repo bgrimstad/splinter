@@ -7,7 +7,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-
 #include "bspline.h"
 #include "include/bsplinebasis.h"
 #include "include/mykroneckerproduct.h"
@@ -118,21 +117,22 @@ DenseMatrix BSpline::evalJacobian(DenseVector x) const
         throw Exception("BSpline::evalJacobian: Evaluation at point outside domain.");
     }
 
-    DenseMatrix Bi = basis.evalBasisJacobianOld(x); // Old Jacobian implementation
-    //SparseMatrix Ji = basis.evalBasisJacobian(x);   // New Jacobian implementation
+    DenseMatrix BiOld = basis.evalBasisJacobianOld(x);  // Old Jacobian implementation
+//    DenseMatrix Bi = basis.evalBasisJacobianFast(x);    // Fast Jacobian implementation
+//    SparseMatrix Ji = basis.evalBasisJacobian(x);       // Sparse Jacobian implementation
 
-//    // Test difference in Jacobians
-//    DenseMatrix Jid(Ji);
-//    DenseMatrix dJ = Bi - Jid;
-//    DenseVector errorVec = dJ.rowwise().maxCoeff();
-//    DenseVector error = errorVec.colwise().maxCoeff();
-//    if (std::abs(error(0)) > 1e-10)
-//    {
-//        std::cout << "NOTABLE DIFFERENCE IN JACOBIANS: " << std::abs(error(0)) << std::endl;
-//        exit(1);
-//    }
+     // Test difference in Jacobians
+     // DenseMatrix Jid(Ji);
+//     DenseMatrix dJ = Bi - BiOld;
+//     DenseVector errorVec = dJ.rowwise().maxCoeff();
+//     DenseVector error = errorVec.colwise().maxCoeff();
+//     if (std::abs(error(0)) > 1e-10)
+//     {
+//         std::cout << "NOTABLE DIFFERENCE IN JACOBIANS: " << std::abs(error(0)) << std::endl;
+//         exit(1);
+//     }
 
-    return coefficients*Bi;
+    return coefficients*BiOld;
 }
 
 /*
@@ -207,10 +207,10 @@ void BSpline::setControlPoints(DenseMatrix &controlPoints)
     checkControlPoints();
 }
 
-bool BSpline::checkControlPoints() const
+void BSpline::checkControlPoints() const
 {
     if (coefficients.cols() != knotaverages.cols())
-        throw Exception("BSpline::checkControlPoints: Inconsistent size of coeffients and knot averages matrices.");
+        throw Exception("BSpline::checkControlPoints: Inconsistent size of coefficients and knot averages matrices.");
     if (knotaverages.rows() != numVariables)
         throw Exception("BSpline::checkControlPoints: Inconsistent size of knot averages matrix.");
     if (coefficients.rows() != 1)

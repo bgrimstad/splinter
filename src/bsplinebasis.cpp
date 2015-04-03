@@ -101,11 +101,72 @@ DenseMatrix BSplineBasis::evalBasisJacobianOld(DenseVector &x) const
             }
 
             bi = kroneckerProduct(temp, xi);
-            //bi = kroneckerProduct(bi, xi).eval();
         }
 
         // Fill out column
         J.block(0,i,bi.rows(),1) = bi.block(0,0,bi.rows(),1);
+    }
+
+    return J;
+}
+
+DenseMatrix BSplineBasis::evalBasisJacobianFast(DenseVector &x) const
+{
+    // Jacobian basis matrix
+    DenseMatrix J; J.setZero(getNumBasisFunctions(), numVariables);
+
+    // Evaluate B-spline basis functions before looping
+    std::vector<DenseVector> func(numVariables);
+    std::vector<DenseVector> grad(numVariables);
+
+    for (unsigned int i = 0; i < numVariables; ++i)
+    {
+        func[i] = bases.at(i).evaluate(x(i));
+        grad[i] = bases.at(i).evaluateFirstDerivative(x(i));
+    }
+
+    // Calculate partial derivatives
+    for (unsigned int i = 0; i < numVariables; ++i)
+    {
+        // One column in basis jacobian
+        DenseVector bi; bi.setOnes(1);
+        DenseVector bi2 = bi;
+
+        for (unsigned int j = 0; j < numVariables; ++j)
+        {
+            if (j % 2 == 0)
+            {
+                if (j == i)
+                {
+                    // Differentiated basis
+                    bi = kroneckerProduct(bi2, grad.at(j));
+                }
+                else
+                {
+                    // Normal basis
+                    bi = kroneckerProduct(bi2, func.at(j));
+                }
+            }
+            else
+            {
+                if (j == i)
+                {
+                    // Differentiated basis
+                    bi2 = kroneckerProduct(bi, grad.at(j));
+                }
+                else
+                {
+                    // Normal basis
+                    bi2 = kroneckerProduct(bi, func.at(j));
+                }
+            }
+        }
+
+        // Fill out column
+        if (bi.size() == getNumBasisFunctions())
+            J.block(0,i,bi.rows(),1) = bi.block(0,0,bi.rows(),1);
+        else
+            J.block(0,i,bi2.rows(),1) = bi2.block(0,0,bi2.rows(),1);
     }
 
     return J;
@@ -118,12 +179,12 @@ SparseMatrix BSplineBasis::evalBasisJacobian(DenseVector &x) const
     //J.setZero(numBasisFunctions(), numInputs);
 
     // Calculate partial derivatives
-    for (unsigned int i = 0; i < numVariables; i++)
+    for (unsigned int i = 0; i < numVariables; ++i)
     {
         // One column in basis jacobian
         SparseMatrix Ji(1,1);
         Ji.insert(0,0) = 1;
-        for (unsigned int j = 0; j < numVariables; j++)
+        for (unsigned int j = 0; j < numVariables; ++j)
         {
             SparseMatrix temp = Ji;
             SparseMatrix xi;

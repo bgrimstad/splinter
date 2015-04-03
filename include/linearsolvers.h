@@ -38,6 +38,7 @@ public:
         return true;
     }
 
+    virtual ~LinearSolver() {}
 private:
     double tol = 1e-12; // Relative error tolerance
 

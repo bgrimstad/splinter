@@ -1,7 +1,8 @@
 ### TODO list
+- Implement integrated B-splines
 - Improve constructors of BSpline
 - Implement save/load functionality for rbfsplines
-- Open for interpolating with B-splines of any degree
+- Open for interpolating with B-splines of any degree (needs an automatic knot initialization procedure - this can be formulated as a minimization problem)
 - Implement more end conditions for cubic B-splines (Hermite, natural, and periodic)
 - Implement MBA algorithm to allow for scattered data interpolation with multilevel B-Splines
 - Implement NURBS
@@ -11,3 +12,6 @@
 - Implement Kriging interpolation
 - Organize the testing code and add more tests 
 - Improve the documentation
+- Test executable runtime speed on different compilers
+- Check that all non-void functions actually return a value (Clang 3.5 can produce illegal executables if they don't)
+- Investigate tension B-splines: http://www.cas.mcmaster.ca/~modersit/Pubs/2009-SPIE-BFM.pdf

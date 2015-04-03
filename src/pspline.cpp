@@ -135,7 +135,7 @@ void PSpline::getSecondOrderFiniteDifferenceMatrix(SparseMatrix &D)
     for (int i=0; i < numVariables; i++)
     {
         // Need at least three coefficients in each variable
-        assert(basis.numBasisFunctions(i) >= 3);
+        assert(basis.getNumBasisFunctions(i) >= 3);
     }
 
     // Number of rows in D and in each block
@@ -213,7 +213,7 @@ void PSpline::getSecondOrderFiniteDifferenceMatrix(SparseMatrix &D)
     }
 
 //    // Number of (total) basis functions - defines the number of columns in D
-//    int numCols = basis.numBasisFunctions();
+//    int numCols = basis.getNumBasisFunctions();
 
 //    // Number of basis functions (and coefficients) in each dimension
 //    std::vector < int > dims = basis.getTensorIndexDimension();
@@ -225,8 +225,8 @@ void PSpline::getSecondOrderFiniteDifferenceMatrix(SparseMatrix &D)
 //    for (int i=0; i < vars; i++)
 //    {
 //        // Need at least three coefficients in each dimension
-//        assert(basis.numBasisFunctions(i) >= 3);
-//        dims.push_back(basis.numBasisFunctions(i));
+//        assert(basis.getNumBasisFunctions(i) >= 3);
+//        dims.push_back(basis.getNumBasisFunctions(i));
 //    }
 
 //    // Number of rows in D and in each block

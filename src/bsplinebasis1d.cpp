@@ -65,7 +65,7 @@ SparseVector BSplineBasis1D::evaluate(double x) const
     basisvalues.reserve(indexSupported.size());
 
     // Iterate through the nonzero basisfunctions and store functionvalues
-    for (auto it = indexSupported.begin(); it != indexSupported.end(); it++)
+    for (auto it = indexSupported.begin(); it != indexSupported.end(); ++it)
     {
         basisvalues.insert(*it) = deBoorCox(x, *it, degree);
     }
@@ -95,8 +95,8 @@ SparseVector BSplineBasis1D::evaluateDerivative(double x, int r) const
     int p = degree;
 
     // Continuity requirement
-    //assert(p >= r+1);
-    if (!(p >= r+1))
+    //assert(p > r);
+    if (p <= r)
     {
         // Return zero-gradient
         SparseVector DB(getNumBasisFunctions());
@@ -109,7 +109,7 @@ SparseVector BSplineBasis1D::evaluateDerivative(double x, int r) const
 
     int knotIndex = indexHalfopenInterval(x);
 
-    // Algorithm 3.18 from Lyche and Moerken 2011
+    // Algorithm 3.18 from Lyche and Moerken (2011)
     SparseMatrix B(1,1);
     B.insert(0,0) = 1;
 
@@ -443,13 +443,13 @@ bool BSplineBasis1D::reduceSupport(double lb, double ub, SparseMatrix &A)
     si.insert(si.begin(), knots.begin()+index_lower, knots.begin()+index_upper+k+1);
 
     // Construct selection matrix A
-    int n_old = knots.size()-k; // Current number of basis functions
-    int n_new = si.size()-k; // Number of basis functions after update
+    int numOld = knots.size()-k; // Current number of basis functions
+    int numNew = si.size()-k; // Number of basis functions after update
 
-    if (n_old < n_new) return false;
+    if (numOld < numNew) return false;
 
-    DenseMatrix Ad = DenseMatrix::Zero(n_old, n_new);
-    Ad.block(index_lower, 0, n_new, n_new) = DenseMatrix::Identity(n_new, n_new);
+    DenseMatrix Ad = DenseMatrix::Zero(numOld, numNew);
+    Ad.block(index_lower, 0, numNew, numNew) = DenseMatrix::Identity(numNew, numNew);
     A = Ad.sparseView();
 
     // Update knots
@@ -460,11 +460,6 @@ bool BSplineBasis1D::reduceSupport(double lb, double ub, SparseMatrix &A)
 
 double BSplineBasis1D::getKnotValue(unsigned int index) const
 {
-    if (index >= knots.size())
-    {
-        throw Exception("BSplineBasis1D:getKnotValue: Invalid knot index - Out of Range");
-    }
-
     return knots.at(index);
 }
 
