@@ -33,10 +33,10 @@ public:
     DenseMatrix evalBasisJacobianFast(DenseVector &x) const; // Depricated
     SparseMatrix evalBasisHessian(DenseVector &x) const;
 
-    // Knot insertion
+    // Knot vector manipulation
     bool refineKnots(SparseMatrix &A);
+    SparseMatrix refineKnotsLocally(DenseVector x);
     bool insertKnots(SparseMatrix &A, double tau, unsigned int dim, unsigned int multiplicity = 1);
-    //bool insertKnots(SparseMatrix &A, std::vector<std::tuple<double,int,int>> tau, unsigned int dim, unsigned int multiplicity = 1);
 
     // Getters
     BSplineBasis1D getSingleBasis(int dim);

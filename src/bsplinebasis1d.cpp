@@ -320,6 +320,50 @@ bool BSplineBasis1D::refineKnots(SparseMatrix &A)
     return true;
 }
 
+SparseMatrix BSplineBasis1D::refineKnotsLocally(double x)
+{
+    if (!insideSupport(x))
+        throw Exception("BSplineBasis1D::refineKnotsLocally: Cannot refine outside support!");
+
+    // Refined knot vector
+    std::vector<double> refinedKnots = knots;
+
+    auto val = std::lower_bound(refinedKnots.begin(), refinedKnots.end(), x);
+
+    // Check left boundary
+    if (val == refinedKnots.begin())
+        std::advance(val, degree+1);
+
+    // Get previous iterator
+    auto prev = std::prev(val);
+
+    double insertVal = x;
+
+    // Adjust x if it is on or close to a knot
+    if (knotMultiplicity(x) > 1
+            || assertNear(*val, x, 1e-3, 1e-3)
+            || assertNear(*prev, x, 1e-3, 1e-3))
+    {
+        insertVal = (*val + *prev)/2.0;
+    }
+
+    // Insert new knot
+    refinedKnots.insert(val, insertVal);
+
+    if (!isKnotVectorRegular(refinedKnots) || !isRefinement(refinedKnots))
+        throw Exception("BSplineBasis1D::refineKnotsLocally: New knot vector is not a proper refinement!");
+
+    // Return knot insertion matrix
+    SparseMatrix A;
+    if (!buildKnotInsertionMatrix(A, refinedKnots))
+        throw Exception("BSplineBasis1D::refineKnotsLocally: Could not build knot insertion matrix!");
+
+    // Update knots
+    knots = refinedKnots;
+
+    return A;
+}
+
 bool BSplineBasis1D::buildKnotInsertionMatrix(SparseMatrix &A, const std::vector<double> &refinedKnots) const
 {
     if (!isRefinement(refinedKnots))

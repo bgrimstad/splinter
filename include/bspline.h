@@ -26,7 +26,7 @@ enum class BSplineType
     QUADRATIC_FREE,     // Quadratic spline with free end conditions.
     //CUBIC_HERMITE,    // Cubic spline with Hermite end conditions. Interpolates all points. Not implemented.
     //CUBIC_NATURAL,    // Cubic spline with Natural end conditions. Interpolates all points. Ensures second derivative of B-spline is zero at end points. Not implemented.
-    CUBIC_FREE          // Cubic spline with Free end conditions. Interpolates all points. Ensures p'th derivative continuous at x(2) and x(n-1). p+1-regular knot sequence with two deleted knots.
+    CUBIC_FREE          // Cubic spline with Free end conditions. Interpolates all points. Ensures p'th derivative continuous at x(2) and x(n-1).
     //CUBIC_PERIODIC,   // Cubic spline with Periodic end conditions. Not implemented.
 };
 
@@ -77,6 +77,9 @@ public:
 
     // B-spline operations
     bool reduceDomain(std::vector<double> lb, std::vector<double> ub, bool doRegularizeKnotVectors = true, bool doRefineKnotVectors = false);
+
+    // Perform a local knot refinement at x
+    void localRefinement(DenseVector x);
 
     bool insertKnots(double tau, unsigned int dim, unsigned int multiplicity = 1); // TODO: move back to private
 

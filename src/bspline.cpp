@@ -265,6 +265,17 @@ bool BSpline::reduceDomain(std::vector<double> lb, std::vector<double> ub, bool 
     return true;
 }
 
+void BSpline::localRefinement(DenseVector x)
+{
+    // Compute knot insertion matrix
+    SparseMatrix A = basis.refineKnotsLocally(x);
+
+    // Update control points
+    assert(A.cols() == coefficients.cols());
+    coefficients = coefficients*A.transpose();
+    knotaverages = knotaverages*A.transpose();
+}
+
 // Computes knot averages: assumes that basis is initialized!
 void BSpline::computeKnotAverages()
 {

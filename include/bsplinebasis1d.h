@@ -37,6 +37,7 @@ public:
 
     // Knot vector related
     bool refineKnots(SparseMatrix &A);
+    SparseMatrix refineKnotsLocally(double x);
     bool insertKnots(SparseMatrix &A, double tau, unsigned int multiplicity = 1);
     // bool insertKnots(SparseMatrix &A, std::vector<tuple<double,int>> newKnots); // Add knots at several locations
     unsigned int knotMultiplicity(double tau) const; // Returns the number of repetitions of tau in the knot vector

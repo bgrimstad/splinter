@@ -34,6 +34,16 @@ typedef Eigen::SparseVector<double> SparseVector;
 typedef Eigen::MatrixXd DenseMatrix;
 typedef Eigen::SparseMatrix<double> SparseMatrix; // declares a column-major sparse matrix type of double
 
+// Compare two numbers
+template<typename T>
+bool assertNear(T x, T y, double tolAbs = 1e-8, double tolRel = 1e-8)
+{
+    double dx = std::abs(x - y);
+    double xAbs = 0.5*(std::abs(x) + std::abs(y));
+    double err = std::max(tolAbs, tolRel*xAbs);
+    return dx < err;
+}
+
 class Exception : public std::exception
 {
 private:
