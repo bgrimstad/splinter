@@ -813,4 +813,36 @@ std::vector<double> BSplineBasis1D::linspace(double start, double stop, unsigned
     return ret;
 }
 
+/*
+ * Automatic selection of knot vector for all degrees
+ * NOTE: Not finished, needs testing!
+ */
+std::vector<double> BSplineBasis1D::computeKnotVector(std::vector<double> samples, unsigned int degree)
+{
+    assert(degree >= 1);
+    assert(samples.size() >= degree + 1);
+    //uint numSamples = samples.size();
+
+    uint numRemove = degree-1;
+    for (uint i = 0; i < numRemove; ++i)
+    {
+        // Distance to nearest neighbour
+        std::vector<double> distVec(samples.size(), 0);
+        for (uint i = 1; i < samples.size()-1; ++i)
+            distVec.at(i) = samples.at(i+1) - samples.at(i-1);
+
+        auto nn = std::min_element(distVec.begin()+1, distVec.end()-1); // Cannot remove first and last element
+        auto inn = nn - distVec.begin();
+        samples.erase(samples.begin() + inn);
+    }
+
+    assert(samples.size() == numSamples - numRemove);
+
+    // Add p knots to each end
+
+    //assert(samples.size() == numSamples + degree + 1);
+
+    return samples;
+}
+
 } // namespace MultivariateSplines

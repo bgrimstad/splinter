@@ -89,6 +89,8 @@ private:
     std::vector<double> knotVectorRegular(std::vector<double>& X) const;
     std::vector<double> knotVectorFree(std::vector<double>& X) const;
 
+    std::vector<double> computeKnotVector(std::vector<double> samples, unsigned int degree);
+
     // Member variables
     unsigned int degree;
     std::vector<double> knots;
