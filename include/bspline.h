@@ -76,7 +76,7 @@ public:
     void checkControlPoints() const;
 
     // B-spline operations
-    bool reduceDomain(std::vector<double> lb, std::vector<double> ub, bool doRegularizeKnotVectors = true, bool doRefineKnotVectors = false);
+    void reduceDomain(std::vector<double> lb, std::vector<double> ub, bool doRegularizeKnotVectors = true);
 
     // Perform global knot refinement
     void globalKnotRefinement(); // All knots in one shabang

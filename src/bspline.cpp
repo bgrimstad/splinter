@@ -222,10 +222,10 @@ bool BSpline::pointInDomain(DenseVector x) const
     return basis.insideSupport(x);
 }
 
-bool BSpline::reduceDomain(std::vector<double> lb, std::vector<double> ub, bool doRegularizeKnotVectors, bool doRefineKnotVectors)
+void BSpline::reduceDomain(std::vector<double> lb, std::vector<double> ub, bool doRegularizeKnotVectors)
 {
     if (lb.size() != numVariables || ub.size() != numVariables)
-        return false;
+        throw Exception("BSpline::reduceDomain: Inconsistent vector sizes!");
 
     std::vector<double> sl = basis.getSupportLowerBound();
     std::vector<double> su = basis.getSupportUpperBound();
@@ -255,14 +255,6 @@ bool BSpline::reduceDomain(std::vector<double> lb, std::vector<double> ub, bool 
     {
         throw Exception("BSpline::reduceDomain: Failed to remove unsupported basis functions!");
     }
-
-    // Refine knots
-    if (doRefineKnotVectors)
-    {
-        globalKnotRefinement();
-    }
-
-    return true;
 }
 
 void BSpline::globalKnotRefinement()
