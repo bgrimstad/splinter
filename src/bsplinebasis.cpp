@@ -39,7 +39,14 @@ void BSplineBasis::setUnivariateBases(std::vector< std::vector<double> > &X, std
     for (unsigned int i = 0; i < numVariables; i++)
     {
         bases.push_back(BSplineBasis1D(X.at(i), basisDegrees.at(i), knotVectorType));
-    }
+
+        // Adjust target number of basis functions used in e.g. refinement
+        if (numVariables > 2)
+        {
+            // One extra knot is allowed
+            bases.at(i).setNumBasisFunctionsTarget(basisDegrees.at(i)+2);
+        }
+    } 
 }
 
 SparseVector BSplineBasis::eval(const DenseVector &x) const
@@ -283,9 +290,10 @@ SparseMatrix BSplineBasis::evalBasisHessian(DenseVector &x) const
     return H;
 }
 
-bool BSplineBasis::insertKnots(SparseMatrix &A, double tau, unsigned int dim, unsigned int multiplicity)
+SparseMatrix BSplineBasis::insertKnots(double tau, unsigned int dim, unsigned int multiplicity)
 {
-    A.resize(1,1);
+    SparseMatrix A(1,1);
+//    A.resize(1,1);
     A.insert(0,0) = 1;
 
     // Calculate multivariate knot insertion matrix
@@ -297,8 +305,7 @@ bool BSplineBasis::insertKnots(SparseMatrix &A, double tau, unsigned int dim, un
         if (i == dim)
         {
             // Build knot insertion matrix
-            if (!bases.at(i).insertKnots(Ai, tau, multiplicity))
-                return false;
+            Ai = bases.at(i).insertKnots(tau, multiplicity);
         }
         else
         {
@@ -309,18 +316,17 @@ bool BSplineBasis::insertKnots(SparseMatrix &A, double tau, unsigned int dim, un
         }
 
         //A = kroneckerProduct(temp, Ai);
-        myKroneckerProduct(temp,Ai,A);
+        myKroneckerProduct(temp, Ai, A);
     }
 
     A.makeCompressed();
 
-    return true;
+    return A;
 }
 
 SparseMatrix BSplineBasis::refineKnots()
 {
     SparseMatrix A(1,1);
-    //A.resize(1,1);
     A.insert(0,0) = 1;
 
     for (unsigned int i = 0; i < numVariables; i++)
@@ -329,7 +335,7 @@ SparseMatrix BSplineBasis::refineKnots()
         SparseMatrix Ai = bases.at(i).refineKnots();
 
         //A = kroneckerProduct(temp, Ai);
-        myKroneckerProduct(temp,Ai,A);
+        myKroneckerProduct(temp, Ai, A);
     }
 
     A.makeCompressed();
@@ -339,8 +345,7 @@ SparseMatrix BSplineBasis::refineKnots()
 
 SparseMatrix BSplineBasis::refineKnotsLocally(DenseVector x)
 {
-    SparseMatrix A;
-    A.resize(1,1);
+    SparseMatrix A(1,1);
     A.insert(0,0) = 1;
 
     for (unsigned int i = 0; i < numVariables; i++)
@@ -349,7 +354,7 @@ SparseMatrix BSplineBasis::refineKnotsLocally(DenseVector x)
         SparseMatrix Ai = bases.at(i).refineKnotsLocally(x(i));
 
         //A = kroneckerProduct(temp, Ai);
-        myKroneckerProduct(temp,Ai,A);
+        myKroneckerProduct(temp, Ai, A);
     }
 
     A.makeCompressed();

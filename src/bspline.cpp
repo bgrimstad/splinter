@@ -88,7 +88,7 @@ void BSpline::init()
     bool initialKnotRefinement = false;
     if (initialKnotRefinement)
     {
-        refineKnotVectors();
+        globalKnotRefinement();
         checkControlPoints();
     }
 }
@@ -245,9 +245,9 @@ bool BSpline::reduceDomain(std::vector<double> lb, std::vector<double> ub, bool 
         su.at(dim) = ub.at(dim);
     }
 
-    if (doRegularizeKnotVectors && !regularizeKnotVectors(sl, su))
+    if (doRegularizeKnotVectors)
     {
-        throw Exception("BSpline::reduceDomain: Failed to regularize knot vectors!");
+        regularizeKnotVectors(sl, su);
     }
 
     // Remove knots and control points that are unsupported with the new bounds
@@ -259,13 +259,24 @@ bool BSpline::reduceDomain(std::vector<double> lb, std::vector<double> ub, bool 
     // Refine knots
     if (doRefineKnotVectors)
     {
-        refineKnotVectors();
+        globalKnotRefinement();
     }
 
     return true;
 }
 
-void BSpline::localRefinement(DenseVector x)
+void BSpline::globalKnotRefinement()
+{
+    // Compute knot insertion matrix
+    SparseMatrix A = basis.refineKnots();
+
+    // Update control points
+    assert(A.cols() == coefficients.cols());
+    coefficients = coefficients*A.transpose();
+    knotaverages = knotaverages*A.transpose();
+}
+
+void BSpline::localKnotRefinement(DenseVector x)
 {
     // Compute knot insertion matrix
     SparseMatrix A = basis.refineKnotsLocally(x);
@@ -436,29 +447,10 @@ void BSpline::controlPointEquationRHS(const DataTable &samples, DenseMatrix &Bx,
     }
 }
 
-bool BSpline::insertKnots(double tau, unsigned int dim, unsigned int multiplicity)
+void BSpline::insertKnots(double tau, unsigned int dim, unsigned int multiplicity)
 {
-    // Test multiplicity at knot
-    if (basis.getKnotMultiplicity(dim, tau) + multiplicity > basis.getBasisDegree(dim) + 1)
-        return false;
-
     // Insert knots and compute knot insertion matrix
-    SparseMatrix A;
-    if (!basis.insertKnots(A, tau, dim, multiplicity))
-        return false;
-
-    // Update control points
-    assert(A.cols() == coefficients.cols());
-    coefficients = coefficients*A.transpose();
-    knotaverages = knotaverages*A.transpose();
-
-    return true;
-}
-
-void BSpline::refineKnotVectors()
-{
-    // Compute knot insertion matrix
-    SparseMatrix A = basis.refineKnots();
+    SparseMatrix A = basis.insertKnots(tau, dim, multiplicity);
 
     // Update control points
     assert(A.cols() == coefficients.cols());
@@ -466,11 +458,11 @@ void BSpline::refineKnotVectors()
     knotaverages = knotaverages*A.transpose();
 }
 
-bool BSpline::regularizeKnotVectors(std::vector<double> &lb, std::vector<double> &ub)
+void BSpline::regularizeKnotVectors(std::vector<double> &lb, std::vector<double> &ub)
 {
     // Add and remove controlpoints and knots to make the b-spline p-regular with support [lb, ub]
     if (!(lb.size() == numVariables && ub.size() == numVariables))
-        return false;
+        throw Exception("BSpline::regularizeKnotVectors: Inconsistent vector sizes.");
 
     for (unsigned int dim = 0; dim < numVariables; dim++)
     {
@@ -485,19 +477,15 @@ bool BSpline::regularizeKnotVectors(std::vector<double> &lb, std::vector<double>
         int numKnotsLB = multiplicityTarget - basis.getKnotMultiplicity(dim, lb.at(dim));
         if (numKnotsLB > 0)
         {
-            if (!insertKnots(lb.at(dim), dim, numKnotsLB))
-                return false;
+            insertKnots(lb.at(dim), dim, numKnotsLB);
         }
 
         int numKnotsUB = multiplicityTarget - basis.getKnotMultiplicity(dim, ub.at(dim));
         if (numKnotsUB > 0)
         {
-            if (!insertKnots(ub.at(dim), dim, numKnotsUB))
-                return false;
+            insertKnots(ub.at(dim), dim, numKnotsUB);
         }
     }
-
-    return true;
 }
 
 bool BSpline::removeUnsupportedBasisFunctions(std::vector<double> &lb, std::vector<double> &ub)

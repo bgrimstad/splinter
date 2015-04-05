@@ -445,8 +445,12 @@ void kroneckerTest()
 
 void localRefinementTest()
 {
-    DenseMatrix coeffs = DenseMatrix::Ones(1,4);
-    std::vector<std::vector<double>> knots = {{1,1,2,3,4,4}};
+//    DenseMatrix coeffs = DenseMatrix::Ones(1,4);
+//    std::vector<std::vector<double>> knots = {{1,1,2,3,4,4}};
+
+    DenseMatrix coeffs = DenseMatrix::Ones(1,2);
+    std::vector<std::vector<double>> knots = {{1,1,1.000000001,1.000000001}};
+
     std::vector<uint> degs = {1};
     BSpline bs(coeffs, knots, degs);
 
@@ -457,8 +461,8 @@ void localRefinementTest()
      * x = 2.01 => knot inserted at 2.001
      * x = 4 => knot inserted at 3.5
      */
-    DenseVector x(1); x(0) = 2.01;
-    bs.localRefinement(x);
+    DenseVector x(1); x(0) = 1;
+    bs.localKnotRefinement(x);
 
     auto knots2 = bs.getKnotVectors();
 
@@ -477,6 +481,8 @@ void run_tests()
 
 int main(int argc, char **argv)
 {
+    localRefinementTest();
+
     try
     {
         run_tests();

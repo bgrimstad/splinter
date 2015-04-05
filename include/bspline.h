@@ -78,10 +78,13 @@ public:
     // B-spline operations
     bool reduceDomain(std::vector<double> lb, std::vector<double> ub, bool doRegularizeKnotVectors = true, bool doRefineKnotVectors = false);
 
-    // Perform a local knot refinement at x
-    void localRefinement(DenseVector x);
+    // Perform global knot refinement
+    void globalKnotRefinement(); // All knots in one shabang
 
-    bool insertKnots(double tau, unsigned int dim, unsigned int multiplicity = 1); // TODO: move back to private
+    // Perform a local knot refinement at x
+    void localKnotRefinement(DenseVector x);
+
+    void insertKnots(double tau, unsigned int dim, unsigned int multiplicity = 1); // TODO: move back to private after testing
 
     void save(const std::string fileName) const override;
 
@@ -104,11 +107,8 @@ protected:
 private:
 
     // Domain reduction
-    bool regularizeKnotVectors(std::vector<double> &lb, std::vector<double> &ub);
+    void regularizeKnotVectors(std::vector<double> &lb, std::vector<double> &ub);
     bool removeUnsupportedBasisFunctions(std::vector<double> &lb, std::vector<double> &ub);
-
-    // Knot insertion and refinement
-    void refineKnotVectors(); // All knots in one shabang
 
     // Helper functions
     bool pointInDomain(DenseVector x) const;

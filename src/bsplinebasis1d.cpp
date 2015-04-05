@@ -21,7 +21,7 @@ BSplineBasis1D::BSplineBasis1D(std::vector<double> &x, unsigned int degree)
 
 BSplineBasis1D::BSplineBasis1D(std::vector<double> &x, unsigned int degree, KnotVectorType knotVectorType)
     : degree(degree),
-      targetNumBasisfunctions((degree+1)+10) // Minimum p+1
+      targetNumBasisfunctions((degree+1)+5) // Minimum p+1
 {
     if (knotVectorType == KnotVectorType::EXPLICIT)
     {
@@ -268,10 +268,13 @@ double BSplineBasis1D::deBoorCoxCoeff(double x, double x_min, double x_max) cons
 }
 
 // Insert knots and compute knot insertion matrix (to update control points)
-bool BSplineBasis1D::insertKnots(SparseMatrix &A, double tau, unsigned int multiplicity)
+SparseMatrix BSplineBasis1D::insertKnots(double tau, unsigned int multiplicity)
 {
-    if (!insideSupport(tau) || knotMultiplicity(tau) + multiplicity > degree + 1)
-        return false;
+    if (!insideSupport(tau))
+        throw Exception("BSplineBasis1D::insertKnots: Cannot insert knot outside domain!");
+
+    if (knotMultiplicity(tau) + multiplicity > degree + 1)
+        throw Exception("BSplineBasis1D::insertKnots: Knot multiplicity is too high!");
 
     // New knot vector
     int index = indexHalfopenInterval(tau);
@@ -284,12 +287,12 @@ bool BSplineBasis1D::insertKnots(SparseMatrix &A, double tau, unsigned int multi
         throw Exception("BSplineBasis1D::insertKnots: New knot vector is not regular!");
 
     // Return knot insertion matrix
-    A = buildKnotInsertionMatrix(extKnots);
+    SparseMatrix A = buildKnotInsertionMatrix(extKnots);
 
     // Update knots
     knots = extKnots;
 
-    return true;
+    return A;
 }
 
 SparseMatrix BSplineBasis1D::refineKnots()
@@ -322,35 +325,52 @@ SparseMatrix BSplineBasis1D::refineKnotsLocally(double x)
     if (!insideSupport(x))
         throw Exception("BSplineBasis1D::refineKnotsLocally: Cannot refine outside support!");
 
+    if (getNumBasisFunctions() >= getNumBasisFunctionsTarget()
+            || assertNear(knots.front(), knots.back()))
+    {
+        unsigned int n = getNumBasisFunctions();
+        DenseMatrix A = DenseMatrix::Identity(n,n);
+        return A.sparseView();
+    }
+
     // Refined knot vector
     std::vector<double> refinedKnots = knots;
 
-    auto val = std::lower_bound(refinedKnots.begin(), refinedKnots.end(), x);
+    auto upper = std::lower_bound(refinedKnots.begin(), refinedKnots.end(), x);
 
     // Check left boundary
-    if (val == refinedKnots.begin())
-        std::advance(val, degree+1);
+    if (upper == refinedKnots.begin())
+        std::advance(upper, degree+1);
 
     // Get previous iterator
-    auto prev = std::prev(val);
+    auto lower = std::prev(upper);
 
+    // Do not insert if upper and lower bounding knot are close
+    if (assertNear(*upper, *lower))
+    {
+        unsigned int n = getNumBasisFunctions();
+        DenseMatrix A = DenseMatrix::Identity(n,n);
+        return A.sparseView();
+    }
+
+    // Insert knot at x
     double insertVal = x;
 
     // Adjust x if it is on or close to a knot
-    if (knotMultiplicity(x) > 1
-            || assertNear(*val, x, 1e-3, 1e-3)
-            || assertNear(*prev, x, 1e-3, 1e-3))
+    if (knotMultiplicity(x) > 0
+            || assertNear(*upper, x, 1e-6, 1e-6)
+            || assertNear(*lower, x, 1e-6, 1e-6))
     {
-        insertVal = (*val + *prev)/2.0;
+        insertVal = (*upper + *lower)/2.0;
     }
 
     // Insert new knot
-    refinedKnots.insert(val, insertVal);
+    refinedKnots.insert(upper, insertVal);
 
     if (!isKnotVectorRegular(refinedKnots) || !isRefinement(refinedKnots))
         throw Exception("BSplineBasis1D::refineKnotsLocally: New knot vector is not a proper refinement!");
 
-    // Return knot insertion matrix
+    // Build knot insertion matrix
     SparseMatrix A = buildKnotInsertionMatrix(refinedKnots);
 
     // Update knots

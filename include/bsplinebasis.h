@@ -36,7 +36,7 @@ public:
     // Knot vector manipulation
     SparseMatrix refineKnots();
     SparseMatrix refineKnotsLocally(DenseVector x);
-    bool insertKnots(SparseMatrix &A, double tau, unsigned int dim, unsigned int multiplicity = 1);
+    SparseMatrix insertKnots(double tau, unsigned int dim, unsigned int multiplicity = 1);
 
     // Getters
     BSplineBasis1D getSingleBasis(int dim);
