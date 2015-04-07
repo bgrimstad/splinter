@@ -1,5 +1,5 @@
-PROJECT_NAME           = "multivariate-splines"
-PROJECT_NUMBER         = @MULTIVARIATESPLINES_VERSION@
+PROJECT_NAME           = "splinter"
+PROJECT_NUMBER         = @SPLINTER_VERSION@
 
 INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/include  @CMAKE_CURRENT_SOURCE_DIR@/src  @CMAKE_CURRENT_SOURCE_DIR@/test
 RECURSIVE              = YES

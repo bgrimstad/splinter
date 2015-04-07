@@ -1,6 +1,6 @@
 ##Installation
 
-You can compile the library yourself by following the guide below, or you can download binaries and headers [here](https://github.com/bgrimstad/multivariate-splines/releases).
+You can compile the library yourself by following the guide below, or you can download binaries and headers [here](https://github.com/bgrimstad/splinter/releases).
 
 There are two separate guides for compilation:
 * [UNIX](#compile-on-unix)
@@ -19,8 +19,8 @@ CMake will try to automatically find where Eigen is installed, but if this fails
 
 1. Download and install [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page)
 2. `sudo apt-get update && sudo apt-get install git cmake build-essential`
-3. `git clone https://github.com/bgrimstad/multivariate-splines.git`
-4. `cd multivariate-splines`
+3. `git clone https://github.com/bgrimstad/splinter.git`
+4. `cd splinter`
 5. `mkdir build && cd build`
 6. `cmake ..` Also, see [options](#options-both-platforms)
 7. `make`
@@ -35,7 +35,7 @@ CMake will try to automatically find where Eigen is installed, but if this fails
 
 ##Compile on Windows
 
-1. Clone https://github.com/bgrimstad/multivariate-splines
+1. Clone https://github.com/bgrimstad/splinter
 2. Download [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page).
   1. Extract the zip-file into a new folder, and write down the location of that folder
 3. Download and install [CMake](http://www.cmake.org/download/).
@@ -45,7 +45,7 @@ CMake will try to automatically find where Eigen is installed, but if this fails
   2. Select Installation -> Apply Changes.
 6. Add "C:\MinGW\bin;C:\MinGW\msys\1.0\bin" to your PATH variable (Google is your friend).
 7. Run CMake
-  1. In "Where is the source code", select the multivariate-splines folder.
+  1. In "Where is the source code", select the splinter folder.
   2. In "Where to build the binaries", make a new folder somewhere and select that one (from now on called your "build" folder).
   3. Click Configure.
   4. Select MinGW Makefiles and Use default native compilers and click Finish.
@@ -86,11 +86,11 @@ If using MSVC and you get compile errors, that might be because of the version o
 These options go along with UNIX step #6 or Windows step #5.2, and are used like this:
 
     UNIX:
-    cmake .. -DEIGEN_DIRECTORY=/path/to/eigen -DHEADER_DIRECTORY=/home/me/multivariate-bsplines/includes
+    cmake .. -DEIGEN_DIRECTORY=/path/to/eigen -DHEADER_DIRECTORY=/home/me/splinter/includes
     
     
     Windows (in the arguments field):
-    -DEIGEN_DIRECTORY=/path/to/eigen -DHEADER_DIRECTORY=/home/me/multivariate-bsplines/includes
+    -DEIGEN_DIRECTORY=/path/to/eigen -DHEADER_DIRECTORY=/home/me/splinter/includes
 
 The syntax is: `-D<VARIABLE_NAME>=<VARIABLE_VALUE>`. If you have any spaces in your value you must surround it with double quotes (").
 
