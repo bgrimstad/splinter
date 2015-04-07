@@ -44,7 +44,7 @@ void BSplineBasis::setUnivariateBases(std::vector< std::vector<double> > &X, std
         if (numVariables > 2)
         {
             // One extra knot is allowed
-            bases.at(i).setNumBasisFunctionsTarget(basisDegrees.at(i)+2);
+            bases.at(i).setNumBasisFunctionsTarget((basisDegrees.at(i)+1)+1); // Minimum degree+1
         }
     } 
 }
