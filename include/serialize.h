@@ -29,8 +29,8 @@
 * - Added support for saving to and loading from files
 */
 
-#ifndef MS_SERIALIZE_H
-#define MS_SERIALIZE_H
+#ifndef SPLINTER_SERIALIZE_H
+#define SPLINTER_SERIALIZE_H
 
 #include <vector>
 #include <Eigen/Dense>
@@ -40,7 +40,7 @@
 #include <set>
 #include <datasample.h>
 
-namespace MultivariateSplines {
+namespace Splinter {
 
 typedef std::vector<uint8_t> StreamType;
 
@@ -417,6 +417,6 @@ inline StreamType load_from_file(std::string filename)
     return sresult;
 }
 
-} // namespace MultivariateSplines
+} // namespace Splinter
 
-#endif // MS_SERIALIZE_H
+#endif // SPLINTER_SERIALIZE_H

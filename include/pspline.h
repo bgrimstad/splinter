@@ -1,5 +1,5 @@
 /*
- * This file is part of the Multivariate Splines library.
+ * This file is part of the Splinter library.
  * Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com)
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -7,13 +7,12 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-
-#ifndef MS_PSPLINE_H
-#define MS_PSPLINE_H
+#ifndef SPLINTER_PSPLINE_H
+#define SPLINTER_PSPLINE_H
 
 #include "bspline.h"
 
-namespace MultivariateSplines
+namespace Splinter
 {
 
 /*
@@ -39,6 +38,6 @@ protected:
 
 };
 
-} // namespace MultivariateSplines
+} // namespace Splinter
 
-#endif // MS_PSPLINE_H
+#endif // SPLINTER_PSPLINE_H

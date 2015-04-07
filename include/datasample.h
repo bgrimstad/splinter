@@ -1,5 +1,5 @@
 /*
- * This file is part of the Multivariate Splines library.
+ * This file is part of the Splinter library.
  * Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com)
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -8,12 +8,12 @@
 */
 
 
-#ifndef MS_DATASAMPLE_H
-#define MS_DATASAMPLE_H
+#ifndef SPLINTER_DATASAMPLE_H
+#define SPLINTER_DATASAMPLE_H
 
 #include "generaldefinitions.h"
 
-namespace MultivariateSplines
+namespace Splinter
 {
 
 /* Class representing a data sample (x,y)
@@ -42,6 +42,6 @@ private:
     void setData(const std::vector<double> &x, double y);
 };
 
-} // namespace MultivariateSplines
+} // namespace Splinter
 
-#endif // MS_DATASAMPLE_H
+#endif // SPLINTER_DATASAMPLE_H

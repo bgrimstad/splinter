@@ -1,5 +1,5 @@
 /*
- * This file is part of the Multivariate Splines library.
+ * This file is part of the Splinter library.
  * Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com)
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -17,7 +17,7 @@
 #include <limits>
 #include <serialize.h>
 
-namespace MultivariateSplines
+namespace Splinter
 {
 
 DataTable::DataTable()
@@ -221,4 +221,4 @@ std::vector<double> DataTable::getVectorY() const
     return y;
 }
 
-} // namespace MultivariateSplines
+} // namespace Splinter

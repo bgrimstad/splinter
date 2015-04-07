@@ -1,5 +1,5 @@
 /*
- * This file is part of the Multivariate Splines library.
+ * This file is part of the Splinter library.
  * Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com)
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -7,11 +7,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-
 #include "pspline.h"
 #include "include/linearsolvers.h"
 
-namespace MultivariateSplines
+namespace Splinter
 {
 
 PSpline::PSpline(const DataTable &samples)
@@ -297,4 +296,4 @@ void PSpline::getSecondOrderFiniteDifferenceMatrix(SparseMatrix &D)
     D.makeCompressed();
 }
 
-} // namespace MultivariateSplines
+} // namespace Splinter

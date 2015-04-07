@@ -1,5 +1,5 @@
 /*
- * This file is part of the Multivariate Splines library.
+ * This file is part of the Splinter library.
  * Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com)
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -12,7 +12,7 @@
 
 using namespace std;
 
-namespace MultivariateSplines
+namespace Splinter
 {
 
 // Checks if a is within margin of b
@@ -94,4 +94,4 @@ double sixHumpCamelBack(DenseVector x)
     return (4 - 2.1*x(0)*x(0) + (1/3.)*x(0)*x(0)*x(0)*x(0))*x(0)*x(0) + x(0)*x(1) + (-4 + 4*x(1)*x(1))*x(1)*x(1);
 }
 
-} // namespace MultivariateSplines
+} // namespace Splinter

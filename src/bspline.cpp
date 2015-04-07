@@ -1,5 +1,5 @@
 /*
- * This file is part of the Multivariate Splines library.
+ * This file is part of the Splinter library.
  * Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com)
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -15,7 +15,7 @@
 #include "serialize.h"
 #include <iostream>
 
-namespace MultivariateSplines
+namespace Splinter
 {
 
 // Constructor for explicitly given multivariate B-splines
@@ -536,4 +536,4 @@ void BSpline::loadBasis(std::vector<std::vector<double>> knotVectors, std::vecto
     checkControlPoints();
 }
 
-} // namespace MultivariateSplines
+} // namespace Splinter

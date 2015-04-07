@@ -1,5 +1,5 @@
 /*
- * This file is part of the Multivariate Splines library.
+ * This file is part of the Splinter library.
  * Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com)
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -8,15 +8,15 @@
 */
 
 
-#ifndef MS_BSPLINE_H
-#define MS_BSPLINE_H
+#ifndef SPLINTER_BSPLINE_H
+#define SPLINTER_BSPLINE_H
 
 #include "datatable.h"
 #include "generaldefinitions.h"
 #include "spline.h"
 #include "bsplinebasis.h"
 
-namespace MultivariateSplines
+namespace Splinter
 {
 
 // Enum for different B-spline types
@@ -117,6 +117,6 @@ private:
     void loadBasis(std::vector<std::vector<double>> knotVectors, std::vector<unsigned int> basisDegrees);
 };
 
-} // namespace MultivariateSplines
+} // namespace Splinter
 
-#endif // MS_BSPLINE_H
+#endif // SPLINTER_BSPLINE_H

@@ -1,5 +1,5 @@
 /*
- * This file is part of the Multivariate Splines library.
+ * This file is part of the Splinter library.
  * Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com)
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -12,7 +12,7 @@
 #include "include/mykroneckerproduct.h"
 #include "unsupported/Eigen/KroneckerProduct"
 
-namespace MultivariateSplines
+namespace Splinter
 {
 
 BSplineBasis::BSplineBasis()
@@ -507,4 +507,4 @@ std::vector<double> BSplineBasis::getSupportUpperBound() const
     return ub;
 }
 
-} // namespace MultivariateSplines
+} // namespace Splinter

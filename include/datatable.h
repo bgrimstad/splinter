@@ -1,5 +1,5 @@
 /*
- * This file is part of the Multivariate Splines library.
+ * This file is part of the Splinter library.
  * Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com)
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -7,16 +7,15 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-
-#ifndef MS_DATATABLE_H
-#define MS_DATATABLE_H
+#ifndef SPLINTER_DATATABLE_H
+#define SPLINTER_DATATABLE_H
 
 #include <set>
 #include "datasample.h"
 
 #include <ostream>
 
-namespace MultivariateSplines
+namespace Splinter
 {
 
 /*
@@ -111,6 +110,6 @@ private:
     void load(const std::string fileName);
 };
 
-} // namespace MultivariateSplines
+} // namespace Splinter
 
-#endif // MS_DATATABLE_H
+#endif // SPLINTER_DATATABLE_H

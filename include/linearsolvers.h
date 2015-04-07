@@ -1,5 +1,5 @@
 /*
- * This file is part of the Multivariate Splines library.
+ * This file is part of the Splinter library.
  * Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com)
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -7,15 +7,14 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-
-#ifndef MS_LINEARSOLVER_H
-#define MS_LINEARSOLVER_H
+#ifndef SPLINTER_LINEARSOLVER_H
+#define SPLINTER_LINEARSOLVER_H
 
 #include "generaldefinitions.h"
 #include "Eigen/IterativeLinearSolvers"
 #include "Eigen/SparseQR"
 
-namespace MultivariateSplines
+namespace Splinter
 {
 
 template<class lhs, class rhs>
@@ -144,6 +143,6 @@ private:
     }
 };
 
-} // namespace MultivariateSplines
+} // namespace Splinter
 
-#endif // MS_LINEARSOLVER_H
+#endif // SPLINTER_LINEARSOLVER_H

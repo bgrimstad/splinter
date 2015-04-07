@@ -1,5 +1,5 @@
 /*
- * This file is part of the Multivariate Splines library.
+ * This file is part of the Splinter library.
  * Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com)
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -7,17 +7,16 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-
-#ifndef MS_MYKRONECKERPRODUCT_H
-#define MS_MYKRONECKERPRODUCT_H
+#ifndef SPLINTER_MYKRONECKERPRODUCT_H
+#define SPLINTER_MYKRONECKERPRODUCT_H
 
 #include "generaldefinitions.h"
 
-namespace MultivariateSplines
+namespace Splinter
 {
 
 void myKroneckerProduct(const SparseMatrix &A, const SparseMatrix &B, SparseMatrix &AB);
 
-} // namespace MultivariateSplines
+} // namespace Splinter
 
-#endif // MS_MYKRONECKERPRODUCT_H
+#endif // SPLINTER_MYKRONECKERPRODUCT_H

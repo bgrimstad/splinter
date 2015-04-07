@@ -1,5 +1,5 @@
 /*
- * This file is part of the Multivariate Splines library.
+ * This file is part of the Splinter library.
  * Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com)
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -11,7 +11,7 @@
 #include <iostream>
 #include <algorithm>
 
-namespace MultivariateSplines
+namespace Splinter
 {
 
 BSplineBasis1D::BSplineBasis1D(std::vector<double> &x, unsigned int degree)
@@ -845,4 +845,4 @@ std::vector<double> BSplineBasis1D::computeKnotVector(std::vector<double> sample
     return samples;
 }
 
-} // namespace MultivariateSplines
+} // namespace Splinter

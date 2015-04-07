@@ -1,5 +1,5 @@
 /*
- * This file is part of the Multivariate Splines library.
+ * This file is part of the Splinter library.
  * Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com)
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -7,12 +7,12 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#ifndef MS_BSPLINEBASIS1D_H
-#define MS_BSPLINEBASIS1D_H
+#ifndef SPLINTER_BSPLINEBASIS1D_H
+#define SPLINTER_BSPLINEBASIS1D_H
 
 #include "generaldefinitions.h"
 
-namespace MultivariateSplines
+namespace Splinter
 {
 
 enum class KnotVectorType
@@ -97,6 +97,6 @@ private:
     unsigned int targetNumBasisfunctions;
 };
 
-} // namespace MultivariateSplines
+} // namespace Splinter
 
-#endif // MS_BSPLINEBASIS1D_H
+#endif // SPLINTER_BSPLINEBASIS1D_H

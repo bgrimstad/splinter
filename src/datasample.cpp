@@ -1,5 +1,5 @@
 /*
- * This file is part of the Multivariate Splines library.
+ * This file is part of the Splinter library.
  * Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com)
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -7,10 +7,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-
 #include "datasample.h"
 
-namespace MultivariateSplines
+namespace Splinter
 {
 
 DataSample::DataSample(double x, double y)
@@ -75,4 +74,4 @@ std::ostream &operator<<(std::ostream &outputStream, const DataSample &sample)
     return outputStream;
 }
 
-} // namespace MultivariateSplines
+} // namespace Splinter

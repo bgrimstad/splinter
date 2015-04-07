@@ -1,5 +1,5 @@
 /*
- * This file is part of the Multivariate Splines library.
+ * This file is part of the Splinter library.
  * Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com)
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -7,12 +7,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-
 #include "rbfspline.h"
 #include "include/linearsolvers.h"
 #include "Eigen/SVD"
 
-namespace MultivariateSplines
+namespace Splinter
 {
 
 RBFSpline::RBFSpline(const DataTable &samples, RadialBasisFunctionType type)
@@ -331,4 +330,4 @@ bool RBFSpline::dist_sort(DataSample x, DataSample y) const
     return (x_dist<y_dist);
 }
 
-} // namespace MultivariateSplines
+} // namespace Splinter

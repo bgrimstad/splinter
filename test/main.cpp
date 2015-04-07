@@ -1,5 +1,5 @@
 /*
- * This file is part of the Multivariate Splines library.
+ * This file is part of the Splinter library.
  * Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com)
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -25,7 +25,7 @@
 using std::cout;
 using std::endl;
 
-using namespace MultivariateSplines;
+using namespace Splinter;
 
 
 void runExample()
@@ -487,7 +487,7 @@ int main(int argc, char **argv)
     {
         run_tests();
     }
-    catch (MultivariateSplines::Exception& e)
+    catch (Splinter::Exception& e)
     {
         cout << "MS Exception - " << e.what() << endl;
     }

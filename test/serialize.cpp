@@ -1,5 +1,5 @@
 /*
- * This file is part of the Multivariate Splines library.
+ * This file is part of the Splinter library.
  * Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com)
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -14,7 +14,7 @@
 #include <iostream>
 
 using namespace std;
-using namespace MultivariateSplines;
+using namespace Splinter;
 
 
 bool serializeDataTable1()
