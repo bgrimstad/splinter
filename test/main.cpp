@@ -331,7 +331,7 @@ void testSplineDerivative()
 
 double kroneckerTestFunction(DenseVector x)
 {
-    assert(x.rows() == dim);
+//    assert(x.rows() == dim);
 
     double y = 1 + (.1 + 0.5*x(0) - x(0)*x(0) - 0.33*x(0)*x(0)*x(0))*(.1 + 0.5*x(1) - x(1)*x(1) - 2*x(1)*x(1)*x(1))*(.1 - 0.5*x(2) + x(2)*x(2) + 2*x(2)*x(2)*x(2))*(.1 - 0.5*x(3) + x(3)*x(3) + 2*x(3)*x(3)*x(3));
     return y;
@@ -451,7 +451,7 @@ void localRefinementTest()
     DenseMatrix coeffs = DenseMatrix::Ones(1,2);
     std::vector<std::vector<double>> knots = {{1,1,1.000000001,1.000000001}};
 
-    std::vector<uint> degs = {1};
+    std::vector<unsigned int> degs = {1};
     BSpline bs(coeffs, knots, degs);
 
     /*

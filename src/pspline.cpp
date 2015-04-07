@@ -126,7 +126,7 @@ void PSpline::getSecondOrderFiniteDifferenceMatrix(SparseMatrix &D)
 
     // Number of basis functions (and coefficients) in each variable
     std::vector<unsigned int> dims;
-    for (uint i = 0; i < numVariables; i++)
+    for (unsigned int i = 0; i < numVariables; i++)
         dims.push_back(basis.getNumBasisFunctions(i));
 
     std::reverse(dims.begin(), dims.end());

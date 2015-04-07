@@ -160,7 +160,7 @@ DenseMatrix BSpline::evalHessian(DenseVector x) const
 std::vector<unsigned int> BSpline::getNumBasisFunctions() const
 {
     std::vector<unsigned int> ret;
-    for (uint i = 0; i < numVariables; i++)
+    for (unsigned int i = 0; i < numVariables; i++)
         ret.push_back(basis.getNumBasisFunctions(i));
     return ret;
 }
