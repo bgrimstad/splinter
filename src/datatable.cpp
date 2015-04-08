@@ -168,15 +168,11 @@ void DataTable::load(const std::string fileName)
 
 std::multiset<DataSample>::const_iterator DataTable::cbegin() const
 {
-    gridCompleteGuard();
-
     return samples.cbegin();
 }
 
 std::multiset<DataSample>::const_iterator DataTable::cend() const
 {
-    gridCompleteGuard();
-
     return samples.cend();
 }
 
