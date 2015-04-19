@@ -7,8 +7,8 @@
 	extern "C"
 	{
 #endif
-		void API init();
-		double API eval(double x);
+		int API *init();
+		double API eval(int *spline, double x);
 #ifdef __cplusplus
 	}
 #endif

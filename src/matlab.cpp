@@ -11,14 +11,12 @@ using namespace Splinter;
 			+ x;
 	}
 
-	
-	BSpline *b = nullptr;
 #ifdef __cplusplus
 	extern "C"
 	{
 #endif
 
-		void init() {
+		int *init() {
 			DataTable samples;
 			double y;
 			double x;
@@ -32,11 +30,11 @@ using namespace Splinter;
 				samples.addSample(x, y);
 			}
 
-			b = new BSpline(samples, BSplineType::CUBIC_FREE);
+			return (int *) new BSpline(samples, BSplineType::CUBIC_FREE);
 		}
-		double eval(double x) {
+		double eval(int *bspline, double x) {
 
-			return b->eval(x);
+			return ((BSpline *)bspline)->eval(x);
 		}
 #ifdef __cplusplus
 	}
