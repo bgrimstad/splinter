@@ -139,14 +139,21 @@ void BSpline::init()
 
 double BSpline::eval(DenseVector x) const
 {
-    if (!pointInDomain(x))
-    {
-        throw Exception("BSpline::eval: Evaluation at point outside domain.");
-    }
+	if (!pointInDomain(x))
+	{
+		throw Exception("BSpline::eval: Evaluation at point outside domain.");
+	}
 
-    SparseVector tensorvalues = basis.eval(x);
-    DenseVector y = coefficients*tensorvalues;
-    return y(0);
+	SparseVector tensorvalues = basis.eval(x);
+	DenseVector y = coefficients*tensorvalues;
+	return y(0);
+}
+
+double BSpline::eval(double x) const
+{
+	DenseVector x_vec(1);
+	x_vec(0) = x;
+	return this->eval(x_vec);
 }
 
 /*

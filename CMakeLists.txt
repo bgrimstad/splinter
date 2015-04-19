@@ -114,9 +114,34 @@ set(SRC_LIST
     src/mykroneckerproduct.cpp
 )
 
+set(MATLAB_SRC_LIST
+    include/spline.h
+    include/bspline.h
+    include/bsplinebasis.h
+    include/bsplinebasis1d.h
+    include/pspline.h
+    include/rbfspline.h
+    include/datasample.h
+    include/datatable.h
+    include/generaldefinitions.h
+    include/linearsolvers.h
+    include/serialize.h
+    include/mykroneckerproduct.h
+	include/matlab.h
+    src/bspline.cpp
+    src/bsplinebasis.cpp
+    src/bsplinebasis1d.cpp
+    src/pspline.cpp
+    src/rbfspline.cpp
+    src/datasample.cpp
+    src/datatable.cpp
+    src/mykroneckerproduct.cpp
+	src/matlab.cpp
+)
 
 set(SHARED_LIBRARY splinter-${SPLINTER_VERSION})
 set(STATIC_LIBRARY splinter-static-${SPLINTER_VERSION})
+set(MATLAB_LIBRARY splinter-matlab-${SPLINTER_VERSION})
 
 set(SHARED_LIBRARY_TEST "splinter-shared-test")
 set(STATIC_LIBRARY_TEST "splinter-static-test")
@@ -126,6 +151,7 @@ set(TESTING_UTILITIES ${CMAKE_CURRENT_SOURCE_DIR}/test/testingutilities.cpp)
 # Add output library: add_library(libname [SHARED | STATIC] sourcelist)
 add_library(${SHARED_LIBRARY} SHARED ${SRC_LIST})
 add_library(${STATIC_LIBRARY} STATIC ${SRC_LIST})
+add_library(${MATLAB_LIBRARY} SHARED ${MATLAB_SRC_LIST})
 
 # Testing executables
 add_executable(${SHARED_LIBRARY_TEST} ${CMAKE_CURRENT_SOURCE_DIR}/test/main.cpp ${TESTING_UTILITIES})
@@ -153,6 +179,7 @@ install(
     TARGETS ${STATIC_LIBRARY}
     DESTINATION ${LIBRARY_DIRECTORY}
 )
+
 
 # Doxygen documentation
 find_package(Doxygen)

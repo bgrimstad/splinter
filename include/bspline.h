@@ -31,7 +31,7 @@ enum class BSplineType
 /**
  * Class that implements the multivariate tensor product B-spline
  */
-class BSpline : public Approximant
+class API BSpline : public Approximant
 {
 public:
 
@@ -58,6 +58,7 @@ public:
 
     // Evaluation of B-spline
     double eval(DenseVector x) const;
+	double eval(double x) const;
     DenseMatrix evalJacobian(DenseVector x) const;
     DenseMatrix evalHessian(DenseVector x) const;
 

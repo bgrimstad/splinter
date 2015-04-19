@@ -20,7 +20,7 @@ namespace SPLINTER
  * It minimizes objective which penalizes both deviation (for interpolation) and second derivative (for smoothing).
  * It inherits all properties of the B-spline - the only difference lies in the calculation of the control points.
  */
-class PSpline : public BSpline
+class API PSpline : public BSpline
 {
 public:
 
