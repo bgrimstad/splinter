@@ -37,7 +37,7 @@ BSpline::BSpline(DenseMatrix coefficients, std::vector< std::vector<double> > kn
 }
 
 // Constructors for interpolation of samples in DataTable
-BSpline::BSpline(const DataTable &samples, BSplineType type = BSplineType::CUBIC_FREE)
+BSpline::BSpline(const DataTable &samples, BSplineType type = BSplineType::CUBIC)
 {
     // Check data
     if (!samples.isGridComplete())
@@ -53,12 +53,12 @@ BSpline::BSpline(const DataTable &samples, BSplineType type = BSplineType::CUBIC
         std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 1);
         basis = BSplineBasis(xdata, basisDegrees, KnotVectorType::FREE);
     }
-    else if (type == BSplineType::QUADRATIC_FREE)
+    else if (type == BSplineType::QUADRATIC || type == BSplineType::QUADRATIC_FREE)
     {
         std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 2);
         basis = BSplineBasis(xdata, basisDegrees, KnotVectorType::FREE);
     }
-    else if (type == BSplineType::CUBIC_FREE)
+    else if (type == BSplineType::CUBIC || type == BSplineType::CUBIC_FREE)
     {
         std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 3);
         basis = BSplineBasis(xdata, basisDegrees, KnotVectorType::FREE);

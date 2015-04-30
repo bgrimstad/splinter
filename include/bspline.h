@@ -23,7 +23,9 @@ namespace Splinter
 enum class BSplineType
 {
     LINEAR,             // Piecewise linear interpolation. Interpolates all points.
+    QUADRATIC,          // Quadratic spline with automatic selection of knots.
     QUADRATIC_FREE,     // Quadratic spline with free end conditions.
+    CUBIC,              // Cubic spline with automatic selection of knots.
     //CUBIC_HERMITE,    // Cubic spline with Hermite end conditions. Interpolates all points. Not implemented.
     //CUBIC_NATURAL,    // Cubic spline with Natural end conditions. Interpolates all points. Ensures second derivative of B-spline is zero at end points. Not implemented.
     CUBIC_FREE          // Cubic spline with Free end conditions. Interpolates all points. Ensures p'th derivative continuous at x(2) and x(n-1).
@@ -84,14 +86,8 @@ public:
     // Perform a local knot refinement at x
     void localKnotRefinement(DenseVector x);
 
-    /*
+    /**
      * Decompose B-spline to Bezier form
-     * By increasing the multiplicity of all knots to degree+1
-     * basis functions will no longer overlap, i.e. each
-     * basis function will be defined in one nonzero knot span.
-     *
-     * Note: this is not the true Bezier form since the
-     * interval of x may be different from [0,1].
      */
     void decomposeToBezierForm();
 
