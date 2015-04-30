@@ -84,6 +84,17 @@ public:
     // Perform a local knot refinement at x
     void localKnotRefinement(DenseVector x);
 
+    /*
+     * Decompose B-spline to Bezier form
+     * By increasing the multiplicity of all knots to degree+1
+     * basis functions will no longer overlap, i.e. each
+     * basis function will be defined in one nonzero knot span.
+     *
+     * Note: this is not the true Bezier form since the
+     * interval of x may be different from [0,1].
+     */
+    void decomposeToBezierForm();
+
     void insertKnots(double tau, unsigned int dim, unsigned int multiplicity = 1); // TODO: move back to private after testing
 
     void save(const std::string fileName) const override;

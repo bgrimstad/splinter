@@ -1,5 +1,7 @@
 ### TODO list
-- Implement integrated B-splines
+- Organize the testing code and add more tests 
+- Improve the documentation
+- Remove code redundancy by wrapping affine operations on the control points (bspline) and tensor products (bsplinebasis)
 - Improve constructors of BSpline
 - Implement save/load functionality for rbfsplines
 - Open for interpolating with B-splines of any degree (needs an automatic knot initialization procedure - this can be formulated as a minimization problem)
@@ -10,8 +12,7 @@
 - Test Jacobian for radial basis function splines
 - Implement a proper preconditioning matrix for radial basis function weight computation
 - Implement Kriging interpolation
-- Organize the testing code and add more tests 
-- Improve the documentation
 - Test executable runtime speed on different compilers
 - Check that all non-void functions actually return a value (Clang 3.5 can produce illegal executables if they don't)
+- Implement integrated B-splines
 - Investigate tension B-splines: http://www.cas.mcmaster.ca/~modersit/Pubs/2009-SPIE-BFM.pdf

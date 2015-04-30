@@ -35,6 +35,7 @@ public:
     // Knot vector manipulation
     SparseMatrix refineKnots();
     SparseMatrix refineKnotsLocally(DenseVector x);
+    SparseMatrix decomposeToBezierForm();
     SparseMatrix insertKnots(double tau, unsigned int dim, unsigned int multiplicity = 1);
 
     // Getters

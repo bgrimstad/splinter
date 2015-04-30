@@ -279,6 +279,17 @@ void BSpline::localKnotRefinement(DenseVector x)
     knotaverages = knotaverages*A.transpose();
 }
 
+void BSpline::decomposeToBezierForm()
+{
+    // Compute knot insertion matrix
+    SparseMatrix A = basis.decomposeToBezierForm();
+
+    // Update control points
+    assert(A.cols() == coefficients.cols());
+    coefficients = coefficients*A.transpose();
+    knotaverages = knotaverages*A.transpose();
+}
+
 // Computes knot averages: assumes that basis is initialized!
 void BSpline::computeKnotAverages()
 {

@@ -362,6 +362,25 @@ SparseMatrix BSplineBasis::refineKnotsLocally(DenseVector x)
     return A;
 }
 
+SparseMatrix BSplineBasis::decomposeToBezierForm()
+{
+    SparseMatrix A(1,1);
+    A.insert(0,0) = 1;
+
+    for (unsigned int i = 0; i < numVariables; i++)
+    {
+        SparseMatrix temp = A;
+        SparseMatrix Ai = bases.at(i).decomposeToBezierForm();
+
+        //A = kroneckerProduct(temp, Ai);
+        myKroneckerProduct(temp, Ai, A);
+    }
+
+    A.makeCompressed();
+
+    return A;
+}
+
 bool BSplineBasis::reduceSupport(std::vector<double>& lb, std::vector<double>& ub, SparseMatrix &A)
 {
     assert(lb.size() == ub.size());

@@ -379,6 +379,39 @@ SparseMatrix BSplineBasis1D::refineKnotsLocally(double x)
     return A;
 }
 
+SparseMatrix BSplineBasis1D::decomposeToBezierForm()
+{
+    // Build refine knot vector
+    std::vector<double> refinedKnots = knots;
+
+    // Start at first knot and add knots until all knots have multiplicity degree + 1
+    std::vector<double>::iterator knoti = refinedKnots.begin();
+    while (knoti != refinedKnots.end())
+    {
+        // Insert new knots
+        int mult = degree + 1 - knotMultiplicity(*knoti);
+        if (mult > 0)
+        {
+            std::vector<double> newKnots(mult, *knoti);
+            refinedKnots.insert(knoti, newKnots.begin(), newKnots.end());
+        }
+
+        // Advance to next knot
+        knoti = std::upper_bound(refinedKnots.begin(), refinedKnots.end(), *knoti);
+    }
+
+    if (!isKnotVectorRegular(refinedKnots) || !isRefinement(refinedKnots))
+        throw Exception("BSplineBasis1D::refineKnots: New knot vector is not a proper refinement!");
+
+    // Return knot insertion matrix
+    SparseMatrix A = buildKnotInsertionMatrix(refinedKnots);
+
+    // Update knots
+    knots = refinedKnots;
+
+    return A;
+}
+
 SparseMatrix BSplineBasis1D::buildKnotInsertionMatrix(const std::vector<double> &refinedKnots) const
 {
     if (!isRefinement(refinedKnots))
@@ -556,6 +589,7 @@ std::vector<int> BSplineBasis1D::indexSupportedBasisfunctions(double x) const
         int last = indexHalfopenInterval(x);
         if (last < 0)
         {
+            // NOTE: can this happen?
             last = knots.size() - 1 - (degree + 1);
         }
         int first = std::max((int)(last - degree), 0);
