@@ -1,5 +1,5 @@
-##Splinter
-Splinter (SPLine INTERpolation) is a function approximation library implementing various multivariate splines in C++. With Splinter you can approximate any function in any number of variables using the following implementations:
+##SPLINTER
+SPLINTER (SPLine INTERpolation) is a function approximation library implementing various multivariate splines in C++. With SPLINTER you can approximate any function in any number of variables using the following implementations:
 
 1. a speedy implementation of the tensor product [B-spline](http://en.wikipedia.org/wiki/B-spline), and 
 2. a simple implementation of [radial basis function splines](http://en.wikipedia.org/wiki/Radial_basis_function), including the [thin plate spline](http://en.wikipedia.org/wiki/Thin_plate_spline).
@@ -13,12 +13,12 @@ When sampling is expensive and/or scattered (not on a grid) the radial basis fun
 The library is based on the C++ template linear algebra library [Eigen](http://eigen.tuxfamily.org); its sparse matrix support is particularly important for the speed of the tensor product B-spline implementation.
 
 ![Illustration of a B-spline](assets/bspline.png)
-Figure: Illustration of a cubic B-spline generated with the Splinter library.
+Figure: Illustration of a cubic B-spline generated with the SPLINTER library.
 
 ###Author's note
-Splinter is the result of two years of work and development towards a fast and general spline library for function approximation. The initial intention with the library was to build splines for use in mathematical programming (nonlinear optimization). Thus, some effort has been put into functionality that supports this, e.g. Jacobian and Hessian computations for the B-spline. The current goals with the library are: 1) to make it more general than it is today, and 2) to implement and test new features that may be useful for anyone using the library (be it for computer-aided design or other graphical work, function approximation, mathematical programming, compression of data, etc.).
+SPLINTER is the result of two years of work and development towards a fast and general spline library for function approximation. The initial intention with the library was to build splines for use in mathematical programming (nonlinear optimization). Thus, some effort has been put into functionality that supports this, e.g. Jacobian and Hessian computations for the B-spline. The current goals with the library are: 1) to make it more general than it is today, and 2) to implement and test new features that may be useful for anyone using the library (be it for computer-aided design or other graphical work, function approximation, mathematical programming, compression of data, etc.).
 
-By making Splinter publicly available the author hopes to help anyone looking for a multivariate spline library, or just a library for multivariate interpolation (there aren't many publicly available multivariate interpolation libraries that support any number of variables). In return the author expects nothing but your suggestions, improvements, and feature requests. As the TODO-list reflects there are still much honing to be done!
+By making SPLINTER publicly available the author hopes to help anyone looking for a multivariate spline library, or just a library for multivariate interpolation (there aren't many publicly available multivariate interpolation libraries that support any number of variables). In return the author expects nothing but your suggestions, improvements, and feature requests. As the TODO-list reflects there are still much honing to be done!
 
 Please let me know by e-mail what you think about the library. Questions related to installation should be directed to Anders Wenhaug (awenhaug@gmail.com). Together we will do our best to support your use of the library.
 
