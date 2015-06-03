@@ -53,19 +53,25 @@ BSpline::BSpline(const DataTable &samples, BSplineType type = BSplineType::CUBIC
         std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 1);
         basis = BSplineBasis(xdata, basisDegrees, KnotVectorType::FREE);
     }
-    else if (type == BSplineType::QUADRATIC || type == BSplineType::QUADRATIC_FREE)
+    else if (type == BSplineType::QUADRATIC)
     {
         std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 2);
         basis = BSplineBasis(xdata, basisDegrees, KnotVectorType::FREE);
     }
-    else if (type == BSplineType::CUBIC || type == BSplineType::CUBIC_FREE)
+    else if (type == BSplineType::CUBIC)
     {
         std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 3);
         basis = BSplineBasis(xdata, basisDegrees, KnotVectorType::FREE);
     }
+    else if (type == BSplineType::QUARTIC)
+    {
+        // Not supported yet
+        std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 4);
+        basis = BSplineBasis(xdata, basisDegrees, KnotVectorType::FREE);
+    }
     else
     {
-        // Default is CUBIC_FREE
+        // Default is CUBIC
         std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 3);
         basis = BSplineBasis(xdata, basisDegrees, KnotVectorType::FREE);
     }

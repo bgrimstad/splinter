@@ -55,8 +55,8 @@ void runExample()
 
     // Build B-splines that interpolate the samples
     BSpline bspline1(samples, BSplineType::LINEAR);
-    BSpline bspline2(samples, BSplineType::QUADRATIC_FREE);
-    BSpline bspline3(samples, BSplineType::CUBIC_FREE);
+    BSpline bspline2(samples, BSplineType::QUADRATIC);
+    BSpline bspline3(samples, BSplineType::CUBIC);
 
     // Build penalized B-spline (P-spline) that smooths the samples
     PSpline pspline(samples, 0.03);
@@ -198,8 +198,8 @@ void runRecursiveDomainReductionTest()
 
     // Build B-splines that interpolate the samples
 //    BSpline bspline(samples, BSplineType::LINEAR);
-//    BSpline bspline(samples, BSplineType::QUADRATIC_FREE);
-    BSpline bspline(samples, BSplineType::CUBIC_FREE);
+//    BSpline bspline(samples, BSplineType::QUADRATIC);
+    BSpline bspline(samples, BSplineType::CUBIC);
 
     if (domainReductionTest(bspline,bspline))
         cout << "Test finished successfully!" << endl;
@@ -242,8 +242,8 @@ void testSplineDerivative()
 
     // Build spline that interpolate the samples
 //    BSpline spline(samples, BSplineType::LINEAR);
-//    BSpline spline(samples, BSplineType::QUADRATIC_FREE);
-    BSpline spline(samples, BSplineType::CUBIC_FREE);
+//    BSpline spline(samples, BSplineType::QUADRATIC);
+    BSpline spline(samples, BSplineType::CUBIC);
 //    RBFSpline spline(samples, RadialBasisFunctionType::THIN_PLATE_SPLINE);
 //    RBFSpline spline(samples, RadialBasisFunctionType::MULTIQUADRIC);
 
@@ -378,7 +378,7 @@ void kroneckerTest()
     }
 
     cout << "Creating large 4-D B-spline" << endl;
-    BSpline bs(table, BSplineType::CUBIC_FREE);
+    BSpline bs(table, BSplineType::CUBIC);
     BSpline bs2(bs);
 
     //Timer timer;

@@ -22,14 +22,10 @@ namespace SPLINTER
 // Enum for different B-spline types
 enum class BSplineType
 {
-    LINEAR,             // Piecewise linear interpolation. Interpolates all points.
-    QUADRATIC,          // Quadratic spline with automatic selection of knots.
-    QUADRATIC_FREE,     // Quadratic spline with free end conditions.
-    CUBIC,              // Cubic spline with automatic selection of knots.
-    //CUBIC_HERMITE,    // Cubic spline with Hermite end conditions. Interpolates all points. Not implemented.
-    //CUBIC_NATURAL,    // Cubic spline with Natural end conditions. Interpolates all points. Ensures second derivative of B-spline is zero at end points. Not implemented.
-    CUBIC_FREE          // Cubic spline with Free end conditions. Interpolates all points. Ensures p'th derivative continuous at x(2) and x(n-1).
-    //CUBIC_PERIODIC,   // Cubic spline with Periodic end conditions. Not implemented.
+    LINEAR,     // Linear basis functions in each variable
+    QUADRATIC,  // Quadratic basis functions in each variable
+    CUBIC,      // Cubic basis functions in each variable
+    QUARTIC     // Quartic basis functions in each variable
 };
 
 /**
