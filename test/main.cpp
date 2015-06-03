@@ -62,7 +62,7 @@ void runExample()
     PSpline pspline(samples, 0.03);
 
     // Build radial basis function spline that interpolate the samples
-    RBFSpline rbfspline(samples, RadialBasisFunctionType::THIN_PLATE_SPLINE);
+    RadialBasisFunction rbfspline(samples, RadialBasisFunctionType::THIN_PLATE_SPLINE);
 
     // Evaluate the splines at x = (0,0)
     x(0) = 0; x(1) = 0;

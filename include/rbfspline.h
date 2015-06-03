@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#ifndef SPLINTER_RBFSPLINE_H
-#define SPLINTER_RBFSPLINE_H
+#ifndef SPLINTER_RADIALBASISFUNCTION_H
+#define SPLINTER_RADIALBASISFUNCTION_H
 
 #include "datatable.h"
 #include "spline.h"
@@ -29,19 +29,19 @@ enum class RadialBasisFunctionType
 /*
  * Base class for radial basis functions.
  */
-class RadialBasisFunction
+class RadialBasisFunctionTerm
 {
 public:
-    RadialBasisFunction() : e(1.0) {}
-    RadialBasisFunction(double e) : e(e) {}
+    RadialBasisFunctionTerm() : e(1.0) {}
+    RadialBasisFunctionTerm(double e) : e(e) {}
     virtual double eval(double r) const = 0;
     virtual double evalDerivative(double r) const = 0;
-    virtual ~RadialBasisFunction() {}
+    virtual ~RadialBasisFunctionTerm() {}
 protected:
     double e;
 };
 
-class ThinPlateSpline : public RadialBasisFunction
+class ThinPlateSpline : public RadialBasisFunctionTerm
 {
 public:
     double eval(double r) const
@@ -54,7 +54,7 @@ public:
     }
 };
 
-class Multiquadric : public RadialBasisFunction
+class Multiquadric : public RadialBasisFunctionTerm
 {
 public:
     double eval(double r) const
@@ -67,7 +67,7 @@ public:
     }
 };
 
-class InverseMultiquadric : public RadialBasisFunction
+class InverseMultiquadric : public RadialBasisFunctionTerm
 {
 public:
     double eval(double r) const
@@ -80,7 +80,7 @@ public:
     }
 };
 
-class InverseQuadric : public RadialBasisFunction
+class InverseQuadric : public RadialBasisFunctionTerm
 {
 public:
     double eval(double r) const
@@ -93,7 +93,7 @@ public:
     }
 };
 
-class Gaussian : public RadialBasisFunction
+class Gaussian : public RadialBasisFunctionTerm
 {
 public:
     double eval(double r) const
@@ -112,14 +112,14 @@ public:
  * the solution of a fairly ill-conditioned linear system. This drawback may be
  * alleviated by applying a pre-conditioner to the linear system.
  */
-class RBFSpline : public Approximant
+class RadialBasisFunction : public Approximant
 {
 public:
 
-    RBFSpline(const DataTable &samples, RadialBasisFunctionType type);
-    RBFSpline(const DataTable &samples, RadialBasisFunctionType type, bool normalized);
+    RadialBasisFunction(const DataTable &samples, RadialBasisFunctionType type);
+    RadialBasisFunction(const DataTable &samples, RadialBasisFunctionType type, bool normalized);
 
-    virtual RBFSpline* clone() const { return new RBFSpline(*this); }
+    virtual RadialBasisFunction* clone() const { return new RadialBasisFunction(*this); }
 
     double eval(DenseVector x) const;
     double eval(std::vector<double> x) const;
@@ -140,7 +140,7 @@ private:
     bool normalized, precondition;
     unsigned int dim, numSamples;
 
-    std::shared_ptr<RadialBasisFunction> fn;
+    std::shared_ptr<RadialBasisFunctionTerm> fn;
 
     DenseMatrix weights;
 
@@ -242,4 +242,4 @@ private:
 
 } // namespace SPLINTER
 
-#endif // SPLINTER_RBFSPLINE_H
+#endif // SPLINTER_RADIALBASISFUNCTION_H

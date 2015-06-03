@@ -14,12 +14,12 @@
 namespace SPLINTER
 {
 
-RBFSpline::RBFSpline(const DataTable &samples, RadialBasisFunctionType type)
-    : RBFSpline(samples, type, false)
+RadialBasisFunction::RadialBasisFunction(const DataTable &samples, RadialBasisFunctionType type)
+    : RadialBasisFunction(samples, type, false)
 {
 }
 
-RBFSpline::RBFSpline(const DataTable &samples, RadialBasisFunctionType type, bool normalized)
+RadialBasisFunction::RadialBasisFunction(const DataTable &samples, RadialBasisFunctionType type, bool normalized)
     : samples(samples),
       normalized(normalized),
       precondition(false),
@@ -28,27 +28,27 @@ RBFSpline::RBFSpline(const DataTable &samples, RadialBasisFunctionType type, boo
 {
     if (type == RadialBasisFunctionType::THIN_PLATE_SPLINE)
     {
-        fn = std::shared_ptr<RadialBasisFunction>(new ThinPlateSpline());
+        fn = std::shared_ptr<RadialBasisFunctionTerm>(new ThinPlateSpline());
     }
     else if (type == RadialBasisFunctionType::MULTIQUADRIC)
     {
-        fn = std::shared_ptr<RadialBasisFunction>(new Multiquadric());
+        fn = std::shared_ptr<RadialBasisFunctionTerm>(new Multiquadric());
     }
     else if (type == RadialBasisFunctionType::INVERSE_QUADRIC)
     {
-        fn = std::shared_ptr<RadialBasisFunction>(new InverseQuadric());
+        fn = std::shared_ptr<RadialBasisFunctionTerm>(new InverseQuadric());
     }
     else if (type == RadialBasisFunctionType::INVERSE_MULTIQUADRIC)
     {
-        fn = std::shared_ptr<RadialBasisFunction>(new InverseMultiquadric());
+        fn = std::shared_ptr<RadialBasisFunctionTerm>(new InverseMultiquadric());
     }
     else if (type == RadialBasisFunctionType::GAUSSIAN)
     {
-        fn = std::shared_ptr<RadialBasisFunction>(new Gaussian());
+        fn = std::shared_ptr<RadialBasisFunctionTerm>(new Gaussian());
     }
     else
     {
-        fn = std::shared_ptr<RadialBasisFunction>(new ThinPlateSpline());
+        fn = std::shared_ptr<RadialBasisFunctionTerm>(new ThinPlateSpline());
     }
 
     /* Want to solve the linear system A*w = b,
@@ -132,7 +132,7 @@ RBFSpline::RBFSpline(const DataTable &samples, RadialBasisFunctionType type, boo
     // NOTE: Tried using experimental GMRES solver in Eigen, but it did not work very well.
 }
 
-double RBFSpline::eval(DenseVector x) const
+double RadialBasisFunction::eval(DenseVector x) const
 {
     std::vector<double> y;
     for (int i=0; i<x.rows(); i++)
@@ -140,7 +140,7 @@ double RBFSpline::eval(DenseVector x) const
     return eval(y);
 }
 
-double RBFSpline::eval(std::vector<double> x) const
+double RadialBasisFunction::eval(std::vector<double> x) const
 {
     assert(x.size() == dim);
     double fval, sum = 0, sumw = 0;
@@ -209,7 +209,7 @@ double RBFSpline::eval(std::vector<double> x) const
 /*
  * Calculate precondition matrix
  */
-DenseMatrix RBFSpline::computePreconditionMatrix() const
+DenseMatrix RadialBasisFunction::computePreconditionMatrix() const
 {
     DenseMatrix P;
     P.setZero(numSamples,numSamples);
@@ -304,7 +304,7 @@ DenseMatrix RBFSpline::computePreconditionMatrix() const
 /*
  * Computes Euclidean distance ||x-y||
  */
-double RBFSpline::dist(std::vector<double> x, std::vector<double> y) const
+double RadialBasisFunction::dist(std::vector<double> x, std::vector<double> y) const
 {
     assert(x.size() == y.size());
     double sum = 0.0;
@@ -316,12 +316,12 @@ double RBFSpline::dist(std::vector<double> x, std::vector<double> y) const
 /*
  * Computes Euclidean distance ||x-y||
  */
-double RBFSpline::dist(DataSample x, DataSample y) const
+double RadialBasisFunction::dist(DataSample x, DataSample y) const
 {
     return dist(x.getX(), y.getX());
 }
 
-bool RBFSpline::dist_sort(DataSample x, DataSample y) const
+bool RadialBasisFunction::dist_sort(DataSample x, DataSample y) const
 {
     std::vector<double> zeros(x.getDimX(), 0);
     DataSample origin(zeros, 0.0);
