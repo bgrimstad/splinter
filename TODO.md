@@ -5,8 +5,7 @@
 - Improve constructors of BSpline
 - Implement save/load functionality for rbfsplines
 - Open for interpolating with B-splines of any degree (needs an automatic knot initialization procedure - this can be formulated as a minimization problem)
-- Implement more end conditions for cubic B-splines (Hermite, natural, and periodic)
-- Implement MBA algorithm to allow for scattered data interpolation with multilevel B-Splines
+- Implement support for scattered data interpolation with B-Splines (look into MBA algorithm)
 - Implement NURBS
 - Implement Hessian for radial basis function splines
 - Test Jacobian for radial basis function splines
