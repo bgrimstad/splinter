@@ -16,3 +16,4 @@
 - Check that all non-void functions actually return a value (Clang 3.5 can produce illegal executables if they don't)
 - Implement integrated B-splines
 - Investigate tension B-splines: http://www.cas.mcmaster.ca/~modersit/Pubs/2009-SPIE-BFM.pdf
+- Fix evalHessian returning the wrong value when using Quadratic B-splines (also investigate if the issue exists elsewhere).
