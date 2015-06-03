@@ -112,7 +112,7 @@ public:
  * the solution of a fairly ill-conditioned linear system. This drawback may be
  * alleviated by applying a pre-conditioner to the linear system.
  */
-class RBFSpline : public Spline
+class RBFSpline : public Approximant
 {
 public:
 

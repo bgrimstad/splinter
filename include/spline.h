@@ -16,13 +16,13 @@ namespace SPLINTER
 {
 
 /*
- * Interface for spline classes
+ * Interface for approximants
  */
-class Spline
+class Approximant
 {
 public:
-    Spline() {}
-    virtual ~Spline() {}
+    Approximant() {}
+    virtual ~Approximant() {}
 
     /*
      * Returns the spline value at x
