@@ -1,18 +1,17 @@
 /*
- * This file is part of the Splinter library.
- * Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com)
+ * This file is part of the SPLINTER library.
+ * Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com).
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-
 #include "include/bsplinebasis.h"
 #include "include/mykroneckerproduct.h"
 #include "unsupported/Eigen/KroneckerProduct"
 
-namespace Splinter
+namespace SPLINTER
 {
 
 BSplineBasis::BSplineBasis()
@@ -526,4 +525,4 @@ std::vector<double> BSplineBasis::getSupportUpperBound() const
     return ub;
 }
 
-} // namespace Splinter
+} // namespace SPLINTER

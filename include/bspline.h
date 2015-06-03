@@ -1,6 +1,6 @@
 /*
- * This file is part of the Splinter library.
- * Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com)
+ * This file is part of the SPLINTER library.
+ * Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com).
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -16,7 +16,7 @@
 #include "spline.h"
 #include "bsplinebasis.h"
 
-namespace Splinter
+namespace SPLINTER
 {
 
 // Enum for different B-spline types
@@ -124,6 +124,6 @@ private:
     void loadBasis(std::vector<std::vector<double>> knotVectors, std::vector<unsigned int> basisDegrees);
 };
 
-} // namespace Splinter
+} // namespace SPLINTER
 
 #endif // SPLINTER_BSPLINE_H

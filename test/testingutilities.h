@@ -1,6 +1,6 @@
 /*
- * This file is part of the Splinter library.
- * Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com)
+ * This file is part of the SPLINTER library.
+ * Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com).
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,7 +14,7 @@
 #include <bspline.h>
 #include <generaldefinitions.h>
 
-namespace Splinter
+namespace SPLINTER
 {
 
 bool equalsWithinRange(double a, double b, double margin = 0.0);
@@ -27,6 +27,6 @@ std::vector<double> linspace(double start, double stop, unsigned int points);
 
 double sixHumpCamelBack(DenseVector x);
 
-} // namespace Splinter
+} // namespace SPLINTER
 
 #endif // SPLINTER_TESTINGUTILITIES_H

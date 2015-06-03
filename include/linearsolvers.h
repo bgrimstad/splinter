@@ -1,6 +1,6 @@
 /*
- * This file is part of the Splinter library.
- * Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com)
+ * This file is part of the SPLINTER library.
+ * Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com).
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,7 +14,7 @@
 #include "Eigen/IterativeLinearSolvers"
 #include "Eigen/SparseQR"
 
-namespace Splinter
+namespace SPLINTER
 {
 
 template<class lhs, class rhs>
@@ -143,6 +143,6 @@ private:
     }
 };
 
-} // namespace Splinter
+} // namespace SPLINTER
 
 #endif // SPLINTER_LINEARSOLVER_H

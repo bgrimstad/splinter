@@ -40,7 +40,8 @@
 #include <set>
 #include <datasample.h>
 
-namespace Splinter {
+namespace SPLINTER
+{
 
 typedef std::vector<uint8_t> StreamType;
 
@@ -417,6 +418,6 @@ inline StreamType load_from_file(std::string filename)
     return sresult;
 }
 
-} // namespace Splinter
+} // namespace SPLINTER
 
 #endif // SPLINTER_SERIALIZE_H

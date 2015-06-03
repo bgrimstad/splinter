@@ -1,6 +1,6 @@
 /*
- * This file is part of the Splinter library.
- * Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com)
+ * This file is part of the SPLINTER library.
+ * Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com).
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,7 +17,7 @@
 #include <limits>
 #include <serialize.h>
 
-namespace Splinter
+namespace SPLINTER
 {
 
 DataTable::DataTable()
@@ -217,4 +217,4 @@ std::vector<double> DataTable::getVectorY() const
     return y;
 }
 
-} // namespace Splinter
+} // namespace SPLINTER
