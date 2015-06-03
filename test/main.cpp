@@ -27,9 +27,38 @@ using std::endl;
 
 using namespace SPLINTER;
 
+double f(int x, int y) {
+	return x + y*y;
+}
+
+void hessianTest() {
+	DataTable samples;
+	DenseVector x(2);
+	for (int i = 0; i < 10; i++) {
+
+		for (int j = 0; j < 10; j++) {
+			x(0) = i;
+			x(1) = j;
+			samples.addSample(x, f(i, j));
+		}
+	}
+
+	BSpline b(samples, BSplineType::QUADRATIC);
+	x(0) = 1;
+	x(1) = 1;
+	auto hessian = b.evalHessian(x);
+
+	std::cout << hessian;
+
+	char c;
+	std::cin >> c;
+}
 
 void runExample()
 {
+	hessianTest();
+	exit(1);
+
     // Create new DataTable to manage samples
     DataTable samples;
 
