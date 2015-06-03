@@ -142,10 +142,9 @@ SparseVector BSplineBasis1D::evaluateDerivative(double x, int r) const
 }
 
 // Old implementation of first derivative of basis functions
-DenseVector BSplineBasis1D::evaluateFirstDerivative(double x) const
+SparseVector BSplineBasis1D::evaluateFirstDerivative(double x) const
 {
-    DenseVector values;
-    values.setZero(getNumBasisFunctions());
+    SparseVector values(getNumBasisFunctions());
 
     supportHack(x);
 
@@ -166,7 +165,7 @@ DenseVector BSplineBasis1D::evaluateFirstDerivative(double x) const
         (t12 == t11) ? b1 = 0 : b1 = b1/(t12-t11);
         (t22 == t21) ? b2 = 0 : b2 = b2/(t22-t21);
 
-        values(i) = degree*(b1 - b2);
+        values.insert(i) = degree*(b1 - b2);
     }
 
     return values;

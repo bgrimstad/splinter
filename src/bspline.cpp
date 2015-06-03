@@ -117,12 +117,11 @@ DenseMatrix BSpline::evalJacobian(DenseVector x) const
         throw Exception("BSpline::evalJacobian: Evaluation at point outside domain.");
     }
 
+    //SparseMatrix BiOld = basis.evalBasisJacobian(x);       // Sparse Jacobian implementation
+    //SparseMatrix Bi = basis.evalBasisJacobian2(x);  // Sparse Jacobian implementation using fold
     DenseMatrix BiOld = basis.evalBasisJacobianOld(x);  // Old Jacobian implementation
-//    DenseMatrix Bi = basis.evalBasisJacobianFast(x);    // Fast Jacobian implementation
-//    SparseMatrix Ji = basis.evalBasisJacobian(x);       // Sparse Jacobian implementation
 
-     // Test difference in Jacobians
-     // DenseMatrix Jid(Ji);
+//      Test difference in Jacobians
 //     DenseMatrix dJ = Bi - BiOld;
 //     DenseVector errorVec = dJ.rowwise().maxCoeff();
 //     DenseVector error = errorVec.colwise().maxCoeff();

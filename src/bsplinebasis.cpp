@@ -11,6 +11,8 @@
 #include "include/mykroneckerproduct.h"
 #include "unsupported/Eigen/KroneckerProduct"
 
+#include <iostream>
+
 namespace SPLINTER
 {
 
@@ -50,34 +52,13 @@ void BSplineBasis::setUnivariateBases(std::vector< std::vector<double> > &X, std
 
 SparseVector BSplineBasis::eval(const DenseVector &x) const
 {
-    // Set correct starting size and values: one element of 1.
-    SparseMatrix tv1(1,1);  //tv1.resize(1);
-    tv1.reserve(1);
-    tv1.insert(0,0) = 1;
-    SparseMatrix tv2 = tv1;
+    // Evaluate basisfunctions for each variable i and compute the tensor product of the function values
+    std::vector<SparseVector> basisFunctionValues;
 
-    // Evaluate all basisfunctions in each dimension i and generate the tensor product of the function values
-    for (int dim = 0; dim < x.size(); dim++)
-    {
-        SparseVector xi = bases.at(dim).evaluate(x(dim));
+    for (int var = 0; var < x.size(); var++)
+        basisFunctionValues.push_back(bases.at(var).evaluate(x(var)));
 
-        // Avoid matrix copy
-        if (dim % 2 == 0)
-        {
-            tv1 = kroneckerProduct(tv2, xi); // tv1 = tv1 x xi
-        }
-        else
-        {
-            tv2 = kroneckerProduct(tv1, xi); // tv2 = tv1 x xi
-        }
-    }
-
-    // Return correct vector
-    if (tv1.size() == (int)getNumBasisFunctions())
-    {
-        return tv1;
-    }
-    return tv2;
+    return foldlKroneckerProductVectors(basisFunctionValues);
 }
 
 // Old implementation of Jacobian
@@ -111,68 +92,6 @@ DenseMatrix BSplineBasis::evalBasisJacobianOld(DenseVector &x) const
 
         // Fill out column
         J.block(0,i,bi.rows(),1) = bi.block(0,0,bi.rows(),1);
-    }
-
-    return J;
-}
-
-DenseMatrix BSplineBasis::evalBasisJacobianFast(DenseVector &x) const
-{
-    // Jacobian basis matrix
-    DenseMatrix J; J.setZero(getNumBasisFunctions(), numVariables);
-
-    // Evaluate B-spline basis functions before looping
-    std::vector<DenseVector> func(numVariables);
-    std::vector<DenseVector> grad(numVariables);
-
-    for (unsigned int i = 0; i < numVariables; ++i)
-    {
-        func[i] = bases.at(i).evaluate(x(i));
-        grad[i] = bases.at(i).evaluateFirstDerivative(x(i));
-    }
-
-    // Calculate partial derivatives
-    for (unsigned int i = 0; i < numVariables; ++i)
-    {
-        // One column in basis jacobian
-        DenseVector bi; bi.setOnes(1);
-        DenseVector bi2 = bi;
-
-        for (unsigned int j = 0; j < numVariables; ++j)
-        {
-            if (j % 2 == 0)
-            {
-                if (j == i)
-                {
-                    // Differentiated basis
-                    bi = kroneckerProduct(bi2, grad.at(j));
-                }
-                else
-                {
-                    // Normal basis
-                    bi = kroneckerProduct(bi2, func.at(j));
-                }
-            }
-            else
-            {
-                if (j == i)
-                {
-                    // Differentiated basis
-                    bi2 = kroneckerProduct(bi, grad.at(j));
-                }
-                else
-                {
-                    // Normal basis
-                    bi2 = kroneckerProduct(bi, func.at(j));
-                }
-            }
-        }
-
-        // Fill out column
-        if (bi.size() == getNumBasisFunctions())
-            J.block(0,i,bi.rows(),1) = bi.block(0,0,bi.rows(),1);
-        else
-            J.block(0,i,bi2.rows(),1) = bi2.block(0,0,bi2.rows(),1);
     }
 
     return J;
@@ -220,6 +139,44 @@ SparseMatrix BSplineBasis::evalBasisJacobian(DenseVector &x) const
     }
 
     J.makeCompressed();
+
+    return J;
+}
+
+SparseMatrix BSplineBasis::evalBasisJacobian2(DenseVector &x) const
+{
+    // Jacobian basis matrix
+    SparseMatrix J(getNumBasisFunctions(), numVariables);
+
+    // Evaluate B-spline basis functions before looping
+    std::vector<SparseVector> funcValues(numVariables);
+    std::vector<SparseVector> gradValues(numVariables);
+
+    for (unsigned int i = 0; i < numVariables; ++i)
+    {
+        funcValues[i] = bases.at(i).evaluate(x(i));
+        gradValues[i] = bases.at(i).evaluateFirstDerivative(x(i));
+    }
+
+    // Calculate partial derivatives
+    for (unsigned int i = 0; i < numVariables; i++)
+    {
+        std::vector<SparseVector> values;
+
+        for (unsigned int j = 0; j < numVariables; j++)
+        {
+            if (j == i)
+                values.push_back(gradValues.at(j)); // Differentiated basis
+            else
+                values.push_back(funcValues.at(j)); // Normal basis
+        }
+
+        SparseVector Ji = foldlKroneckerProductVectors(values);
+
+        // Fill out column
+        for (SparseVector::InnerIterator it(Ji); it; ++it)
+            J.insert(it.row(),i) = it.value();
+    }
 
     return J;
 }
@@ -403,6 +360,58 @@ bool BSplineBasis::reduceSupport(std::vector<double>& lb, std::vector<double>& u
     A.makeCompressed();
 
     return true;
+}
+
+SparseVector BSplineBasis::foldlKroneckerProductVectors(const std::vector<SparseVector> &vectors) const
+{
+    // Create two temp matrices
+    SparseMatrix temp1(1,1);
+    temp1.insert(0,0) = 1;
+    SparseMatrix temp2 = temp1;
+
+    // Fold from left
+    int counter = 0;
+    for (const auto &vec : vectors)
+    {
+        // Avoid copy
+        if (counter % 2 == 0)
+            temp1 = kroneckerProduct(temp2, vec);
+        else
+            temp2 = kroneckerProduct(temp1, vec);
+
+        ++counter;
+    }
+
+    // Return correct product
+    if (counter % 2 == 0)
+        return temp2;
+    return temp1;
+}
+
+SparseMatrix BSplineBasis::foldlKroneckerProductMatrices(const std::vector<SparseMatrix> &matrices) const
+{
+    // Create two temp matrices
+    SparseMatrix temp1(1,1);
+    temp1.insert(0,0) = 1;
+    SparseMatrix temp2 = temp1;
+
+    // Fold from left
+    int counter = 0;
+    for (const auto &mat : matrices)
+    {
+        // Avoid copy
+        if (counter % 2 == 0)
+            temp1 = kroneckerProduct(temp2, mat);
+        else
+            temp2 = kroneckerProduct(temp1, mat);
+
+        ++counter;
+    }
+
+    // Return correct product
+    if (counter % 2 == 0)
+        return temp2;
+    return temp1;
 }
 
 std::vector<unsigned int> BSplineBasis::getBasisDegrees() const

@@ -27,9 +27,9 @@ public:
 
     // Evaluation
     SparseVector eval(const DenseVector &x) const;
-    SparseMatrix evalBasisJacobian(DenseVector &x) const;
     DenseMatrix evalBasisJacobianOld(DenseVector &x) const; // Depricated
-    DenseMatrix evalBasisJacobianFast(DenseVector &x) const; // Depricated
+    SparseMatrix evalBasisJacobian(DenseVector &x) const;
+    SparseMatrix evalBasisJacobian2(DenseVector &x) const; // A bit slower than evaBasisJacobianOld()
     SparseMatrix evalBasisHessian(DenseVector &x) const;
 
     // Knot vector manipulation
@@ -65,6 +65,10 @@ public:
 private:
     std::vector<BSplineBasis1D> bases;
     unsigned int numVariables;
+
+    // Fold from left using Kronecker product
+    SparseVector foldlKroneckerProductVectors(const std::vector<SparseVector> &vectors) const;
+    SparseMatrix foldlKroneckerProductMatrices(const std::vector<SparseMatrix> &matrices) const;
 };
 
 } // namespace SPLINTER

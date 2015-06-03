@@ -32,7 +32,7 @@ public:
     // Evaluation of basis functions
     SparseVector evaluate(double x) const;
     SparseVector evaluateDerivative(double x, int r) const;
-    DenseVector evaluateFirstDerivative(double x) const; // Depricated
+    SparseVector evaluateFirstDerivative(double x) const; // Depricated
 
     // Knot vector related
     SparseMatrix refineKnots();
