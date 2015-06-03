@@ -68,7 +68,7 @@ set(SRC_LIST
     include/bsplinebasis.h
     include/bsplinebasis1d.h
     include/pspline.h
-    include/rbfspline.h
+    include/radialbasisfunction.h
     include/datasample.h
     include/datatable.h
     include/generaldefinitions.h
@@ -79,7 +79,7 @@ set(SRC_LIST
     src/bsplinebasis.cpp
     src/bsplinebasis1d.cpp
     src/pspline.cpp
-    src/rbfspline.cpp
+    src/radialbasisfunction.cpp
     src/datasample.cpp
     src/datatable.cpp
     src/mykroneckerproduct.cpp

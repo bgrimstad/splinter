@@ -19,7 +19,7 @@
 
 #include "bspline.h"
 #include "pspline.h"
-#include "rbfspline.h"
+#include "radialbasisfunction.h"
 #include "testingutilities.h"
 
 using std::cout;

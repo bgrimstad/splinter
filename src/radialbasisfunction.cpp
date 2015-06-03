@@ -7,7 +7,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include "rbfspline.h"
+#include "radialbasisfunction.h"
 #include "include/linearsolvers.h"
 #include "Eigen/SVD"
 
