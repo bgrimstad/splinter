@@ -162,10 +162,9 @@ void DataTable::load(const std::string fileName)
     grid = deserialize<std::vector<std::set<double>>>(it, stream.cend());
 }
 
-/***********
- * Getters *
- ***********/
-
+/*
+ * Getters for iterators
+ */
 std::multiset<DataSample>::const_iterator DataTable::cbegin() const
 {
     return samples.cbegin();
@@ -176,8 +175,10 @@ std::multiset<DataSample>::const_iterator DataTable::cend() const
     return samples.cend();
 }
 
-// Get table of samples x-values,
-// i.e. table[i][j] is the value of variable i at sample j
+/*
+ * Get table of samples x-values,
+ * i.e. table[i][j] is the value of variable i at sample j
+ */
 std::vector< std::vector<double> > DataTable::getTableX() const
 {
     gridCompleteGuard();

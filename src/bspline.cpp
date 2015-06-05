@@ -18,7 +18,29 @@
 namespace SPLINTER
 {
 
-// Constructor for explicitly given multivariate B-splines
+/*
+ * Constructors for multivariate B-splines with explicit data
+ */
+BSpline::BSpline(std::vector<double> coefficients, std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees)
+    : coefficients(DenseMatrix::Zero(1, coefficients.size()))
+{
+    for (unsigned int i = 0; i < coefficients.size(); ++i)
+        this->coefficients(0,i) = coefficients[i];
+
+    numVariables = knotVectors.size();
+
+    if (this->coefficients.rows() != 1)
+        throw Exception("BSpline::BSpline: coefficient matrix can only have one row!");
+
+    basis = BSplineBasis(knotVectors, basisDegrees, KnotVectorType::EXPLICIT);
+
+    computeKnotAverages();
+
+    init();
+
+    checkControlPoints();
+}
+
 BSpline::BSpline(DenseMatrix coefficients, std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees)
     : coefficients(coefficients)
 {
@@ -36,7 +58,33 @@ BSpline::BSpline(DenseMatrix coefficients, std::vector< std::vector<double> > kn
     checkControlPoints();
 }
 
-// Constructors for interpolation of samples in DataTable
+/*
+ * Constructors for interpolation of samples in DataTable
+ */
+BSpline::BSpline(const DataTable &samples, unsigned int degree)
+{
+    // Check data
+    if (!samples.isGridComplete())
+        throw Exception("BSpline::BSpline: Cannot create B-spline from irregular (incomplete) grid.");
+
+    numVariables = samples.getNumVariables();
+
+    std::vector< std::vector<double> > xdata = samples.getTableX();
+
+    // Assuming that all basis function are of the same degree
+    std::vector<unsigned int> basisDegrees(samples.getNumVariables(), degree);
+
+    // Set multivariate basis
+    basis = BSplineBasis(xdata, basisDegrees, KnotVectorType::FREE);
+
+    // Calculate control points
+    computeControlPoints(samples);
+
+    init();
+
+    checkControlPoints();
+}
+
 BSpline::BSpline(const DataTable &samples, BSplineType type = BSplineType::CUBIC)
 {
     // Check data
@@ -47,34 +95,21 @@ BSpline::BSpline(const DataTable &samples, BSplineType type = BSplineType::CUBIC
 
     std::vector< std::vector<double> > xdata = samples.getTableX();
 
+    // Default is CUBIC
+    std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 3);
+
     // Set multivariate basis
     if (type == BSplineType::LINEAR)
-    {
-        std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 1);
-        basis = BSplineBasis(xdata, basisDegrees, KnotVectorType::FREE);
-    }
+        basisDegrees = std::vector<unsigned int>(samples.getNumVariables(), 1);
     else if (type == BSplineType::QUADRATIC)
-    {
-        std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 2);
-        basis = BSplineBasis(xdata, basisDegrees, KnotVectorType::FREE);
-    }
+        basisDegrees = std::vector<unsigned int>(samples.getNumVariables(), 2);
     else if (type == BSplineType::CUBIC)
-    {
-        std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 3);
-        basis = BSplineBasis(xdata, basisDegrees, KnotVectorType::FREE);
-    }
+        basisDegrees = std::vector<unsigned int>(samples.getNumVariables(), 3);
     else if (type == BSplineType::QUARTIC)
-    {
-        // Not supported yet
-        std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 4);
-        basis = BSplineBasis(xdata, basisDegrees, KnotVectorType::FREE);
-    }
-    else
-    {
-        // Default is CUBIC
-        std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 3);
-        basis = BSplineBasis(xdata, basisDegrees, KnotVectorType::FREE);
-    }
+        basisDegrees = std::vector<unsigned int>(samples.getNumVariables(), 4);
+
+    // Set multivariate basis
+    basis = BSplineBasis(xdata, basisDegrees, KnotVectorType::FREE);
 
     // Calculate control points
     computeControlPoints(samples);
@@ -84,6 +119,9 @@ BSpline::BSpline(const DataTable &samples, BSplineType type = BSplineType::CUBIC
     checkControlPoints();
 }
 
+/*
+ * Construct from saved data
+ */
 BSpline::BSpline(const std::string fileName)
 {
     load(fileName);

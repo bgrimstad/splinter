@@ -38,11 +38,13 @@ public:
     /**
      * Construct B-spline from knot vectors, control coefficients (assumed vectorized), and basis degrees
      */
+    BSpline(std::vector<double> coefficients, std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees);
     BSpline(DenseMatrix coefficients, std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees);
 
     /**
      * Construct B-spline that interpolates the samples in DataTable
      */
+    BSpline(const DataTable &samples, unsigned int degree);
     BSpline(const DataTable &samples, BSplineType type);
 
     /**

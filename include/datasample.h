@@ -18,8 +18,7 @@ namespace SPLINTER
 
 /* Class representing a data sample (x,y)
  * where y is the value obtained by sampling
- * at a point x. Both x and y may be scalar
- * or vectors.
+ * at a point x.
 */
 class DataSample
 {
