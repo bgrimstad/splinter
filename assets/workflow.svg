@@ -16,7 +16,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="drawing.eps">
+   sodipodi:docname="workflow.svg">
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -24,9 +24,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.7"
-     inkscape:cx="324.10002"
-     inkscape:cy="558.38964"
+     inkscape:zoom="1.979899"
+     inkscape:cx="385.05633"
+     inkscape:cy="423.5255"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -47,7 +47,7 @@
        orientation="0,1" />
     <sodipodi:guide
        id="guide4293"
-       position="455,256.07143"
+       position="448.00265,499.52043"
        orientation="1,0" />
     <sodipodi:guide
        id="guide5006"
@@ -159,7 +159,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -371,12 +371,12 @@
        sodipodi:linespacing="125%"
        id="text4126-4"
        y="594.76306"
-       x="353.50626"
+       x="347.50626"
        style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Latin Modern Math;-inkscape-font-specification:Latin Modern Math"
        xml:space="preserve"><tspan
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Droid Sans;-inkscape-font-specification:Droid Sans"
          y="594.76306"
-         x="353.50626"
+         x="347.50626"
          id="tspan4128-6"
          sodipodi:role="line">Constructing approximation</tspan></text>
     <text
@@ -456,7 +456,7 @@
        id="g5612"
        ns0:preamble=""
        ns0:text="$\\tilde{f}$"
-       transform="matrix(2.8004952,0,0,2.8004952,-180.47152,291.82747)">
+       transform="matrix(2.8004952,0,0,2.8004952,-186.47152,291.82747)">
       <defs
          id="defs5614">
         <g
@@ -727,7 +727,7 @@
       </g>
     </g>
     <g
-       transform="translate(454.7433,661.4573)"
+       transform="translate(448.7433,661.4573)"
        inkscape:label="Gear12"
        id="g14249">
       <path
@@ -739,7 +739,7 @@
     <g
        id="g15065"
        inkscape:label="Gear8"
-       transform="translate(410.29659,683.68066)">
+       transform="translate(404.29659,683.68066)">
       <path
          id="path15067"
          style="fill:none;stroke:#000000"
@@ -749,7 +749,7 @@
     <g
        id="g15065-6"
        inkscape:label="Gear8"
-       transform="translate(499.01536,639.20978)">
+       transform="translate(493.01536,639.20978)">
       <path
          id="path15067-9"
          style="fill:none;stroke:#000000"
