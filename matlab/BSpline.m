@@ -25,14 +25,12 @@ classdef BSpline < Spline
             type_index = -1;
             switch type
                 case BSplineType.Linear
-                    type_index = 0;
-                case BSplineType.Quadratic
                     type_index = 1;
-                case BSplineType.Quadratic_free
+                case BSplineType.Quadratic
                     type_index = 2;
                 case BSplineType.Cubic
                     type_index = 3;
-                case BSplineType.Cubic_free
+                case BSplineType.Quartic
                     type_index = 4;
             end
             

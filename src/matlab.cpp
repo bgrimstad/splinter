@@ -1,5 +1,6 @@
 #include "matlab.h"
 #include <bspline.h>
+#include <pspline.h>
 #include <datatable.h>
 #include <generaldefinitions.h>
 #include <iostream>
@@ -41,6 +42,19 @@ using namespace Splinter;
 			dataTable->addSample(vec, y);
 		}
 
+		API void datatable_add_samples(obj_ptr datatable_ptr, double *x, int n_samples, int x_dim) {
+			DataTable *dataTable = get_datatable(datatable_ptr);
+			DenseVector vec(x_dim);
+
+			int k = 0;
+			for (int i = 0; i < n_samples; ++i) {
+				for (int j = 0; j < x_dim; ++j) {
+					vec(j) = x[i + j * n_samples];
+				}
+				dataTable->addSample(vec, x[i + x_dim * n_samples]);
+			}
+		}
+
 		void datatable_delete(obj_ptr datatable_ptr) {
 			DataTable *dataTable = get_datatable(datatable_ptr);
 
@@ -49,8 +63,8 @@ using namespace Splinter;
 
 		/* BSpline interface */
 		/* Cast the obj_ptr to a BSpline * */
-		BSpline *get_bspline(obj_ptr datatable_ptr) {
-			return (BSpline *)datatable_ptr;
+		BSpline *get_bspline(obj_ptr bspline_ptr) {
+			return (BSpline *) bspline_ptr;
 		}
 
 		// TODO: Make sure MatLab provides the correct type for the BSplineType enum
@@ -60,16 +74,12 @@ using namespace Splinter;
 
 			BSplineType bsplineType;
 			switch (type) {
-			case 0: {
+			case 1: {
 				bsplineType = BSplineType::LINEAR;
 				break;
 			}
-			case 1: {
-				bsplineType = BSplineType::QUADRATIC;
-				break;
-			}
 			case 2: {
-				bsplineType = BSplineType::QUADRATIC_FREE;
+				bsplineType = BSplineType::QUADRATIC;
 				break;
 			}
 			case 3: {
@@ -77,7 +87,7 @@ using namespace Splinter;
 				break;
 			}
 			case 4: {
-				bsplineType = BSplineType::CUBIC_FREE;
+				bsplineType = BSplineType::QUARTIC;
 				break;
 			}
 			default: {
@@ -85,7 +95,7 @@ using namespace Splinter;
 			}
 			}
 
-			return (obj_ptr) new BSpline(*table, BSplineType::QUADRATIC);
+			return (obj_ptr) new BSpline(*table, bsplineType);
 		}
 
 		double bspline_eval(obj_ptr bspline_ptr, double *x, int x_dim) {
@@ -139,6 +149,72 @@ using namespace Splinter;
 			BSpline *bspline = get_bspline(bspline_ptr);
 
 			delete bspline;
+		}
+
+		/* PSpline interface */
+		/* Cast the obj_ptr to a PSpline * */
+		PSpline *get_pspline(obj_ptr pspline_ptr) {
+			return (PSpline *) pspline_ptr;
+		}
+
+		/* Constructor */
+		obj_ptr pspline_init(obj_ptr pspline_ptr, double lambda) {
+			DataTable *table = get_datatable(pspline_ptr);
+
+			return (obj_ptr) new PSpline(*table, lambda);
+		}
+
+		double pspline_eval(obj_ptr pspline_ptr, double *x, int x_dim) {
+			PSpline *pspline = get_pspline(pspline_ptr);
+			DenseVector vec(x_dim);
+			for (int i = 0; i < x_dim; i++) {
+				vec(i) = x[i];
+			}
+
+			return pspline->eval(vec);
+		}
+
+		/*
+		Return double ptr so MatLab identifies the libpointer type as
+		'doublePtr'. Then we can do reshape(ptr, x_dim, y_dim) in MatLab
+		to get a MatLab matrix.
+		*/
+		double *pspline_eval_jacobian(obj_ptr pspline_ptr, double *x, int x_dim) {
+			PSpline *pspline = get_pspline(pspline_ptr);
+			DenseVector vec(x_dim);
+			for (int i = 0; i < x_dim; i++) {
+				vec(i) = x[i];
+			}
+
+			DenseMatrix jacobian = pspline->evalJacobian(vec);
+
+			int numCoefficients = jacobian.cols() * jacobian.rows();
+			double *res = (double *)malloc(sizeof(double) * numCoefficients);
+			memcpy(res, jacobian.data(), sizeof(double) * numCoefficients);
+			return res;
+		}
+
+		double *pspline_eval_hessian(obj_ptr pspline_ptr, double *x, int x_dim) {
+			PSpline *pspline = get_pspline(pspline_ptr);
+			DenseVector vec(x_dim);
+			for (int i = 0; i < x_dim; i++) {
+				vec(i) = x[i];
+			}
+
+			DenseMatrix hessian = pspline->evalHessian(vec);
+
+			// The DenseMatrix lives on the stack, so we need to copy
+			// the data into a newly allocated memory area.
+			int numCoefficients = hessian.cols() * hessian.rows();
+			double *res = (double *)malloc(sizeof(double) * numCoefficients);
+			memcpy(res, hessian.data(), sizeof(double) * numCoefficients);
+			return res;
+		}
+
+		void pspline_delete(obj_ptr pspline_ptr) {
+			PSpline *pspline = get_pspline(pspline_ptr);
+
+			delete pspline;
 		}
 #ifdef __cplusplus
 	}
