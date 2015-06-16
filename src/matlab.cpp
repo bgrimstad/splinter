@@ -150,7 +150,8 @@ extern "C"
 			break;
 		}
 		default: {
-			throw new Exception("Invalid degree passed to BSpline constructor!");
+			lastFuncCallError = 1;
+			return nullptr;
 		}
 		}
 
