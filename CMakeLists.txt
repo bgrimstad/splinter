@@ -63,7 +63,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/test)
 # These are the sources we need for compilation of the library (not the testing executables)
 #aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/src SRC_LIST)
 set(SRC_LIST
-    include/spline.h
+    include/approximant.h
     include/bspline.h
     include/bsplinebasis.h
     include/bsplinebasis1d.h
@@ -127,7 +127,7 @@ install(
 # Used to debug warnings
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-long-long -pedantic")
 # Need to specify c++ std on OSX Yosemite
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-long-long -std=c++11")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-long-long -std=c++11")
 
 # Doxygen documentation
 find_package(Doxygen)

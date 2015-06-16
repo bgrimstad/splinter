@@ -11,7 +11,7 @@
 #define SPLINTER_RADIALBASISFUNCTION_H
 
 #include "datatable.h"
-#include "spline.h"
+#include "approximant.h"
 #include "memory"
 
 namespace SPLINTER

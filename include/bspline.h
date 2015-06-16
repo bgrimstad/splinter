@@ -13,7 +13,7 @@
 
 #include "datatable.h"
 #include "generaldefinitions.h"
-#include "spline.h"
+#include "approximant.h"
 #include "bsplinebasis.h"
 
 namespace SPLINTER
