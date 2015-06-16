@@ -23,7 +23,7 @@ classdef (Abstract = true) Approximant < handle
         % Evaluate the Jacobian at x
         % x should be a real number (not array) within the domain of the spline
         function r = evalJacobian(obj, x)
-            temp = calllib(Splinter.getInstance().get_alias(), obj.EvalJacobian_function, obj.Handle, x, length(x));
+            temp = Splinter.getInstance().call(obj.EvalJacobian_function, obj.Handle, x, length(x));
             reshape(temp, 1, length(x))
             r = temp.value;
         end
@@ -31,22 +31,18 @@ classdef (Abstract = true) Approximant < handle
         % Evaluate the Hessian at x
         % x should be a real number (not array) within the domain of the spline
         function r = evalHessian(obj, x)
-            temp = calllib(Splinter.getInstance().get_alias(), obj.EvalHessian_function, obj.Handle, x, length(x));
+            temp = Splinter.getInstance().call(obj.EvalHessian_function, obj.Handle, x, length(x));
             reshape(temp, length(x), length(x))
             r = temp.value;
         end
         
         function save(obj, fileName)
-            calllib(Splinter.getInstance().get_alias(), obj.Save_function, obj.Handle, fileName);
+            Splinter.getInstance().call(obj.Save_function, obj.Handle, fileName);
         end
 
-        % Destructor. Deletes the internal BSpline object.
-        % Note that calling any of the methods after this,
-        % WILL make MatLab crash!
+        % Destructor. Deletes the internal Approximant object.
         function delete(obj)
-            if(obj.Handle ~= -1)
-                calllib(Splinter.getInstance().get_alias(), obj.Destructor_function, obj.Handle);
-            end
+            Splinter.getInstance().call(obj.Destructor_function, obj.Handle);
         end
     end
 end

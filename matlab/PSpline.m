@@ -24,11 +24,7 @@ classdef PSpline < Approximant
             % Set to -1 so we don't try to delete the library instance in case type is invalid
             obj.Handle = -1;
             
-            obj.Handle = calllib(Splinter.getInstance().get_alias(), obj.Constructor_function, dataTable.get_handle(), lambda);
-
-            if(obj.Handle == 0)
-                error('Could not create PSpline!');
-            end
+            obj.Handle = Splinter.getInstance().call(obj.Constructor_function, dataTable.get_handle(), lambda);
         end
     end
 end

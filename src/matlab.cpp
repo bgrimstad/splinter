@@ -19,48 +19,68 @@ static DataTable *get_datatable(obj_ptr datatable_ptr) {
 		return (DataTable *)datatable_ptr;
 	}
 
-	throw new Exception("Invalid DataTable pointer (may be caused by reloading the library)!");
+	return nullptr;
 }
 
 /* Cast the obj_ptr to a BSpline * */
-BSpline *get_bspline(obj_ptr bspline_ptr) {
+static BSpline *get_bspline(obj_ptr bspline_ptr) {
 	if (objects.count(bspline_ptr) > 0) {
 		return (BSpline *)bspline_ptr;
 	}
 
-	throw new Exception("Invalid BSpline pointer (may be caused by reloading the library)!");
+	return nullptr;
 }
 
 /* Cast the obj_ptr to a PSpline * */
-PSpline *get_pspline(obj_ptr pspline_ptr) {
+static PSpline *get_pspline(obj_ptr pspline_ptr) {
 	if (objects.count(pspline_ptr) > 0) {
 		return (PSpline *)pspline_ptr;
 	}
 
-	throw new Exception("Invalid PSpline pointer (may be caused by reloading the library)!");
+	return nullptr;
 }
 
 /* Cast the obj_ptr to a RadialBasisFunction * */
-RadialBasisFunction *get_rbf(obj_ptr rbf_ptr) {
+static RadialBasisFunction *get_rbf(obj_ptr rbf_ptr) {
 	if (objects.count(rbf_ptr) > 0) {
 		return (RadialBasisFunction *)rbf_ptr;
 	}
 
-	throw new Exception("Invalid RadialBasisFunction pointer (may be caused by reloading the library)!");
+	return nullptr;
 }
 
 extern "C"
 {
+	/* 1 if the last call to the library resulted in an error,
+	*  0 otherwise. This is used to avoid throwing exceptions across library boundaries,
+	*  and we expect the caller to manually check the value of this flag.
+	*/
+	int lastFuncCallError = 0;
+	int get_error() {
+		return lastFuncCallError;
+	}
+
 	/* DataTable interface */
 	/* Constructor */
 	obj_ptr datatable_init() {
+		lastFuncCallError = 0;
 		obj_ptr dataTable = (obj_ptr) new DataTable();
+		if (dataTable == nullptr) {
+			lastFuncCallError = 1;
+			return nullptr;
+		}
+
 		objects.insert(dataTable);
 		return dataTable;
 	}
 
 	void datatable_add_sample(obj_ptr datatable_ptr, double *x, int x_dim, double y) {
+		lastFuncCallError = 0;
 		DataTable *dataTable = get_datatable(datatable_ptr);
+		if (dataTable == nullptr) {
+			lastFuncCallError = 1;
+			return;
+		}
 
 		DenseVector vec(x_dim);
 		for (int i = 0; i < x_dim; i++) {
@@ -71,7 +91,12 @@ extern "C"
 	}
 
 	void datatable_add_samples(obj_ptr datatable_ptr, double *x, int n_samples, int x_dim) {
+		lastFuncCallError = 0;
 		DataTable *dataTable = get_datatable(datatable_ptr);
+		if (dataTable == nullptr) {
+			lastFuncCallError = 1;
+			return;
+		}
 
 		DenseVector vec(x_dim);
 
@@ -85,7 +110,13 @@ extern "C"
 	}
 
 	void datatable_delete(obj_ptr datatable_ptr) {
+		lastFuncCallError = 0;
 		DataTable *dataTable = get_datatable(datatable_ptr);
+		if (dataTable == nullptr) {
+			lastFuncCallError = 1;
+			return;
+		}
+
 		objects.erase(datatable_ptr);
 		delete dataTable;
 	}
@@ -93,7 +124,12 @@ extern "C"
 	/* BSpline interface */
 	/* Constructor */
 	obj_ptr bspline_init(obj_ptr datatable_ptr, int degree) {
+		lastFuncCallError = 0;
 		DataTable *table = get_datatable(datatable_ptr);
+		if (table == nullptr) {
+			lastFuncCallError = 1;
+			return nullptr;
+		}
 
 		BSplineType bsplineType;
 		switch (degree) {
@@ -119,12 +155,21 @@ extern "C"
 		}
 
 		obj_ptr bspline = (obj_ptr) new BSpline(*table, bsplineType);
+		if (bspline == nullptr) {
+			lastFuncCallError = 1;
+			return nullptr;
+		}
 		objects.insert(bspline);
 		return bspline;
 	}
 
 	double bspline_eval(obj_ptr bspline_ptr, double *x, int x_dim) {
+		lastFuncCallError = 0;
 		BSpline *bspline = get_bspline(bspline_ptr);
+		if (bspline == nullptr) {
+			lastFuncCallError = 1;
+			return 0.0;
+		}
 
 		DenseVector vec(x_dim);
 		for (int i = 0; i < x_dim; i++) {
@@ -140,7 +185,12 @@ extern "C"
 		to get a MatLab matrix.
 	*/
 	double *bspline_eval_jacobian(obj_ptr bspline_ptr, double *x, int x_dim) {
+		lastFuncCallError = 0;
 		BSpline *bspline = get_bspline(bspline_ptr);
+		if (bspline == nullptr) {
+			lastFuncCallError = 1;
+			return nullptr;
+		}
 
 		DenseVector vec(x_dim);
 		for (int i = 0; i < x_dim; i++) {
@@ -156,7 +206,12 @@ extern "C"
 	}
 
 	double *bspline_eval_hessian(obj_ptr bspline_ptr, double *x, int x_dim) {
+		lastFuncCallError = 0;
 		BSpline *bspline = get_bspline(bspline_ptr);
+		if (bspline == nullptr) {
+			lastFuncCallError = 1;
+			return nullptr;
+		}
 
 		DenseVector vec(x_dim);
 		for (int i = 0; i < x_dim; i++) {
@@ -174,7 +229,12 @@ extern "C"
 	}
 
 	void bspline_delete(obj_ptr bspline_ptr) {
+		lastFuncCallError = 0;
 		BSpline *bspline = get_bspline(bspline_ptr);
+		if (bspline == nullptr) {
+			lastFuncCallError = 1;
+			return;
+		}
 		objects.erase(bspline_ptr);
 		delete bspline;
 	}
@@ -182,15 +242,29 @@ extern "C"
 	/* PSpline interface */
 	/* Constructor */
 	obj_ptr pspline_init(obj_ptr pspline_ptr, double lambda) {
+		lastFuncCallError = 0;
 		DataTable *table = get_datatable(pspline_ptr);
+		if (table == nullptr) {
+			lastFuncCallError = 1;
+			return nullptr;
+		}
 
 		obj_ptr pspline = (obj_ptr) new PSpline(*table, lambda);
+		if (pspline == nullptr) {
+			lastFuncCallError = 1;
+			return nullptr;
+		}
 		objects.insert(pspline);
 		return pspline;
 	}
 
 	double pspline_eval(obj_ptr pspline_ptr, double *x, int x_dim) {
+		lastFuncCallError = 0;
 		PSpline *pspline = get_pspline(pspline_ptr);
+		if (pspline == nullptr) {
+			lastFuncCallError = 1;
+			return 0.0;
+		}
 
 		DenseVector vec(x_dim);
 		for (int i = 0; i < x_dim; i++) {
@@ -206,7 +280,12 @@ extern "C"
 	to get a MatLab matrix.
 	*/
 	double *pspline_eval_jacobian(obj_ptr pspline_ptr, double *x, int x_dim) {
+		lastFuncCallError = 0;
 		PSpline *pspline = get_pspline(pspline_ptr);
+		if (pspline == nullptr) {
+			lastFuncCallError = 1;
+			return nullptr;
+		}
 
 		DenseVector vec(x_dim);
 		for (int i = 0; i < x_dim; i++) {
@@ -222,7 +301,12 @@ extern "C"
 	}
 
 	double *pspline_eval_hessian(obj_ptr pspline_ptr, double *x, int x_dim) {
+		lastFuncCallError = 0;
 		PSpline *pspline = get_pspline(pspline_ptr);
+		if (pspline == nullptr) {
+			lastFuncCallError = 1;
+			return nullptr;
+		}
 
 		DenseVector vec(x_dim);
 		for (int i = 0; i < x_dim; i++) {
@@ -240,7 +324,12 @@ extern "C"
 	}
 
 	void pspline_delete(obj_ptr pspline_ptr) {
+		lastFuncCallError = 0;
 		PSpline *pspline = get_pspline(pspline_ptr);
+		if (pspline == nullptr) {
+			lastFuncCallError = 1;
+			return;
+		}
 		objects.erase(pspline_ptr);
 		delete pspline;
 	}
@@ -248,7 +337,12 @@ extern "C"
 	/* RadialBasisFunction interface */
 	/* Constructor */
 	obj_ptr rbf_init(obj_ptr rbf_ptr, int type_index, int normalized) {
+		lastFuncCallError = 0;
 		DataTable *table = get_datatable(rbf_ptr);
+		if (table == nullptr) {
+			lastFuncCallError = 1;
+			return nullptr;
+		}
 
 		RadialBasisFunctionType type;
 		switch (type_index) {
@@ -275,12 +369,21 @@ extern "C"
 		bool norm = normalized == 0 ? false : true;
 
 		obj_ptr rbf = (obj_ptr) new RadialBasisFunction(*table, type, norm);
+		if (rbf == nullptr) {
+			lastFuncCallError = 1;
+			return nullptr;
+		}
 		objects.insert(rbf);
 		return rbf;
 	}
 
 	double rbf_eval(obj_ptr rbf_ptr, double *x, int x_dim) {
+		lastFuncCallError = 0;
 		RadialBasisFunction *rbf = get_rbf(rbf_ptr);
+		if (rbf == nullptr) {
+			lastFuncCallError = 1;
+			return 0.0;
+		}
 
 		DenseVector vec(x_dim);
 		for (int i = 0; i < x_dim; i++) {
@@ -296,7 +399,12 @@ extern "C"
 	to get a MatLab matrix.
 	*/
 	double *rbf_eval_jacobian(obj_ptr rbf_ptr, double *x, int x_dim) {
+		lastFuncCallError = 0;
 		RadialBasisFunction *rbf = get_rbf(rbf_ptr);
+		if (rbf == nullptr) {
+			lastFuncCallError = 1;
+			return nullptr;
+		}
 
 		DenseVector vec(x_dim);
 		for (int i = 0; i < x_dim; i++) {
@@ -312,7 +420,12 @@ extern "C"
 	}
 
 	double *rbf_eval_hessian(obj_ptr rbf_ptr, double *x, int x_dim) {
+		lastFuncCallError = 0;
 		RadialBasisFunction *rbf = get_rbf(rbf_ptr);
+		if (rbf == nullptr) {
+			lastFuncCallError = 1;
+			return nullptr;
+		}
 
 		DenseVector vec(x_dim);
 		for (int i = 0; i < x_dim; i++) {
@@ -330,7 +443,12 @@ extern "C"
 	}
 
 	void rbf_delete(obj_ptr rbf_ptr) {
+		lastFuncCallError = 0;
 		RadialBasisFunction *rbf = get_rbf(rbf_ptr);
+		if (rbf == nullptr) {
+			lastFuncCallError = 1;
+			return;
+		}
 		objects.erase(rbf_ptr);
 		delete rbf;
 	}

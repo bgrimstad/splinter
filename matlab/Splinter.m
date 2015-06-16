@@ -35,12 +35,25 @@ classdef Splinter < handle
         end
         
         function r = call(obj, func, varargin)
-            fprintf('Calling %s with %d args\n', func, length(nargin));
             if(~obj.is_loaded())
                 error('You need to load the library with Splinter.getInstance().load(libFile, headerFile [, alias]) before making calls to it!\n'); 
             end
             
+            % strcmp == 1 if identical
+            if(strcmp(func, ''))
+                error('This function has not been implemented yet!'); 
+            end
+            
             r = calllib(obj.Alias, func, varargin{:});
+            
+            % Check the internal error flag (set when trying to reference
+            % an object that does not exist, which may happen when creating
+            % an object, reloading the library, then trying to use the
+            % object. The internal reference will then be gone, and the
+            % reference invalid).
+            if(calllib(obj.Alias, 'get_error'))
+               error('Internal library error: Did you use an object belonging to a previous load of the library?'); 
+            end
         end
         
         function unload(obj)

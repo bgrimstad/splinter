@@ -12,6 +12,10 @@ typedef int *obj_ptr;
 	extern "C"
 	{
 #endif
+		/* 1 if the previous function call resulted in an error, 0 otherwise. */
+		API int get_error();
+
+
 		API obj_ptr datatable_init();
 
 		API void datatable_add_sample(obj_ptr datatable_ptr, double *x, int x_dim, double y);

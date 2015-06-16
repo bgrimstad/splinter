@@ -37,11 +37,7 @@ classdef BSpline < Approximant
             if(type_index == -1)
                 error('type should be an enumeration constant of type BSplineType!')
             else
-                obj.Handle = calllib(obj.Splinter_alias, obj.Constructor_function, dataTable.get_handle(), type_index);
-                
-                if(obj.Handle == 0)
-                    error('Could not create BSpline!');
-                end
+                obj.Handle = Splinter.getInstance().call(obj.Constructor_function, dataTable.get_handle(), type_index);
             end
         end
     end
