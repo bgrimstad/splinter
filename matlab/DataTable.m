@@ -1,8 +1,4 @@
 classdef DataTable < handle
-    properties (Constant)
-       Splinter_alias = 'splinter'; 
-    end
-    
     properties (Access = private)
         Handle
         
@@ -17,7 +13,7 @@ classdef DataTable < handle
         % Constructor. Creates an instance of the DataTable class in the
         % library.
         function obj = DataTable()
-            obj.Handle = calllib(obj.Splinter_alias, 'datatable_init');
+            obj.Handle = calllib(Splinter.getInstance().get_alias(), 'datatable_init');
             obj.Samples = [];
             obj.Num_samples = 0;
             obj.Is_synced = true;
@@ -28,7 +24,7 @@ classdef DataTable < handle
         % Multi-dimensional support is in the library but not
         % the MatLab interface (yet).
         function r = add_sample(obj, x, y)
-            r = calllib(obj.Splinter_alias, 'datatable_add_sample', obj.Handle, x, length(x), y);
+            r = calllib(Splinter.getInstance().get_alias(), 'datatable_add_sample', obj.Handle, x, length(x), y);
         end
         
         % Reserve memory for the Samples. It is *HIGHLY* recommended that
@@ -57,14 +53,14 @@ classdef DataTable < handle
             % Make a libpointer to avoid copying the matrix
             if(obj.Is_synced == false)
                 samplePtr = libpointer('doublePtr', obj.Samples);
-                calllib(obj.Splinter_alias, 'datatable_add_samples', obj.Handle, samplePtr, obj.Num_samples, obj.X_dim) 
+                calllib(Splinter.getInstance().get_alias(), 'datatable_add_samples', obj.Handle, samplePtr, obj.Num_samples, obj.X_dim) 
                 obj.Is_synced = true;
             end
         end
         
         % Destructor. Deletes the internal DataTable object.
         function delete(obj)
-            calllib(obj.Splinter_alias, 'datatable_delete', obj.Handle) 
+            calllib(Splinter.getInstance().get_alias(), 'datatable_delete', obj.Handle) 
         end
         
         % Internal use only

@@ -1,4 +1,4 @@
-classdef PSpline < Spline
+classdef PSpline < Approximant
     properties (Access = protected)
         Handle
         
@@ -20,14 +20,14 @@ classdef PSpline < Spline
             if(~exist('lambda', 'var'))
                 lambda = 0.03;
             end
-            fprintf('%d\', lambda)
+            
             % Set to -1 so we don't try to delete the library instance in case type is invalid
             obj.Handle = -1;
             
-            obj.Handle = calllib(obj.Splinter_alias, obj.Constructor_function, dataTable.get_handle(), lambda);
+            obj.Handle = calllib(Splinter.getInstance().get_alias(), obj.Constructor_function, dataTable.get_handle(), lambda);
 
             if(obj.Handle == 0)
-                error('Could not create BSpline!');
+                error('Could not create PSpline!');
             end
         end
     end

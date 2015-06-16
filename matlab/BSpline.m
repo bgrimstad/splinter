@@ -1,4 +1,4 @@
-classdef BSpline < Spline
+classdef BSpline < Approximant
     properties (Access = protected)
         Handle
         
