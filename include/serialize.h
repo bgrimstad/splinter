@@ -39,6 +39,7 @@
 #include <numeric>
 #include <set>
 #include <datasample.h>
+#include <stdint.h>
 
 namespace SPLINTER
 {

@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#ifndef SPLINTER_SPLINE_H
-#define SPLINTER_SPLINE_H
+#ifndef SPLINTER_APPROXIMANT_H
+#define SPLINTER_APPROXIMANT_H
 
 #include "generaldefinitions.h"
 
@@ -54,4 +54,4 @@ public:
 
 } // namespace SPLINTER
 
-#endif // SPLINTER_SPLINE_H
+#endif // SPLINTER_APPROXIMANT_H
