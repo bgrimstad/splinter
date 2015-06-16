@@ -41,6 +41,8 @@ classdef DataTable < handle
         % to the library by the finish-method. This is to avoid a call via
         % calllib every time a sample is inserted. This method is about
         % twice as fast as inserting a sample one by one into the library.
+        % Note that you *MUST* call finish before using this DataTable to
+        % create an Approximant from it, unless you want to use old data.
         function add_samples(obj, x, y)
             obj.Samples(obj.Num_samples+1,:) = [x y];
             if(obj.Num_samples == 0)
