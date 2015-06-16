@@ -13,7 +13,7 @@ When sampling is expensive and/or scattered (not on a grid) the radial basis fun
 ![Illustration of a B-spline](assets/bspline.png)
 Figure: Illustration of a cubic B-spline generated with the SPLINTER library.
 
-The workflow is simple: sample a function and build an approximation. As the following figure illustrates, a possible workflow is to run this process iteratively until a satisfactory approximation has been built.
+The workflow is simple: sample a function and build an approximation. As the following figure illustrates, this process can be run iteratively until a satisfactory approximation has been built.
 
 ![Possbile workflow with SPLINTER.](assets/workflow.png)
 Figure: A possbile workflow for building approximations with SPLINTER.
