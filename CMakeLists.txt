@@ -120,49 +120,25 @@ set(MATLAB_SRC_LIST
     include/bsplinebasis.h
     include/bsplinebasis1d.h
     include/pspline.h
-    include/rbfspline.h
+    include/radialbasisfunction.h
     include/datasample.h
     include/datatable.h
     include/generaldefinitions.h
     include/linearsolvers.h
     include/serialize.h
     include/mykroneckerproduct.h
-	include/matlab.h
+    include/matlab.h
     src/bspline.cpp
     src/bsplinebasis.cpp
     src/bsplinebasis1d.cpp
     src/pspline.cpp
-    src/rbfspline.cpp
+    src/radialbasisfunction.cpp
     src/datasample.cpp
     src/datatable.cpp
     src/mykroneckerproduct.cpp
-	src/matlab.cpp
+    src/matlab.cpp
 )
 
-set(MATLAB_SRC_LIST
-    include/spline.h
-    include/bspline.h
-    include/bsplinebasis.h
-    include/bsplinebasis1d.h
-    include/pspline.h
-    include/rbfspline.h
-    include/datasample.h
-    include/datatable.h
-    include/generaldefinitions.h
-    include/linearsolvers.h
-    include/serialize.h
-    include/mykroneckerproduct.h
-	include/matlab.h
-    src/bspline.cpp
-    src/bsplinebasis.cpp
-    src/bsplinebasis1d.cpp
-    src/pspline.cpp
-    src/rbfspline.cpp
-    src/datasample.cpp
-    src/datatable.cpp
-    src/mykroneckerproduct.cpp
-	src/matlab.cpp
-)
 
 set(SHARED_LIBRARY splinter-${SPLINTER_VERSION})
 set(STATIC_LIBRARY splinter-static-${SPLINTER_VERSION})

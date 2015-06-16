@@ -1,7 +1,8 @@
 #ifndef SPLINTER_MATLAB_H
 #define SPLINTER_MATLAB_H
 
-#define obj_ptr int *
+/*#define obj_ptr int * */
+typedef int *obj_ptr;
 
 #ifndef API
 # define API __declspec(dllexport)
@@ -31,8 +32,6 @@
 		API void bspline_delete(obj_ptr bspline_ptr);
 
 
-		API PSpline *get_pspline(obj_ptr pspline_ptr);
-
 		API obj_ptr pspline_init(obj_ptr pspline_ptr, double lambda);
 
 		API double pspline_eval(obj_ptr pspline_ptr, double *x, int x_dim);
@@ -42,6 +41,17 @@
 		API double *pspline_eval_hessian(obj_ptr pspline_ptr, double *x, int x_dim);
 
 		API void pspline_delete(obj_ptr pspline_ptr);
+
+
+		API obj_ptr rbf_init(obj_ptr rbf_ptr, int type_index, int normalized);
+
+		API double rbf_eval(obj_ptr rbf_ptr, double *x, int x_dim);
+
+		API double *rbf_eval_jacobian(obj_ptr rbf_ptr, double *x, int x_dim);
+
+		API double *rbf_eval_hessian(obj_ptr rbf_ptr, double *x, int x_dim);
+
+		API void rbf_delete(obj_ptr rbf_ptr);
 #ifdef __cplusplus
 	}
 #endif
