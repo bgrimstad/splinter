@@ -33,3 +33,4 @@ Note that the sparse matrix support of Eigen is particularly important for the s
 ###Guides
 * [Installation](docs/install.md)
 * [Basic usage](docs/basic_usage.md)
+* [MatLab interface](docs/MATLAB.md)
