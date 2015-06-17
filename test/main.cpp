@@ -49,16 +49,10 @@ void hessianTest() {
 	auto hessian = b.evalHessian(x);
 
 	std::cout << hessian;
-
-	char c;
-	std::cin >> c;
 }
 
 void runExample()
 {
-	hessianTest();
-	exit(1);
-
     // Create new DataTable to manage samples
     DataTable samples;
 
@@ -506,6 +500,8 @@ void run_tests()
     testSplineDerivative();
 
     runRecursiveDomainReductionTest();
+
+    hessianTest();
 }
 
 int main(int argc, char **argv)
