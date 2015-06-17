@@ -40,6 +40,11 @@ public:
     virtual DenseMatrix evalHessian(DenseVector x) const = 0;
 
     /*
+     * Get the dimension
+     */
+    virtual unsigned int getNumVariables() const = 0;
+
+    /*
     * Serialize and save spline to fileName
     * Throws if file could not be opened
     */

@@ -63,7 +63,7 @@ public:
     DenseMatrix evalHessian(DenseVector x) const;
 
     // Getters
-    unsigned int getNumVariables() const { return numVariables; }
+    unsigned int getNumVariables() const override { return numVariables; }
     unsigned int getNumControlPoints() const { return coefficients.cols(); }
     std::vector<unsigned int> getNumBasisFunctions() const;
     std::vector< std::vector<double> > getKnotVectors() const;

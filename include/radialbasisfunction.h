@@ -129,7 +129,7 @@ public:
     //    std::vector<double> getDomainUpperBound() const;
     //    std::vector<double> getDomainLowerBound() const;
 
-    unsigned int getNumVariables() const { return dim; }
+    unsigned int getNumVariables() const override { return dim; }
 
     void save(const std::string fileName) const override {}
     void load(const std::string fileName) override {}
