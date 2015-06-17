@@ -115,7 +115,7 @@ set(SRC_LIST
 )
 
 set(MATLAB_SRC_LIST
-    include/spline.h
+    include/approximant.h
     include/bspline.h
     include/bsplinebasis.h
     include/bsplinebasis1d.h
