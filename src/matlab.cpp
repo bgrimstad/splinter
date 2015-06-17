@@ -65,10 +65,6 @@ extern "C"
 	obj_ptr datatable_init() {
 		lastFuncCallError = 0;
 		obj_ptr dataTable = (obj_ptr) new DataTable();
-		if (dataTable == nullptr) {
-			lastFuncCallError = 1;
-			return nullptr;
-		}
 
 		objects.insert(dataTable);
 		return dataTable;
@@ -156,10 +152,6 @@ extern "C"
 		}
 
 		obj_ptr bspline = (obj_ptr) new BSpline(*table, bsplineType);
-		if (bspline == nullptr) {
-			lastFuncCallError = 1;
-			return nullptr;
-		}
 		objects.insert(bspline);
 		return bspline;
 	}
@@ -251,10 +243,6 @@ extern "C"
 		}
 
 		obj_ptr pspline = (obj_ptr) new PSpline(*table, lambda);
-		if (pspline == nullptr) {
-			lastFuncCallError = 1;
-			return nullptr;
-		}
 		objects.insert(pspline);
 		return pspline;
 	}
@@ -367,13 +355,9 @@ extern "C"
 			break;
 		}
 
-		bool norm = normalized == 0 ? false : true;
+		bool norm = normalized != 0;
 
 		obj_ptr rbf = (obj_ptr) new RadialBasisFunction(*table, type, norm);
-		if (rbf == nullptr) {
-			lastFuncCallError = 1;
-			return nullptr;
-		}
 		objects.insert(rbf);
 		return rbf;
 	}
