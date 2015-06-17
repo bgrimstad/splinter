@@ -22,9 +22,13 @@
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 
+
 #ifndef API
-#define API 
-//__declspec(dllexport)
+# ifdef _MSC_VER
+#  define API __declspec(dllexport)
+# else
+#  define API
+# endif
 #endif
 
 namespace SPLINTER

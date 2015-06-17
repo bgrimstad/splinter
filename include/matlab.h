@@ -5,7 +5,11 @@
 typedef int *obj_ptr;
 
 #ifndef API
-# define API __declspec(dllexport)
+# ifdef _MSC_VER
+#  define API __declspec(dllexport)
+# else
+#  define API
+# endif
 #endif
 
 #ifdef __cplusplus
