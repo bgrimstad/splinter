@@ -9,21 +9,50 @@ project(splinter)
 cmake_minimum_required(VERSION 2.8)
 set(CMAKE_BUILD_TYPE Release)
 
-if(WIN32)
-    set(CMAKE_CXX_FLAGS_RELEASE "-O2")
-endif(WIN32)
-
 set(SPLINTER_VERSION_MAJOR 1)
 set(SPLINTER_VERSION_MINOR 2)
 set(SPLINTER_VERSION ${SPLINTER_VERSION_MAJOR}-${SPLINTER_VERSION_MINOR})
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
-include("${CMAKE_SOURCE_DIR}/cmake/c11Support.cmake")
+# Detect platform
+string(COMPARE EQUAL "Linux"   ${CMAKE_SYSTEM_NAME} LINUX)
+string(COMPARE EQUAL "Windows" ${CMAKE_SYSTEM_NAME} WINDOWS)
+string(COMPARE EQUAL "Darwin"  ${CMAKE_SYSTEM_NAME} OS_X)
+
+# Detect compiler
+string(COMPARE EQUAL "Clang" ${CMAKE_CXX_COMPILER_ID} CLANG)
+string(COMPARE EQUAL "GNU"   ${CMAKE_CXX_COMPILER_ID} GCC)
+string(COMPARE EQUAL "Intel" ${CMAKE_CXX_COMPILER_ID} INTEL)
+string(COMPARE EQUAL "MSVC"  ${CMAKE_CXX_COMPILER_ID} MSVC)
+
+message("Clang: ${CLANG}")
+message("GCC: ${GCC}")
+message("Intel: ${INTEL}")
+message("MSVC: ${MSVC}")
+message("Linux: ${LINUX}")
+message("Windows: ${WINDOWS}")
+message("OS X: ${OS_X}")
+
+if(WINDOWS AND GCC)
+    # GCC on Windows generates wrong code with -03
+    set(CMAKE_CXX_FLAGS_RELEASE "-O2")
+
+else(WINDOWS AND GCC)
+
+    if(MSVC)
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Ox")
+    else(MSVC)
+        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wno-long-long -std=c++11")
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -std=c++11")
+    endif(MSVC)
+
+endif(WINDOWS AND GCC)
+
 
 if(UNIX)
     set(DEFAULT_EIGEN_DIRECTORY "/usr/local/include/eigen3")
-elseif(WIN32)
+elseif(WINDOWS)
     # TODO: This surely can't be the most logical place to look for Eigen
     set(DEFAULT_EIGEN_DIRECTORY "C:/Program Files/Eigen")
 endif(UNIX)
@@ -85,6 +114,7 @@ set(SRC_LIST
     src/mykroneckerproduct.cpp
 )
 
+
 set(SHARED_LIBRARY splinter-${SPLINTER_VERSION})
 set(STATIC_LIBRARY splinter-static-${SPLINTER_VERSION})
 
@@ -124,11 +154,6 @@ install(
     DESTINATION ${LIBRARY_DIRECTORY}
 )
 
-# Used to debug warnings
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-long-long -pedantic")
-# Need to specify c++ std on OSX Yosemite
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-long-long -std=c++11")
-
 # Doxygen documentation
 find_package(Doxygen)
 
@@ -148,3 +173,6 @@ if(DOXYGEN_FOUND)
     VERBATIM)
     
 endif(DOXYGEN_FOUND)
+
+message("CMAKE_CXX_FLAGS_DEBUG: ${CMAKE_CXX_FLAGS_DEBUG}")
+message("CMAKE_CXX_FLAGS_RELEASE: ${CMAKE_CXX_FLAGS_RELEASE}")
