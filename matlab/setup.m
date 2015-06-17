@@ -1,7 +1,8 @@
 function setup()
     % Change this to the directory where the MatLab interface of SPLINTER
     % is installed.
-    splinter_path = '/home/anders/splinter-matlab';
+    %splinter_path = '/home/anders/splinter-matlab';
+    splinter_path = 'C:\Users\Anders\Documents\splinter-matlab';
 
     % Add the directory containing the MatLab interface of SPLINTER to the
     % search path that MatLab searches through to find .m files.
