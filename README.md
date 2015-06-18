@@ -25,6 +25,17 @@ By making SPLINTER publicly available we hope to help anyone looking for a multi
 
 Please let us know by what you think about the library. Together we can make a great library - one that appears to be simple and dull, but that is packing some serious horsepower under the hood.
 
+If you use SPLINTER in a scientific work we kindly ask you to cite it. You can cite it as shown in the bibtex entry below (remember to update the date accessed).
+```
+@misc{SPLINTER,
+  title={{SPLINTER: a library for multivariate function approximation}},
+  author={Bjarne Grimstad and others},
+  howpublished={\url{http://github.com/bgrimstad/splinter}},
+  year={2015},
+  note={Accessed: 2015-05-16}
+}
+```
+
 ###Requirements for use
 * [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page) (tested with versions 3.2.1, 3.2.2 and 3.2.3)
 
