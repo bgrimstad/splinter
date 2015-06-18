@@ -8,7 +8,7 @@
 */
 
 #include "pspline.h"
-#include "include/linearsolvers.h"
+#include "linearsolvers.h"
 
 namespace SPLINTER
 {

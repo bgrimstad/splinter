@@ -7,7 +7,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include "include/bsplinebasis1d.h"
+#include "bsplinebasis1d.h"
 #include <iostream>
 #include <algorithm>
 

@@ -8,7 +8,7 @@
 */
 
 #include "radialbasisfunction.h"
-#include "include/linearsolvers.h"
+#include "linearsolvers.h"
 #include "Eigen/SVD"
 
 namespace SPLINTER
