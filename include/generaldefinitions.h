@@ -15,14 +15,6 @@
     #include <iomanip>
 #endif // NDEBUG
 
-#include <exception>
-#include <stdexcept>
-
-#include <vector>
-#include <Eigen/Dense>
-#include <Eigen/Sparse>
-
-
 #ifndef API
 # ifdef _MSC_VER
 #  define API __declspec(dllexport)
@@ -30,6 +22,13 @@
 #  define API
 # endif
 #endif
+
+#include <exception>
+#include <stdexcept>
+
+#include <vector>
+#include <Eigen/Dense>
+#include <Eigen/Sparse>
 
 namespace SPLINTER
 {

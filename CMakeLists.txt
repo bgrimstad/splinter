@@ -139,7 +139,6 @@ set(MATLAB_SRC_LIST
     src/matlab.cpp
 )
 
-
 set(SHARED_LIBRARY splinter-${SPLINTER_VERSION})
 set(STATIC_LIBRARY splinter-static-${SPLINTER_VERSION})
 set(MATLAB_LIBRARY splinter-matlab-${SPLINTER_VERSION})
@@ -180,7 +179,6 @@ install(
     TARGETS ${STATIC_LIBRARY}
     DESTINATION ${LIBRARY_DIRECTORY}
 )
-
 
 # Doxygen documentation
 find_package(Doxygen)

@@ -22,7 +22,7 @@ namespace SPLINTER
  * DataTable is a class for storing multidimensional data samples (x,y).
  * The samples are stored in a continuously sorted table.
  */
-	class API DataTable
+class API DataTable
 {
 public:
     DataTable();
