@@ -8,7 +8,7 @@ The B-spline may approximate any multivariate function sampled on a grid. The us
 
 The user may create a penalized B-spline (P-spline) that smooths the data instead of interpolating it. The construction of a P-spline is more computationally demanding than the B-spline - a large least-square problem must be solved - bringing the practical limit on the number of samples down to about 10 000.
 
-When sampling is expensive and/or scattered (not on a grid) the radial basis function splines may be utilized for function approximation. The user should expect a high computational cost for constructing and evaluating a radial basis function spline, even with a modest number of samples (up to about 1 000 samples). 
+When sampling is expensive and/or scattered (not on a grid) a radial basis function may be utilized for function approximation. The user should expect a high computational cost for constructing and evaluating a radial basis function spline, even with a modest number of samples (up to about 1 000 samples). 
 
 ![Illustration of a B-spline](assets/bspline.png)
 Figure: Illustration of a cubic B-spline generated with the SPLINTER library.
