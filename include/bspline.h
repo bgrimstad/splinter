@@ -96,7 +96,7 @@ public:
 
 protected:
 
-    BSpline() {}
+	BSpline();
 
     BSplineBasis basis;
     DenseMatrix knotaverages; // One row per input

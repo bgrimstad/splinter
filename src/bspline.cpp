@@ -10,7 +10,7 @@
 #include "bspline.h"
 #include "bsplinebasis.h"
 #include "mykroneckerproduct.h"
-#include "Eigen/unsupported/Eigen/KroneckerProduct"
+#include "unsupported/Eigen/KroneckerProduct"
 #include "linearsolvers.h"
 #include "serialize.h"
 #include <iostream>
@@ -18,6 +18,10 @@
 namespace SPLINTER
 {
 
+BSpline::BSpline()
+{
+
+}
 /*
  * Constructors for multivariate B-splines with explicit data
  */
