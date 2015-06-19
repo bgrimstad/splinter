@@ -96,7 +96,6 @@ extern "C"
 
 		DenseVector vec(x_dim);
 
-		int k = 0;
 		for (int i = 0; i < n_samples; ++i) {
 			for (int j = 0; j < x_dim; ++j) {
 				vec(j) = x[i + j * n_samples];
