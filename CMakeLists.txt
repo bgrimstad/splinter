@@ -5,20 +5,34 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-project(splinter)
+project(SPLINTER)
 cmake_minimum_required(VERSION 2.8)
-set(CMAKE_BUILD_TYPE Release)
+string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
 
-set(SPLINTER_VERSION_MAJOR 1)
-set(SPLINTER_VERSION_MINOR 2)
-set(SPLINTER_VERSION ${SPLINTER_VERSION_MAJOR}-${SPLINTER_VERSION_MINOR})
+set(VERSION_MAJOR 1)
+set(VERSION_MINOR 3)
+set(VERSION ${VERSION_MAJOR}-${VERSION_MINOR})
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+# Default configuration values
+set(DEFAULT_BUILD_TYPE "Release")
+set(DEFAULT_BITNESS "32") # Can be overriden by user or generator selection
+set(DEFAULT_HEADER_INSTALL_DIRECTORY "include")
+set(DEFAULT_LIBRARY_INSTALL_DIRECTORY "lib")
+set(DEFAULT_EIGEN_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/Eigen)
 
 # Detect platform
 string(COMPARE EQUAL "Linux"   ${CMAKE_SYSTEM_NAME} LINUX)
 string(COMPARE EQUAL "Windows" ${CMAKE_SYSTEM_NAME} WINDOWS)
 string(COMPARE EQUAL "Darwin"  ${CMAKE_SYSTEM_NAME} OS_X)
+if(LINUX)
+    set(OS_STRING "Linux")
+elseif(WINDOWS)
+    set(OS_STRING "WINDOWS")
+elseif(OS_X)
+    set(OS_STRING "OSX")
+else()
+    set(OS_STRING "Unknown")
+endif()
 
 # Detect compiler
 string(COMPARE EQUAL "Clang" ${CMAKE_CXX_COMPILER_ID} CLANG)
@@ -26,84 +40,68 @@ string(COMPARE EQUAL "GNU"   ${CMAKE_CXX_COMPILER_ID} GCC)
 string(COMPARE EQUAL "Intel" ${CMAKE_CXX_COMPILER_ID} INTEL)
 string(COMPARE EQUAL "MSVC"  ${CMAKE_CXX_COMPILER_ID} MSVC)
 
-message("Clang: ${CLANG}")
-message("GCC: ${GCC}")
-message("Intel: ${INTEL}")
-message("MSVC: ${MSVC}")
-message("Linux: ${LINUX}")
-message("Windows: ${WINDOWS}")
-message("OS X: ${OS_X}")
+# Set build type
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE ${DEFAULT_BUILD_TYPE})
+endif()
+string(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE)
 
+# Set bitness
+if(BITNESS EQUAL "64")
+	set(BITNESS "64")
+else()
+	set(BITNESS ${DEFAULT_BITNESS})
+endif()
+
+# GCC on Windows generates wrong code with -O3
 if(WINDOWS AND GCC)
-    # GCC on Windows generates wrong code with -03
     set(CMAKE_CXX_FLAGS_RELEASE "-O2")
+    # -ftree-vectorize is turned on by -O3 but not -O2.
+    # Investigate if the issue of generating wrong code still exists before uncommenting the following line.
+    # set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ftree-vectorize")
+endif()
 
-else(WINDOWS AND GCC)
+if(MSVC)
+    # User cannot specify bitness with MSVC, so set it to whatever the generator is.
+    string(TOLOWER ${CMAKE_GENERATOR} GENERATOR)
+    if(GENERATOR MATCHES ".*win64.*")
+        set(BITNESS "64")
+    else()
+        set(BITNESS "32")
+    endif()
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Ox")
 
-    if(MSVC)
-        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Ox")
-    else(MSVC)
-        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wno-long-long -std=c++11")
-        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -std=c++11")
-    endif(MSVC)
-
-endif(WINDOWS AND GCC)
-
-
-if(UNIX)
-    set(DEFAULT_EIGEN_DIRECTORY "/usr/local/include/eigen3")
-elseif(WINDOWS)
-    # TODO: This surely can't be the most logical place to look for Eigen
-    set(DEFAULT_EIGEN_DIRECTORY "C:/Program Files/Eigen")
-endif(UNIX)
-
-set(DEFAULT_HEADER_DIRECTORY "include")
-set(DEFAULT_LIBRARY_DIRECTORY "lib")
+elseif(GCC OR CLANG)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m${BITNESS} -std=c++11")
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wno-long-long")
+#   TODO: Intel flags
+endif()
 
 if(NOT EIGEN_DIRECTORY)
-    find_package(Eigen3 REQUIRED) # Attempt to automatically locate Eigen
-    if(EIGEN3_FOUND)
-        set(EIGEN_DIRECTORY ${EIGEN3_INCLUDE_DIR})
-    else(EIGEN3_FOUND)
-        set(EIGEN_DIRECTORY ${DEFAULT_EIGEN_DIRECTORY})
-    endif(EIGEN3_FOUND)
-endif(NOT EIGEN_DIRECTORY)
+	set(EIGEN_DIRECTORY ${DEFAULT_EIGEN_DIRECTORY})
+endif()
 # CACHE STRING = Display the option with help text in CMakeCache.txt
 set(EIGEN_DIRECTORY ${EIGEN_DIRECTORY} CACHE STRING "Directory where the Eigen library is located.")
 
-if(NOT HEADER_DIRECTORY)
-    set(HEADER_DIRECTORY ${DEFAULT_HEADER_DIRECTORY})
-endif(NOT HEADER_DIRECTORY)
+if(NOT HEADER_INSTALL_DIRECTORY)
+    set(HEADER_INSTALL_DIRECTORY ${DEFAULT_HEADER_INSTALL_DIRECTORY})
+endif()
 # CACHE STRING = Display the option with help text in CMakeCache.txt
-set(HEADER_DIRECTORY ${HEADER_DIRECTORY} CACHE STRING "Absolute path, or, if relative, relative to CMAKE_INSTALL_PREFIX to install the header files.")
+set(HEADER_INSTALL_DIRECTORY ${HEADER_INSTALL_DIRECTORY} CACHE STRING "Absolute path, or, if relative, relative to CMAKE_INSTALL_PREFIX to install the header files.")
 
-if(NOT LIBRARY_DIRECTORY)
-    set(LIBRARY_DIRECTORY ${DEFAULT_LIBRARY_DIRECTORY})
-endif(NOT LIBRARY_DIRECTORY)
+if(NOT LIBRARY_INSTALL_DIRECTORY)
+    set(LIBRARY_INSTALL_DIRECTORY ${DEFAULT_LIBRARY_INSTALL_DIRECTORY})
+endif()
 # CACHE STRING = Display the option with help text in CMakeCache.txt
-set(LIBRARY_DIRECTORY ${LIBRARY_DIRECTORY} CACHE STRING "Absolute path, or, if relative, relative to CMAKE_INSTALL_PREFIX to install the library file.")
+set(LIBRARY_INSTALL_DIRECTORY ${LIBRARY_INSTALL_DIRECTORY} CACHE STRING "Absolute path, or, if relative, relative to CMAKE_INSTALL_PREFIX to install the library file.")
 
-# These are the headers we need for compilation
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+# Header directories
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${EIGEN_DIRECTORY})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/test)
 
-# These are the sources we need for compilation of the library (not the testing executables)
-#aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/src SRC_LIST)
+# These are the sources we need for compilation of the library
 set(SRC_LIST
-    include/approximant.h
-    include/bspline.h
-    include/bsplinebasis.h
-    include/bsplinebasis1d.h
-    include/pspline.h
-    include/radialbasisfunction.h
-    include/datasample.h
-    include/datatable.h
-    include/generaldefinitions.h
-    include/linearsolvers.h
-    include/serialize.h
-    include/mykroneckerproduct.h
     src/bspline.cpp
     src/bsplinebasis.cpp
     src/bsplinebasis1d.cpp
@@ -114,44 +112,19 @@ set(SRC_LIST
     src/mykroneckerproduct.cpp
 )
 
-set(MATLAB_SRC_LIST
-    include/approximant.h
-    include/bspline.h
-    include/bsplinebasis.h
-    include/bsplinebasis1d.h
-    include/pspline.h
-    include/radialbasisfunction.h
-    include/datasample.h
-    include/datatable.h
-    include/generaldefinitions.h
-    include/linearsolvers.h
-    include/serialize.h
-    include/mykroneckerproduct.h
-    include/matlab.h
-    src/bspline.cpp
-    src/bsplinebasis.cpp
-    src/bsplinebasis1d.cpp
-    src/pspline.cpp
-    src/radialbasisfunction.cpp
-    src/datasample.cpp
-    src/datatable.cpp
-    src/mykroneckerproduct.cpp
-    src/matlab.cpp
-)
+set(SHARED_LIBRARY ${PROJECT_NAME_LOWER}-${VERSION})
+set(STATIC_LIBRARY ${PROJECT_NAME_LOWER}-static-${VERSION})
+set(MATLAB_LIBRARY ${PROJECT_NAME_LOWER}-matlab-${VERSION})
 
-set(SHARED_LIBRARY splinter-${SPLINTER_VERSION})
-set(STATIC_LIBRARY splinter-static-${SPLINTER_VERSION})
-set(MATLAB_LIBRARY splinter-matlab-${SPLINTER_VERSION})
-
-set(SHARED_LIBRARY_TEST "splinter-shared-test")
-set(STATIC_LIBRARY_TEST "splinter-static-test")
-set(SERIALIZE_TEST "splinter-serialize-test")
+set(SHARED_LIBRARY_TEST "${PROJECT_NAME_LOWER}-shared-test")
+set(STATIC_LIBRARY_TEST "${PROJECT_NAME_LOWER}-static-test")
+set(SERIALIZE_TEST "${PROJECT_NAME_LOWER}-serialize-test")
 set(TESTING_UTILITIES ${CMAKE_CURRENT_SOURCE_DIR}/test/testingutilities.cpp)
 
 # Add output library: add_library(libname [SHARED | STATIC] sourcelist)
 add_library(${SHARED_LIBRARY} SHARED ${SRC_LIST})
 add_library(${STATIC_LIBRARY} STATIC ${SRC_LIST})
-add_library(${MATLAB_LIBRARY} SHARED ${MATLAB_SRC_LIST})
+add_library(${MATLAB_LIBRARY} SHARED ${MATLAB_SRC_LIST} src/matlab.cpp)
 
 # Testing executables
 add_executable(${SHARED_LIBRARY_TEST} ${CMAKE_CURRENT_SOURCE_DIR}/test/main.cpp ${TESTING_UTILITIES})
@@ -163,28 +136,41 @@ target_link_libraries(${STATIC_LIBRARY_TEST} ${STATIC_LIBRARY})
 add_executable(${SERIALIZE_TEST} ${CMAKE_CURRENT_SOURCE_DIR}/test/serialize.cpp ${TESTING_UTILITIES})
 target_link_libraries(${SERIALIZE_TEST} ${STATIC_LIBRARY})
 
+# Make the directory structure expected by the MatLab interface
+install(
+    DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/matlab
+    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-matlab
+)
+install(
+    FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/matlab.h
+    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-matlab/include
+)
+install(
+    TARGETS ${MATLAB_LIBRARY}
+    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-matlab/lib/${OS_STRING}/${BITNESS}bit
+)
+
 # Install the header files
 install(
     DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
-    DESTINATION ${HEADER_DIRECTORY}
+    DESTINATION ${HEADER_INSTALL_DIRECTORY}
 )
 
 # Install the shared library file
 install(
     TARGETS ${SHARED_LIBRARY}
-    DESTINATION ${LIBRARY_DIRECTORY}
+    DESTINATION ${LIBRARY_INSTALL_DIRECTORY}
 )
 # Install the static library file
 install(
     TARGETS ${STATIC_LIBRARY}
-    DESTINATION ${LIBRARY_DIRECTORY}
+    DESTINATION ${LIBRARY_INSTALL_DIRECTORY}
 )
 
 # Doxygen documentation
 find_package(Doxygen)
 
 if(DOXYGEN_FOUND)
-
   configure_file(
     ${PROJECT_SOURCE_DIR}/docs/Doxyfile.in
     ${PROJECT_BINARY_DIR}/Doxyfile
@@ -198,7 +184,18 @@ if(DOXYGEN_FOUND)
     COMMENT "Generating API documentation with Doxygen"
     VERBATIM)
     
-endif(DOXYGEN_FOUND)
+endif()
 
-message("CMAKE_CXX_FLAGS_DEBUG: ${CMAKE_CXX_FLAGS_DEBUG}")
-message("CMAKE_CXX_FLAGS_RELEASE: ${CMAKE_CXX_FLAGS_RELEASE}")
+if(CMAKE_BUILD_TYPE STREQUAL DEBUG)
+    message("Detected compiler and platform:")
+	message("Clang:   ${CLANG}")
+	message("GCC:     ${GCC}")
+	message("Intel:   ${INTEL}")
+	message("MSVC:    ${MSVC}")
+	message("Linux:   ${LINUX}")
+	message("Windows: ${WINDOWS}")
+	message("OS X:    ${OS_X}")
+endif()
+
+message("Configuring ${PROJECT_NAME} version ${VERSION} in ${CMAKE_BUILD_TYPE} mode (${BITNESS} bit)")
+message("Compiler flags: ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}}")

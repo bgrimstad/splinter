@@ -10,7 +10,7 @@
 #include "bspline.h"
 #include "bsplinebasis.h"
 #include "mykroneckerproduct.h"
-#include "unsupported/Eigen/KroneckerProduct"
+#include "Eigen/unsupported/Eigen/KroneckerProduct"
 #include "linearsolvers.h"
 #include "serialize.h"
 #include <iostream>

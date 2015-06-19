@@ -1,14 +1,16 @@
 ##Installation
 
+*Note: This guide is slightly out of date, a newer version is under development.*
+
 You can compile the library yourself by following the guide below, or you can download binaries and headers [here](https://github.com/bgrimstad/splinter/releases).
 
 There are two separate guides for compilation:
 * [UNIX](#compile-on-unix)
 * [Windows](#compile-on-windows)
 
-Note that for both guides the same [options](#options-both-platforms) to CMake apply.
+Note that most of the [options](#options-both-platforms) to CMake are the same for both guides.
 
-CMake will try to automatically find where Eigen is installed, but if this fails you can specify it yourself with the option `EIGEN_DIRECTORY`. See [options](#options-both-platforms) for further information on how to use it.
+We have included Eigen in the SPLINTER repository, but if you wish to use your own version, you can specify the path to it yourself with the option `EIGEN_DIRECTORY`. See [options](#options-both-platforms) for further information on how to use it.
 
 ##Compile on UNIX
 ####Requirements
@@ -17,7 +19,7 @@ CMake will try to automatically find where Eigen is installed, but if this fails
 * [GCC](https://gcc.gnu.org/) or an equivalent C++11 compiler
 
 
-1. Download and install [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page)
+1. (Optional) Download and install [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page)
 2. `sudo apt-get update && sudo apt-get install git cmake build-essential`
 3. `git clone https://github.com/bgrimstad/splinter.git`
 4. `cd splinter`
@@ -27,8 +29,6 @@ CMake will try to automatically find where Eigen is installed, but if this fails
 8. `make install`
 
 ####Troubleshooting
-`fatal error: Eigen/Dense: No such file or directory`: The compiler could not find Eigen. You either need to install Eigen, and then run step #6 again (with `-DEIGEN_DIRECTORY="/path/to/eigen"` if Eigen did not install to the default directory (/usr/local/include/eigen3)).
-
 `make: *** [install] Error 1`: You probably need elevated rights to install the library because you are trying to write to a directory you don't have permission to write to. Either change the install paths via the options, or run step #8 again like this: `sudo make install`.
 
 ---
@@ -36,7 +36,7 @@ CMake will try to automatically find where Eigen is installed, but if this fails
 ##Compile on Windows
 
 1. Clone https://github.com/bgrimstad/splinter
-2. Download [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page).
+2. (Optional) Download [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page).
   1. Extract the zip-file into a new folder, and write down the location of that folder
 3. Download and install [CMake](http://www.cmake.org/download/).
 4. Download and install [MinGW](http://sourceforge.net/projects/mingw/files/latest/download?source=files).
@@ -66,31 +66,28 @@ CMake will try to automatically find where Eigen is installed, but if this fails
 The output files should be in your build folder. If you wish to have them installed you can type "mingw32-make install".
 
 ####Troubleshooting
-`fatal error: Eigen/Dense: No such file or directory`: The compiler could not find Eigen. You either need to install Eigen, and then run step #6 again (with `-DEIGEN_DIRECTORY="/path/to/eigen"` if Eigen did not install to the default directory (C:/Program Files/eigen3)).
-
-If using MSVC and you get compile errors, that might be because of the version of Eigen you are using. We've found that the library compiles and runs fine with [this](http://bitbucket.org/eigen/eigen/get/3.2.3.zip) version of Eigen.
-
-`cc1plus.exe:-1: error: out of memory allocating (...).`: You need to use GCC version 4.7.0, as later versions introduce this bug. [This](https://code.google.com/p/mingw-builds/downloads/detail?name=x86_64-mingw32-gcc-4.7.0-release-c%2Cc%2B%2B%2Cfortran-sjlj.zip&can=2&q=) version of MinGW should be able to compile the library. To install this version of MinGW you can just delete everything in C:\mingw and replace it with what you find in the archive you downloaded.
+`cc1plus.exe:-1: error: out of memory allocating (...).`: You need to use GCC version <= 4.7.0 or >= 4.9.1, as other versions has this bug. [This](https://code.google.com/p/mingw-builds/downloads/detail?name=x86_64-mingw32-gcc-4.7.0-release-c%2Cc%2B%2B%2Cfortran-sjlj.zip&can=2&q=) version of MinGW should be able to compile the library. To install this version of MinGW you can just delete everything in C:\mingw and replace it with what you find in the archive you downloaded.
 
 ---
 
 ##Options (both platforms)
 
-| Variable name     | Default value                    | Description                               |
-| ----------------- | -------------------------------- | ----------------------------------------- |
-| EIGEN_DIRECTORY   | UNIX: /usr/local/include/eigen3  | Path to the Eigen lib.                    |
-|                   | Windows: C:/Program Files/eigen3 | Path to the Eigen lib.                    |
-| HEADER_DIRECTORY  | include                          | Where the headers should be installed.    |
-| LIBRARY_DIRECTORY | lib                              | Where to install the library file.        |
+| Variable name             | Default value     | Description                                                             |
+| ------------------------- | ----------------- | ----------------------------------------------------------------------- |
+| EIGEN_DIRECTORY           | include/Eigen     | Path to the Eigen lib.                                                  |
+| HEADER_INSTALL_DIRECTORY  | include           | Where the headers should be installed.                                  |
+| LIBRARY_INSTALL_DIRECTORY | lib               | Where to install the library file.                                      |
+| BITNESS                   | 32                | Bitness of the generated binary (32/64 bit). Only works with GCC/Clang. |
+| CMAKE_BUILD_TYPE          | Release           | Build type (Debug / Release)                                            |
 
-These options go along with UNIX step #6 or Windows step #5.2, and are used like this:
+These options go along with UNIX step #6 or Windows step #7.2, and are used like this:
 
     UNIX:
-    cmake .. -DEIGEN_DIRECTORY=/path/to/eigen -DHEADER_DIRECTORY=/home/me/splinter/includes
+    cmake .. -DEIGEN_DIRECTORY=/path/to/eigen -DHEADER_INSTALL_DIRECTORY=/home/me/splinter/includes -DBITNESS=64
     
     
     Windows (in the arguments field):
-    -DEIGEN_DIRECTORY=/path/to/eigen -DHEADER_DIRECTORY=/home/me/splinter/includes
+    -DEIGEN_DIRECTORY=C:/path/to/eigen -DHEADER_INSTALL_DIRECTORY=C:/Users/me/splinter/includes
 
 The syntax is: `-D<VARIABLE_NAME>=<VARIABLE_VALUE>`. If you have any spaces in your value you must surround it with double quotes (").
 

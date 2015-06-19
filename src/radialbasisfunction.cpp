@@ -9,7 +9,7 @@
 
 #include "radialbasisfunction.h"
 #include "linearsolvers.h"
-#include "Eigen/SVD"
+#include "Eigen/Eigen/SVD"
 
 namespace SPLINTER
 {

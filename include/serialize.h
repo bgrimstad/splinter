@@ -33,7 +33,7 @@
 #define SPLINTER_SERIALIZE_H
 
 #include <vector>
-#include <Eigen/Dense>
+#include <Eigen/Eigen/Dense>
 #include <cassert>
 #include <fstream>
 #include <numeric>

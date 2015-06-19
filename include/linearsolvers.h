@@ -11,8 +11,8 @@
 #define SPLINTER_LINEARSOLVER_H
 
 #include "generaldefinitions.h"
-#include "Eigen/IterativeLinearSolvers"
-#include "Eigen/SparseQR"
+#include "Eigen/Eigen/IterativeLinearSolvers"
+#include "Eigen/Eigen/SparseQR"
 
 namespace SPLINTER
 {
