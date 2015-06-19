@@ -55,7 +55,10 @@ endif()
 
 # GCC on Windows generates wrong code with -O3
 if(WINDOWS AND GCC)
-    set(CMAKE_CXX_FLAGS_RELEASE "-O2")
+	# Remove -O3
+	string (REPLACE "-O3" "" CMAKE_CXX_FLAGS_RELEASE ${CMAKE_CXX_FLAGS_RELEASE})
+	# Add -O2
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
     # -ftree-vectorize is turned on by -O3 but not -O2.
     # Investigate if the issue of generating wrong code still exists before uncommenting the following line.
     # set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ftree-vectorize")
