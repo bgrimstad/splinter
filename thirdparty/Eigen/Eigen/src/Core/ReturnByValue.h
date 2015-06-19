@@ -72,8 +72,6 @@ template<typename Derived> class ReturnByValue
     const Unusable& coeff(Index,Index) const { return *reinterpret_cast<const Unusable*>(this); }
     Unusable& coeffRef(Index) { return *reinterpret_cast<Unusable*>(this); }
     Unusable& coeffRef(Index,Index) { return *reinterpret_cast<Unusable*>(this); }
-    template<int LoadMode>  Unusable& packet(Index) const;
-    template<int LoadMode>  Unusable& packet(Index, Index) const;
 #endif
 };
 
@@ -84,15 +82,6 @@ Derived& DenseBase<Derived>::operator=(const ReturnByValue<OtherDerived>& other)
   other.evalTo(derived());
   return derived();
 }
-
-template<typename Derived>
-template<typename OtherDerived>
-Derived& DenseBase<Derived>::lazyAssign(const ReturnByValue<OtherDerived>& other)
-{
-  other.evalTo(derived());
-  return derived();
-}
-
 
 } // end namespace Eigen
 

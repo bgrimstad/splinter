@@ -19,12 +19,10 @@ namespace Eigen {
   *
   * \brief An axis aligned box
   *
-  * \tparam _Scalar the type of the scalar coefficients
-  * \tparam _AmbientDim the dimension of the ambient space, can be a compile time value or Dynamic.
+  * \param _Scalar the type of the scalar coefficients
+  * \param _AmbientDim the dimension of the ambient space, can be a compile time value or Dynamic.
   *
   * This class represents an axis aligned box as a pair of the minimal and maximal corners.
-  * \warning The result of most methods is undefined when applied to an empty box. You can check for empty boxes using isEmpty().
-  * \sa alignedboxtypedefs
   */
 template <typename _Scalar, int _AmbientDim>
 class AlignedBox
@@ -42,21 +40,18 @@ EIGEN_MAKE_ALIGNED_OPERATOR_NEW_IF_VECTORIZABLE_FIXED_SIZE(_Scalar,_AmbientDim)
   /** Define constants to name the corners of a 1D, 2D or 3D axis aligned bounding box */
   enum CornerType
   {
-    /** 1D names @{ */
+    /** 1D names */
     Min=0, Max=1,
-    /** @} */
 
-    /** Identifier for 2D corner @{ */
+    /** Added names for 2D */
     BottomLeft=0, BottomRight=1,
     TopLeft=2, TopRight=3,
-    /** @} */
 
-    /** Identifier for 3D corner  @{ */
+    /** Added names for 3D */
     BottomLeftFloor=0, BottomRightFloor=1,
     TopLeftFloor=2, TopRightFloor=3,
     BottomLeftCeil=4, BottomRightCeil=5,
     TopLeftCeil=6, TopRightCeil=7
-    /** @} */
   };
 
 
@@ -68,33 +63,34 @@ EIGEN_MAKE_ALIGNED_OPERATOR_NEW_IF_VECTORIZABLE_FIXED_SIZE(_Scalar,_AmbientDim)
   inline explicit AlignedBox(Index _dim) : m_min(_dim), m_max(_dim)
   { setEmpty(); }
 
-  /** Constructs a box with extremities \a _min and \a _max.
-   * \warning If either component of \a _min is larger than the same component of \a _max, the constructed box is empty. */
+  /** Constructs a box with extremities \a _min and \a _max. */
   template<typename OtherVectorType1, typename OtherVectorType2>
   inline AlignedBox(const OtherVectorType1& _min, const OtherVectorType2& _max) : m_min(_min), m_max(_max) {}
 
   /** Constructs a box containing a single point \a p. */
   template<typename Derived>
-  inline explicit AlignedBox(const MatrixBase<Derived>& p) : m_min(p), m_max(m_min)
-  { }
+  inline explicit AlignedBox(const MatrixBase<Derived>& a_p)
+  {
+    typename internal::nested<Derived,2>::type p(a_p.derived());
+    m_min = p;
+    m_max = p;
+  }
 
   ~AlignedBox() {}
 
   /** \returns the dimension in which the box holds */
   inline Index dim() const { return AmbientDimAtCompileTime==Dynamic ? m_min.size() : Index(AmbientDimAtCompileTime); }
 
-  /** \deprecated use isEmpty() */
+  /** \deprecated use isEmpty */
   inline bool isNull() const { return isEmpty(); }
 
-  /** \deprecated use setEmpty() */
+  /** \deprecated use setEmpty */
   inline void setNull() { setEmpty(); }
 
-  /** \returns true if the box is empty.
-   * \sa setEmpty */
+  /** \returns true if the box is empty. */
   inline bool isEmpty() const { return (m_min.array() > m_max.array()).any(); }
 
-  /** Makes \c *this an empty box.
-   * \sa isEmpty */
+  /** Makes \c *this an empty box. */
   inline void setEmpty()
   {
     m_min.setConstant( ScalarTraits::highest() );
@@ -179,34 +175,27 @@ EIGEN_MAKE_ALIGNED_OPERATOR_NEW_IF_VECTORIZABLE_FIXED_SIZE(_Scalar,_AmbientDim)
 
   /** \returns true if the point \a p is inside the box \c *this. */
   template<typename Derived>
-  inline bool contains(const MatrixBase<Derived>& p) const
+  inline bool contains(const MatrixBase<Derived>& a_p) const
   {
-    typename internal::nested<Derived,2>::type p_n(p.derived());
-    return (m_min.array()<=p_n.array()).all() && (p_n.array()<=m_max.array()).all();
+    typename internal::nested<Derived,2>::type p(a_p.derived());
+    return (m_min.array()<=p.array()).all() && (p.array()<=m_max.array()).all();
   }
 
   /** \returns true if the box \a b is entirely inside the box \c *this. */
   inline bool contains(const AlignedBox& b) const
   { return (m_min.array()<=(b.min)().array()).all() && ((b.max)().array()<=m_max.array()).all(); }
 
-  /** \returns true if the box \a b is intersecting the box \c *this.
-   * \sa intersection, clamp */
-  inline bool intersects(const AlignedBox& b) const
-  { return (m_min.array()<=(b.max)().array()).all() && ((b.min)().array()<=m_max.array()).all(); }
-
-  /** Extends \c *this such that it contains the point \a p and returns a reference to \c *this.
-   * \sa extend(const AlignedBox&) */
+  /** Extends \c *this such that it contains the point \a p and returns a reference to \c *this. */
   template<typename Derived>
-  inline AlignedBox& extend(const MatrixBase<Derived>& p)
+  inline AlignedBox& extend(const MatrixBase<Derived>& a_p)
   {
-    typename internal::nested<Derived,2>::type p_n(p.derived());
-    m_min = m_min.cwiseMin(p_n);
-    m_max = m_max.cwiseMax(p_n);
+    typename internal::nested<Derived,2>::type p(a_p.derived());
+    m_min = m_min.cwiseMin(p);
+    m_max = m_max.cwiseMax(p);
     return *this;
   }
 
-  /** Extends \c *this such that it contains the box \a b and returns a reference to \c *this.
-   * \sa merged, extend(const MatrixBase&) */
+  /** Extends \c *this such that it contains the box \a b and returns a reference to \c *this. */
   inline AlignedBox& extend(const AlignedBox& b)
   {
     m_min = m_min.cwiseMin(b.m_min);
@@ -214,9 +203,7 @@ EIGEN_MAKE_ALIGNED_OPERATOR_NEW_IF_VECTORIZABLE_FIXED_SIZE(_Scalar,_AmbientDim)
     return *this;
   }
 
-  /** Clamps \c *this by the box \a b and returns a reference to \c *this.
-   * \note If the boxes don't intersect, the resulting box is empty.
-   * \sa intersection(), intersects() */
+  /** Clamps \c *this by the box \a b and returns a reference to \c *this. */
   inline AlignedBox& clamp(const AlignedBox& b)
   {
     m_min = m_min.cwiseMax(b.m_min);
@@ -224,15 +211,11 @@ EIGEN_MAKE_ALIGNED_OPERATOR_NEW_IF_VECTORIZABLE_FIXED_SIZE(_Scalar,_AmbientDim)
     return *this;
   }
 
-  /** Returns an AlignedBox that is the intersection of \a b and \c *this
-   * \note If the boxes don't intersect, the resulting box is empty.
-   * \sa intersects(), clamp, contains()  */
+  /** Returns an AlignedBox that is the intersection of \a b and \c *this */
   inline AlignedBox intersection(const AlignedBox& b) const
   {return AlignedBox(m_min.cwiseMax(b.m_min), m_max.cwiseMin(b.m_max)); }
 
-  /** Returns an AlignedBox that is the union of \a b and \c *this.
-   * \note Merging with an empty box may result in a box bigger than \c *this. 
-   * \sa extend(const AlignedBox&) */
+  /** Returns an AlignedBox that is the union of \a b and \c *this */
   inline AlignedBox merged(const AlignedBox& b) const
   { return AlignedBox(m_min.cwiseMin(b.m_min), m_max.cwiseMax(b.m_max)); }
 
@@ -248,20 +231,20 @@ EIGEN_MAKE_ALIGNED_OPERATOR_NEW_IF_VECTORIZABLE_FIXED_SIZE(_Scalar,_AmbientDim)
 
   /** \returns the squared distance between the point \a p and the box \c *this,
     * and zero if \a p is inside the box.
-    * \sa exteriorDistance(const MatrixBase&), squaredExteriorDistance(const AlignedBox&)
+    * \sa exteriorDistance()
     */
   template<typename Derived>
-  inline Scalar squaredExteriorDistance(const MatrixBase<Derived>& p) const;
+  inline Scalar squaredExteriorDistance(const MatrixBase<Derived>& a_p) const;
 
   /** \returns the squared distance between the boxes \a b and \c *this,
     * and zero if the boxes intersect.
-    * \sa exteriorDistance(const AlignedBox&), squaredExteriorDistance(const MatrixBase&)
+    * \sa exteriorDistance()
     */
   inline Scalar squaredExteriorDistance(const AlignedBox& b) const;
 
   /** \returns the distance between the point \a p and the box \c *this,
     * and zero if \a p is inside the box.
-    * \sa squaredExteriorDistance(const MatrixBase&), exteriorDistance(const AlignedBox&)
+    * \sa squaredExteriorDistance()
     */
   template<typename Derived>
   inline NonInteger exteriorDistance(const MatrixBase<Derived>& p) const
@@ -269,7 +252,7 @@ EIGEN_MAKE_ALIGNED_OPERATOR_NEW_IF_VECTORIZABLE_FIXED_SIZE(_Scalar,_AmbientDim)
 
   /** \returns the distance between the boxes \a b and \c *this,
     * and zero if the boxes intersect.
-    * \sa squaredExteriorDistance(const AlignedBox&), exteriorDistance(const MatrixBase&)
+    * \sa squaredExteriorDistance()
     */
   inline NonInteger exteriorDistance(const AlignedBox& b) const
   { using std::sqrt; return sqrt(NonInteger(squaredExteriorDistance(b))); }

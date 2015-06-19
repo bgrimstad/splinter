@@ -77,8 +77,7 @@ Index SparseLUImpl<Scalar,Index>::pivotL(const Index jcol, const RealScalar& dia
   RealScalar rtemp;
   Index isub, icol, itemp, k; 
   for (isub = nsupc; isub < nsupr; ++isub) {
-    using std::abs;
-    rtemp = abs(lu_col_ptr[isub]);
+    rtemp = std::abs(lu_col_ptr[isub]);
     if (rtemp > pivmax) {
       pivmax = rtemp; 
       pivptr = isub;
@@ -102,8 +101,7 @@ Index SparseLUImpl<Scalar,Index>::pivotL(const Index jcol, const RealScalar& dia
     if (diag >= 0 ) 
     {
       // Diagonal element exists
-      using std::abs;
-      rtemp = abs(lu_col_ptr[diag]);
+      rtemp = std::abs(lu_col_ptr[diag]);
       if (rtemp != 0.0 && rtemp >= thresh) pivptr = diag;
     }
     pivrow = lsub_ptr[pivptr];

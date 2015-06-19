@@ -374,12 +374,6 @@ template<typename _MatrixType> class FullPivLU
     inline Index cols() const { return m_lu.cols(); }
 
   protected:
-    
-    static void check_template_parameters()
-    {
-      EIGEN_STATIC_ASSERT_NON_INTEGER(Scalar);
-    }
-    
     MatrixType m_lu;
     PermutationPType m_p;
     PermutationQType m_q;
@@ -424,8 +418,6 @@ FullPivLU<MatrixType>::FullPivLU(const MatrixType& matrix)
 template<typename MatrixType>
 FullPivLU<MatrixType>& FullPivLU<MatrixType>::compute(const MatrixType& matrix)
 {
-  check_template_parameters();
-  
   // the permutations are stored as int indices, so just to be sure:
   eigen_assert(matrix.rows()<=NumTraits<int>::highest() && matrix.cols()<=NumTraits<int>::highest());
   

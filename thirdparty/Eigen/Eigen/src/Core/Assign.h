@@ -439,26 +439,19 @@ struct assign_impl<Derived1, Derived2, SliceVectorizedTraversal, NoUnrolling, Ve
   typedef typename Derived1::Index Index;
   static inline void run(Derived1 &dst, const Derived2 &src)
   {
-    typedef typename Derived1::Scalar Scalar;
-    typedef packet_traits<Scalar> PacketTraits;
+    typedef packet_traits<typename Derived1::Scalar> PacketTraits;
     enum {
       packetSize = PacketTraits::size,
       alignable = PacketTraits::AlignedOnScalar,
-      dstIsAligned = assign_traits<Derived1,Derived2>::DstIsAligned,
-      dstAlignment = alignable ? Aligned : int(dstIsAligned),
+      dstAlignment = alignable ? Aligned : int(assign_traits<Derived1,Derived2>::DstIsAligned) ,
       srcAlignment = assign_traits<Derived1,Derived2>::JointAlignment
     };
-    const Scalar *dst_ptr = &dst.coeffRef(0,0);
-    if((!bool(dstIsAligned)) && (Index(dst_ptr) % sizeof(Scalar))>0)
-    {
-      // the pointer is not aligend-on scalar, so alignment is not possible
-      return assign_impl<Derived1,Derived2,DefaultTraversal,NoUnrolling>::run(dst, src);
-    }
     const Index packetAlignedMask = packetSize - 1;
     const Index innerSize = dst.innerSize();
     const Index outerSize = dst.outerSize();
     const Index alignedStep = alignable ? (packetSize - dst.outerStride() % packetSize) & packetAlignedMask : 0;
-    Index alignedStart = ((!alignable) || bool(dstIsAligned)) ? 0 : internal::first_aligned(dst_ptr, innerSize);
+    Index alignedStart = ((!alignable) || assign_traits<Derived1,Derived2>::DstIsAligned) ? 0
+                       : internal::first_aligned(&dst.coeffRef(0,0), innerSize);
 
     for(Index outer = 0; outer < outerSize; ++outer)
     {
