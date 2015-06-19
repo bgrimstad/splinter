@@ -220,6 +220,17 @@ extern "C"
 		return res;
 	}
 
+	int bspline_get_num_variables(obj_ptr bspline_ptr) {
+		lastFuncCallError = 0;
+		BSpline *bspline = get_bspline(bspline_ptr);
+		if (bspline == nullptr) {
+			lastFuncCallError = 1;
+			return 0;
+		}
+
+		return bspline->getNumVariables();
+	}
+
 	void bspline_delete(obj_ptr bspline_ptr) {
 		lastFuncCallError = 0;
 		BSpline *bspline = get_bspline(bspline_ptr);
@@ -309,6 +320,17 @@ extern "C"
 		double *res = (double *)malloc(sizeof(double) * numCoefficients);
 		memcpy(res, hessian.data(), sizeof(double) * numCoefficients);
 		return res;
+	}
+
+	int pspline_get_num_variables(obj_ptr pspline_ptr) {
+		lastFuncCallError = 0;
+		PSpline *pspline = get_pspline(pspline_ptr);
+		if (pspline == nullptr) {
+			lastFuncCallError = 1;
+			return 0;
+		}
+
+		return pspline->getNumVariables();
 	}
 
 	void pspline_delete(obj_ptr pspline_ptr) {
@@ -424,6 +446,17 @@ extern "C"
 		double *res = (double *)malloc(sizeof(double) * numCoefficients);
 		memcpy(res, hessian.data(), sizeof(double) * numCoefficients);
 		return res;
+	}
+
+	int rbf_get_num_variables(obj_ptr rbf_ptr) {
+		lastFuncCallError = 0;
+		RadialBasisFunction *rbf = get_rbf(rbf_ptr);
+		if (rbf == nullptr) {
+			lastFuncCallError = 1;
+			return 0;
+		}
+
+		return rbf->getNumVariables();
 	}
 
 	void rbf_delete(obj_ptr rbf_ptr) {

@@ -37,6 +37,8 @@ typedef int *obj_ptr;
 
 		API double *bspline_eval_hessian(obj_ptr bspline_ptr, double *x, int n);
 
+		API int bspline_get_num_variables(obj_ptr bspline_ptr);
+
 		API void bspline_delete(obj_ptr bspline_ptr);
 
 
@@ -48,6 +50,8 @@ typedef int *obj_ptr;
 
 		API double *pspline_eval_hessian(obj_ptr pspline_ptr, double *x, int x_dim);
 
+		API int pspline_get_num_variables(obj_ptr pspline_ptr);
+
 		API void pspline_delete(obj_ptr pspline_ptr);
 
 
@@ -58,6 +62,8 @@ typedef int *obj_ptr;
 		API double *rbf_eval_jacobian(obj_ptr rbf_ptr, double *x, int x_dim);
 
 		API double *rbf_eval_hessian(obj_ptr rbf_ptr, double *x, int x_dim);
+
+		API int rbf_get_num_variables(obj_ptr rbf_ptr);
 
 		API void rbf_delete(obj_ptr rbf_ptr);
 #ifdef __cplusplus

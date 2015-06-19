@@ -14,8 +14,9 @@ classdef RadialBasisFunction < Approximant
         Eval_function = 'rbf_eval';
         EvalJacobian_function = '';
         EvalHessian_function = '';
-        Save_function = 'rbf_save';
-        Load_function = 'rbf_load';
+        GetNumVariables_function = 'rbf_get_num_variables';
+        Save_function = '';
+        Load_function = '';
     end
 
     methods

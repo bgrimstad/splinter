@@ -8,8 +8,8 @@
 function setup()
     % Change this to the directory where the MatLab interface of SPLINTER
     % is installed.
-    %splinter_path = '/home/anders/splinter-matlab';
-    splinter_path = 'C:\Users\Anders\Documents\splinter-matlab';
+    splinter_path = '/home/anders/C++/SPLINTER/SPLINTER/build/splinter-matlab';
+    %splinter_path = 'C:/Users/Anders/Documents/Github/SPLINTER/SPLINTER/build/splinter-matlab';
 
     % Add the directory containing the MatLab interface of SPLINTER to the
     % search path that MatLab searches through to find .m files.
@@ -32,16 +32,16 @@ function setup()
     wordSizeString = strcat(int2str(wordSize), 'bit');
     if(windows)
         libFileDir = fullfile(splinter_path, 'lib', 'Windows', wordSizeString);
-        libFile = fullfile(libFileDir, 'splinter-matlab-1-2.dll');
+        libFile = fullfile(libFileDir, 'splinter-matlab-1-3.dll');
     elseif(linux)
         libFileDir = fullfile(splinter_path, 'lib', 'Linux', wordSizeString);
-        libFile = fullfile(libFileDir, 'libsplinter-matlab-1-2.so');
+        libFile = fullfile(libFileDir, 'libsplinter-matlab-1-3.so');
     elseif(mac)
         libFileDir = fullfile(splinter_path, 'lib', 'OSX', wordSizeString);
-        libFile = fullfile(libFileDir, 'libsplinter-matlab-1-2.so');
+        libFile = fullfile(libFileDir, 'libsplinter-matlab-1-3.so');
     else
         libFileDir = fullfile(splinter_path, 'lib', 'Linux', wordSizeString);
-        libFile = fullfile(libFileDir, 'libsplinter-matlab-1-2.so');
+        libFile = fullfile(libFileDir, 'libsplinter-matlab-1-3.so');
     end
 
     % The Splinter class is implemented as a Singleton

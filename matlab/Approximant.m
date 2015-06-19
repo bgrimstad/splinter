@@ -15,6 +15,7 @@ classdef (Abstract = true) Approximant < handle
         Eval_function
         EvalJacobian_function
         EvalHessian_function
+        GetNumVariables_function
         Save_function
         Load_function
     end
@@ -41,6 +42,10 @@ classdef (Abstract = true) Approximant < handle
             temp = Splinter.getInstance().call(obj.EvalHessian_function, obj.Handle, x, length(x));
             reshape(temp, length(x), length(x))
             r = temp.value;
+        end
+
+        function r = getNumVariables(obj)
+            r = Splinter.getInstance().call(obj.GetNumVariables_function, obj.Handle);
         end
         
         function save(obj, fileName)
