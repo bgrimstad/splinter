@@ -32,16 +32,16 @@ function setup()
     wordSizeString = strcat(int2str(wordSize), 'bit');
     if(windows)
         libFileDir = fullfile(splinter_path, 'lib', 'Windows', wordSizeString);
-        libFile = fullfile(libFileDir, 'splinter-matlab-1-3.dll');
+        libFile = fullfile(libFileDir, 'splinter-matlab-1-4.dll');
     elseif(linux)
         libFileDir = fullfile(splinter_path, 'lib', 'Linux', wordSizeString);
-        libFile = fullfile(libFileDir, 'libsplinter-matlab-1-3.so');
+        libFile = fullfile(libFileDir, 'libsplinter-matlab-1-4.so');
     elseif(mac)
         libFileDir = fullfile(splinter_path, 'lib', 'OSX', wordSizeString);
-        libFile = fullfile(libFileDir, 'libsplinter-matlab-1-3.so');
+        libFile = fullfile(libFileDir, 'libsplinter-matlab-1-4.so');
     else
         libFileDir = fullfile(splinter_path, 'lib', 'Linux', wordSizeString);
-        libFile = fullfile(libFileDir, 'libsplinter-matlab-1-3.so');
+        libFile = fullfile(libFileDir, 'libsplinter-matlab-1-4.so');
     end
 
     % The Splinter class is implemented as a Singleton

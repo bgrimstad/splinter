@@ -10,7 +10,7 @@ cmake_minimum_required(VERSION 2.8)
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
 
 set(VERSION_MAJOR 1)
-set(VERSION_MINOR 3)
+set(VERSION_MINOR 4)
 set(VERSION ${VERSION_MAJOR}-${VERSION_MINOR})
 
 # Default configuration values
