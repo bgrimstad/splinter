@@ -18,7 +18,7 @@ set(DEFAULT_BUILD_TYPE "Release")
 set(DEFAULT_BITNESS "32") # Can be overriden by user or generator selection
 set(DEFAULT_HEADER_INSTALL_DIRECTORY "include")
 set(DEFAULT_LIBRARY_INSTALL_DIRECTORY "lib")
-set(DEFAULT_EIGEN_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/Eigen)
+set(DEFAULT_EIGEN_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/Eigen)
 
 # Detect platform
 string(COMPARE EQUAL "Linux"   ${CMAKE_SYSTEM_NAME} LINUX)
@@ -27,7 +27,7 @@ string(COMPARE EQUAL "Darwin"  ${CMAKE_SYSTEM_NAME} OS_X)
 if(LINUX)
     set(OS_STRING "Linux")
 elseif(WINDOWS)
-    set(OS_STRING "WINDOWS")
+    set(OS_STRING "Windows")
 elseif(OS_X)
     set(OS_STRING "OSX")
 else()
@@ -155,6 +155,11 @@ install(
 install(
     DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
     DESTINATION ${HEADER_INSTALL_DIRECTORY}
+)
+# Install Eigen to the header directory
+install(
+	DIRECTORY ${EIGEN_DIRECTORY}
+	DESTINATION ${HEADER_INSTALL_DIRECTORY}
 )
 
 # Install the shared library file

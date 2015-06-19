@@ -9,7 +9,7 @@
 
 #include "bsplinebasis.h"
 #include "mykroneckerproduct.h"
-#include "Eigen/unsupported/Eigen/KroneckerProduct"
+#include "unsupported/Eigen/KroneckerProduct"
 
 #include <iostream>
 

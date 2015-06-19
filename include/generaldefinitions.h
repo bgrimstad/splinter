@@ -27,8 +27,8 @@
 #include <stdexcept>
 
 #include <vector>
-#include <Eigen/Eigen/Dense>
-#include <Eigen/Eigen/Sparse>
+#include <Eigen/Dense>
+#include <Eigen/Sparse>
 
 namespace SPLINTER
 {
