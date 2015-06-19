@@ -7,9 +7,13 @@
 - Spline class renamed Approximant to open for other forms of interpolation in the future
 - Added getNumVariables to the Approximant interface
 - rbspline.* renamed to radialbasisfunction.*
-- Removed QUADRATIC_FREE and CUBIC_FREE BSpline types, added Quartic
+- Removed QUADRATIC_FREE and CUBIC_FREE BSpline types, available types are now LINEAR, QUADRATIC, CUBIC and QUARTIC
 - Added MatLab interface
 - Improved build system (CMake code)
+
+#### Version 1.2
+- Renamed library from multivariate-splines to Splinter.
+- Added saving and loading of BSplines and DataTables in binary form.
 
 #### Version 1.1
 - Quadratic B-splines are now exposed to the user
