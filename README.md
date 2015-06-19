@@ -1,5 +1,5 @@
 ##SPLINTER
-SPLINTER (SPLine INTERpolation) is a function approximation library implementing various multivariate function approximation methods in C++. With SPLINTER you can approximate any function in any number of variables using the following implementations:
+SPLINTER (SPLine INTERpolation) is a library of various multivariate function approximation methods implemented in C++. With SPLINTER you can approximate any function in any number of variables using the following implementations:
 
 1. a speedy implementation of the tensor product [B-spline](http://en.wikipedia.org/wiki/B-spline), and 
 2. a simple implementation of [radial basis function splines](http://en.wikipedia.org/wiki/Radial_basis_function), including the [thin plate spline](http://en.wikipedia.org/wiki/Thin_plate_spline).
@@ -12,11 +12,6 @@ When sampling is expensive and/or scattered (not on a grid) the radial basis fun
 
 ![Illustration of a B-spline](assets/bspline.png)
 Figure: Illustration of a cubic B-spline generated with the SPLINTER library.
-
-The workflow to construct an approximation is simple: sample a function and construct an approximation. As the following figure illustrates, this process can be run iteratively until a satisfactory approximation has been built. To assess the accuracy of the approximation one can use existing samples for cross-validation or perform additional sampling. Note that the current version of SPLINTER only facilitates sampling and model construction. 
-
-![Possbile workflow with SPLINTER.](assets/workflow.png)
-Figure: A possbile workflow for building approximations with SPLINTER.
 
 ###Sharing
 SPLINTER is the result of several years of development towards a fast and general library for function approximation. The initial intention with the library was to build splines for use in mathematical programming (nonlinear optimization). Thus, some effort has been put into functionality that supports this, e.g. Jacobian and Hessian computations for the B-spline. The current goals with the library are: 1) to improve the current code and make it more accessible for users (for instance by adding a Matlab and Python interface), and 2) to implement and test new function approximation methods.
