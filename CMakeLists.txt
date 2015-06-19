@@ -105,12 +105,13 @@ set(SRC_LIST
     src/bspline.cpp
     src/bsplinebasis.cpp
     src/bsplinebasis1d.cpp
-    src/pspline.cpp
-    src/radialbasisfunction.cpp
     src/datasample.cpp
     src/datatable.cpp
     src/mykroneckerproduct.cpp
+    src/pspline.cpp
+    src/radialbasisfunction.cpp
 )
+set(MATLAB_SRC_LIST ${SRC_LIST} src/matlab.cpp)
 
 set(SHARED_LIBRARY ${PROJECT_NAME_LOWER}-${VERSION})
 set(STATIC_LIBRARY ${PROJECT_NAME_LOWER}-static-${VERSION})
@@ -124,7 +125,7 @@ set(TESTING_UTILITIES ${CMAKE_CURRENT_SOURCE_DIR}/test/testingutilities.cpp)
 # Add output library: add_library(libname [SHARED | STATIC] sourcelist)
 add_library(${SHARED_LIBRARY} SHARED ${SRC_LIST})
 add_library(${STATIC_LIBRARY} STATIC ${SRC_LIST})
-add_library(${MATLAB_LIBRARY} SHARED ${MATLAB_SRC_LIST} src/matlab.cpp)
+add_library(${MATLAB_LIBRARY} SHARED ${MATLAB_SRC_LIST})
 
 # Testing executables
 add_executable(${SHARED_LIBRARY_TEST} ${CMAKE_CURRENT_SOURCE_DIR}/test/main.cpp ${TESTING_UTILITIES})
