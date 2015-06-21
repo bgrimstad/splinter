@@ -15,7 +15,7 @@ set(VERSION ${VERSION_MAJOR}-${VERSION_MINOR})
 
 # Default configuration values
 set(DEFAULT_BUILD_TYPE "Release")
-set(DEFAULT_BITNESS "32") # Can be overriden by user or generator selection
+set(DEFAULT_ARCH "x86")
 set(DEFAULT_HEADER_INSTALL_DIRECTORY "include")
 set(DEFAULT_LIBRARY_INSTALL_DIRECTORY "lib")
 set(DEFAULT_EIGEN_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/Eigen)
@@ -25,11 +25,11 @@ string(COMPARE EQUAL "Linux"   ${CMAKE_SYSTEM_NAME} LINUX)
 string(COMPARE EQUAL "Windows" ${CMAKE_SYSTEM_NAME} WINDOWS)
 string(COMPARE EQUAL "Darwin"  ${CMAKE_SYSTEM_NAME} OS_X)
 if(LINUX)
-    set(OS_STRING "Linux")
+    set(OS_STRING "linux")
 elseif(WINDOWS)
-    set(OS_STRING "Windows")
+    set(OS_STRING "windows")
 elseif(OS_X)
-    set(OS_STRING "OSX")
+    set(OS_STRING "osx")
 else()
     set(OS_STRING "Unknown")
 endif()
@@ -46,11 +46,20 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 string(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE)
 
+# Set architecture to default if not set
+if(NOT ARCH)
+    set(ARCH ${DEFAULT_ARCH})
+endif()
+
 # Set bitness
-if(BITNESS EQUAL "64")
+if(${ARCH} STREQUAL "x86-64")
 	set(BITNESS "64")
+elseif(${ARCH} STREQUAL "x86")
+	set(BITNESS "32")
 else()
-	set(BITNESS ${DEFAULT_BITNESS})
+    set(BITNESS "32")
+    set(ARCH "x86")
+    message("Unknown architecture selected, defaulting to x86")
 endif()
 
 # MinGW (GCC on Windows) version 4.8.1 has a bug where _hypot is not found
@@ -142,13 +151,14 @@ install(
     DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/matlab
     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-matlab
 )
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/splinter-matlab/version ${VERSION})
 install(
     FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/matlab.h
     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-matlab/include
 )
 install(
     TARGETS ${MATLAB_LIBRARY}
-    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-matlab/lib/${OS_STRING}/${BITNESS}bit
+    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-matlab/lib/${OS_STRING}/${ARCH}
 )
 
 # Install the header files
@@ -203,5 +213,5 @@ if(CMAKE_BUILD_TYPE STREQUAL DEBUG)
 	message("OS X:    ${OS_X}")
 endif()
 
-message("Configuring ${PROJECT_NAME} version ${VERSION} in ${CMAKE_BUILD_TYPE} mode (${BITNESS} bit)")
+message("Configuring ${PROJECT_NAME} version ${VERSION} in ${CMAKE_BUILD_TYPE} mode for ${ARCH} (${BITNESS} bit)")
 message("Compiler flags: ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}}")

@@ -72,18 +72,18 @@ The output files should be in your build folder. If you wish to have them instal
 
 ##Options (both platforms)
 
-| Variable name             | Default value     | Description                                                             |
-| ------------------------- | ----------------- | ----------------------------------------------------------------------- |
-| EIGEN_DIRECTORY           | include/Eigen     | Path to the Eigen lib.                                                  |
-| HEADER_INSTALL_DIRECTORY  | include           | Where the headers should be installed.                                  |
-| LIBRARY_INSTALL_DIRECTORY | lib               | Where to install the library file.                                      |
-| BITNESS                   | 32                | Bitness of the generated binary (32/64 bit). Only works with GCC/Clang. |
-| CMAKE_BUILD_TYPE          | Release           | Build type (Debug / Release)                                            |
+| Variable name             | Default value     | Description                                                                   |
+| ------------------------- | ----------------- | ----------------------------------------------------------------------------- |
+| EIGEN_DIRECTORY           | include/Eigen     | Path to the Eigen lib.                                                        |
+| HEADER_INSTALL_DIRECTORY  | include           | Where the headers should be installed.                                        |
+| LIBRARY_INSTALL_DIRECTORY | lib               | Where to install the library file.                                            |
+| ARCH                      | x86               | Architecture of the generated binary (x86/x86-64). Only works with GCC/Clang. |
+| CMAKE_BUILD_TYPE          | Release           | Build type (Debug / Release)                                                  |
 
 These options go along with UNIX step #6 or Windows step #7.2, and are used like this:
 
     UNIX:
-    cmake .. -DEIGEN_DIRECTORY=/path/to/eigen -DHEADER_INSTALL_DIRECTORY=/home/me/splinter/includes -DBITNESS=64
+    cmake .. -DEIGEN_DIRECTORY=/path/to/eigen -DHEADER_INSTALL_DIRECTORY=/home/me/splinter/includes -ARCH=x86-64
     
     
     Windows (in the arguments field):

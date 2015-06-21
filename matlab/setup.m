@@ -8,8 +8,16 @@
 function setup()
     % Change this to the directory where the MatLab interface of SPLINTER
     % is installed.
-    splinter_path = '/home/anders/C++/SPLINTER/SPLINTER/build/splinter-matlab';
+    splinter_path = '/home/anders/C++/SPLINTER-build/SPLINTER-build/splinter-matlab';
     %splinter_path = 'C:/Users/Anders/Documents/Github/SPLINTER/SPLINTER/build/splinter-matlab';
+    
+    versionFile = fullfile(splinter_path, 'version');
+    versionFileId = fopen(versionFile, 'r');
+    version = fscanf(versionFileId, '%d-%d');
+    fclose(versionFileId);
+    
+    majorVersion = version(1);
+    minorVersion = version(2);
 
     % Add the directory containing the MatLab interface of SPLINTER to the
     % search path that MatLab searches through to find .m files.
@@ -19,29 +27,31 @@ function setup()
     mac = ismac();
     linux = isunix() && ~mac;
 
-    % Detect bitness. Linux and MAC does not have 32 bit builds.
-    wordSize = 64;
+    % Detect architecture. Linux and MAC does not have x86 builds.
+    arch = 'x86-64';
     if(strcmp('PCWIN', computer()))
-        wordSize = 32;
+        arch = 'x86';
     end
 
     % Header file is at the same location no matter the OS
     headerFile = fullfile(splinter_path, 'include', 'matlab.h');
 
-    % Library file location is dependent on arch and OS
-    wordSizeString = strcat(int2str(wordSize), 'bit');
+    libBaseName = strcat('splinter-matlab-', int2str(majorVersion));
+    libBaseName = strcat(libBaseName, '-');
+    libBaseName = strcat(libBaseName, int2str(minorVersion));
+    
     if(windows)
-        libFileDir = fullfile(splinter_path, 'lib', 'Windows', wordSizeString);
-        libFile = fullfile(libFileDir, 'splinter-matlab-1-4.dll');
+        libFileDir = fullfile(splinter_path, 'lib', 'windows', arch);
+        libFile = fullfile(libFileDir, strcat(libBaseName, '.dll'));
     elseif(linux)
-        libFileDir = fullfile(splinter_path, 'lib', 'Linux', wordSizeString);
-        libFile = fullfile(libFileDir, 'libsplinter-matlab-1-4.so');
+        libFileDir = fullfile(splinter_path, 'lib', 'linux', arch);
+        libFile = fullfile(libFileDir, strcat('lib', strcat(libBaseName), '.so'));
     elseif(mac)
-        libFileDir = fullfile(splinter_path, 'lib', 'OSX', wordSizeString);
-        libFile = fullfile(libFileDir, 'libsplinter-matlab-1-4.so');
+        libFileDir = fullfile(splinter_path, 'lib', 'osx', arch);
+        libFile = fullfile(libFileDir, strcat('lib', strcat(libBaseName), '.so'));
     else
-        libFileDir = fullfile(splinter_path, 'lib', 'Linux', wordSizeString);
-        libFile = fullfile(libFileDir, 'libsplinter-matlab-1-4.so');
+        libFileDir = fullfile(splinter_path, 'lib', 'linux', arch);
+        libFile = fullfile(libFileDir, strcat('lib', strcat(libBaseName), '.so'));
     end
 
     % The Splinter class is implemented as a Singleton
