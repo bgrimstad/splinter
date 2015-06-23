@@ -44,14 +44,22 @@ end
 
 % Build approximations
 approximator1 = BSpline(d, BSplineType.Linear);
+approximator2 = BSpline(d, BSplineType.Quadratic);
 approximator3 = BSpline(d, BSplineType.Cubic);
+approximator4 = BSpline(d, BSplineType.Quartic);
 
 % Evaluate approximations and compute errors
 approx1 = zeros(Nd,Nd);
 error1 = approx1;
 
+approx2 = zeros(Nd,Nd);
+error2 = approx2;
+
 approx3 = zeros(Nd,Nd);
 error3 = approx3;
+
+approx4 = zeros(Nd,Nd);
+error4 = approx4;
 
 i=1;
 for xi = xd
@@ -61,8 +69,12 @@ for xi = xd
         
         approx1(i,j) = approximator1.eval([xi yi]);
         error1(i,j) = (approx1(i,j) - exact);
+        approx2(i,j) = approximator2.eval([xi yi]);
+        error2(i,j) = (approx2(i,j) - exact);
         approx3(i,j) = approximator3.eval([xi yi]);
         error3(i,j) = (approx3(i,j) - exact);
+        approx4(i,j) = approximator4.eval([xi yi]);
+        error4(i,j) = (approx4(i,j) - exact);
         
         j = j+1;
     end
@@ -71,25 +83,55 @@ end
 
 % Plot approximations
 figure
+subplot(2,2,1);
 surf(xd, yd, approx1', 'EdgeColor','none','LineStyle','none')
 zlim([0,3000]);
 view(210, 30);
+title('Linear');
 
-figure
+subplot(2,2,2);
+surf(xd, yd, approx2', 'EdgeColor','none','LineStyle','none')
+zlim([0,3000]);
+view(210, 30);
+title('Quadratic');
+
+subplot(2,2,3);
 surf(xd, yd, approx3', 'EdgeColor','none','LineStyle','none')
 zlim([0,3000]);
 view(210, 30);
+title('Cubic');
+
+subplot(2,2,4);
+surf(xd, yd, approx4', 'EdgeColor','none','LineStyle','none')
+zlim([0,3000]);
+view(210, 30);
+title('Quartic');
 
 % Plot errors
 figure
+subplot(2,2,1);
 surf(xd, yd, abs(error1)', 'EdgeColor','none','LineStyle','none')
 %zlim([0,3000]);
 view(210, 30);
+title('Linear');
 
-figure
+subplot(2,2,2);
+surf(xd, yd, abs(error2)', 'EdgeColor','none','LineStyle','none')
+%zlim([0,3000]);
+view(210, 30);
+title('Quadratic');
+
+subplot(2,2,3);
 surf(xd, yd, abs(error3)', 'EdgeColor','none','LineStyle','none')
 %zlim([0,3000]);
 view(210, 30);
+title('Cubic');
+
+subplot(2,2,4);
+surf(xd, yd, abs(error4)', 'EdgeColor','none','LineStyle','none')
+%zlim([0,3000]);
+view(210, 30);
+title('Quartic');
 
 % Compute absolute errors
 disp('Max error with linear spline:');
@@ -97,8 +139,16 @@ abserror1 = max(max(abs(error1)));
 abserror1
 
 disp('Max error with cubic spline:');
+abserror2 = max(max(abs(error2)));
+abserror2
+
+disp('Max error with cubic spline:');
 abserror3 = max(max(abs(error3)));
 abserror3
+
+disp('Max error with cubic spline:');
+abserror4 = max(max(abs(error4)));
+abserror4
 
 % Compute relative errors
 rangef = abs(max(max(Zd)) - min(min(Zd)));
@@ -108,5 +158,13 @@ relerror1 = abserror1/rangef;
 relerror1
 
 disp('Max relative error with cubic spline:');
+relerror2 = max(max(abs(error2)))/rangef;
+relerror2
+
+disp('Max relative error with cubic spline:');
 relerror3 = max(max(abs(error3)))/rangef;
 relerror3
+
+disp('Max relative error with cubic spline:');
+relerror4 = max(max(abs(error4)))/rangef;
+relerror4
