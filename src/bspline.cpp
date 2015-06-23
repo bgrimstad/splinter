@@ -36,7 +36,7 @@ BSpline::BSpline(std::vector<double> coefficients, std::vector< std::vector<doub
     if (this->coefficients.rows() != 1)
         throw Exception("BSpline::BSpline: coefficient matrix can only have one row!");
 
-    basis = BSplineBasis(knotVectors, basisDegrees, KnotVectorType::EXPLICIT);
+    basis = BSplineBasis(knotVectors, basisDegrees, true);
 
     computeKnotAverages();
 
@@ -53,7 +53,7 @@ BSpline::BSpline(DenseMatrix coefficients, std::vector< std::vector<double> > kn
     if (coefficients.rows() != 1)
         throw Exception("BSpline::BSpline: coefficient matrix can only have one row!");
 
-    basis = BSplineBasis(knotVectors, basisDegrees, KnotVectorType::EXPLICIT);
+    basis = BSplineBasis(knotVectors, basisDegrees, true);
 
     computeKnotAverages();
 
@@ -79,7 +79,7 @@ BSpline::BSpline(const DataTable &samples, unsigned int degree)
     std::vector<unsigned int> basisDegrees(samples.getNumVariables(), degree);
 
     // Set multivariate basis
-    basis = BSplineBasis(xdata, basisDegrees, KnotVectorType::FREE);
+    basis = BSplineBasis(xdata, basisDegrees, false);
 
     // Calculate control points
     computeControlPoints(samples);
@@ -113,7 +113,7 @@ BSpline::BSpline(const DataTable &samples, BSplineType type = BSplineType::CUBIC
         basisDegrees = std::vector<unsigned int>(samples.getNumVariables(), 4);
 
     // Set multivariate basis
-    basis = BSplineBasis(xdata, basisDegrees, KnotVectorType::FREE);
+    basis = BSplineBasis(xdata, basisDegrees, false);
 
     // Calculate control points
     computeControlPoints(samples);
@@ -595,7 +595,7 @@ void BSpline::load(const std::string fileName)
 void BSpline::loadBasis(std::vector<std::vector<double>> knotVectors, std::vector<unsigned int> basisDegrees)
 {
     assert(coefficients.rows() == 1);
-    basis = BSplineBasis(knotVectors, basisDegrees, KnotVectorType::EXPLICIT);
+    basis = BSplineBasis(knotVectors, basisDegrees, true);
     computeKnotAverages();
     init();
     checkControlPoints();

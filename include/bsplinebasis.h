@@ -21,9 +21,9 @@ class BSplineBasis
 public:
     BSplineBasis();
     BSplineBasis(std::vector< std::vector<double> > &X, std::vector<unsigned int> basisDegrees);
-    BSplineBasis(std::vector< std::vector<double> > &X, std::vector<unsigned int> basisDegrees, KnotVectorType knotVectorType);
+    BSplineBasis(std::vector< std::vector<double> > &X, std::vector<unsigned int> basisDegrees, bool explicitKnots);
 
-    void setUnivariateBases(std::vector< std::vector<double> > &X, std::vector<unsigned int> &basisDegrees, KnotVectorType knotVectorType);
+    void setUnivariateBases(std::vector< std::vector<double> > &X, std::vector<unsigned int> &basisDegrees, bool explicitKnots);
 
     // Evaluation
     SparseVector eval(const DenseVector &x) const;

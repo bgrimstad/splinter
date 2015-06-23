@@ -15,34 +15,23 @@ namespace SPLINTER
 {
 
 BSplineBasis1D::BSplineBasis1D(std::vector<double> &x, unsigned int degree)
-    : BSplineBasis1D(x, degree, KnotVectorType::FREE)
+    : BSplineBasis1D(x, degree, false)
 {
 }
 
-BSplineBasis1D::BSplineBasis1D(std::vector<double> &x, unsigned int degree, KnotVectorType knotVectorType)
+BSplineBasis1D::BSplineBasis1D(std::vector<double> &x, unsigned int degree, bool explicitKnots)
     : degree(degree),
       targetNumBasisfunctions((degree+1)+2*degree+1) // Minimum p+1
 {
-    if (knotVectorType == KnotVectorType::EXPLICIT)
+    if (explicitKnots)
     {
+        // Knots are given explicitly
         knots = x;
-    }
-    else if (knotVectorType == KnotVectorType::FREE)
-    {
-        knots = knotVectorFree(x);
-    }
-    else if (knotVectorType == KnotVectorType::REGULAR)
-    {
-        knots = knotVectorRegular(x);
-    }
-    else if (knotVectorType == KnotVectorType::EQUIDISTANT)
-    {
-        knots = knotVectorEquidistant(x);
     }
     else
     {
-        // Assuming a regular knot vector is given
-        knots = x;
+        // Construct (p+1)-regular knot vector from x
+        knots = knotVectorMovingAverage(x);
     }
 
     if (degree <= 0)
@@ -682,200 +671,89 @@ bool BSplineBasis1D::isRefinement(const std::vector<double> &refinedKnots) const
 }
 
 /*
- * Creates a regular knot vector of n+p+1 equidistant knots,
- * where the first and last knot is repeated p+1 times,
- * and n is the number of unique values in x.
+ * Automatic construction of (p+1)-regular knot vector
+ * using moving average.
  *
- * This knot vector can be used for all degrees > 0.
+ * Requirement:
+ * Knot vector should be of size n+p+1.
+ * End knots are should be repeated p+1 times.
+ *
+ * Computed sizes:
+ * n+2*(p) = n + p + 1 + (p - 1)
+ * k = (p - 1) values must be removed from sample vector.
+ * w = k + 3 window size in moving average
+ *
+ * Algorithm:
+ * 1) compute n - k values using moving average with window size w
+ * 2) repeat first and last value p + 1 times
+ *
+ * The resulting knot vector has n - k + 2*p = n + p + 1 knots.
+ *
+ * NOTE:
+ * For _equidistant_ samples, the resulting knot vector is identicaly to
+ * the free end conditions knot vector used in cubic interpolation.
+ * That is, samples (a,b,c,d,e,f) produces the knot vector (a,a,a,a,c,d,f,f,f,f) for p = 3.
+ * For p = 1, (a,b,c,d,e,f) becomes (a,a,b,c,d,e,f,f).
+ *
  */
-std::vector<double> BSplineBasis1D::knotVectorEquidistant(std::vector<double> &X) const
+std::vector<double> BSplineBasis1D::knotVectorMovingAverage(std::vector<double> &vec) const
 {
-    // Copy X -> sort -> remove duplicates -> resize = a sorted vector of unique values
-    std::vector<double> uniqueX(X);
-    sort(uniqueX.begin(), uniqueX.end());
+    // Sort and remove duplicates
+    std::vector<double> uniqueX(vec);
+    std::sort(uniqueX.begin(), uniqueX.end());
     std::vector<double>::iterator it = unique_copy(uniqueX.begin(), uniqueX.end(), uniqueX.begin());
     uniqueX.resize(distance(uniqueX.begin(),it));
 
-    // Minimum number of interpolation points
-    if (uniqueX.size() < degree+1)
-    {
-        std::ostringstream e;
-        e << "BSplineBasis1D::knotVectorFree: Only " << uniqueX.size()
-          << " unique interpolation points are given. A minimum of degree+1 = " << degree+1
-          << " unique points are required to build a B-spline basis of degree " << degree << ".";
-        throw Exception(e.str());
-    }
-
-    std::vector<double> knots;
-    for (unsigned int i = 0; i < degree; i++)
-        knots.push_back(uniqueX.front());
-
-    std::vector<double> equiKnots = linspace(uniqueX.front(), uniqueX.back(), uniqueX.size() - degree + 1);
-    for (auto it = equiKnots.begin(); it != equiKnots.end(); ++it)
-        knots.push_back(*it);
-
-    for (unsigned int i = 0; i < degree; i++)
-        knots.push_back(uniqueX.back());
-
-    return knots;
-}
-
-/*
- * Repeats first and last knot p+1 times. Removes no knots.
- */
-std::vector<double> BSplineBasis1D::knotVectorRegular(std::vector<double> &X) const
-{
-    // Copy X -> sort -> remove duplicates -> resize = a sorted vector of unique values
-    std::vector<double> uniqueX(X);
-    sort(uniqueX.begin(), uniqueX.end());
-    std::vector<double>::iterator it = unique_copy(uniqueX.begin(), uniqueX.end(), uniqueX.begin());
-    uniqueX.resize(distance(uniqueX.begin(),it));
-
-    std::vector<double> knots;
-    it = uniqueX.begin();
-
-    // Repeat first knot p + 1 times (for interpolation of start point)
-    for (unsigned int i = 0; i < degree + 1; i++)
-    {
-        knots.push_back(*it);
-    }
-
-    // Add unique knots
-    for (it = uniqueX.begin()+1; it < uniqueX.end()-1; it++)
-    {
-        knots.push_back(*it);
-    }
-
-    // Repeat last knot p + 1 times (for interpolation of end point)
-    it = uniqueX.end()-1; // Last element in uniqueX
-    for (unsigned int i = 0; i < degree + 1; i++)
-    {
-        knots.push_back(*it);
-    }
-
-    // Number of knots in a (p+1)-regular knot vector
-    assert(knots.size() == uniqueX.size() + 2*degree);
-
-    return knots;
-}
-
-/*
- * Free knot vector for degrees 1, 2, and 3 only.
- * The free knot vector ensure that the first and last knot is repeated p + 1 times,
- * and that the total number of knots is n + p + 1.
- * Example for degree=3 and x={a,b,c,d,e,f,g,h}: knots={a,a,a,a,c,d,e,f,h,h,h,h}
- */
-std::vector<double> BSplineBasis1D::knotVectorFree(std::vector<double> &X) const
-{
-    // Copy X -> sort -> remove duplicates -> resize = a sorted vector of unique values
-    std::vector<double> uniqueX(X);
-    sort(uniqueX.begin(), uniqueX.end());
-    std::vector<double>::iterator it = unique_copy(uniqueX.begin(), uniqueX.end(), uniqueX.begin());
-    uniqueX.resize(distance(uniqueX.begin(),it));
+    // Compute sizes
+    unsigned int n = uniqueX.size();
+    unsigned int k = degree-1; // knots to remove
+    unsigned int w = k + 3; // Window size
 
     // The minimum number of samples from which a free knot vector can be created
-    if (uniqueX.size() < degree+1)
+    if (n < degree+1)
     {
         std::ostringstream e;
-        e << "BSplineBasis1D::knotVectorFree: Only " << uniqueX.size()
+        e << "BSplineBasis1D::knotVectorMovingAverage: Only " << n
           << " unique interpolation points are given. A minimum of degree+1 = " << degree+1
           << " unique points are required to build a B-spline basis of degree " << degree << ".";
         throw Exception(e.str());
     }
 
-    std::vector<double> knots;
-    it = uniqueX.begin();
+    std::vector<double> knots(n-k-2, 0);
 
-    // Repeat first x value p + 1 times (for interpolation of start point)
-    for (unsigned int i = 0; i < degree + 1; i++)
+    // Compute (n-k-2) interior knots using moving average
+    for (unsigned int i = 0; i < n-k-2; ++i)
     {
-        knots.push_back(*it);
-    }
+        double ma = 0;
+        for (unsigned int j = 0; j < w; ++j)
+            ma += uniqueX.at(i+j);
 
-    if (degree == 1)
-    {
-        // No knots removed
-        for (it = uniqueX.begin()+1; it < uniqueX.end()-1; it++)
-        {
-            knots.push_back(*it);
-        }
-    }
-    else if (degree == 2)
-    {
-        // First knot removed
-        for (it = uniqueX.begin()+2; it < uniqueX.end()-1; it++)
-        {
-            knots.push_back(*it);
-        }
-    }
-    else if (degree == 3)
-    {
-        // First and last knot removed
-        for (it = uniqueX.begin()+2; it < uniqueX.end()-2; it++)
-        {
-            knots.push_back(*it);
-        }
-    }
-    else
-    {
-        throw Exception("BSplineBasis1D::knotVectorFree: A free knot vector is only supported by degrees 1, 2, and 3!");
+        knots.at(i) = ma/w;
     }
 
-    // Repeat last x value p + 1 times (for interpolation of end point)
-    it = uniqueX.end()-1; // Last element in uniqueX
-    for (unsigned int i = 0; i < degree + 1; i++)
-    {
-        knots.push_back(*it);
-    }
+    // Repeat first knot p + 1 times (for interpolation of start point)
+    for (unsigned int i = 0; i < degree + 1; ++i)
+        knots.insert(knots.begin(), uniqueX.front());
+
+    // Repeat last knot p + 1 times (for interpolation of end point)
+    for (unsigned int i = 0; i < degree + 1; ++i)
+        knots.insert(knots.end(), uniqueX.back());
 
     // Number of knots in a (p+1)-regular knot vector
-    // Ensures a square matrix when calculating the control points
     assert(knots.size() == uniqueX.size() + degree + 1);
 
     return knots;
 }
 
-std::vector<double> BSplineBasis1D::linspace(double start, double stop, unsigned int points) const
-{
-    std::vector<double> ret;
-    double dx = 0;
-    if (points > 1)
-        dx = (stop - start)/(points-1);
-    for (unsigned int i = 0; i < points; ++i)
-        ret.push_back(start + i*dx);
-    return ret;
-}
-
-/*
- * Automatic selection of knot vector for all degrees
- * NOTE: Not finished, needs testing!
- */
-std::vector<double> BSplineBasis1D::computeKnotVector(std::vector<double> samples, unsigned int degree)
-{
-    assert(degree >= 1);
-    assert(samples.size() >= degree + 1);
-    unsigned int numSamples = samples.size();
-
-    unsigned int numRemove = degree-1;
-    for (unsigned int i = 0; i < numRemove; ++i)
-    {
-        // Distance to nearest neighbour
-        std::vector<double> distVec(samples.size(), 0);
-        for (unsigned int i = 1; i < samples.size()-1; ++i)
-            distVec.at(i) = samples.at(i+1) - samples.at(i-1);
-
-        auto nn = std::min_element(distVec.begin()+1, distVec.end()-1); // Cannot remove first and last element
-        auto inn = nn - distVec.begin();
-        samples.erase(samples.begin() + inn);
-    }
-
-    assert(samples.size() == numSamples - numRemove);
-
-    // Add p knots to each end
-
-    //assert(samples.size() == numSamples + degree + 1);
-
-    return samples;
-}
+//std::vector<double> BSplineBasis1D::linspace(double start, double stop, unsigned int points) const
+//{
+//    std::vector<double> ret;
+//    double dx = 0;
+//    if (points > 1)
+//        dx = (stop - start)/(points-1);
+//    for (unsigned int i = 0; i < points; ++i)
+//        ret.push_back(start + i*dx);
+//    return ret;
+//}
 
 } // namespace SPLINTER

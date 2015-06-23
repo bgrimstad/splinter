@@ -15,19 +15,11 @@
 namespace SPLINTER
 {
 
-enum class KnotVectorType
-{
-    EXPLICIT,   // Knot sequence is explicitly given (it should be regular)
-    REGULAR,    // p+1-regular knots (knots are added if necessary)
-    FREE,       // Knots for cubic spline interpolation with free end conditions
-    EQUIDISTANT // Equidistant p+1-regular knot sequence for all degrees
-};
-
 class BSplineBasis1D
 {
 public:
     BSplineBasis1D(std::vector<double> &x, unsigned int degree);
-    BSplineBasis1D(std::vector<double> &x, unsigned int degree, KnotVectorType knotVectorType);
+    BSplineBasis1D(std::vector<double> &x, unsigned int degree, bool explicitKnots);
 
     // Evaluation of basis functions
     SparseVector evaluate(double x) const;
@@ -80,17 +72,13 @@ private:
 
     // Helper functions
     bool inHalfopenInterval(double x, double x_min, double x_max) const;
-    std::vector<double> linspace(double start, double stop, unsigned int points) const;
+//    std::vector<double> linspace(double start, double stop, unsigned int points) const;
 
     // Knot vector related
     bool isKnotVectorRegular() const;
     bool isKnotVectorRegular(const std::vector<double> &vec) const;
     bool isRefinement(const std::vector<double> &refinedKnots) const;
-    std::vector<double> knotVectorEquidistant(std::vector<double> &X) const;
-    std::vector<double> knotVectorRegular(std::vector<double>& X) const;
-    std::vector<double> knotVectorFree(std::vector<double>& X) const;
-
-    std::vector<double> computeKnotVector(std::vector<double> samples, unsigned int degree);
+    std::vector<double> knotVectorMovingAverage(std::vector<double> &vec) const;
 
     // Member variables
     unsigned int degree;
