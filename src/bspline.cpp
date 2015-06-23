@@ -550,9 +550,7 @@ bool BSpline::removeUnsupportedBasisFunctions(std::vector<double> &lb, std::vect
     assert(lb.size() == numVariables);
     assert(ub.size() == numVariables);
 
-    SparseMatrix A;
-    if (!basis.reduceSupport(lb, ub, A))
-        return false;
+    SparseMatrix A = basis.reduceSupport(lb, ub);
 
     if (coefficients.cols() != A.rows())
         return false;

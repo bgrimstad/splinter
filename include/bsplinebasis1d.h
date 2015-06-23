@@ -37,7 +37,7 @@ public:
     // Support related
     void supportHack(double &x) const;
     bool insideSupport(double x) const;
-    bool reduceSupport(double lb, double ub, SparseMatrix &A);
+    SparseMatrix reduceSupport(double lb, double ub);
 
     // Getters
     std::vector<double> getKnotVector() const { return knots; }

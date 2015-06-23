@@ -48,7 +48,7 @@ void hessianTest() {
 	x(1) = 1;
 	auto hessian = b.evalHessian(x);
 
-	std::cout << hessian;
+    std::cout << hessian << endl;
 }
 
 void runExample()

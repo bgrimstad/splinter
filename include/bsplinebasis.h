@@ -60,7 +60,7 @@ public:
     std::vector<double> getSupportUpperBound() const;
 
     // Support related
-    bool reduceSupport(std::vector<double>& lb, std::vector<double>& ub, SparseMatrix &A);
+    SparseMatrix reduceSupport(std::vector<double>& lb, std::vector<double>& ub);
 
 private:
     std::vector<BSplineBasis1D> bases;

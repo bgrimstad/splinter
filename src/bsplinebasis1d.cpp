@@ -477,11 +477,11 @@ int BSplineBasis1D::indexHalfopenInterval(double x) const
     return index - 1;
 }
 
-bool BSplineBasis1D::reduceSupport(double lb, double ub, SparseMatrix &A)
+SparseMatrix BSplineBasis1D::reduceSupport(double lb, double ub)
 {
     // Check bounds
     if (lb < knots.front() || ub > knots.back())
-        return false;
+        throw Exception("BSplineBasis1D::reduceSupport: Cannot increase support!");
 
     unsigned int k = degree + 1;
 
@@ -489,10 +489,7 @@ bool BSplineBasis1D::reduceSupport(double lb, double ub, SparseMatrix &A)
     int index_upper = indexSupportedBasisfunctions(ub).back();
 
     // Check lower bound index
-    unsigned int count = knotMultiplicity(knots.at(index_lower));
-    bool is_p_regular = (k == count);
-
-    if (!is_p_regular)
+    if (k != knotMultiplicity(knots.at(index_lower)))
     {
         int suggested_index = index_lower - 1;
         if (0 <= suggested_index)
@@ -501,14 +498,7 @@ bool BSplineBasis1D::reduceSupport(double lb, double ub, SparseMatrix &A)
         }
         else
         {
-
-#ifndef NDEBUG
-            std::cout << "\n\n----------------adjust_index_for_domain_reduction-----------------" << std::endl;
-            std::cout << "Error: not enough knots to guarantee controlpoint convergence" << std::endl;
-            std::cout << "----------------adjust_index_for_domain_reduction-----------------\n\n" << std::endl;
-#endif // NDEBUG
-
-            return false;
+            throw Exception("BSplineBasis1D::reduceSupport: Suggested index is negative!");
         }
     }
 
@@ -526,16 +516,17 @@ bool BSplineBasis1D::reduceSupport(double lb, double ub, SparseMatrix &A)
     int numOld = knots.size()-k; // Current number of basis functions
     int numNew = si.size()-k; // Number of basis functions after update
 
-    if (numOld < numNew) return false;
+    if (numOld < numNew)
+        throw Exception("BSplineBasis1D::reduceSupport: Number of basis functions is increased instead of reduced!");
 
     DenseMatrix Ad = DenseMatrix::Zero(numOld, numNew);
     Ad.block(index_lower, 0, numNew, numNew) = DenseMatrix::Identity(numNew, numNew);
-    A = Ad.sparseView();
+    SparseMatrix A = Ad.sparseView();
 
     // Update knots
     knots = si;
 
-    return true;
+    return A;
 }
 
 double BSplineBasis1D::getKnotValue(unsigned int index) const

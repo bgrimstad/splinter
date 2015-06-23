@@ -337,12 +337,12 @@ SparseMatrix BSplineBasis::decomposeToBezierForm()
     return A;
 }
 
-bool BSplineBasis::reduceSupport(std::vector<double>& lb, std::vector<double>& ub, SparseMatrix &A)
+SparseMatrix BSplineBasis::reduceSupport(std::vector<double>& lb, std::vector<double>& ub)
 {
     assert(lb.size() == ub.size());
     assert(lb.size() == numVariables);
 
-    A.resize(1,1);
+    SparseMatrix A(1,1);
     A.insert(0,0) = 1;
 
     for (unsigned int i = 0; i < numVariables; i++)
@@ -350,8 +350,7 @@ bool BSplineBasis::reduceSupport(std::vector<double>& lb, std::vector<double>& u
         SparseMatrix temp = A;
         SparseMatrix Ai;
 
-        if (!bases.at(i).reduceSupport(lb.at(i), ub.at(i), Ai))
-            return false;
+        Ai = bases.at(i).reduceSupport(lb.at(i), ub.at(i));
 
         //A = kroneckerProduct(temp, Ai);
         myKroneckerProduct(temp, Ai, A);
@@ -359,7 +358,7 @@ bool BSplineBasis::reduceSupport(std::vector<double>& lb, std::vector<double>& u
 
     A.makeCompressed();
 
-    return true;
+    return A;
 }
 
 SparseVector BSplineBasis::foldlKroneckerProductVectors(const std::vector<SparseVector> &vectors) const
