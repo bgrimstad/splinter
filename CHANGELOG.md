@@ -1,5 +1,8 @@
 ## Changelog
 
+#### Version 1.4
+- Automatic knot vector selection using moving average
+
 #### Version 1.3
 - Library renamed SPLINTER (from Splinter)
 - Namespace changed from Splinter to SPLINTER to reflect the name change
