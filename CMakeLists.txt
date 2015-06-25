@@ -111,6 +111,18 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/test)
 
 # These are the sources we need for compilation of the library
 set(SRC_LIST
+    include/approximant.h
+    include/bspline.h
+    include/bsplinebasis.h
+    include/bsplinebasis1d.h
+    include/datasample.h
+    include/datatable.h
+    include/generaldefinitions.h
+    include/linearsolvers.h
+    include/mykroneckerproduct.h
+    include/pspline.h
+    include/radialbasisfunction.h
+    include/serialize.h
     src/bspline.cpp
     src/bsplinebasis.cpp
     src/bsplinebasis1d.cpp
@@ -120,7 +132,7 @@ set(SRC_LIST
     src/pspline.cpp
     src/radialbasisfunction.cpp
 )
-set(MATLAB_SRC_LIST ${SRC_LIST} src/matlab.cpp)
+set(MATLAB_SRC_LIST ${SRC_LIST} include/matlab.h src/matlab.cpp)
 
 set(SHARED_LIBRARY ${PROJECT_NAME_LOWER}-${VERSION})
 set(STATIC_LIBRARY ${PROJECT_NAME_LOWER}-static-${VERSION})
@@ -213,5 +225,5 @@ if(CMAKE_BUILD_TYPE STREQUAL DEBUG)
 	message("OS X:    ${OS_X}")
 endif()
 
-message("Configuring ${PROJECT_NAME} version ${VERSION} in ${CMAKE_BUILD_TYPE} mode for ${ARCH} (${BITNESS} bit)")
+message("Configuring ${PROJECT_NAME} version ${VERSION} in ${CMAKE_BUILD_TYPE} mode for ${ARCH} (${BITNESS} bit)")
 message("Compiler flags: ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}}")
