@@ -4,7 +4,6 @@
 - Remove code redundancy by wrapping affine operations on the control points (bspline) and tensor products (bsplinebasis)
 - Improve constructors of BSpline
 - Implement save/load functionality for rbfsplines
-- Open for interpolating with B-splines of any degree (needs an automatic knot initialization procedure - this can be formulated as a minimization problem)
 - Implement support for scattered data interpolation with B-Splines (look into MBA algorithm)
 - Implement NURBS
 - Implement Hessian for radial basis function splines
@@ -12,7 +11,10 @@
 - Implement a proper preconditioning matrix for radial basis function weight computation
 - Implement Kriging interpolation
 - Test executable runtime speed on different compilers
-- Implement integrated B-splines
-- Investigate tension B-splines: http://www.cas.mcmaster.ca/~modersit/Pubs/2009-SPIE-BFM.pdf
+- Investigate integrated B-splines and tension B-splines: http://www.cas.mcmaster.ca/~modersit/Pubs/2009-SPIE-BFM.pdf
 - Fix evalHessian returning the wrong value when using Quadratic B-splines (also investigate if the issue exists elsewhere).
 - Update documentation to reflect that we also have a MatLab interface
+- Implement set operations for DataTable objects (set summation as union and set subtraction as relative complement)
+- Consider creating a class for interpolating B-splines
+- Implement functionality for appraising approximation errors
+- Implement ordinary least squares
