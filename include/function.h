@@ -24,22 +24,22 @@ public:
     Function() {}
     virtual ~Function() {}
 
-    /*
+    /**
      * Returns the spline value at x
      */
     virtual double eval(DenseVector x) const = 0;
 
-    /*
+    /**
      * Returns the (1 x numVariables) Jacobian evaluated at x
      */
     virtual DenseMatrix evalJacobian(DenseVector x) const = 0;
 
-    /*
+    /**
      * Returns the (numVariables x numVariables) Hessian evaluated at x
      */
     virtual DenseMatrix evalHessian(DenseVector x) const = 0;
 
-    /*
+    /**
      * Get the dimension
      */
     virtual unsigned int getNumVariables() const = 0;

@@ -25,13 +25,13 @@ public:
     Approximant() {}
     virtual ~Approximant() {}
 
-    /*
+    /**
      * Serialize and save approximant to fileName
      * Throws if file could not be opened
      */
     virtual void save(const std::string fileName) const = 0;
 
-    /*
+    /**
      * Deserialize and load approximant from fileName
      * Throws if file could not be opened or if the file format is wrong
      */
