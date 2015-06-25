@@ -17,4 +17,4 @@
 - Implement set operations for DataTable objects (set summation as union and set subtraction as relative complement)
 - Consider creating a class for interpolating B-splines
 - Implement functionality for appraising approximation errors
-- Implement ordinary least squares
+- Complete and test implementation of ordinary least squares
