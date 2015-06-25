@@ -26,8 +26,8 @@ public:
 
     // Evaluation
     double eval(DenseVector x) const override;
-    DenseMatrix evalJacobian(DenseVector x) const override {}
-    DenseMatrix evalHessian(DenseVector x) const override {}
+    DenseMatrix evalJacobian(DenseVector x) const override { return DenseMatrix(); } // TODO: Implement
+    DenseMatrix evalHessian(DenseVector x) const override { return DenseMatrix(); } // TODO: Implement
 
     // Getters
     unsigned int getNumVariables() const override { return numVariables; }
