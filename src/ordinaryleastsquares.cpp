@@ -10,7 +10,6 @@
 #include "ordinaryleastsquares.h"
 #include "linearsolvers.h"
 #include "unsupported/Eigen/KroneckerProduct"
-#include <iostream> // TODO: remove
 
 namespace SPLINTER
 {
@@ -100,7 +99,6 @@ DenseVector OrdinaryLeastSquares::evalMonomials(DenseVector x) const
     for (unsigned int i = 0; i < numVariables; ++i)
     {
         unsigned int deg = degrees.at(i);
-        std::cout << deg << std::endl;
         DenseVector powi = DenseVector::Zero(deg+1);
         for (unsigned int j = 0; j <= deg; ++j)
             powi(j) = std::pow(x(i), j);
