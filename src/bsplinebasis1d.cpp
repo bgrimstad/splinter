@@ -736,15 +736,4 @@ std::vector<double> BSplineBasis1D::knotVectorMovingAverage(std::vector<double> 
     return knots;
 }
 
-//std::vector<double> BSplineBasis1D::linspace(double start, double stop, unsigned int points) const
-//{
-//    std::vector<double> ret;
-//    double dx = 0;
-//    if (points > 1)
-//        dx = (stop - start)/(points-1);
-//    for (unsigned int i = 0; i < points; ++i)
-//        ret.push_back(start + i*dx);
-//    return ret;
-//}
-
 } // namespace SPLINTER

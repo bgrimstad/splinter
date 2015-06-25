@@ -21,6 +21,7 @@
 #include "pspline.h"
 #include "radialbasisfunction.h"
 #include "testingutilities.h"
+#include "ordinaryleastsquares.h"
 
 using std::cout;
 using std::endl;
@@ -493,6 +494,36 @@ void localRefinementTest()
         cout << k << ", ";
 }
 
+void testOrdinaryLeastSquares()
+{
+    cout << "Testing ordinary least squares..." << endl;
+
+    DataTable samples;
+    double pi = std::atan(1)*4;
+    auto x = linspace(0, 4*pi, 10);
+    for (auto xi : x)
+        samples.addSample(xi,std::sin(xi));
+
+    OrdinaryLeastSquares polyfit(samples, 3);
+    std::cout << polyfit.getCoefficients() << std::endl;
+
+    /*
+     * Expected results:
+     * Coefficients for degree 1: 0.2925 -0.0466
+     * Coefficients for degree 2: 0.2925 -0.0466 0
+     * Coefficients for degree 3: 0.3787 -0.1595 0.0237 -0.0013
+     * Coefficients for degree 4: 0.3787 -0.1595 0.0237 -0.0013 0
+     *
+     * Check using MATLAB:
+     * deg = 3;
+     * x = linspace(0,4*pi,10);
+     * y = sin(x);
+     * p = polyfit(x,y,deg)
+     */
+
+    // Check results here
+}
+
 void run_tests()
 {
     runExample();
@@ -506,6 +537,8 @@ void run_tests()
 
 int main(int argc, char **argv)
 {
+    testOrdinaryLeastSquares();
+
     localRefinementTest();
 
     try

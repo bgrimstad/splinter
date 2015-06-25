@@ -72,7 +72,6 @@ private:
 
     // Helper functions
     bool inHalfopenInterval(double x, double x_min, double x_max) const;
-//    std::vector<double> linspace(double start, double stop, unsigned int points) const;
 
     // Knot vector related
     bool isKnotVectorRegular() const;

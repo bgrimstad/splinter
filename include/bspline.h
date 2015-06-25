@@ -12,7 +12,6 @@
 #define SPLINTER_BSPLINE_H
 
 #include "datatable.h"
-#include "generaldefinitions.h"
 #include "approximant.h"
 #include "bsplinebasis.h"
 
@@ -57,10 +56,10 @@ public:
     void init();
 
     // Evaluation of B-spline
-    double eval(DenseVector x) const;
+    double eval(DenseVector x) const override;
 	double eval(double x) const;
-    DenseMatrix evalJacobian(DenseVector x) const;
-    DenseMatrix evalHessian(DenseVector x) const;
+    DenseMatrix evalJacobian(DenseVector x) const override;
+    DenseMatrix evalHessian(DenseVector x) const override;
 
     // Getters
     unsigned int getNumVariables() const override { return numVariables; }

@@ -77,13 +77,13 @@ bool compareDataTables(DataTable &a, DataTable &b)
     return ait == a.cend() && bit == b.cend();
 }
 
-std::vector<double> linspace(double start, double stop, unsigned int points)
+std::vector<double> linspace(double start, double stop, unsigned int num)
 {
     std::vector<double> ret;
     double dx = 0;
-    if (points > 1)
-        dx = (stop - start)/(points-1);
-    for (unsigned int i = 0; i < points; ++i)
+    if (num > 1)
+        dx = (stop - start)/(num-1);
+    for (unsigned int i = 0; i < num; ++i)
         ret.push_back(start + i*dx);
     return ret;
 }
