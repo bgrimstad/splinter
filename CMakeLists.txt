@@ -5,7 +5,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-project(SPLINTER)
+project(SPLINTER CXX)
 cmake_minimum_required(VERSION 2.8)
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
 
