@@ -20,8 +20,8 @@ namespace SPLINTER
 
 BSpline::BSpline()
 {
-
 }
+
 /*
  * Constructors for multivariate B-splines with explicit data
  */

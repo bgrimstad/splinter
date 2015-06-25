@@ -111,6 +111,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/test)
 
 # These are the sources we need for compilation of the library
 set(SRC_LIST
+    include/function.h
     include/approximant.h
     include/bspline.h
     include/bsplinebasis.h

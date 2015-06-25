@@ -11,6 +11,7 @@
 #define SPLINTER_APPROXIMANT_H
 
 #include "generaldefinitions.h"
+#include "function.h"
 
 namespace SPLINTER
 {
@@ -18,43 +19,35 @@ namespace SPLINTER
 /*
  * Interface for approximants
  */
-class API Approximant
+class API Approximant : public Function
 {
 public:
     Approximant() {}
     virtual ~Approximant() {}
 
     /*
-     * Returns the spline value at x
+     * Serialize and save approximant to fileName
+     * Throws if file could not be opened
      */
-    virtual double eval(DenseVector x) const = 0;
-
-    /*
-     * Returns the (1 x numVariables) Jacobian evaluated at x
-     */
-    virtual DenseMatrix evalJacobian(DenseVector x) const = 0;
-
-    /*
-     * Returns the (numVariables x numVariables) Hessian evaluated at x
-     */
-    virtual DenseMatrix evalHessian(DenseVector x) const = 0;
-
-    /*
-     * Get the dimension
-     */
-    virtual unsigned int getNumVariables() const = 0;
-
-    /*
-    * Serialize and save spline to fileName
-    * Throws if file could not be opened
-    */
     virtual void save(const std::string fileName) const = 0;
 
     /*
-    * Deserialize and load spline from fileName
-    * Throws if file could not be opened or if the file format is wrong
-    */
+     * Deserialize and load approximant from fileName
+     * Throws if file could not be opened or if the file format is wrong
+     */
     virtual void load(const std::string fileName) = 0;
+
+    /*
+     * Functions for appraising absolute approximation error
+     */
+    //double absDist2(DataTable realValues);
+    //double absDistInf(DataTable realValues);
+
+    /*
+     * Functions for appraising relative approximation error
+     */
+    //double relDist2(DataTable realValues);
+    //double relDistInf(DataTable realValues);
 };
 
 } // namespace SPLINTER
