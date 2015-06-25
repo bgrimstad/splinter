@@ -41,7 +41,8 @@ OrdinaryLeastSquares::OrdinaryLeastSquares(const DataTable &samples, std::vector
 
 double OrdinaryLeastSquares::eval(DenseVector x) const
 {
-    DenseMatrix res = coefficients*x;
+    DenseMatrix monomials = evalMonomials(x);
+    DenseMatrix res = coefficients*monomials;
     return res(0,0);
 }
 
