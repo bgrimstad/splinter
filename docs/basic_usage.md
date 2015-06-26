@@ -9,7 +9,7 @@ Figure: A possible workflow for building approximations with SPLINTER.
 The header files and classes intended for the end user of this library are:
 [DataTable](../include/datatable.h), [BSpline](../include/bspline.h), [BSplineType](../include/bspline.h), [PSpline](../include/pspline.h), [RadialBasisFunction](../include/radialbasisfunction.h), [RadialBasisFunctionType](../include/radialbasisfunctionterm.h) and [PolynomialRegression](../include/polynomialregression.h).
 
-This is a simple example demonstrating the use of Splinter. Note that there is no restrictions to the dimension of x (except that it has to be >= 1, of course).
+This is a simple example demonstrating the use of SPLINTER.
 
 Remember to compile with a c++11 compatible compiler! That means you probably have to add a flag when compiling.
 
@@ -110,7 +110,10 @@ samples.addSample(4,15);
 // The order in which the samples are added does not matter
 // since DataTable keeps the samples sorted internally.
 ```
-The grid, meaning all the values of x where you have sampled the function, must be complete. This means that if you have sampled the function at `x = [0 0]`, `x = [1 0]` and `x = [2 1]`, you must also sample the function at `x = [1 1]`, `x = [0 1]` and `x = [2 0]`. You must have sampled the function in all permutations of x within the possible values of x<sub>0</sub>, x<sub>1</sub> ... x<sub>n</sub>. The number of samples will then (disregarding duplicates) be num(x<sub>0</sub>) * num(x<sub>1</sub>) * ... * num(x<sub>n</sub>), where num(x) is the number of distinct sample points x. You can check if the grid is complete by calling `isGridComplete()` on your DataTable.
+
+##Restrictions
+###B-splines
+For the current implementation of B-splines we require that the samples you provide form a complete [grid](https://en.wikipedia.org/wiki/Regular_grid). This means that if the function you are sampling is two-dimensional with variables `x0` and `x1`, then all combinations of `x0` and `x1` must be present in the samples. This means that if you choose to sample `x1` in a new value, say 1, then you must sample `[x0 1]` for all previous values of `x0` used so far. In 2D you can visualize this as [graphing paper](https://en.wikipedia.org/wiki/Graph_paper#/media/File:Log_paper.svg), where all lines intersect. If a sample were missing, one of the intersections would be missing, and the grid would be incomplete. You can check if the grid is complete by calling `isGridComplete()` on your DataTable. This restriction will be removed in a later implementation.
 
 
 This is an **incomplete** grid:
@@ -132,3 +135,7 @@ This is a **complete** grid:
 | 2.3             | 1               | 0   |
 
 Please note that whether the grid is complete or not only depends on the values of x, not those of y.
+
+
+###Polynomial regression
+For polynomial regression it is important that the number of unique samples is larger or equal to the number of variables of the function to approximate. If not, you get an [underdetermined system](https://en.wikipedia.org/wiki/Underdetermined_system) with bad approximations.
