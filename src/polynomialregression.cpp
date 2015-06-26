@@ -7,25 +7,25 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include "ordinaryleastsquares.h"
+#include "polynomialregression.h"
 #include "linearsolvers.h"
 #include "unsupported/Eigen/KroneckerProduct"
 
 namespace SPLINTER
 {
 
-OrdinaryLeastSquares::OrdinaryLeastSquares(const DataTable &samples, unsigned int degree)
-    : OrdinaryLeastSquares(samples, std::vector<unsigned int>(samples.getNumVariables(), degree))
+PolynomialRegression::PolynomialRegression(const DataTable &samples, unsigned int degree)
+    : PolynomialRegression(samples, std::vector<unsigned int>(samples.getNumVariables(), degree))
 {
 }
 
-OrdinaryLeastSquares::OrdinaryLeastSquares(const DataTable &samples, std::vector<unsigned int> degrees)
+PolynomialRegression::PolynomialRegression(const DataTable &samples, std::vector<unsigned int> degrees)
     : degrees(degrees),
       numVariables(samples.getNumVariables()),
       numCoefficients(0)
 {
     if (degrees.size() != numVariables)
-        throw Exception("OrdinaryLeastSquares::OrdinaryLeastSquares: Inconsistent input data!");
+        throw Exception("PolynomialRegression::PolynomialRegression: Inconsistent input data!");
 
     // Check that a minimum number of samples is provided
     numCoefficients = 1;
@@ -33,20 +33,20 @@ OrdinaryLeastSquares::OrdinaryLeastSquares(const DataTable &samples, std::vector
         numCoefficients *= (deg+1);
 
     if (numCoefficients > samples.getNumSamples())
-        throw Exception("OrdinaryLeastSquares::OrdinaryLeastSquares: Insufficient number of samples!");
+        throw Exception("PolynomialRegression::PolynomialRegression: Insufficient number of samples!");
 
     // Compute coefficients
     computeCoefficients(samples);
 }
 
-double OrdinaryLeastSquares::eval(DenseVector x) const
+double PolynomialRegression::eval(DenseVector x) const
 {
     DenseMatrix monomials = evalMonomials(x);
     DenseMatrix res = coefficients*monomials;
     return res(0,0);
 }
 
-void OrdinaryLeastSquares::computeCoefficients(const DataTable &samples)
+void PolynomialRegression::computeCoefficients(const DataTable &samples)
 {
     // Left hand side
     DenseMatrix X = computeDesignMatrix(samples);
@@ -63,13 +63,13 @@ void OrdinaryLeastSquares::computeCoefficients(const DataTable &samples)
     // Solve for coefficients
     DenseQR s;
     if (!s.solve(XtX, Xty, coefficients))
-        throw Exception("OrdinaryLeastSquares::computeCoefficients: Failed to solve for coefficients.");
+        throw Exception("PolynomialRegression::computeCoefficients: Failed to solve for coefficients.");
 
     // Transpose coefficients matrix
     coefficients.transposeInPlace();
 }
 
-DenseMatrix OrdinaryLeastSquares::computeDesignMatrix(const DataTable &samples) const
+DenseMatrix PolynomialRegression::computeDesignMatrix(const DataTable &samples) const
 {
     DenseMatrix X = DenseMatrix::Zero(samples.getNumSamples(), numCoefficients);
 
@@ -93,7 +93,7 @@ DenseMatrix OrdinaryLeastSquares::computeDesignMatrix(const DataTable &samples) 
     return X;
 }
 
-DenseVector OrdinaryLeastSquares::evalMonomials(DenseVector x) const
+DenseVector PolynomialRegression::evalMonomials(DenseVector x) const
 {
     std::vector<DenseVector> powers;
 

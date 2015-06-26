@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#ifndef SPLINTER_ORDINARYLEASTSQUARES_H
-#define SPLINTER_ORDINARYLEASTSQUARES_H
+#ifndef SPLINTER_POLYNOMIALREGRESSION_H
+#define SPLINTER_POLYNOMIALREGRESSION_H
 
 #include "approximant.h"
 #include "datatable.h"
@@ -16,13 +16,13 @@
 namespace SPLINTER
 {
 
-class OrdinaryLeastSquares : public Approximant
+class PolynomialRegression : public Approximant
 {
 public:
-    OrdinaryLeastSquares(const DataTable &samples, unsigned int degree);
-    OrdinaryLeastSquares(const DataTable &samples, std::vector<unsigned int> degrees);
+    PolynomialRegression(const DataTable &samples, unsigned int degree);
+    PolynomialRegression(const DataTable &samples, std::vector<unsigned int> degrees);
 
-    virtual OrdinaryLeastSquares* clone() const { return new OrdinaryLeastSquares(*this); }
+    virtual PolynomialRegression * clone() const { return new PolynomialRegression(*this); }
 
     // Evaluation
     double eval(DenseVector x) const override;
@@ -52,4 +52,4 @@ private:
 
 } // namespace SPLINTER
 
-#endif // SPLINTER_ORDINARYLEASTSQUARES_H
+#endif // SPLINTER_POLYNOMIALREGRESSION_H

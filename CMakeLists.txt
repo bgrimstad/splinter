@@ -111,20 +111,20 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/test)
 
 # These are the sources we need for compilation of the library
 set(SRC_LIST
-    include/function.h
     include/approximant.h
     include/bspline.h
     include/bsplinebasis.h
     include/bsplinebasis1d.h
     include/datasample.h
     include/datatable.h
+    include/function.h
     include/generaldefinitions.h
     include/linearsolvers.h
     include/mykroneckerproduct.h
+    include/polynomialregression.h
     include/pspline.h
     include/radialbasisfunction.h
     include/radialbasisfunctionterm.h
-    include/ordinaryleastsquares.h
     include/serialize.h
     src/bspline.cpp
     src/bsplinebasis.cpp
@@ -132,9 +132,9 @@ set(SRC_LIST
     src/datasample.cpp
     src/datatable.cpp
     src/mykroneckerproduct.cpp
+    src/polynomialregression.cpp
     src/pspline.cpp
     src/radialbasisfunction.cpp
-    src/ordinaryleastsquares.cpp
 )
 set(MATLAB_SRC_LIST ${SRC_LIST} include/matlab.h src/matlab.cpp)
 

@@ -21,7 +21,7 @@
 #include "pspline.h"
 #include "radialbasisfunction.h"
 #include "testingutilities.h"
-#include "ordinaryleastsquares.h"
+#include "polynomialregression.h"
 
 using std::cout;
 using std::endl;
@@ -496,7 +496,7 @@ void localRefinementTest()
 
 void testOrdinaryLeastSquares()
 {
-    cout << "Testing ordinary least squares..." << endl;
+    cout << "Testing polynomial regression..." << endl;
 
     DataTable samples;
     double pi = std::atan(1)*4;
@@ -504,7 +504,7 @@ void testOrdinaryLeastSquares()
     for (auto xi : x)
         samples.addSample(xi,std::sin(xi));
 
-    OrdinaryLeastSquares polyfit(samples, 3);
+    PolynomialRegression polyfit(samples, 3);
     std::cout << polyfit.getCoefficients() << std::endl;
 
     /*
