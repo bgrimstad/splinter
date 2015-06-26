@@ -18,3 +18,4 @@
 - Consider creating a class for interpolating B-splines
 - Implement functionality for appraising approximation errors
 - Complete and test implementation of ordinary least squares
+- Add set operations to DataTable
