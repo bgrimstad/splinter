@@ -25,11 +25,6 @@ DataTable::DataTable()
 {
 }
 
-DataTable::DataTable(const char *fileName)
-    : DataTable(std::string(fileName))
-{
-}
-
 DataTable::DataTable(bool allowDuplicates)
     : DataTable(allowDuplicates, false)
 {
@@ -40,6 +35,11 @@ DataTable::DataTable(bool allowDuplicates, bool allowIncompleteGrid)
       allowIncompleteGrid(allowIncompleteGrid),
       numDuplicates(0),
       numVariables(0)
+{
+}
+
+DataTable::DataTable(const char *fileName)
+    : DataTable(std::string(fileName))
 {
 }
 
@@ -71,7 +71,9 @@ void DataTable::addSample(const DataSample &sample)
         initDataStructures();
     }
 
-    assert(sample.getDimX() == numVariables); // All points must have the same dimension
+    if(sample.getDimX() != numVariables) {
+        throw Exception("Datatable::addSample: Dimension of new sample is inconsistent with previous samples!");
+    }
 
     // Check if the sample has been added already
     if (samples.count(sample) > 0)

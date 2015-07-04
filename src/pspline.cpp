@@ -9,9 +9,20 @@
 
 #include "pspline.h"
 #include "linearsolvers.h"
+#include "serialize.h"
 
 namespace SPLINTER
 {
+
+PSpline::PSpline(const char *fileName)
+    : PSpline(std::string(fileName))
+{
+}
+
+PSpline::PSpline(const std::string fileName)
+{
+    load(fileName);
+}
 
 PSpline::PSpline(const DataTable &samples)
     : PSpline(samples,0.03)

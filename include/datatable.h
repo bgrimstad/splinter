@@ -26,9 +26,9 @@ class API DataTable
 {
 public:
     DataTable();
-    DataTable(const char *fileName);
     DataTable(bool allowDuplicates);
     DataTable(bool allowDuplicates, bool allowIncompleteGrid);
+    DataTable(const char *fileName);
     DataTable(const std::string fileName); // Load DataTable from file
 
     /*

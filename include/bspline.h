@@ -49,6 +49,7 @@ public:
     /**
      * Construct B-spline from file
      */
+    BSpline(const char *fileName);
     BSpline(const std::string fileName);
 
     virtual BSpline* clone() const { return new BSpline(*this); }

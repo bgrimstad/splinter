@@ -10,13 +10,6 @@ classdef RadialBasisFunction < Approximant
         Handle
         
         Constructor_function = 'rbf_init';
-        Destructor_function = 'rbf_delete';
-        Eval_function = 'rbf_eval';
-        EvalJacobian_function = '';
-        EvalHessian_function = '';
-        GetNumVariables_function = 'rbf_get_num_variables';
-        Save_function = '';
-        Load_function = '';
     end
 
     methods

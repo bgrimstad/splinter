@@ -126,6 +126,11 @@ BSpline::BSpline(const DataTable &samples, BSplineType type = BSplineType::CUBIC
 /*
  * Construct from saved data
  */
+BSpline::BSpline(const char *fileName)
+    : BSpline(std::string(fileName))
+{
+}
+
 BSpline::BSpline(const std::string fileName)
 {
     load(fileName);

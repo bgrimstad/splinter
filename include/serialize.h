@@ -398,7 +398,17 @@ inline void save_to_file(std::string filename, StreamType data)
  */
 inline StreamType load_from_file(std::string filename)
 {
+    // Open the file in binary mode at the end
     std::ifstream ifs(filename, std::ios::binary | std::ios::ate);
+
+    if(!ifs.is_open()) {
+        std::string error_message("serialize.h: load_from_file: Unable to open file \"");
+        error_message.append(filename);
+        error_message.append("\" for deserializing.");
+        throw Exception(error_message);
+    }
+
+    // Because we opened the file at the end, tellg() will give us the size of the file
     std::ifstream::pos_type pos = ifs.tellg();
 
     std::vector<char> result(pos);

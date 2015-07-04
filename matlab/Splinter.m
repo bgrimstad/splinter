@@ -59,7 +59,8 @@ classdef Splinter < handle
             % object. The internal reference will then be gone, and the
             % reference invalid).
             if(calllib(obj.Alias, 'get_error'))
-               error('Internal library error: Did you use an object belonging to a previous load of the library?'); 
+                error_message = calllib(obj.Alias, 'get_error_string');
+                error(error_message); 
             end
         end
         

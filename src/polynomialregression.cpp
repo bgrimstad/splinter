@@ -7,12 +7,23 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
+#include <serialize.h>
 #include "polynomialregression.h"
 #include "linearsolvers.h"
 #include "unsupported/Eigen/KroneckerProduct"
 
 namespace SPLINTER
 {
+
+PolynomialRegression::PolynomialRegression(const char *fileName)
+    : PolynomialRegression(std::string(fileName))
+{
+}
+
+PolynomialRegression::PolynomialRegression(const std::string fileName)
+{
+    load(fileName);
+}
 
 PolynomialRegression::PolynomialRegression(const DataTable &samples, unsigned int degree)
     : PolynomialRegression(samples, std::vector<unsigned int>(samples.getNumVariables(), degree))
@@ -118,6 +129,32 @@ DenseVector PolynomialRegression::evalMonomials(DenseVector x) const
     assert(monomials.cols() == numCoefficients);
 
     return monomials;
+}
+
+void PolynomialRegression::save(const std::string fileName) const
+{
+    // Serialize
+    StreamType stream;
+    serialize(numVariables, stream);
+    serialize(numCoefficients, stream);
+    serialize(degrees, stream);
+    serialize(coefficients, stream);
+
+    // Save stream to file
+    save_to_file(fileName, stream);
+}
+
+void PolynomialRegression::load(const std::string fileName)
+{
+    // Load stream from file
+    StreamType stream = load_from_file(fileName);
+
+    // Deserialize
+    auto it = stream.cbegin();
+    numVariables = deserialize<unsigned int>(it, stream.cend());
+    numCoefficients = deserialize<unsigned int>(it, stream.cend());
+    degrees = deserialize<std::vector<unsigned int>>(it, stream.cend());
+    coefficients = deserialize<DenseMatrix>(it, stream.cend());
 }
 
 } // namespace SPLINTER
