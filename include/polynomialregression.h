@@ -16,7 +16,7 @@
 namespace SPLINTER
 {
 
-class PolynomialRegression : public Approximant
+class API PolynomialRegression : public Approximant
 {
 public:
     PolynomialRegression(const DataTable &samples, unsigned int degree);
