@@ -19,6 +19,8 @@ namespace SPLINTER
 class API PolynomialRegression : public Approximant
 {
 public:
+    PolynomialRegression(const char *fileName);
+    PolynomialRegression(const std::string fileName);
     PolynomialRegression(const DataTable &samples, unsigned int degree);
     PolynomialRegression(const DataTable &samples, std::vector<unsigned int> degrees);
 
@@ -34,9 +36,7 @@ public:
 
     DenseMatrix getCoefficients() const { return coefficients; }
 
-    // Save and load
-    void save(const std::string fileName) const override {}
-    void load(const std::string fileName) override {}
+    void save(const std::string fileName) const override;
 
 private:
     unsigned int numVariables;
@@ -48,6 +48,8 @@ private:
     DenseMatrix computeDesignMatrix(const DataTable &samples) const;
 
     DenseVector evalMonomials(DenseVector x) const;
+
+    void load(const std::string fileName) override;
 };
 
 } // namespace SPLINTER

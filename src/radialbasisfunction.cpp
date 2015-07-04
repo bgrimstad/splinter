@@ -14,6 +14,16 @@
 namespace SPLINTER
 {
 
+RadialBasisFunction::RadialBasisFunction(const char *fileName)
+    : RadialBasisFunction(std::string(fileName))
+{
+}
+
+RadialBasisFunction::RadialBasisFunction(const std::string fileName)
+{
+    load(fileName);
+}
+
 RadialBasisFunction::RadialBasisFunction(const DataTable &samples, RadialBasisFunctionType type)
     : RadialBasisFunction(samples, type, false)
 {

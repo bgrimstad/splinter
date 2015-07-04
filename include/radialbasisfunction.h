@@ -27,7 +27,8 @@ namespace SPLINTER
 class API RadialBasisFunction : public Approximant
 {
 public:
-
+    RadialBasisFunction(const char *filename);
+    RadialBasisFunction(const std::string filename);
     RadialBasisFunction(const DataTable &samples, RadialBasisFunctionType type);
     RadialBasisFunction(const DataTable &samples, RadialBasisFunctionType type, bool normalized);
 
@@ -43,8 +44,8 @@ public:
 
     unsigned int getNumVariables() const override { return dim; }
 
-    void save(const std::string fileName) const override {}
-    void load(const std::string fileName) override {}
+    void save(const std::string fileName) const override { throw Exception("RadialBasisFunction::save: not implemented."); }
+    void load(const std::string fileName) override { throw Exception("RadialBasisFunction::load: not implemented."); }
 
 private:
 
