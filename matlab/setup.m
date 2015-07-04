@@ -11,6 +11,7 @@ function setup()
     splinter_path = '/home/anders/C++/SPLINTER-build/SPLINTER-build/splinter-matlab';
     %splinter_path = 'C:/Users/Anders/Documents/Github/SPLINTER/SPLINTER/build/splinter-matlab';
     
+    % Read version file. Name of library file depends on the version.
     versionFile = fullfile(splinter_path, 'version');
     versionFileId = fopen(versionFile, 'r');
     version = fscanf(versionFileId, '%d-%d');

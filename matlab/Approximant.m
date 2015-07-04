@@ -8,30 +8,20 @@
 classdef (Abstract = true) Approximant < handle
     properties (Abstract = true, Access = protected)
         Handle
-        
-        % Name of the functions in the back end, used with calllib
-        Constructor_function
-        Destructor_function
-        Eval_function
-        EvalJacobian_function
-        EvalHessian_function
-        GetNumVariables_function
-        Save_function
-        Load_function
     end
 
     methods
         % Evaluate the spline at x
         % x should be a real number (not array) within the domain of the spline
         function r = eval(obj, x)
-            r = Splinter.getInstance().call(obj.Eval_function, obj.Handle, x, length(x));
+            r = Splinter.getInstance().call('eval', obj.Handle, x, length(x));
             %r = calllib(Splinter.getInstance.get_alias(), obj.Eval_function, obj.Handle, x, length(x));
         end
         
         % Evaluate the Jacobian at x
         % x should be a real number (not array) within the domain of the spline
         function r = evalJacobian(obj, x)
-            temp = Splinter.getInstance().call(obj.EvalJacobian_function, obj.Handle, x, length(x));
+            temp = Splinter.getInstance().call('eval_jacobian', obj.Handle, x, length(x));
             reshape(temp, 1, length(x))
             r = temp.value;
         end
@@ -39,22 +29,28 @@ classdef (Abstract = true) Approximant < handle
         % Evaluate the Hessian at x
         % x should be a real number (not array) within the domain of the spline
         function r = evalHessian(obj, x)
-            temp = Splinter.getInstance().call(obj.EvalHessian_function, obj.Handle, x, length(x));
+            temp = Splinter.getInstance().call('eval_hessian', obj.Handle, x, length(x));
             reshape(temp, length(x), length(x))
             r = temp.value;
         end
 
         function r = getNumVariables(obj)
-            r = Splinter.getInstance().call(obj.GetNumVariables_function, obj.Handle);
+            r = Splinter.getInstance().call('get_num_variables', obj.Handle);
         end
         
         function save(obj, fileName)
-            Splinter.getInstance().call(obj.Save_function, obj.Handle, fileName);
+            Splinter.getInstance().call('save', obj.Handle, fileName);
+        end
+        
+        function load(obj, fileName)
+            Splinter.getInstance().call('load', obj.Handle, fileName);
         end
 
         % Destructor. Deletes the internal Approximant object.
         function delete(obj)
-            Splinter.getInstance().call(obj.Destructor_function, obj.Handle);
+            if(obj.Handle ~= -1)
+                Splinter.getInstance().call('delete_approximant', obj.Handle);
+            end
         end
     end
 end
