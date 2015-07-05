@@ -14,6 +14,10 @@
 namespace SPLINTER
 {
 
+PSpline::PSpline()
+{
+}
+
 PSpline::PSpline(const char *fileName)
     : PSpline(std::string(fileName))
 {
@@ -305,6 +309,29 @@ void PSpline::getSecondOrderFiniteDifferenceMatrix(SparseMatrix &D)
 //    D = Dd.sparseView();
 
     D.makeCompressed();
+}
+
+void PSpline::save(const std::string fileName) const
+{
+    StreamType stream;
+
+    serialize(*this, stream);
+
+    save_to_file(fileName, stream);
+}
+
+void PSpline::load(const std::string fileName)
+{
+    StreamType stream = load_from_file(fileName);
+
+    auto it = stream.cbegin();
+    _deserialize(it, stream.cend());
+}
+
+void PSpline::_deserialize(StreamType::const_iterator &it, StreamType::const_iterator end)
+{
+    BSpline::_deserialize(it, end);
+    lambda = deserialize<double>(it, end);
 }
 
 } // namespace SPLINTER

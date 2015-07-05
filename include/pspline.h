@@ -23,12 +23,17 @@ namespace SPLINTER
 class API PSpline : public BSpline
 {
 public:
+    PSpline();
+
     PSpline(const char *fileName);
     PSpline(const std::string fileName);
     PSpline(const DataTable &samples);
     PSpline(const DataTable &samples, double lambda);
 
-    void save(const std::string fileName) const override { throw Exception("PSpline::save: not implemented."); };
+    double getLambda() const { return lambda; }
+
+    void save(const std::string fileName) const override;
+    void _deserialize(StreamType::const_iterator &it, StreamType::const_iterator end);
 
 protected:
 
@@ -40,7 +45,7 @@ protected:
     void getSecondOrderFiniteDifferenceMatrix(SparseMatrix &D);
 
 private:
-    void load(const std::string fileName) override { throw Exception("PSpline::load: not implemented."); };
+    void load(const std::string fileName) override;
 };
 
 } // namespace SPLINTER

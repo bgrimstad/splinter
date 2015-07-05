@@ -210,6 +210,67 @@ bool serializeBSpline1()
     return compareBSplines(bspline, loadedBspline);
 }
 
+bool serializePSpline1()
+{
+    // Create new DataTable to manage samples
+    DataTable samples;
+    // Sample function
+    auto x0_vec = linspace(0, 2, 20);
+    auto x1_vec = linspace(0, 2, 20);
+    DenseVector x(2);
+    double y;
+    for (auto x0 : x0_vec)
+    {
+        for (auto x1 : x1_vec)
+        {
+            // Sample function at x
+            x(0) = x0;
+            x(1) = x1;
+            y = sixHumpCamelBack(x);
+            // Store sample
+            samples.addSample(x,y);
+        }
+    }
+    // Build P-spline
+    PSpline pspline(samples);
+    pspline.save("saveTest1.pspline");
+    PSpline loadedPspline("saveTest1.pspline");
+    remove("saveTest1.pspline");
+
+    return compareBSplines(pspline, loadedPspline)
+           && pspline.getLambda() == loadedPspline.getLambda();
+}
+
+bool serializeRBF1()
+{
+    // Create new DataTable to manage samples
+    DataTable samples;
+    // Sample function
+    auto x0_vec = linspace(0, 2, 20);
+    auto x1_vec = linspace(0, 2, 20);
+    DenseVector x(2);
+    double y;
+    for (auto x0 : x0_vec)
+    {
+        for (auto x1 : x1_vec)
+        {
+            // Sample function at x
+            x(0) = x0;
+            x(1) = x1;
+            y = sixHumpCamelBack(x);
+            // Store sample
+            samples.addSample(x,y);
+        }
+    }
+    // Build RBF
+    RadialBasisFunction rbf(samples, RadialBasisFunctionType::THIN_PLATE_SPLINE);
+    rbf.save("saveTest1.rbf");
+    RadialBasisFunction loadedRbf("saveTest1.rbf");
+    remove("saveTest1.rbf");
+
+    return compareFunctions(rbf, loadedRbf);
+}
+
 int main()
 {
     cout << endl << endl;
@@ -224,6 +285,8 @@ int main()
     cout << "serializeDataTable6(): " << (serializeDataTable6() ? "success" : "fail")   << endl;
     cout << "BSplines:                                                              "   << endl;
     cout << "serializeBSpline1():   " << (serializeBSpline1()   ? "success" : "fail")   << endl;
+    cout << "serializePSpline1():   " << (serializePSpline1()   ? "success" : "fail")   << endl;
+    cout << "serializeRBF1():       " << (serializeRBF1()       ? "success" : "fail")   << endl;
 
     return 0;
 }

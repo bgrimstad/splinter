@@ -10,6 +10,7 @@
 #ifndef SPLINTER_RADIALBASISFUNCTION_H
 #define SPLINTER_RADIALBASISFUNCTION_H
 
+#include <generaldefinitions.h>
 #include "datatable.h"
 #include "approximant.h"
 #include "radialbasisfunctionterm.h"
@@ -44,15 +45,23 @@ public:
 
     unsigned int getNumVariables() const override { return dim; }
 
-    void save(const std::string fileName) const override { throw Exception("RadialBasisFunction::save: not implemented."); }
-    void load(const std::string fileName) override { throw Exception("RadialBasisFunction::load: not implemented."); }
+    void save(const std::string fileName) const override;
 
+    void _deserialize(StreamType::const_iterator &it, StreamType::const_iterator end);
+
+    template <class T>
+    friend struct detail::get_size_helper;
+
+    template <class T>
+    friend struct detail::serialize_helper;
 private:
 
-    const DataTable samples;
+    DataTable samples;
     bool normalized, precondition;
     unsigned int dim, numSamples;
 
+    // Store the type so we can reconstruct the object when deserializing
+    RadialBasisFunctionType type;
     std::shared_ptr<RadialBasisFunctionTerm> fn;
 
     DenseMatrix weights;
@@ -63,6 +72,7 @@ private:
     double dist(DataSample x, DataSample y) const;
     bool dist_sort(DataSample x, DataSample y) const;
 
+    void load(const std::string fileName) override;
 };
 
 /*
