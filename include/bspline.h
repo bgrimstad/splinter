@@ -34,6 +34,7 @@ class API BSpline : public Approximant
 {
 public:
 
+    BSpline();
     /**
      * Construct B-spline from knot vectors, control coefficients (assumed vectorized), and basis degrees
      */
@@ -46,6 +47,7 @@ public:
     BSpline(const DataTable &samples, unsigned int degree);
     BSpline(const DataTable &samples, BSplineType type);
 
+    BSpline(BSplineBasis basis, DenseMatrix knotaverages, DenseMatrix coefficients, unsigned int numVariables);
     /**
      * Construct B-spline from file
      */
@@ -70,6 +72,9 @@ public:
     std::vector<unsigned int> getBasisDegrees() const;
     std::vector<double> getDomainUpperBound() const;
     std::vector<double> getDomainLowerBound() const;
+    BSplineBasis getBasis() const;
+    DenseMatrix getKnotaverages() const;
+    DenseMatrix getCoefficients() const;
 
     // Control point related
     void setControlPoints(DenseMatrix &controlPoints);
@@ -93,10 +98,9 @@ public:
     void insertKnots(double tau, unsigned int dim, unsigned int multiplicity = 1); // TODO: move back to private after testing
 
     void save(const std::string fileName) const override;
+    virtual void _deserialize(StreamType::const_iterator &it, StreamType::const_iterator end);
 
 protected:
-
-	BSpline();
 
     BSplineBasis basis;
     DenseMatrix knotaverages; // One row per input
@@ -120,7 +124,6 @@ private:
     bool pointInDomain(DenseVector x) const;
 
     void load(const std::string fileName) override;
-    void loadBasis(std::vector<std::vector<double>> knotVectors, std::vector<unsigned int> basisDegrees);
 };
 
 } // namespace SPLINTER

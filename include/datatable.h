@@ -53,6 +53,10 @@ public:
     std::vector< std::vector<double> > getTableX() const;
     std::vector<double> getVectorY() const;
 
+    bool getAllowDuplicates() const { return allowDuplicates; }
+    bool getAllowIncompleteGrid() const { return allowIncompleteGrid; }
+    unsigned int getNumDuplicates() const { return numDuplicates; }
+
     /*
      * Debug
      */
@@ -88,6 +92,7 @@ public:
     bool isGridComplete() const;
 
     void save(const std::string fileName) const;
+    virtual void _deserialize(StreamType::const_iterator &it, StreamType::const_iterator end);
 
 private:
     bool allowDuplicates;

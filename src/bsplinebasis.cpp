@@ -33,6 +33,12 @@ BSplineBasis::BSplineBasis(std::vector< std::vector<double> > &X, std::vector<un
     setUnivariateBases(X, basisDegrees, explicitKnots);
 }
 
+BSplineBasis::BSplineBasis(std::vector<BSplineBasis1D> &bases, unsigned int numVariables)
+    : bases(bases),
+    numVariables(numVariables)
+{
+}
+
 void BSplineBasis::setUnivariateBases(std::vector< std::vector<double> > &X, std::vector<unsigned int> &basisDegrees, bool explicitKnots)
 {
     bases.clear();
@@ -531,6 +537,16 @@ std::vector<double> BSplineBasis::getSupportUpperBound() const
         ub.push_back(knots.back());
     }
     return ub;
+}
+
+std::vector<BSplineBasis1D> BSplineBasis::getBases() const
+{
+    return bases;
+}
+
+unsigned int BSplineBasis::getNumVariables() const
+{
+    return numVariables;
 }
 
 } // namespace SPLINTER

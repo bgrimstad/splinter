@@ -123,6 +123,14 @@ BSpline::BSpline(const DataTable &samples, BSplineType type = BSplineType::CUBIC
     checkControlPoints();
 }
 
+BSpline::BSpline(BSplineBasis basis, DenseMatrix knotaverages, DenseMatrix coefficients, unsigned int numVariables)
+    : basis(basis),
+    knotaverages(knotaverages),
+    coefficients(coefficients),
+    numVariables(numVariables)
+{
+}
+
 /*
  * Construct from saved data
  */
@@ -571,10 +579,8 @@ void BSpline::save(const std::string fileName) const
 {
     // Serialize
     StreamType stream;
-    serialize(numVariables, stream);
-    serialize(coefficients, stream);
-    serialize(basis.getKnotVectors(), stream);
-    serialize(basis.getBasisDegrees(), stream);
+
+    serialize(*this, stream);
 
     // Save stream to file
     save_to_file(fileName, stream);
@@ -585,23 +591,31 @@ void BSpline::load(const std::string fileName)
     // Load stream from file
     StreamType stream = load_from_file(fileName);
 
-    // Deserialize
     auto it = stream.cbegin();
-    numVariables = deserialize<unsigned int>(it, stream.cend());
-    coefficients = deserialize<DenseMatrix>(it, stream.cend());
-    auto knotVectors = deserialize<std::vector<std::vector<double>>>(it, stream.cend());
-    auto basisDegrees = deserialize<std::vector<unsigned int>>(it, stream.cend());
-
-    loadBasis(knotVectors, basisDegrees);
+    _deserialize(it, stream.cend());
 }
 
-void BSpline::loadBasis(std::vector<std::vector<double>> knotVectors, std::vector<unsigned int> basisDegrees)
+void BSpline::_deserialize(StreamType::const_iterator &it, StreamType::const_iterator end)
 {
-    assert(coefficients.rows() == 1);
-    basis = BSplineBasis(knotVectors, basisDegrees, true);
-    computeKnotAverages();
-    init();
-    checkControlPoints();
+    basis = std::move(deserialize<BSplineBasis>(it, end));
+    knotaverages = std::move(deserialize<DenseMatrix>(it, end));
+    coefficients = std::move(deserialize<DenseMatrix>(it, end));
+    numVariables = std::move(deserialize<unsigned int>(it, end));
+}
+
+BSplineBasis BSpline::getBasis() const
+{
+    return basis;
+}
+
+DenseMatrix BSpline::getKnotaverages() const
+{
+    return knotaverages;
+}
+
+DenseMatrix BSpline::getCoefficients() const
+{
+    return coefficients;
 }
 
 } // namespace SPLINTER

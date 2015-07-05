@@ -14,6 +14,10 @@
 namespace SPLINTER
 {
 
+BSplineBasis1D::BSplineBasis1D()
+{
+}
+
 BSplineBasis1D::BSplineBasis1D(std::vector<double> &x, unsigned int degree)
     : BSplineBasis1D(x, degree, false)
 {
@@ -40,6 +44,13 @@ BSplineBasis1D::BSplineBasis1D(std::vector<double> &x, unsigned int degree, bool
     // NOTE: this exception is too strict (multiple start and end knots should not be required)
     if (!isKnotVectorRegular())
         throw Exception("BSplineBasis1D::BSplineBasis1D: Knot vector is not regular.");
+}
+
+BSplineBasis1D::BSplineBasis1D(unsigned int degree, std::vector<double> &knots, unsigned int targetNumBasisFunctions)
+    : degree(degree),
+    knots(knots),
+    targetNumBasisfunctions(targetNumBasisFunctions)
+{
 }
 
 SparseVector BSplineBasis1D::evaluate(double x) const
@@ -734,6 +745,21 @@ std::vector<double> BSplineBasis1D::knotVectorMovingAverage(std::vector<double> 
     assert(knots.size() == uniqueX.size() + degree + 1);
 
     return knots;
+}
+
+unsigned int BSplineBasis1D::getDegree() const
+{
+    return degree;
+}
+
+std::vector<double> BSplineBasis1D::getKnots() const
+{
+    return knots;
+}
+
+unsigned int BSplineBasis1D::getTargetNumBasisFunctions() const
+{
+    return targetNumBasisfunctions;
 }
 
 } // namespace SPLINTER

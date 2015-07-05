@@ -22,6 +22,7 @@ public:
     BSplineBasis();
     BSplineBasis(std::vector< std::vector<double> > &X, std::vector<unsigned int> basisDegrees);
     BSplineBasis(std::vector< std::vector<double> > &X, std::vector<unsigned int> basisDegrees, bool explicitKnots);
+    BSplineBasis(std::vector<BSplineBasis1D> &bases, unsigned int numVariables);
 
     void setUnivariateBases(std::vector< std::vector<double> > &X, std::vector<unsigned int> &basisDegrees, bool explicitKnots);
 
@@ -42,6 +43,8 @@ public:
     BSplineBasis1D getSingleBasis(int dim);
     std::vector< std::vector<double> > getKnotVectors() const;
     std::vector<double> getKnotVector(int dim) const;
+    std::vector<BSplineBasis1D> getBases() const;
+    unsigned int getNumVariables() const;
 
     std::vector<unsigned int> getBasisDegrees() const;
     unsigned int getBasisDegree(unsigned int dim) const;
@@ -61,7 +64,6 @@ public:
 
     // Support related
     SparseMatrix reduceSupport(std::vector<double>& lb, std::vector<double>& ub);
-
 private:
     std::vector<BSplineBasis1D> bases;
     unsigned int numVariables;

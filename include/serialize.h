@@ -32,19 +32,22 @@
 #ifndef SPLINTER_SERIALIZE_H
 #define SPLINTER_SERIALIZE_H
 
+#include <generaldefinitions.h>
 #include <vector>
 #include <Eigen/Dense>
 #include <cassert>
 #include <fstream>
 #include <numeric>
 #include <set>
+#include <bspline.h>
 #include <datasample.h>
 #include <stdint.h>
+#include <bsplinebasis.h>
+#include <pspline.h>
+#include <radialbasisfunction.h>
 
 namespace SPLINTER
 {
-
-typedef std::vector<uint8_t> StreamType;
 
 template <class T>
 size_t get_size(const T& obj);
@@ -77,6 +80,62 @@ namespace detail
     struct get_size_helper<DataSample> {
         static size_t value(const DataSample& sample) {
             return get_size(sample.getX()) + get_size(sample.getY());
+        }
+    };
+
+    template <>
+    struct get_size_helper<DataTable> {
+        static size_t value(const DataTable& table) {
+            return get_size(table.getAllowDuplicates())
+                   + get_size(table.getAllowIncompleteGrid())
+                   + get_size(table.getNumDuplicates())
+                   + get_size(table.getNumVariables())
+                   + get_size(table.getSamples())
+                   + get_size(table.getGrid());
+        }
+    };
+
+    template <>
+    struct get_size_helper<BSpline> {
+        static size_t value(const BSpline &bspline) {
+            return get_size(bspline.getBasis())
+                   + get_size(bspline.getKnotaverages())
+                   + get_size(bspline.getCoefficients())
+                   + get_size(bspline.getNumVariables());
+        }
+    };
+
+    template <>
+    struct get_size_helper<PSpline> {
+        static size_t value(const PSpline &pspline) {
+            return get_size(pspline.getLambda()) + get_size(*((BSpline *) &pspline));
+        }
+    };
+
+    template <>
+    struct get_size_helper<RadialBasisFunction> {
+        static size_t value(const RadialBasisFunction &rbf) {
+            return get_size(rbf.samples)
+                   + get_size(rbf.normalized)
+                   + get_size(rbf.precondition)
+                   + get_size(rbf.dim)
+                   + get_size(rbf.numSamples)
+                   + get_size(rbf.type)
+                   + get_size(rbf.weights);
+        }
+    };
+
+    template <>
+    struct get_size_helper<BSplineBasis> {
+        static size_t value(const BSplineBasis &basis) {
+            return get_size(basis.getBases()) + get_size(basis.getNumVariables());
+        }
+    };
+
+    template <>
+    struct get_size_helper<BSplineBasis1D> {
+        static size_t value(const BSplineBasis1D &basis) {
+            return get_size(basis.getDegree()) + get_size(basis.getKnots()) + get_size(basis.getTargetNumBasisFunctions());
         }
     };
 
@@ -168,6 +227,18 @@ namespace detail
         }
     };
 
+    template <>
+    struct serialize_helper<DataTable> {
+        static void apply(const DataTable &table, StreamType::iterator &res) {
+            serializer(table.getAllowDuplicates(), res);
+            serializer(table.getAllowIncompleteGrid(), res);
+            serializer(table.getNumDuplicates(), res);
+            serializer(table.getNumVariables(), res);
+            serializer(table.getSamples(), res);
+            serializer(table.getGrid(), res);
+        }
+    };
+
     template <class T>
     struct serialize_helper<std::vector<T>> {
         static void apply(const std::vector<T>& obj, StreamType::iterator& res) {
@@ -195,12 +266,74 @@ namespace detail
         }
     };
 
+    template <>
+    struct serialize_helper<BSpline> {
+        static void apply(const BSpline &obj, StreamType::iterator &res)
+        {
+            serializer(obj.getBasis(), res);
+
+            serializer(obj.getKnotaverages(), res);
+
+            serializer(obj.getCoefficients(), res);
+
+            serializer(obj.getNumVariables(), res);
+        }
+    };
+
+    template <>
+    struct serialize_helper<PSpline> {
+        static void apply(const PSpline &obj, StreamType::iterator &res)
+        {
+            serializer(*(BSpline *) &obj, res);
+
+            serializer(obj.getLambda(), res);
+        }
+    };
+
+    template <>
+    struct serialize_helper<BSplineBasis> {
+        static void apply(const BSplineBasis &obj, StreamType::iterator &res)
+        {
+            // Store the bases
+            serializer(obj.getBases(), res);
+
+            serializer(obj.getNumVariables(), res);
+        }
+    };
+
+    template <>
+    struct serialize_helper<BSplineBasis1D> {
+        static void apply(const BSplineBasis1D &obj, StreamType::iterator &res)
+        {
+            serializer(obj.getDegree(), res);
+
+            serializer(obj.getKnots(), res);
+
+            serializer(obj.getTargetNumBasisFunctions(), res);
+        }
+    };
+
+    template <>
+    struct serialize_helper<RadialBasisFunction> {
+        static void apply(const RadialBasisFunction &obj, StreamType::iterator &res)
+        {
+            serializer(obj.samples, res);
+            serializer(obj.normalized, res);
+            serializer(obj.precondition, res);
+            serializer(obj.dim, res);
+            serializer(obj.numSamples, res);
+            serializer(obj.type, res);
+            serializer(obj.weights, res);
+        }
+    };
+
     template <class T>
     struct serialize_helper {
         static void apply(const T& obj, StreamType::iterator& res) {
             const uint8_t* ptr = reinterpret_cast<const uint8_t*>(&obj);
-            std::copy(ptr, ptr+sizeof(T), res);
-            res+=sizeof(T);
+            // Copy the contents between ptr and ptr+sizeof(T) to res
+            // The returned value is the element beyond the last element copied
+            res = std::copy(ptr, ptr+sizeof(T), res);
         }
     };
 
@@ -237,11 +370,11 @@ namespace detail
     struct deserialize_helper {
         static T apply(StreamType::const_iterator& begin,
                        StreamType::const_iterator end) {
-            assert(begin+sizeof(T)<=end && "Error: not enough bytes to deserialize type");
+            assert(begin+sizeof(T)<=end && "Error: not enough bytes in the stream to deserialize type");
             T val;
             uint8_t* ptr = reinterpret_cast<uint8_t*>(&val);
             std::copy(begin, begin+sizeof(T), ptr);
-            begin+=sizeof(T);
+            begin += sizeof(T);
             return val;
         }
     };
@@ -352,7 +485,6 @@ namespace detail
         }
     };
 
-
     /**
     * Deserialization for DataSample.
     */
@@ -365,6 +497,65 @@ namespace detail
             DataSample sample(x, y);
 
             return sample;
+        }
+    };
+
+    template <>
+    struct deserialize_helper<DataTable> {
+        static DataTable apply(StreamType::const_iterator& begin, StreamType::const_iterator end) {
+            DataTable table;
+            table._deserialize(begin, end);
+            return table;
+        }
+    };
+
+    template <>
+    struct deserialize_helper<BSplineBasis1D> {
+        static BSplineBasis1D apply(StreamType::const_iterator& begin, StreamType::const_iterator end)
+        {
+            auto degree = deserialize_helper<unsigned int>::apply(begin, end);
+
+            auto knots = deserialize_helper<std::vector<double>>::apply(begin, end);
+
+            auto targetNumBasisFunctions = deserialize_helper<unsigned int>::apply(begin, end);
+
+            BSplineBasis1D basis1d(degree, knots, targetNumBasisFunctions);
+
+            return basis1d;
+        }
+    };
+
+    template <>
+    struct deserialize_helper<BSplineBasis> {
+        static BSplineBasis apply(StreamType::const_iterator& begin, StreamType::const_iterator end)
+        {
+            auto bases = deserialize_helper<std::vector<BSplineBasis1D>>::apply(begin, end);
+
+            auto numVariables = deserialize_helper<unsigned int>::apply(begin, end);
+
+            BSplineBasis basis(bases, numVariables);
+
+            return basis;
+        }
+    };
+
+    template <>
+    struct deserialize_helper<BSpline> {
+        static BSpline apply(StreamType::const_iterator& begin, StreamType::const_iterator end)
+        {
+            BSpline bspline;
+            bspline._deserialize(begin, end);
+            return bspline;
+        }
+    };
+
+    template <>
+    struct deserialize_helper<PSpline> {
+        static PSpline apply(StreamType::const_iterator& begin, StreamType::const_iterator end)
+        {
+            PSpline pspline;
+            pspline._deserialize(begin, end);
+            return pspline;
         }
     };
 

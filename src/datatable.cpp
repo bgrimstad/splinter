@@ -141,12 +141,8 @@ void DataTable::gridCompleteGuard() const
 void DataTable::save(const std::string fileName) const
 {
     StreamType stream;
-    serialize(allowDuplicates, stream);
-    serialize(allowIncompleteGrid, stream);
-    serialize(numDuplicates, stream);
-    serialize(numVariables, stream);
-    serialize(samples, stream);
-    serialize(grid, stream);
+
+    serialize(*this, stream);
 
     save_to_file(fileName, stream);
 }
@@ -156,12 +152,17 @@ void DataTable::load(const std::string fileName)
     StreamType stream = load_from_file(fileName);
 
     auto it = stream.cbegin();
-    allowDuplicates = deserialize<bool>(it, stream.cend());
-    allowIncompleteGrid = deserialize<bool>(it, stream.cend());
-    numDuplicates = deserialize<unsigned int>(it, stream.cend());
-    numVariables = deserialize<unsigned int>(it, stream.cend());
-    samples = deserialize<std::multiset<DataSample>>(it, stream.cend());
-    grid = deserialize<std::vector<std::set<double>>>(it, stream.cend());
+    _deserialize(it, stream.cend());
+}
+
+void DataTable::_deserialize(StreamType::const_iterator &it, StreamType::const_iterator end)
+{
+    allowDuplicates = deserialize<bool>(it, end);
+    allowIncompleteGrid = deserialize<bool>(it, end);
+    numDuplicates = deserialize<unsigned int>(it, end);
+    numVariables = deserialize<unsigned int>(it, end);
+    samples = deserialize<std::multiset<DataSample>>(it, end);
+    grid = deserialize<std::vector<std::set<double>>>(it, end);
 }
 
 /*
