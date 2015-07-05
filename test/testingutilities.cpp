@@ -21,6 +21,36 @@ bool equalsWithinRange(double a, double b, double margin)
     return b - margin <= a && a <= b + margin;
 }
 
+bool compareFunctions(const Function &f1, const Function &f2)
+{
+    if(f1.getNumVariables() != f2.getNumVariables()) {
+        return false;
+    }
+
+    /* TODO:
+     * Generate permutations of x and eval
+     */
+    auto x0_vec = linspace(0, 2, 20);
+    auto x1_vec = linspace(0, 2, 20);
+    DenseVector x(2);
+    double y;
+    for (auto x0 : x0_vec)
+    {
+        for (auto x1 : x1_vec)
+        {
+            // Sample function at x
+            x(0) = x0;
+            x(1) = x1;
+
+            if(f1.eval(x) != f2.eval(x)) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
 bool compareBSplines(BSpline &bs, const BSpline &bs_orig)
 {
     auto lb = bs.getDomainLowerBound();

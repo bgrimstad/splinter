@@ -11,13 +11,16 @@
 #define SPLINTER_TESTINGUTILITIES_H
 
 #include <datatable.h>
-#include <bspline.h>
+#include <function.h>
 #include <generaldefinitions.h>
+#include <bspline.h>
 
 namespace SPLINTER
 {
 
 bool equalsWithinRange(double a, double b, double margin = 0.0);
+
+bool compareFunctions(const Function &f1, const Function &f2);
 
 bool compareBSplines(BSpline &bs, const BSpline &bs_orig);
 
