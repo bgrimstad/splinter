@@ -8,6 +8,7 @@
 */
 
 #include <serialize.h>
+#include <Serializer.h>
 #include "radialbasisfunction.h"
 #include "linearsolvers.h"
 #include "Eigen/SVD"
@@ -344,19 +345,26 @@ bool RadialBasisFunction::dist_sort(DataSample x, DataSample y) const
 
 void RadialBasisFunction::save(const std::string fileName) const
 {
-    StreamType stream;
+    /*StreamType stream;
 
     serialize(*this, stream);
 
-    save_to_file(fileName, stream);
+    save_to_file(fileName, stream);*/
+
+    Serializer s;
+    s.serialize(*this);
+    s.saveToFile(fileName);
 }
 
 void RadialBasisFunction::load(const std::string fileName)
 {
-    StreamType stream = load_from_file(fileName);
+    /*StreamType stream = load_from_file(fileName);
 
     auto it = stream.cbegin();
-    _deserialize(it, stream.cend());
+    _deserialize(it, stream.cend());*/
+
+    Serializer s(fileName);
+    s.deserialize(*this);
 }
 
 void RadialBasisFunction::_deserialize(StreamType::const_iterator &it, StreamType::const_iterator end)

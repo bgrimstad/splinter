@@ -88,6 +88,8 @@ private:
     unsigned int degree;
     std::vector<double> knots;
     unsigned int targetNumBasisfunctions;
+
+    friend class Serializer;
 };
 
 } // namespace SPLINTER

@@ -35,10 +35,13 @@ public:
     unsigned int getDimX() const { return x.size(); }
 
 private:
+    DataSample();
+
     std::vector<double> x;
     double y;
-
     void setData(const std::vector<double> &x, double y);
+
+    friend class Serializer;
 };
 
 } // namespace SPLINTER

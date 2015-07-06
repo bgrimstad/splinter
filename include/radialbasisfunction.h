@@ -73,6 +73,8 @@ private:
     bool dist_sort(DataSample x, DataSample y) const;
 
     void load(const std::string fileName) override;
+
+    friend class Serializer;
 };
 
 /*

@@ -8,6 +8,7 @@
 */
 
 #include <serialize.h>
+#include <Serializer.h>
 #include "polynomialregression.h"
 #include "linearsolvers.h"
 #include "unsupported/Eigen/KroneckerProduct"
@@ -133,7 +134,7 @@ DenseVector PolynomialRegression::evalMonomials(DenseVector x) const
 
 void PolynomialRegression::save(const std::string fileName) const
 {
-    // Serialize
+    /*// Serialize
     StreamType stream;
     serialize(numVariables, stream);
     serialize(numCoefficients, stream);
@@ -141,12 +142,16 @@ void PolynomialRegression::save(const std::string fileName) const
     serialize(coefficients, stream);
 
     // Save stream to file
-    save_to_file(fileName, stream);
+    save_to_file(fileName, stream);*/
+
+    Serializer s;
+    s.serialize(*this);
+    s.saveToFile(fileName);
 }
 
 void PolynomialRegression::load(const std::string fileName)
 {
-    // Load stream from file
+    /*// Load stream from file
     StreamType stream = load_from_file(fileName);
 
     // Deserialize
@@ -154,7 +159,10 @@ void PolynomialRegression::load(const std::string fileName)
     numVariables = deserialize<unsigned int>(it, stream.cend());
     numCoefficients = deserialize<unsigned int>(it, stream.cend());
     degrees = deserialize<std::vector<unsigned int>>(it, stream.cend());
-    coefficients = deserialize<DenseMatrix>(it, stream.cend());
+    coefficients = deserialize<DenseMatrix>(it, stream.cend());*/
+
+    Serializer s(fileName);
+    s.deserialize(*this);
 }
 
 } // namespace SPLINTER

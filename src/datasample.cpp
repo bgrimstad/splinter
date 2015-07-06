@@ -12,6 +12,10 @@
 namespace SPLINTER
 {
 
+DataSample::DataSample()
+{
+}
+
 DataSample::DataSample(double x, double y)
 {
     setData(std::vector<double>(1, x), y);

@@ -13,6 +13,7 @@
 #include "unsupported/Eigen/KroneckerProduct"
 #include "linearsolvers.h"
 #include "serialize.h"
+#include <Serializer.h>
 #include <iostream>
 
 namespace SPLINTER
@@ -578,21 +579,28 @@ bool BSpline::removeUnsupportedBasisFunctions(std::vector<double> &lb, std::vect
 void BSpline::save(const std::string fileName) const
 {
     // Serialize
-    StreamType stream;
+    /*StreamType stream;
 
     serialize(*this, stream);
 
     // Save stream to file
-    save_to_file(fileName, stream);
+    save_to_file(fileName, stream);*/
+
+    Serializer s;
+    s.serialize(*this);
+    s.saveToFile(fileName);
 }
 
 void BSpline::load(const std::string fileName)
 {
     // Load stream from file
-    StreamType stream = load_from_file(fileName);
+    /*StreamType stream = load_from_file(fileName);
 
     auto it = stream.cbegin();
-    _deserialize(it, stream.cend());
+    _deserialize(it, stream.cend());*/
+
+    Serializer s(fileName);
+    s.deserialize(*this);
 }
 
 void BSpline::_deserialize(StreamType::const_iterator &it, StreamType::const_iterator end)

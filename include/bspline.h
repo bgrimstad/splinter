@@ -100,6 +100,7 @@ public:
     void save(const std::string fileName) const override;
     virtual void _deserialize(StreamType::const_iterator &it, StreamType::const_iterator end);
 
+    friend class Serializer;
 protected:
 
     BSplineBasis basis;

@@ -92,7 +92,7 @@ public:
     bool isGridComplete() const;
 
     void save(const std::string fileName) const;
-    virtual void _deserialize(StreamType::const_iterator &it, StreamType::const_iterator end);
+    void _deserialize(StreamType::const_iterator &it, StreamType::const_iterator end);
 
 private:
     bool allowDuplicates;
@@ -113,6 +113,8 @@ private:
     void gridCompleteGuard() const;
 
     void load(const std::string fileName);
+
+    friend class Serializer;
 };
 
 } // namespace SPLINTER

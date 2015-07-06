@@ -46,6 +46,8 @@ protected:
 
 private:
     void load(const std::string fileName) override;
+
+    friend class Serializer;
 };
 
 } // namespace SPLINTER

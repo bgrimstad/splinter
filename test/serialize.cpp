@@ -12,6 +12,8 @@
 #include <serialize.h>
 #include "testingutilities.h"
 #include <iostream>
+#include <Serializer.h>
+#include <chrono>
 
 using namespace std;
 using namespace SPLINTER;
@@ -207,6 +209,7 @@ bool serializeBSpline1()
     bspline.save("saveTest1.bspline");
     BSpline loadedBspline("saveTest1.bspline");
     remove("saveTest1.bspline");
+
     return compareBSplines(bspline, loadedBspline);
 }
 
@@ -273,6 +276,71 @@ bool serializeRBF1()
 
 int main()
 {
+    /*cout << "Serializer test: " << std::endl;
+
+    auto vec = std::vector<std::vector<double>>(10000);
+    for(int i = 0; i < vec.size(); i++) {
+        for(int j = 0; j < 1000; j++) {
+            vec.at(i).push_back(j*10);
+        }
+    }
+
+    using namespace std::chrono;
+    high_resolution_clock::time_point t1 = high_resolution_clock::now();
+    StreamType stream;
+    serialize(vec, stream);
+    serialize(vec, stream);
+    save_to_file("test2.serialized", stream);
+
+    high_resolution_clock::time_point t2 = high_resolution_clock::now();
+    std::cout << "Old method serialize = " << duration_cast<duration<double>>(t2 - t1).count() << std::endl;
+
+    StreamType stream2 = load_from_file("test2.serialized");
+    auto it = stream2.cbegin();
+    auto vec3 = deserialize<std::vector<std::vector<double>>>(it, stream2.cend());
+    auto vec5 = deserialize<std::vector<std::vector<double>>>(it, stream2.cend());
+
+    high_resolution_clock::time_point t3 = high_resolution_clock::now();
+    std::cout << "Old method deserialize = " << duration_cast<duration<double>>(t3 - t2).count() << std::endl;
+
+    Serializer s;
+    s.serialize(vec);
+    s.serialize(vec);
+    s.saveToFile("test.serialized");
+
+    high_resolution_clock::time_point t4 = high_resolution_clock::now();
+    std::cout << "New method serialize = " << duration_cast<duration<double>>(t4 - t3).count() << std::endl;
+
+    s.loadFromFile("test.serialized");
+    std::vector<std::vector<double>> vec2;
+    std::vector<std::vector<double>> vec4;
+    s.deserialize(vec2);
+    s.deserialize(vec4);
+
+    high_resolution_clock::time_point t5 = high_resolution_clock::now();
+    std::cout << "New method deserialize = " << duration_cast<duration<double>>(t5 - t4).count() << std::endl;
+
+
+    for(int i = 0; i < vec.size(); i++) {
+        for(int j = 0; j < vec.at(i).size(); j++) {
+            if(vec.at(i).at(j) != vec2.at(i).at(j)) {
+                std::cout << "vec not equal to vec2!" << std::endl;
+            }
+            if(vec.at(i).at(j) != vec3.at(i).at(j)) {
+                std::cout << "vec not equal to vec3!" << std::endl;
+            }
+            if(vec.at(i).at(j) != vec4.at(i).at(j)) {
+                std::cout << "vec not equal to vec4!" << std::endl;
+            }
+            if(vec.at(i).at(j) != vec5.at(i).at(j)) {
+                std::cout << "vec not equal to vec5!" << std::endl;
+            }
+        }
+    }
+
+    exit(0);*/
+
+    using namespace std::chrono;
     cout << endl << endl;
     cout << "Testing load and save functionality:                                   "   << endl;
     cout << "-----------------------------------------------------------------------"   << endl;

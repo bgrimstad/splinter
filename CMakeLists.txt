@@ -126,6 +126,7 @@ set(SRC_LIST
     include/radialbasisfunction.h
     include/radialbasisfunctionterm.h
     include/serialize.h
+    include/Serializer.h
     src/bspline.cpp
     src/bsplinebasis.cpp
     src/bsplinebasis1d.cpp
@@ -135,6 +136,7 @@ set(SRC_LIST
     src/polynomialregression.cpp
     src/pspline.cpp
     src/radialbasisfunction.cpp
+    src/Serializer.cpp
 )
 set(MATLAB_SRC_LIST ${SRC_LIST} include/matlab.h src/matlab.cpp)
 
