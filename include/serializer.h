@@ -15,7 +15,7 @@
 #include <iostream>
 #include <generaldefinitions.h>
 #include <set>
-#include <stdint>
+#include <stdint.h>
 
 namespace SPLINTER
 {
