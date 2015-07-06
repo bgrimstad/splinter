@@ -54,4 +54,3 @@ classdef (Abstract = true) Approximant < handle
         end
     end
 end
-

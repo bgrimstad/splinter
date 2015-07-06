@@ -38,4 +38,3 @@ classdef PSpline < Approximant
         end
     end
 end
-

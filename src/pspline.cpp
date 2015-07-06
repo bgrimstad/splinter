@@ -7,10 +7,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include <Serializer.h>
+#include <serializer.h>
 #include "pspline.h"
 #include "linearsolvers.h"
-#include "serialize.h"
 
 namespace SPLINTER
 {
@@ -314,12 +313,6 @@ void PSpline::getSecondOrderFiniteDifferenceMatrix(SparseMatrix &D)
 
 void PSpline::save(const std::string fileName) const
 {
-    /*StreamType stream;
-
-    serialize(*this, stream);
-
-    save_to_file(fileName, stream);*/
-
     Serializer s;
     s.serialize(*this);
     s.saveToFile(fileName);
@@ -327,19 +320,8 @@ void PSpline::save(const std::string fileName) const
 
 void PSpline::load(const std::string fileName)
 {
-    /*StreamType stream = load_from_file(fileName);
-
-    auto it = stream.cbegin();
-    _deserialize(it, stream.cend());*/
-
     Serializer s(fileName);
     s.deserialize(*this);
-}
-
-void PSpline::_deserialize(StreamType::const_iterator &it, StreamType::const_iterator end)
-{
-    BSpline::_deserialize(it, end);
-    lambda = deserialize<double>(it, end);
 }
 
 } // namespace SPLINTER

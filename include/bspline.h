@@ -7,7 +7,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-
 #ifndef SPLINTER_BSPLINE_H
 #define SPLINTER_BSPLINE_H
 
@@ -33,8 +32,6 @@ enum class BSplineType
 class API BSpline : public Approximant
 {
 public:
-
-    BSpline();
     /**
      * Construct B-spline from knot vectors, control coefficients (assumed vectorized), and basis degrees
      */
@@ -47,7 +44,6 @@ public:
     BSpline(const DataTable &samples, unsigned int degree);
     BSpline(const DataTable &samples, BSplineType type);
 
-    BSpline(BSplineBasis basis, DenseMatrix knotaverages, DenseMatrix coefficients, unsigned int numVariables);
     /**
      * Construct B-spline from file
      */
@@ -72,9 +68,6 @@ public:
     std::vector<unsigned int> getBasisDegrees() const;
     std::vector<double> getDomainUpperBound() const;
     std::vector<double> getDomainLowerBound() const;
-    BSplineBasis getBasis() const;
-    DenseMatrix getKnotaverages() const;
-    DenseMatrix getCoefficients() const;
 
     // Control point related
     void setControlPoints(DenseMatrix &controlPoints);
@@ -98,10 +91,9 @@ public:
     void insertKnots(double tau, unsigned int dim, unsigned int multiplicity = 1); // TODO: move back to private after testing
 
     void save(const std::string fileName) const override;
-    virtual void _deserialize(StreamType::const_iterator &it, StreamType::const_iterator end);
 
-    friend class Serializer;
 protected:
+    BSpline();
 
     BSplineBasis basis;
     DenseMatrix knotaverages; // One row per input
@@ -116,7 +108,6 @@ protected:
     void controlPointEquationRHS(const DataTable &samples, DenseMatrix &Bx, DenseMatrix &By) const;
 
 private:
-
     // Domain reduction
     void regularizeKnotVectors(std::vector<double> &lb, std::vector<double> &ub);
     bool removeUnsupportedBasisFunctions(std::vector<double> &lb, std::vector<double> &ub);
@@ -125,6 +116,8 @@ private:
     bool pointInDomain(DenseVector x) const;
 
     void load(const std::string fileName) override;
+
+    friend class Serializer;
 };
 
 } // namespace SPLINTER

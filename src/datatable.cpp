@@ -8,15 +8,12 @@
 */
 
 #include "datatable.h"
-
 #include <string>
 #include <fstream>
 #include <iomanip>
-
 #include <stdexcept>
 #include <limits>
-#include <serialize.h>
-#include <Serializer.h>
+#include <serializer.h>
 
 namespace SPLINTER
 {
@@ -141,12 +138,6 @@ void DataTable::gridCompleteGuard() const
 
 void DataTable::save(const std::string fileName) const
 {
-    /*StreamType stream;
-
-    serialize(*this, stream);
-
-    save_to_file(fileName, stream);*/
-
     Serializer s;
     s.serialize(*this);
     s.saveToFile(fileName);
@@ -154,23 +145,8 @@ void DataTable::save(const std::string fileName) const
 
 void DataTable::load(const std::string fileName)
 {
-    /*StreamType stream = load_from_file(fileName);
-
-    auto it = stream.cbegin();
-    _deserialize(it, stream.cend());*/
-
     Serializer s(fileName);
     s.deserialize(*this);
-}
-
-void DataTable::_deserialize(StreamType::const_iterator &it, StreamType::const_iterator end)
-{
-    allowDuplicates = deserialize<bool>(it, end);
-    allowIncompleteGrid = deserialize<bool>(it, end);
-    numDuplicates = deserialize<unsigned int>(it, end);
-    numVariables = deserialize<unsigned int>(it, end);
-    samples = deserialize<std::multiset<DataSample>>(it, end);
-    grid = deserialize<std::vector<std::set<double>>>(it, end);
 }
 
 /*

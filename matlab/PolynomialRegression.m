@@ -39,4 +39,3 @@ classdef PolynomialRegression < Approximant
         end
     end
 end
-

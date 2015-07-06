@@ -9,15 +9,17 @@
 
 #include <datatable.h>
 #include <datasample.h>
-#include <serialize.h>
 #include "testingutilities.h"
 #include <iostream>
-#include <Serializer.h>
+#include <bspline.h>
+#include <pspline.h>
+#include <radialbasisfunction.h>
+#include <polynomialregression.h>
+#include <serializer.h>
 #include <chrono>
 
 using namespace std;
 using namespace SPLINTER;
-
 
 bool serializeDataTable1()
 {

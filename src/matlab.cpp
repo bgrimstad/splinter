@@ -1,3 +1,12 @@
+/*
+ * This file is part of the SPLINTER library.
+ * Copyright (C) 2012 Bjarne Grimstad (bjarne.grimstad@gmail.com).
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+
 #include "matlab.h"
 #include <datatable.h>
 #include <bspline.h>
@@ -26,7 +35,7 @@ std::set<obj_ptr> objects = std::set<obj_ptr>();
 static DataTable *get_datatable(obj_ptr datatable_ptr) {
 	lastFuncCallError = 0;
 	if (objects.count(datatable_ptr) > 0) {
-		return (DataTable *)datatable_ptr;
+		return (DataTable *) datatable_ptr;
 	}
 
 	set_error_string("Invalid reference to DataTable: Maybe it has been deleted?");
@@ -38,7 +47,7 @@ static DataTable *get_datatable(obj_ptr datatable_ptr) {
 static Approximant *get_approximant(obj_ptr approximant_ptr) {
 	lastFuncCallError = 0;
 	if (objects.count(approximant_ptr) > 0) {
-		return (Approximant *)approximant_ptr;
+		return (Approximant *) approximant_ptr;
 	}
 
 	set_error_string("Invalid reference to Approximant: Maybe it has been deleted?");
@@ -57,308 +66,309 @@ static DenseVector get_densevector(double *x, int x_dim) {
 
 extern "C"
 {
-	/* 1 if the last call to the library resulted in an error,
+/* 1 if the last call to the library resulted in an error,
 	*  0 otherwise. This is used to avoid throwing exceptions across library boundaries,
 	*  and we expect the caller to manually check the value of this flag.
 	*/
-	int get_error() {
-		return lastFuncCallError;
+int get_error() {
+	return lastFuncCallError;
+}
+
+const char *get_error_string() {
+	return error_string;
+}
+
+/* DataTable constructor */
+obj_ptr datatable_init() {
+	obj_ptr dataTable = (obj_ptr) new DataTable();
+
+	objects.insert(dataTable);
+
+	return dataTable;
+}
+
+obj_ptr datatable_load_init(const char *filename) {
+	obj_ptr dataTable = (obj_ptr) new DataTable(filename);
+
+	objects.insert(dataTable);
+
+	return dataTable;
+}
+
+void datatable_add_samples(obj_ptr datatable_ptr, double *x, int n_samples, int x_dim, int size) {
+	DataTable *dataTable = get_datatable(datatable_ptr);
+	if (dataTable != nullptr) {
+		DenseVector vec(x_dim);
+		for (int i = 0; i < n_samples; ++i) {
+			for (int j = 0; j < x_dim; ++j) {
+				vec(j) = x[i + j * size];
+			}
+			dataTable->addSample(vec, x[i + x_dim * size]);
+		}
+	}
+}
+
+unsigned int datatable_get_num_variables(obj_ptr datatable_ptr) {
+	DataTable *dataTable = get_datatable(datatable_ptr);
+	if (dataTable != nullptr) {
+		return dataTable->getNumVariables();
 	}
 
-	const char *get_error_string() {
-		return error_string;
+	return 0;
+}
+
+unsigned int datatable_get_num_samples(obj_ptr datatable_ptr) {
+	DataTable *dataTable = get_datatable(datatable_ptr);
+	if (dataTable != nullptr) {
+		return dataTable->getNumSamples();
 	}
 
-	/* DataTable constructor */
-	obj_ptr datatable_init() {
-		obj_ptr dataTable = (obj_ptr) new DataTable();
+	return 0;
+}
 
-		objects.insert(dataTable);
-
-		return dataTable;
+void datatable_save(obj_ptr datatable_ptr, const char *filename) {
+	DataTable *dataTable = get_datatable(datatable_ptr);
+	if (dataTable != nullptr) {
+		dataTable->save(filename);
 	}
+}
 
-	obj_ptr datatable_load_init(const char *filename) {
-		obj_ptr dataTable = (obj_ptr) new DataTable(filename);
+// Deletes the previous handle and loads a new
+obj_ptr datatable_load(obj_ptr datatable_ptr, const char *filename) {
+	// Delete and reset error, as it will get set if the DataTable didn't exist.
+	datatable_delete(datatable_ptr);
+	lastFuncCallError = 0;
 
-		objects.insert(dataTable);
+	obj_ptr dataTable = (obj_ptr) new DataTable(filename);
 
-		return dataTable;
+	objects.insert(dataTable);
+	return dataTable;
+}
+
+void datatable_delete(obj_ptr datatable_ptr) {
+	DataTable *dataTable = get_datatable(datatable_ptr);
+	if (dataTable != nullptr) {
+		objects.erase(datatable_ptr);
+		delete dataTable;
 	}
+}
 
-	void datatable_add_samples(obj_ptr datatable_ptr, double *x, int n_samples, int x_dim, int size) {
-		DataTable *dataTable = get_datatable(datatable_ptr);
-		if (dataTable != nullptr) {
-			DenseVector vec(x_dim);
-			for (int i = 0; i < n_samples; ++i) {
-				for (int j = 0; j < x_dim; ++j) {
-					vec(j) = x[i + j * size];
-				}
-				dataTable->addSample(vec, x[i + x_dim * size]);
+/* BSpline constructor */
+obj_ptr bspline_init(obj_ptr datatable_ptr, int degree) {
+	obj_ptr bspline = nullptr;
+
+	auto table = get_datatable(datatable_ptr);
+	if (table != nullptr) {
+		BSplineType bsplineType;
+		switch (degree) {
+			case 1: {
+				bsplineType = BSplineType::LINEAR;
+				break;
+			}
+			case 2: {
+				bsplineType = BSplineType::QUADRATIC;
+				break;
+			}
+			case 3: {
+				bsplineType = BSplineType::CUBIC;
+				break;
+			}
+			case 4: {
+				bsplineType = BSplineType::QUARTIC;
+				break;
+			}
+			default: {
+				set_error_string("Invalid BSplineType!");
+				return nullptr;
 			}
 		}
-	}
 
-	unsigned int datatable_get_num_variables(obj_ptr datatable_ptr) {
-		DataTable *dataTable = get_datatable(datatable_ptr);
-		if (dataTable != nullptr) {
-			return dataTable->getNumVariables();
-		}
-
-		return 0;
-	}
-
-	unsigned int datatable_get_num_samples(obj_ptr datatable_ptr) {
-		DataTable *dataTable = get_datatable(datatable_ptr);
-		if (dataTable != nullptr) {
-			return dataTable->getNumSamples();
-		}
-
-		return 0;
-	}
-
-	void datatable_save(obj_ptr datatable_ptr, const char *filename) {
-		DataTable *dataTable = get_datatable(datatable_ptr);
-		if (dataTable != nullptr) {
-			dataTable->save(filename);
-		}
-	}
-
-	// Deletes the previous handle and loads a new
-	obj_ptr datatable_load(obj_ptr datatable_ptr, const char *filename) {
-		// Delete and reset error, as it will get set if the DataTable didn't exist.
-		datatable_delete(datatable_ptr);
-		lastFuncCallError = 0;
-
-		obj_ptr dataTable = (obj_ptr) new DataTable(filename);
-
-		objects.insert(dataTable);
-		return dataTable;
-	}
-
-	void datatable_delete(obj_ptr datatable_ptr) {
-		DataTable *dataTable = get_datatable(datatable_ptr);
-		if (dataTable != nullptr) {
-			objects.erase(datatable_ptr);
-			delete dataTable;
-		}
-	}
-
-	/* BSpline constructor */
-	obj_ptr bspline_init(obj_ptr datatable_ptr, int degree) {
-		obj_ptr bspline = nullptr;
-
-		auto table = get_datatable(datatable_ptr);
-		if (table != nullptr) {
-			BSplineType bsplineType;
-			switch (degree) {
-				case 1: {
-					bsplineType = BSplineType::LINEAR;
-					break;
-				}
-				case 2: {
-					bsplineType = BSplineType::QUADRATIC;
-					break;
-				}
-				case 3: {
-					bsplineType = BSplineType::CUBIC;
-					break;
-				}
-				case 4: {
-					bsplineType = BSplineType::QUARTIC;
-					break;
-				}
-				default: {
-					set_error_string("Invalid BSplineType!");
-					return nullptr;
-				}
-			}
-
-			bspline = (obj_ptr) new BSpline(*table, bsplineType);
-			objects.insert(bspline);
-		}
-
-		return bspline;
-	}
-
-	obj_ptr bspline_load_init(const char *filename) {
-		obj_ptr bspline = (obj_ptr) new BSpline(filename);
-
+		bspline = (obj_ptr) new BSpline(*table, bsplineType);
 		objects.insert(bspline);
-
-		return bspline;
 	}
 
-	/* PSpline constructor */
-	obj_ptr pspline_init(obj_ptr datatable_ptr, double lambda) {
-		obj_ptr pspline = nullptr;
+	return bspline;
+}
 
-		auto table = get_datatable(datatable_ptr);
-		if (table != nullptr) {
-			pspline = (obj_ptr) new PSpline(*table, lambda);
-			objects.insert(pspline);
-		}
+obj_ptr bspline_load_init(const char *filename) {
+	obj_ptr bspline = (obj_ptr) new BSpline(filename);
 
-		return pspline;
-	}
+	objects.insert(bspline);
 
-	obj_ptr pspline_load_init(const char *filename) {
-		obj_ptr pspline = (obj_ptr) new PSpline(filename);
+	return bspline;
+}
 
+/* PSpline constructor */
+obj_ptr pspline_init(obj_ptr datatable_ptr, double lambda) {
+	obj_ptr pspline = nullptr;
+
+	auto table = get_datatable(datatable_ptr);
+	if (table != nullptr) {
+		pspline = (obj_ptr) new PSpline(*table, lambda);
 		objects.insert(pspline);
-
-		return pspline;
 	}
 
-	/* RadialBasisFunction constructor */
-	obj_ptr rbf_init(obj_ptr datatable_ptr, int type_index, int normalized) {
-		obj_ptr rbf = nullptr;
+	return pspline;
+}
 
-		auto table = get_datatable(datatable_ptr);
-		if (table != nullptr) {
-			RadialBasisFunctionType type;
-			switch (type_index) {
-				case 1:
-					type = RadialBasisFunctionType::THIN_PLATE_SPLINE;
-					break;
-				case 2:
-					type = RadialBasisFunctionType::MULTIQUADRIC;
-					break;
-				case 3:
-					type = RadialBasisFunctionType::INVERSE_QUADRIC;
-					break;
-				case 4:
-					type = RadialBasisFunctionType::INVERSE_MULTIQUADRIC;
-					break;
-				case 5:
-					type = RadialBasisFunctionType::GAUSSIAN;
-					break;
-				default:
-					type = RadialBasisFunctionType::THIN_PLATE_SPLINE;
-					break;
-			}
+obj_ptr pspline_load_init(const char *filename) {
+	obj_ptr pspline = (obj_ptr) new PSpline(filename);
 
-			bool norm = normalized != 0;
+	objects.insert(pspline);
 
-			rbf = (obj_ptr) new RadialBasisFunction(*table, type, norm);
-			objects.insert(rbf);
+	return pspline;
+}
+
+/* RadialBasisFunction constructor */
+obj_ptr rbf_init(obj_ptr datatable_ptr, int type_index, int normalized) {
+	obj_ptr rbf = nullptr;
+
+	auto table = get_datatable(datatable_ptr);
+	if (table != nullptr) {
+		RadialBasisFunctionType type;
+		switch (type_index) {
+			case 1:
+				type = RadialBasisFunctionType::THIN_PLATE_SPLINE;
+				break;
+			case 2:
+				type = RadialBasisFunctionType::MULTIQUADRIC;
+				break;
+			case 3:
+				type = RadialBasisFunctionType::INVERSE_QUADRIC;
+				break;
+			case 4:
+				type = RadialBasisFunctionType::INVERSE_MULTIQUADRIC;
+				break;
+			case 5:
+				type = RadialBasisFunctionType::GAUSSIAN;
+				break;
+			default:
+				type = RadialBasisFunctionType::THIN_PLATE_SPLINE;
+				break;
 		}
 
-		return rbf;
-	}
+		bool norm = normalized != 0;
 
-	obj_ptr rbf_load_init(const char *filename) {
-		obj_ptr rbf = (obj_ptr) new RadialBasisFunction(filename);
-
+		rbf = (obj_ptr) new RadialBasisFunction(*table, type, norm);
 		objects.insert(rbf);
-
-		return rbf;
 	}
 
-	/* PolynomialRegression constructor */
-	obj_ptr polynomial_regression_init(obj_ptr datatable_ptr, int *degrees, int degrees_dim) {
-		obj_ptr polyfit = nullptr;
+	return rbf;
+}
 
-		auto table = get_datatable(datatable_ptr);
-		if (table != nullptr) {
-			auto degreeVec = std::vector<unsigned int>(degrees_dim);
-			for(int i = 0; i < degrees_dim; ++i) {
-				degreeVec.at(i) = (unsigned int) degrees[i];
-			}
+obj_ptr rbf_load_init(const char *filename) {
+	obj_ptr rbf = (obj_ptr) new RadialBasisFunction(filename);
 
-			polyfit = (obj_ptr) new PolynomialRegression(*table, degreeVec);
-			objects.insert(polyfit);
+	objects.insert(rbf);
+
+	return rbf;
+}
+
+/* PolynomialRegression constructor */
+obj_ptr polynomial_regression_init(obj_ptr datatable_ptr, int *degrees, int degrees_dim) {
+	obj_ptr polyfit = nullptr;
+
+	auto table = get_datatable(datatable_ptr);
+	if (table != nullptr) {
+		auto degreeVec = std::vector<unsigned int>(degrees_dim);
+		for (int i = 0; i < degrees_dim; ++i) {
+			degreeVec.at(i) = (unsigned int) degrees[i];
 		}
 
-		return polyfit;
-	}
-
-	obj_ptr polynomial_regression_load_init(const char *filename) {
-		obj_ptr polyfit = (obj_ptr) new PolynomialRegression(filename);
-
+		polyfit = (obj_ptr) new PolynomialRegression(*table, degreeVec);
 		objects.insert(polyfit);
-
-		return polyfit;
 	}
 
+	return polyfit;
+}
 
-	double eval(obj_ptr approximant, double *x, int x_dim) {
-		double retVal = 0.0;
+obj_ptr polynomial_regression_load_init(const char *filename) {
+	obj_ptr polyfit = (obj_ptr) new PolynomialRegression(filename);
 
-		auto approx = get_approximant(approximant);
-		if(approx != nullptr) {
-			auto xvec = get_densevector(x, x_dim);
-			retVal = approx->eval(xvec);
-		}
+	objects.insert(polyfit);
 
-		return retVal;
+	return polyfit;
+}
+
+
+double eval(obj_ptr approximant, double *x, int x_dim) {
+	double retVal = 0.0;
+
+	auto approx = get_approximant(approximant);
+	if (approx != nullptr) {
+		auto xvec = get_densevector(x, x_dim);
+		retVal = approx->eval(xvec);
 	}
 
-	double *eval_jacobian(obj_ptr approximant, double *x, int x_dim) {
-		double *retVal = nullptr;
+	return retVal;
+}
 
-		auto approx = get_approximant(approximant);
-		if(approx != nullptr) {
-			auto xvec = get_densevector(x, x_dim);
-			DenseMatrix jacobian = approx->evalJacobian(xvec);
+double *eval_jacobian(obj_ptr approximant, double *x, int x_dim) {
+	double *retVal = nullptr;
 
-			/* Copy jacobian from stack to heap */
-			int numCoefficients = jacobian.cols() * jacobian.rows();
-			retVal = (double *) malloc(sizeof(double) * numCoefficients);
-			memcpy(retVal, jacobian.data(), sizeof(double) * numCoefficients);
-		}
+	auto approx = get_approximant(approximant);
+	if (approx != nullptr) {
+		auto xvec = get_densevector(x, x_dim);
+		DenseMatrix jacobian = approx->evalJacobian(xvec);
 
-		return retVal;
+		/* Copy jacobian from stack to heap */
+		int numCoefficients = jacobian.cols() * jacobian.rows();
+		retVal = (double *) malloc(sizeof(double) * numCoefficients);
+		memcpy(retVal, jacobian.data(), sizeof(double) * numCoefficients);
 	}
 
-	double *eval_hessian(obj_ptr approximant, double *x, int x_dim) {
-		double *retVal = nullptr;
+	return retVal;
+}
 
-		auto approx = get_approximant(approximant);
-		if(approx != nullptr) {
-			auto xvec = get_densevector(x, x_dim);
-			DenseMatrix hessian = approx->evalHessian(xvec);
+double *eval_hessian(obj_ptr approximant, double *x, int x_dim) {
+	double *retVal = nullptr;
 
-			/* Copy jacobian from stack to heap */
-			int numCoefficients = hessian.cols() * hessian.rows();
-			retVal = (double *) malloc(sizeof(double) * numCoefficients);
-			memcpy(retVal, hessian.data(), sizeof(double) * numCoefficients);
-		}
+	auto approx = get_approximant(approximant);
+	if (approx != nullptr) {
+		auto xvec = get_densevector(x, x_dim);
+		DenseMatrix hessian = approx->evalHessian(xvec);
 
-		return retVal;
+		/* Copy jacobian from stack to heap */
+		int numCoefficients = hessian.cols() * hessian.rows();
+		retVal = (double *) malloc(sizeof(double) * numCoefficients);
+		memcpy(retVal, hessian.data(), sizeof(double) * numCoefficients);
 	}
 
-	int get_num_variables(obj_ptr approximant) {
-		int retVal = 0;
+	return retVal;
+}
 
-		auto approx = get_approximant(approximant);
-		if(approx != nullptr) {
-			retVal = approx->getNumVariables();
-		}
+int get_num_variables(obj_ptr approximant) {
+	int retVal = 0;
 
-		return retVal;
+	auto approx = get_approximant(approximant);
+	if (approx != nullptr) {
+		retVal = approx->getNumVariables();
 	}
 
-	void save(obj_ptr approximant, const char *filename) {
-		auto approx = get_approximant(approximant);
-		if(approx != nullptr) {
-			approx->save(filename);
-		}
-	}
+	return retVal;
+}
 
-	void load(obj_ptr approximant, const char *filename) {
-		auto approx = get_approximant(approximant);
-		if(approx != nullptr) {
-			approx->load(filename);
-		}
+void save(obj_ptr approximant, const char *filename) {
+	auto approx = get_approximant(approximant);
+	if (approx != nullptr) {
+		approx->save(filename);
 	}
+}
 
-	void delete_approximant(obj_ptr approximant) {
-		auto approx = get_approximant(approximant);
-
-		if(approx != nullptr) {
-			objects.erase(approximant);
-			delete approx;
-		}
+void load(obj_ptr approximant, const char *filename) {
+	auto approx = get_approximant(approximant);
+	if (approx != nullptr) {
+		approx->load(filename);
 	}
+}
+
+void delete_approximant(obj_ptr approximant) {
+	auto approx = get_approximant(approximant);
+
+	if (approx != nullptr) {
+		objects.erase(approximant);
+		delete approx;
+	}
+}
+
 }

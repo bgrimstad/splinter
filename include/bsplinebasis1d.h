@@ -21,7 +21,6 @@ public:
     BSplineBasis1D();
     BSplineBasis1D(std::vector<double> &x, unsigned int degree);
     BSplineBasis1D(std::vector<double> &x, unsigned int degree, bool explicitKnots);
-    BSplineBasis1D(unsigned int degree, std::vector<double> &knots, unsigned int targetNumBasisFunctions);
 
     // Evaluation of basis functions
     SparseVector evaluate(double x) const;
@@ -47,9 +46,6 @@ public:
     double getKnotValue(unsigned int index) const;
     unsigned int getNumBasisFunctions() const;
     unsigned int getNumBasisFunctionsTarget() const;
-    unsigned int getDegree() const;
-    std::vector<double> getKnots() const;
-    unsigned int getTargetNumBasisFunctions() const;
 
     // Index getters
     std::vector<int> indexSupportedBasisfunctions(double x) const;
@@ -64,7 +60,6 @@ public:
     }
 
 private:
-
     // DeBoorCox algorithm for evaluating basis functions
     double deBoorCox(double x, int i, int k) const;
     double deBoorCoxCoeff(double x, double x_min, double x_max) const;

@@ -7,7 +7,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-
 #ifndef SPLINTER_SERIALIZER_H
 #define SPLINTER_SERIALIZER_H
 
@@ -17,8 +16,8 @@
 #include <generaldefinitions.h>
 #include <set>
 
-namespace SPLINTER {
-
+namespace SPLINTER
+{
 
 class DataSample;
 class DataTable;
@@ -333,6 +332,6 @@ void Serializer::deserialize(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &o
     }
 }
 
-}
+} // namespace SPLINTER
 
 #endif // SPLINTER_SERIALIZER_H

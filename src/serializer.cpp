@@ -7,8 +7,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-
-#include "Serializer.h"
+#include "serializer.h"
 #include <fstream>
 #include <generaldefinitions.h>
 #include <datasample.h>
@@ -283,6 +282,5 @@ void Serializer::deserialize(PolynomialRegression &obj)
     deserialize(obj.degrees);
     deserialize(obj.coefficients);
 }
-
 
 }

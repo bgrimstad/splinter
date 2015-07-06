@@ -47,14 +47,8 @@ public:
 
     void save(const std::string fileName) const override;
 
-    void _deserialize(StreamType::const_iterator &it, StreamType::const_iterator end);
-
-    template <class T>
-    friend struct detail::get_size_helper;
-
-    template <class T>
-    friend struct detail::serialize_helper;
 private:
+    RadialBasisFunction();
 
     DataTable samples;
     bool normalized, precondition;

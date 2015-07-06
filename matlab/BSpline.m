@@ -52,4 +52,3 @@ classdef BSpline < Approximant
         end
     end
 end
-

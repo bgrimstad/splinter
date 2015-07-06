@@ -12,8 +12,7 @@
 #include "mykroneckerproduct.h"
 #include "unsupported/Eigen/KroneckerProduct"
 #include "linearsolvers.h"
-#include "serialize.h"
-#include <Serializer.h>
+#include <serializer.h>
 #include <iostream>
 
 namespace SPLINTER
@@ -122,14 +121,6 @@ BSpline::BSpline(const DataTable &samples, BSplineType type = BSplineType::CUBIC
     init();
 
     checkControlPoints();
-}
-
-BSpline::BSpline(BSplineBasis basis, DenseMatrix knotaverages, DenseMatrix coefficients, unsigned int numVariables)
-    : basis(basis),
-    knotaverages(knotaverages),
-    coefficients(coefficients),
-    numVariables(numVariables)
-{
 }
 
 /*
@@ -578,14 +569,6 @@ bool BSpline::removeUnsupportedBasisFunctions(std::vector<double> &lb, std::vect
 
 void BSpline::save(const std::string fileName) const
 {
-    // Serialize
-    /*StreamType stream;
-
-    serialize(*this, stream);
-
-    // Save stream to file
-    save_to_file(fileName, stream);*/
-
     Serializer s;
     s.serialize(*this);
     s.saveToFile(fileName);
@@ -593,37 +576,8 @@ void BSpline::save(const std::string fileName) const
 
 void BSpline::load(const std::string fileName)
 {
-    // Load stream from file
-    /*StreamType stream = load_from_file(fileName);
-
-    auto it = stream.cbegin();
-    _deserialize(it, stream.cend());*/
-
     Serializer s(fileName);
     s.deserialize(*this);
-}
-
-void BSpline::_deserialize(StreamType::const_iterator &it, StreamType::const_iterator end)
-{
-    basis = std::move(deserialize<BSplineBasis>(it, end));
-    knotaverages = std::move(deserialize<DenseMatrix>(it, end));
-    coefficients = std::move(deserialize<DenseMatrix>(it, end));
-    numVariables = std::move(deserialize<unsigned int>(it, end));
-}
-
-BSplineBasis BSpline::getBasis() const
-{
-    return basis;
-}
-
-DenseMatrix BSpline::getKnotaverages() const
-{
-    return knotaverages;
-}
-
-DenseMatrix BSpline::getCoefficients() const
-{
-    return coefficients;
 }
 
 } // namespace SPLINTER

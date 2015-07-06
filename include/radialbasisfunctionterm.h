@@ -39,12 +39,6 @@ public:
     virtual double evalDerivative(double r) const = 0;
     virtual ~RadialBasisFunctionTerm() {}
 
-    template <class T>
-    friend struct detail::get_size_helper;
-
-    template <class T>
-    friend struct detail::serialize_helper;
-
 protected:
     double e;
 };

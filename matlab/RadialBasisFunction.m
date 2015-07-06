@@ -50,4 +50,3 @@ classdef RadialBasisFunction < Approximant
         end
     end
 end
-

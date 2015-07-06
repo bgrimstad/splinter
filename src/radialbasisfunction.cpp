@@ -7,14 +7,17 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include <serialize.h>
-#include <Serializer.h>
+#include <serializer.h>
 #include "radialbasisfunction.h"
 #include "linearsolvers.h"
 #include "Eigen/SVD"
 
 namespace SPLINTER
 {
+
+RadialBasisFunction::RadialBasisFunction()
+{
+}
 
 RadialBasisFunction::RadialBasisFunction(const char *fileName)
     : RadialBasisFunction(std::string(fileName))
@@ -345,12 +348,6 @@ bool RadialBasisFunction::dist_sort(DataSample x, DataSample y) const
 
 void RadialBasisFunction::save(const std::string fileName) const
 {
-    /*StreamType stream;
-
-    serialize(*this, stream);
-
-    save_to_file(fileName, stream);*/
-
     Serializer s;
     s.serialize(*this);
     s.saveToFile(fileName);
@@ -358,50 +355,8 @@ void RadialBasisFunction::save(const std::string fileName) const
 
 void RadialBasisFunction::load(const std::string fileName)
 {
-    /*StreamType stream = load_from_file(fileName);
-
-    auto it = stream.cbegin();
-    _deserialize(it, stream.cend());*/
-
     Serializer s(fileName);
     s.deserialize(*this);
-}
-
-void RadialBasisFunction::_deserialize(StreamType::const_iterator &it, StreamType::const_iterator end)
-{
-    samples = deserialize<DataTable>(it, end);
-    normalized = deserialize<bool>(it, end);
-    precondition = deserialize<bool>(it, end);
-    dim = deserialize<unsigned int>(it, end);
-    numSamples = deserialize<unsigned int>(it, end);
-    type = deserialize<RadialBasisFunctionType>(it, end);
-
-    if (type == RadialBasisFunctionType::THIN_PLATE_SPLINE)
-    {
-        fn = std::shared_ptr<RadialBasisFunctionTerm>(new ThinPlateSpline());
-    }
-    else if (type == RadialBasisFunctionType::MULTIQUADRIC)
-    {
-        fn = std::shared_ptr<RadialBasisFunctionTerm>(new Multiquadric());
-    }
-    else if (type == RadialBasisFunctionType::INVERSE_QUADRIC)
-    {
-        fn = std::shared_ptr<RadialBasisFunctionTerm>(new InverseQuadric());
-    }
-    else if (type == RadialBasisFunctionType::INVERSE_MULTIQUADRIC)
-    {
-        fn = std::shared_ptr<RadialBasisFunctionTerm>(new InverseMultiquadric());
-    }
-    else if (type == RadialBasisFunctionType::GAUSSIAN)
-    {
-        fn = std::shared_ptr<RadialBasisFunctionTerm>(new Gaussian());
-    }
-    else
-    {
-        fn = std::shared_ptr<RadialBasisFunctionTerm>(new ThinPlateSpline());
-    }
-
-    weights = deserialize<DenseMatrix>(it, end);
 }
 
 

@@ -23,19 +23,17 @@ namespace SPLINTER
 class API PSpline : public BSpline
 {
 public:
-    PSpline();
-
     PSpline(const char *fileName);
     PSpline(const std::string fileName);
     PSpline(const DataTable &samples);
     PSpline(const DataTable &samples, double lambda);
 
-    double getLambda() const { return lambda; }
+    inline double getLambda() { return lambda; }
 
     void save(const std::string fileName) const override;
-    void _deserialize(StreamType::const_iterator &it, StreamType::const_iterator end);
 
 protected:
+    PSpline();
 
     // Smoothing parameter (usually set to a small number; default 0.03)
     double lambda;

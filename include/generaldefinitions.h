@@ -33,21 +33,6 @@
 namespace SPLINTER
 {
 
-// Serialization
-typedef std::vector<uint8_t> StreamType;
-
-// Used in friend declarations
-namespace detail {
-    template <class T>
-    struct get_size_helper;
-
-    template <class T>
-    struct serialize_helper;
-
-    template <class T>
-    struct deserialize_helper;
-}
-
 // Eigen vectors
 typedef Eigen::VectorXd DenseVector;
 typedef Eigen::SparseVector<double> SparseVector;
