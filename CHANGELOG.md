@@ -2,6 +2,12 @@
 
 #### Version 1.4
 - Automatic knot vector selection using moving average
+- Added PolynomialRegression (including MatLab interface)
+- Added saving and loading of PSpline, RadialBasisFunction and PolynomialRegression
+- Reworked serialization (~5% faster serialization now)
+- Added loading of serialized objects in MatLab interface: b = BSpline('save_bspline.bspline')
+- Added loading and saving of DataTable to MatLab interface
+- Refactored MatLab interface backend (no end user visible changes)
 
 #### Version 1.3
 - Library renamed SPLINTER (from Splinter)

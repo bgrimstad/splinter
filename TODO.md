@@ -3,7 +3,6 @@
 - Improve the documentation
 - Remove code redundancy by wrapping affine operations on the control points (bspline) and tensor products (bsplinebasis)
 - Improve constructors of BSpline
-- Implement save/load functionality for rbfsplines
 - Implement support for scattered data interpolation with B-Splines (look into MBA algorithm)
 - Implement NURBS
 - Implement Hessian for radial basis function splines
@@ -18,5 +17,4 @@
 - Consider creating a class for interpolating B-splines
 - Implement functionality for appraising approximation errors
 - Complete and test implementation of ordinary least squares
-- Add set operations to DataTable
 - Add Python interface (2 and 3?)
