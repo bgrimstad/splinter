@@ -167,4 +167,76 @@ double log(double base, double x)
     return std::log(x) / std::log(base);
 }
 
+// Enumerates all permutations
+std::vector<std::vector<double>> linspace(std::vector<double> start, std::vector<double> end, std::vector<unsigned int> points)
+{
+    assert(start.size() == end.size() && end.size() == points.size());
+
+    unsigned int nDims = start.size();
+    unsigned int numPoints = 1;
+    for(int i = 0; i < nDims; i++) {
+        numPoints *= points.at(i);
+    }
+
+    auto result = std::vector<std::vector<double>>(numPoints);
+
+    auto dx = std::vector<double>(nDims);
+    auto it = std::vector<unsigned int>(nDims);
+    auto cur = std::vector<double>(nDims);
+
+    for(unsigned int i = 0; i < nDims; i++) {
+        cur.at(i) = start.at(i);
+        it.at(i) = 0;
+        dx.at(i) = (end.at(i) - start.at(i)) / (points.at(i) - 1);
+    }
+
+    unsigned int curDim = 0;
+    unsigned int i = 0;
+    // Add the start vector
+    result.at(i++) = std::vector<double>(start);
+    while(true) {
+        curDim = 0;
+        while(curDim < nDims && it.at(curDim)+1 >= points.at(curDim)) {
+            it.at(curDim) = 0;
+            cur.at(curDim) = start.at(curDim) + dx.at(curDim) * it.at(curDim);
+            curDim++;
+        }
+        // If we're unable to find a number that can be increased,
+        // it means were at the highest number
+        // (for 4 digits in decimal that is 9999)
+        if(curDim >= nDims) {
+            break;
+        }
+
+        it.at(curDim)++;
+        cur.at(curDim) = start.at(curDim) + dx.at(curDim) * it.at(curDim);
+
+        result.at(i++) = std::vector<double>(cur);
+    }
+
+    assert(i == numPoints);
+
+    return result;
+}
+
+std::vector<double> denseToVec(const DenseVector &dense)
+{
+    auto vec = std::vector<double>(dense.size());
+    for(int i = 0; i < dense.size(); i++) {
+        vec.at(i) = dense(i);
+    }
+
+    return vec;
+}
+
+DenseVector vecToDense(const std::vector<double> &vec)
+{
+    DenseVector dense(vec.size());
+    for(int i = 0; i < vec.size(); i++) {
+        dense(i) = vec.at(i);
+    }
+
+    return dense;
+}
+
 } // namespace SPLINTER

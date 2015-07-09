@@ -39,6 +39,12 @@ double maxNorm(const DenseMatrix &m);
 // returns log(x) in base base
 double log(double base, double x);
 
+std::vector<std::vector<double>> linspace(std::vector<double> start, std::vector<double> end, std::vector<unsigned int> points);
+
+std::vector<double> denseToVec(const DenseVector &dense);
+
+DenseVector vecToDense(const std::vector<double> &vec);
+
 } // namespace SPLINTER
 
 #endif // SPLINTER_TESTINGUTILITIES_H
