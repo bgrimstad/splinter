@@ -147,6 +147,7 @@ set(TEST_SRC_LIST
     test/testingutilities.cpp
     test/test_functions.h
     test/test_functions.cpp
+    test/accuracy.cpp
 )
 
 set(SHARED_LIBRARY ${PROJECT_NAME_LOWER}-${VERSION})
