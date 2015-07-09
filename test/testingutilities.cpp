@@ -124,4 +124,47 @@ double sixHumpCamelBack(DenseVector x)
     return (4 - 2.1*x(0)*x(0) + (1/3.)*x(0)*x(0)*x(0)*x(0))*x(0)*x(0) + x(0)*x(1) + (-4 + 4*x(1)*x(1))*x(1)*x(1);
 }
 
+double oneNorm(const DenseMatrix &m)
+{
+    double norm = 0.0;
+    for(int i = 0; i < m.rows(); i++) {
+        for(int j = 0; j < m.cols(); j++) {
+            norm += std::abs(m(i, j));
+        }
+    }
+
+    return norm;
+}
+
+double twoNorm(const DenseMatrix &m)
+{
+    double norm = 0.0;
+    for(int i = 0; i < m.rows(); i++) {
+        for(int j = 0; j < m.cols(); j++) {
+            norm += std::pow(m(i, j), 2);
+        }
+    }
+
+    norm = std::sqrt(norm);
+
+    return norm;
+}
+
+double maxNorm(const DenseMatrix &m)
+{
+    double norm = 0.0;
+    for(int i = 0; i < m.rows(); i++) {
+        for(int j = 0; j < m.cols(); j++) {
+            norm = std::max(std::abs(m(i, j)), norm);
+        }
+    }
+
+    return norm;
+}
+
+double log(double base, double x)
+{
+    return std::log(x) / std::log(base);
+}
+
 } // namespace SPLINTER

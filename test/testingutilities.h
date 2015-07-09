@@ -30,6 +30,15 @@ std::vector<double> linspace(double start, double stop, unsigned int points);
 
 double sixHumpCamelBack(DenseVector x);
 
+double oneNorm(const DenseMatrix &m);
+
+double twoNorm(const DenseMatrix &m);
+
+double maxNorm(const DenseMatrix &m);
+
+// returns log(x) in base base
+double log(double base, double x);
+
 } // namespace SPLINTER
 
 #endif // SPLINTER_TESTINGUTILITIES_H
