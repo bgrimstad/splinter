@@ -20,13 +20,28 @@ namespace SPLINTER
 
 bool equalsWithinRange(double a, double b, double margin = 0.0);
 
-bool compareFunctions(const Function &f1, const Function &f2);
+bool compareFunctions(const Function &exact, const Function &approx, const std::vector<std::vector<double>> &points);
 
-bool compareBSplines(BSpline &bs, const BSpline &bs_orig);
+bool compareFunctions(const Function &exact, const Function &approx, const std::vector<std::vector<double>> &points, double val_epsilon, double one_norm_epsilon, double two_norm_epsilon, double inf_norm_epsilon);
+
+bool compareFunctions(const Function &exact, const Function &approx);
+
+bool compareBSplines(const BSpline &left, const BSpline &right);
 
 bool compareDataTables(DataTable &a, DataTable &b);
 
+DataTable sample(const Function &func, std::vector<std::vector<double>> &points);
+
 std::vector<double> linspace(double start, double stop, unsigned int points);
+
+std::vector<std::vector<double>> linspace(std::vector<double> start, std::vector<double> end, std::vector<unsigned int> points);
+
+std::vector<std::vector<double>> linspace(int dim, double start, double end, unsigned int points);
+
+// Returns a default linspace of dim dim
+std::vector<std::vector<double>> linspace(int dim);
+
+std::vector<std::vector<double>> linspace(int dim, unsigned int pointsPerDim);
 
 double sixHumpCamelBack(DenseVector x);
 
@@ -39,11 +54,11 @@ double maxNorm(const DenseMatrix &m);
 // returns log(x) in base base
 double log(double base, double x);
 
-std::vector<std::vector<double>> linspace(std::vector<double> start, std::vector<double> end, std::vector<unsigned int> points);
-
 std::vector<double> denseToVec(const DenseVector &dense);
 
 DenseVector vecToDense(const std::vector<double> &vec);
+
+std::string pretty_print(const DenseVector &denseVec);
 
 } // namespace SPLINTER
 
