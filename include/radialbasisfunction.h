@@ -38,8 +38,8 @@ public:
     double eval(DenseVector x) const;
     double eval(std::vector<double> x) const;
 
-    DenseMatrix evalJacobian(DenseVector x) const { return DenseMatrix(); }; // TODO: implement
-    DenseMatrix evalHessian(DenseVector x) const { return DenseMatrix(); }; // TODO: implement
+    DenseMatrix evalJacobian(DenseVector x) const { return DenseMatrix(1, dim); }; // TODO: implement
+    DenseMatrix evalHessian(DenseVector x) const { return DenseMatrix(dim, dim); }; // TODO: implement
     //    std::vector<double> getDomainUpperBound() const;
     //    std::vector<double> getDomainLowerBound() const;
 
