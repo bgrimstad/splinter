@@ -18,3 +18,4 @@
 - Implement functionality for appraising approximation errors
 - Complete and test implementation of ordinary least squares
 - Add Python interface (2 and 3?)
+- Automatically download Catch? See https://github.com/philsquared/Catch/blob/master/docs/build-systems.md#cmake
