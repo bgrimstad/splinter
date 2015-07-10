@@ -21,16 +21,13 @@ TestFunction::TestFunction(unsigned int n, Term *func)
     calculateHessian();
 }
 TestFunction::TestFunction(unsigned int n, Term &func)
-        : TestFunction(n, &func)
+        : TestFunction(n, func.clone())
 {
 }
 
 double TestFunction::eval(DenseVector x) const
 {
-    std::vector<double> xvec(numVariables);
-    for(size_t i = 0; i < numVariables; i++) {
-        xvec.at(i) = x(i);
-    }
+    auto xvec = denseToVec(x);
 
     return f->eval(xvec);
 }
@@ -39,10 +36,7 @@ DenseMatrix TestFunction::evalJacobian(DenseVector x) const
 {
     DenseMatrix jacobian(1, numVariables);
 
-    std::vector<double> xvec(numVariables);
-    for(size_t i = 0; i < numVariables; i++) {
-        xvec.at(i) = x(i);
-    }
+    auto xvec = denseToVec(x);
 
     for(size_t i = 0; i < numVariables; i++) {
         jacobian(0, i) = df.at(i)->eval(xvec);
@@ -55,10 +49,7 @@ DenseMatrix TestFunction::evalHessian(DenseVector x) const
 {
     DenseMatrix hessian(numVariables, numVariables);
 
-    std::vector<double> xvec(numVariables);
-    for(size_t i = 0; i < numVariables; i++) {
-        xvec.at(i) = x(i);
-    }
+    auto xvec = denseToVec(x);
 
     for(size_t i = 0; i < numVariables; i++) {
         for(size_t j = 0; j < numVariables; j++) {
@@ -78,7 +69,8 @@ void TestFunction::calculateJacobian()
 {
     df.clear();
     for(size_t i = 0; i < numVariables; i++) {
-        df.push_back(f->derivative(i));
+        auto temp = f->derivative(i);
+        df.push_back(temp->simplify());
     }
 }
 
@@ -90,11 +82,17 @@ void TestFunction::calculateHessian()
         ddf.push_back(std::vector<Term *>());
 
         for(size_t j = 0; j < numVariables; j++) {
-            ddf.at(i).push_back(df.at(i)->derivative(j));
+            auto temp = df.at(i)->derivative(j);
+            ddf.at(i).push_back(temp->simplify());
         }
     }
 }
 
+std::ostream &operator<<(std::ostream &out, const Term &term)
+{
+    term.pretty_text(out);
+    return out;
+}
 
 Plus::Plus(const Term *left, const Term *right)
     : left(left->clone()),
@@ -104,7 +102,9 @@ Plus::Plus(const Term *left, const Term *right)
 
 double Plus::eval(const std::vector<double> &x) const
 {
-    return left->eval(x) + right->eval(x);
+    auto leftVal = left->eval(x);
+    auto rightVal = right->eval(x);
+    return leftVal + rightVal;
 }
 
 Term *Plus::derivative(int x) const
@@ -188,7 +188,9 @@ Mul::Mul(const Term *left, const Term *right)
 
 double Mul::eval(const std::vector<double> &x) const
 {
-    return left->eval(x) * right->eval(x);
+    auto leftVal = left->eval(x);
+    auto rightVal = right->eval(x);
+    return leftVal * rightVal;
 }
 
 Term *Mul::derivative(int x) const
@@ -356,7 +358,21 @@ Exp::Exp(const Term *base, const Term *exponent)
 
 double Exp::eval(const std::vector<double> &x) const
 {
-    return std::pow(base->eval(x), exponent->eval(x));
+    auto baseVal = base->eval(x);
+    auto expVal = exponent->eval(x);
+
+    double res = 0.0;
+    // baseVal can be 0.0 if this is a derivative, because of insufficient
+    // simplification of the resulting function. Example:
+    // d(x^2)/dx is represented as 2*(x^2)*(x^-1)
+    // if we try to evaluate that at x = 0.0 we get a division by 0 error,
+    // even though we should get 2*(0.0^1) = 0. We can therefore safely
+    // return 0 if the base is 0 and the exponent is <= 0
+    if(baseVal != 0.0 || expVal > 0){
+        res = std::pow(baseVal, expVal);
+    }
+
+    return res;
 }
 
 Term *Exp::derivative(int x) const

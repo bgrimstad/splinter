@@ -7,8 +7,89 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#define CATCH_CONFIG_MAIN
+#define CATCH_CONFIG_RUNNER
 #include <Catch.h>
+#include "test_functions.h"
+
+
+std::vector<TestFunction *> testFunctions = std::vector<TestFunction *>();
+
+void setupTestFunctions() {
+
+    // Mono-variable functions
+    {
+        unsigned int dim = 1;
+        Var x(0);
+
+        {
+            auto f =  -5.1*x + 13.37;
+            testFunctions.push_back(new TestFunction(dim, f));
+        }
+
+        {
+            auto f = 8.1*(x^2) - 0.2*x + 13.37;
+            testFunctions.push_back(new TestFunction(dim, f));
+        }
+
+        {
+            auto f = -4.5*(x^3) + 2.2*(x^2);
+            testFunctions.push_back(new TestFunction(dim, f));
+        }
+
+        {
+            auto f = 4.5*(x^4) + 3*(x^3) - (x^2);
+            testFunctions.push_back(new TestFunction(dim, f));
+        }
+    }
+
+    // Duo-variable functions
+    {
+        unsigned int dim = 2;
+        Var x(0);
+        Var y(1);
+
+        {
+            auto f = - 5.1*x + 13.37*y;
+            testFunctions.push_back(new TestFunction(dim, f));
+        }
+
+        {
+            auto f = 8.1*(x^2)*(y^2) - 0.2*x*y + 13.37;
+            testFunctions.push_back(new TestFunction(dim, f));
+        }
+
+        {
+            auto f = -4.5*(x^3) + 2.2*(x^2) - (y^2);
+            testFunctions.push_back(new TestFunction(dim, f));
+        }
+
+        {
+            auto f = 4.5*(x^4) - (x^2) + 3*x*y;
+            testFunctions.push_back(new TestFunction(dim, f));
+        }
+    }
+
+    // Special
+    {
+        {
+            // Six-hump camelback function
+            unsigned int dim = 2;
+            Var x(0);
+            Var y(1);
+            auto f = (4 - 2.1*x*x + (1/3.)*x*x*x*x)*x*x + x*y + (-4 + 4*y*y)*y*y;
+            testFunctions.push_back(new TestFunction(dim, f));
+        }
+    }
+}
+
+
+int main(int argc, char *argv[]) {
+    setupTestFunctions();
+
+    int result = Catch::Session().run(argc, argv);
+
+    return result;
+}
 
 
 //

@@ -17,8 +17,13 @@
 
 using namespace SPLINTER;
 
+class TestFunction;
+extern std::vector<TestFunction *> testFunctions;
+
 class Term;
 
+// TODO: Keep track of the domain of the function
+// This is very useful for testing functions that have "interesting" regions
 class TestFunction : public Function
 {
 public:
@@ -28,6 +33,10 @@ public:
     double eval(DenseVector x) const override;
     DenseMatrix evalJacobian(DenseVector x) const override;
     DenseMatrix evalHessian(DenseVector x) const override;
+
+    inline Term *getF() const { return f; }
+    inline std::vector<Term *> getDF() const { return df; }
+    inline std::vector<std::vector<Term *>> getDDF() const { return ddf; }
 
     unsigned int getNumVariables() const override;
 
@@ -84,6 +93,8 @@ public:
 
     virtual ~Term() {};
 };
+
+std::ostream &operator<<(std::ostream &out, const Term &term);
 
 class Plus : public Term
 {
