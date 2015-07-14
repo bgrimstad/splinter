@@ -147,6 +147,8 @@ set(TEST_SRC_LIST
     test/testingutilities.cpp
     test/test_functions.h
     test/test_functions.cpp
+    test/testfunction.h
+    test/testfunction.cpp
     test/accuracy.cpp
 )
 

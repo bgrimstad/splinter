@@ -11,82 +11,6 @@
 #include <iostream>
 #include <testingutilities.h>
 
-using namespace SPLINTER;
-
-TestFunction::TestFunction(unsigned int n, Term *func)
-        : numVariables(n),
-          f(func)
-{
-    calculateJacobian();
-    calculateHessian();
-}
-TestFunction::TestFunction(unsigned int n, Term &func)
-        : TestFunction(n, func.clone())
-{
-}
-
-double TestFunction::eval(DenseVector x) const
-{
-    auto xvec = denseToVec(x);
-
-    return f->eval(xvec);
-}
-
-DenseMatrix TestFunction::evalJacobian(DenseVector x) const
-{
-    DenseMatrix jacobian(1, numVariables);
-
-    auto xvec = denseToVec(x);
-
-    for(size_t i = 0; i < numVariables; i++) {
-        jacobian(0, i) = df.at(i)->eval(xvec);
-    }
-
-    return jacobian;
-}
-
-DenseMatrix TestFunction::evalHessian(DenseVector x) const
-{
-    DenseMatrix hessian(numVariables, numVariables);
-
-    auto xvec = denseToVec(x);
-
-    for(size_t i = 0; i < numVariables; i++) {
-        for(size_t j = 0; j < numVariables; j++) {
-            hessian(i, j) = ddf.at(i).at(j)->eval(xvec);
-        }
-    }
-
-    return hessian;
-}
-
-unsigned int TestFunction::getNumVariables() const
-{
-    return numVariables;
-}
-
-void TestFunction::calculateJacobian()
-{
-    df.clear();
-    for(size_t i = 0; i < numVariables; i++) {
-        auto temp = f->derivative(i);
-        df.push_back(temp->simplify());
-    }
-}
-
-void TestFunction::calculateHessian()
-{
-    ddf.clear();
-
-    for(size_t i = 0; i < numVariables; i++) {
-        ddf.push_back(std::vector<Term *>());
-
-        for(size_t j = 0; j < numVariables; j++) {
-            auto temp = df.at(i)->derivative(j);
-            ddf.at(i).push_back(temp->simplify());
-        }
-    }
-}
 
 std::ostream &operator<<(std::ostream &out, const Term &term)
 {
@@ -94,78 +18,153 @@ std::ostream &operator<<(std::ostream &out, const Term &term)
     return out;
 }
 
-Plus::Plus(const Term *left, const Term *right)
-    : left(left->clone()),
-      right(right->clone())
+bool Term::isConstant() const
+{
+    auto temp = const_cast<Term *>(this);
+    return dynamic_cast<Const *>(temp) != nullptr;
+}
+
+Term::~Term()
 {
 }
 
+Plus::Plus()
+{
+}
+
+Plus::Plus(const Term &lhs, const Term &rhs)
+    : Plus(lhs.clone(), rhs.clone())
+{
+}
+
+Plus::Plus(const Term &lhs, Term *rhs)
+    : Plus(lhs.clone(), rhs)
+{
+}
+
+Plus::Plus(Term *lhs, const Term &rhs)
+    : Plus(lhs, rhs.clone())
+{
+}
+
+Plus::Plus(Term *lhs, Term *rhs)
+{
+    add(lhs);
+    add(rhs);
+}
+
+Plus::~Plus()
+{
+//    for(auto &term : terms) {
+//        delete term;
+//    }
+}
+
+void Plus::add(const Term &term)
+{
+    terms.push_back(term.clone());
+}
+
+void Plus::add(Term *term)
+{
+    terms.push_back(term);
+}
+
+/* TODO: Maybe better to evaluate in a tree-like fashion so
+ * we avoid round off errors? F.ex. when we have 4 terms:
+ * temp0 = term0 + term1
+ * temp1 = term2 + term3
+ * return temp0 + temp1
+ */
 double Plus::eval(const std::vector<double> &x) const
 {
-    auto leftVal = left->eval(x);
-    auto rightVal = right->eval(x);
-    return leftVal + rightVal;
+    auto tot = 0.0;
+    for(auto &term : terms) {
+        tot += term->eval(x);
+    }
+    return tot;
 }
 
-Term *Plus::derivative(int x) const
+Term *Plus::derivative(Var x) const
 {
-    auto d_left = left->derivative(x);
-    auto d_right = right->derivative(x);
+    auto result = new Plus();
 
-    auto result = new Plus(d_left, d_right);
-
-    delete d_left;
-    delete d_right;
+    for(auto &term : terms) {
+        result->add(term->derivative(x));
+    }
 
     return result;
 }
 
 Term *Plus::clone() const
 {
-    return new Plus(left, right);
+    auto result = new Plus();
+    result->terms.reserve(terms.size());
+    for(auto &term : terms) {
+        result->terms.push_back(term->clone());
+    }
+    return result;
+}
+
+// Find all terms that are Plus *, and "steal" their children.
+// This can be done because x0 + (x1 + x2) = x0 + x1 + x2
+void Plus::steal_children() {
+    // Store the current size. It will increase if we need to steal terms,
+    // and there's no need to see if those need stealing, as that has been
+    // done in the simplify loop above.
+    size_t size = terms.size();
+    for(int i = size - 1; i >= 0; --i) {
+        // See if the term is a Plus, and if so, we "steal" all its children
+        auto plus = dynamic_cast<Plus *>(terms.at(i));
+        if(plus != nullptr) {
+            // Resize now for efficiency
+            terms.erase(terms.begin() + i); // Erase the Plus entry
+            terms.reserve(terms.size() + plus->terms.size());
+            for(int j = plus->terms.size() - 1; j >= 0; --j) {
+                terms.push_back(plus->terms.at(j));
+                plus->terms.erase(plus->terms.begin() + j);
+            }
+            delete plus;
+        }
+    }
 }
 
 Term *Plus::simplify()
 {
-    auto l = const_cast<Term *>(left);
-    auto r = const_cast<Term *>(right);
+    for(auto &term : terms) {
+        term = term->simplify();
+    }
 
-    left = l->simplify();
+    steal_children();
 
-    right = r->simplify();
+    size_t size = terms.size();
+    double totConstVal = 0.0;
+    for(int i = size - 1; i >= 0; --i) {
+        auto constant = dynamic_cast<Const *>(terms.at(i));
+        if(constant != nullptr) {
+            totConstVal += constant->getVal();
 
-    auto l_const = dynamic_cast<const Const *>(left);
-    auto r_const = dynamic_cast<const Const *>(right);
-
-    if(l_const != nullptr) {
-        // a + b where a and b are constants
-        double l_const_val = l_const->getVal();
-        if(r_const != nullptr) {
-            double tot_const_val = l_const_val + r_const->getVal();
-            delete left;
-            delete right;
-            delete this;
-            return new Const(tot_const_val);
-        }
-        // 0 + x
-        else {
-            if(l_const_val == 0.0) {
-                auto toReturn = const_cast<Term *>(right);
-                delete left;
-                delete this;
-                return toReturn;
-            }
+            auto term = terms.at(i);
+            terms.erase(terms.begin() + i);
+            delete term;
         }
     }
-    // x + 0
-    if(r_const != nullptr) {
-        double r_const_val = r_const->getVal();
-        if(r_const_val == 0.0) {
-            auto toReturn = const_cast<Term *>(left);
-            delete right;
-            delete this;
-            return toReturn;
-        }
+
+    if(totConstVal != 0.0) {
+        add(new Const(totConstVal));
+    }
+
+    // TODO: Sort terms, then concatenate as possible
+
+    // If this is empty it means all terms summed to 0.0
+    if(terms.size() == 0) {
+        delete this;
+        return new Const(0.0);
+
+    } else if(terms.size() == 1) {
+        auto temp = terms.at(0)->clone();
+        delete this;
+        return temp;
     }
 
     return this;
@@ -174,104 +173,265 @@ Term *Plus::simplify()
 void Plus::pretty_text(std::ostream &out) const
 {
     out << "(";
-    left->pretty_text(out);
-    out << " + ";
-    right->pretty_text(out);
+    for(auto it = terms.cbegin(); it != terms.cend(); ++it) {
+        (*it)->pretty_text(out);
+        if(it + 1 != terms.cend()) {
+            out << " + ";
+        }
+    }
     out << ")";
 }
 
-Mul::Mul(const Term *left, const Term *right)
-    : left(left->clone()),
-      right(right->clone())
+
+Mul::Mul()
 {
 }
 
+Mul::Mul(const Term &lhs, const Term &rhs)
+    : Mul(lhs.clone(), rhs.clone())
+{
+}
+
+Mul::Mul(const Term &lhs, Term *rhs)
+    : Mul(lhs.clone(), rhs)
+{
+}
+
+Mul::Mul(Term *lhs, const Term &rhs)
+    : Mul(lhs, rhs.clone())
+{
+}
+
+Mul::Mul(Term *lhs, Term *rhs)
+{
+    add(lhs);
+    add(rhs);
+}
+
+Mul::~Mul()
+{
+//    for(auto &term : terms) {
+//        delete term;
+//    }
+}
+
+void Mul::add(const Term &term)
+{
+    terms.push_back(term.clone());
+}
+
+void Mul::add(Term *term)
+{
+    terms.push_back(term);
+}
+
+/* TODO: Maybe better to evaluate in a tree-like fashion so
+ * we avoid round off errors? F.ex. when we have 4 terms:
+ * temp0 = term0 * term1
+ * temp1 = term2 * term3
+ * return temp0 * temp1
+ */
 double Mul::eval(const std::vector<double> &x) const
 {
-    auto leftVal = left->eval(x);
-    auto rightVal = right->eval(x);
-    return leftVal * rightVal;
+    auto tot = 1.0;
+    for(auto &term : terms) {
+        tot *= term->eval(x);
+    }
+    return tot;
 }
 
-Term *Mul::derivative(int x) const
+Term *Mul::derivative(Var x) const
 {
-    auto d_left = left->derivative(x);
-    auto d_right = right->derivative(x);
+    Plus *result = new Plus();
+    for(int i = 0; i < terms.size(); ++i) {
 
-    // if f(x,y) = x*y then
-    // df/dx = dx/dx * dy/dx + x * dy/dx
-    auto d_left_times_right = Mul(d_left, right);
-    auto left_times_d_right = Mul(left, d_right);
+        Mul *temp = new Mul();
+        for(int j = 0; j < terms.size(); ++j) {
+            if(i == j) {
+                temp->add(terms.at(j)->derivative(x));
+            } else {
+                temp->add(terms.at(j)->clone());
+            }
+        }
 
-    auto result = new Plus(&d_left_times_right, &left_times_d_right);
-
-    delete d_left;
-    delete d_right;
+        result->add(temp);
+    }
 
     return result;
 }
 
 Term *Mul::clone() const
 {
-    return new Mul(left, right);
+    auto result = new Mul();
+    result->terms.reserve(terms.size());
+    for(auto &term : terms) {
+        result->terms.push_back(term);
+    }
+    return result;
+}
+
+// Find all terms that are Mul *, and "steal" their children.
+// This can be done because x0 * (x1 * x2) = x0 * x1 * x2
+void Mul::steal_children() {
+    // Store the current size. It will increase if we need to steal terms,
+    // and there's no need to see if those need stealing, as that has been
+    // done in the simplify loop above.
+    size_t size = terms.size();
+    for(int i = size - 1; i >= 0; --i) {
+        // See if the term is a Mul, and if so, we "steal" all its children
+        auto mul = dynamic_cast<Mul *>(terms.at(i));
+        if(mul != nullptr) {
+            // Resize now for efficiency
+            terms.erase(terms.begin() + i); // Erase the Mul entry
+            terms.reserve(terms.size() + mul->terms.size());
+            for(int j = mul->terms.size() - 1; j >= 0; --j) {
+                terms.push_back(mul->terms.at(j));
+                mul->terms.erase(mul->terms.begin() + j);
+            }
+            delete mul;
+        }
+    }
+}
+
+/* See if there is a plus that is a child term, and if so,
+ * multiply by it so we get a resulting Plus with the same number of terms
+ * as the previous Plus
+ */
+Term *Mul::multiply_by_plus() {
+    for(auto it = terms.end() - 1; it >= terms.begin(); --it) {
+        auto term = *it;
+        auto plus = dynamic_cast<Plus *>(term);
+
+        if(plus != nullptr) {
+            auto result = new Plus();
+
+            auto plus_terms = plus->getTerms();
+
+            // Important to erase this _before_ the call to
+            // this->clone below, else the plus will get
+            // cloned too and start an infinite loop
+            terms.erase(it);
+
+            for(auto &plus_term : plus_terms) {
+                auto temp = new Mul();
+                temp->add(plus_term);
+                temp->add(this->clone());
+                result->add(temp);
+            }
+
+            delete this;
+            return result->simplify();
+        }
+    }
+
+    return this;
 }
 
 Term *Mul::simplify()
 {
-    auto l = const_cast<Term *>(left);
-    auto r = const_cast<Term *>(right);
+    /* TODO:
+     * look for Plus terms to multiply by,
+     * concatenate identical variables
+     */
+    for(auto &term : terms) {
+        term = term->simplify();
+    }
 
-    left = l->simplify();
+    steal_children();
 
-    right = r->simplify();
+    /* TODO:
+     * Sort and concatenate */
 
-    auto l_const = dynamic_cast<const Const *>(left);
-    auto r_const = dynamic_cast<const Const *>(right);
+    /* Multiply all the constants and see what we end up with */
+    size_t size = terms.size();
+    double totConstVal = 1.0;
+    for(int i = size - 1; i >= 0; --i) {
+        auto constant = dynamic_cast<Const *>(terms.at(i));
+        if(constant != nullptr) {
+            totConstVal *= constant->getVal();
 
-    if(l_const != nullptr) {
-        double const_val = l_const->getVal();
-
-        // a*b where a and b are constants
-        if(r_const != nullptr) {
-            double tot_const = const_val * r_const->getVal();
-            delete left;
-            delete right;
-            delete this;
-
-            return new Const(tot_const);
-        }
-
-        // 0 * x
-        if(const_val == 0.0) {
-            delete left;
-            delete right;
-            delete this;
-            return new Const(0.0);
-        }
-        // 1 * x
-        else if(const_val == 1.0) {
-            auto toReturn = const_cast<Term *>(right);
-            delete left;
-            delete this; // Commenting out this line avoids segfault with f = Log(10, x);
-            return toReturn;
+            auto term = terms.at(i);
+            terms.erase(terms.begin() + i);
+            delete term;
         }
     }
-    if(r_const != nullptr) {
-        double const_val = r_const->getVal();
-        // x * 0
-        if (const_val == 0.0) {
-            delete left;
-            delete right;
-            delete this;
-            return new Const(0.0);
+
+    if(totConstVal == 0.0) {
+        delete this;
+        return new Const(0.0);
+    }
+    if(totConstVal != 1.0) {
+        terms.insert(terms.begin(), new Const(totConstVal));
+    }
+
+
+    for(int i = 0; i < terms.size(); ++i) {
+        Var *var0 = dynamic_cast<Var *>(terms.at(i));
+        Term *exp0 = nullptr;
+
+        if(var0 == nullptr) {
+            auto exp = dynamic_cast<Exp *>(terms.at(i));
+            if(exp != nullptr) {
+                var0 = dynamic_cast<Var *>(exp->getBase());
+                exp0 = exp->getExponent();
+            }
         }
-        // x * 1
-        else if(const_val == 1.0) {
-            auto toReturn = const_cast<Term *>(left);
-            delete right;
-            delete this;
-            return toReturn;
+
+        if(var0 != nullptr) {
+            auto replacementExponent = new Plus();
+            if(exp0 != nullptr) {
+                replacementExponent->add(exp0->clone());
+            } else {
+                replacementExponent->add(new Const(1.0));
+            }
+
+            for(int j = i+1; j < terms.size(); ++j) {
+                Var *var1 = dynamic_cast<Var *>(terms.at(j));
+                Term *exp1 = nullptr;
+
+                if(var1 == nullptr) {
+                    auto exp = dynamic_cast<Exp *>(terms.at(j));
+                    if(exp != nullptr) {
+                        var1 = dynamic_cast<Var *>(exp->getBase());
+                        exp1 = exp->getExponent();
+                    }
+                }
+
+                if(var1 != nullptr) {
+                    if(var0->getVarNum() == var1->getVarNum()) {
+                        if(exp1 != nullptr) {
+                            replacementExponent->add(exp1->clone());
+                        } else {
+                            replacementExponent->add(new Const(1.0));
+                        }
+                        delete terms.at(j); // free memory
+                        terms.erase(terms.begin() + j);
+                    }
+                }
+            }
+
+            auto replacement = new Exp(var0->clone(), replacementExponent); // MUST be done before the next call
+            //delete terms.at(i); // free memory (This causes segfault!)
+
+            terms.at(i) = replacement->simplify();
         }
+    }
+
+    // If this is empty it means all terms was a constant with value 1.0
+    if(terms.size() == 0) {
+        delete this;
+        return new Const(1.0);
+
+    } else if(terms.size() == 1) {
+        auto temp = terms.at(0)->clone();
+        delete this;
+        return temp;
+    }
+
+    auto temp = multiply_by_plus();
+    if(temp != this) {
+        // Don't delete this, it has been deleted already by multiply_by_plus()
+        return temp;
     }
 
     return this;
@@ -279,13 +439,22 @@ Term *Mul::simplify()
 
 void Mul::pretty_text(std::ostream &out) const
 {
-    left->pretty_text(out);
-    out << "*";
-    right->pretty_text(out);
+    for(auto it = terms.cbegin(); it != terms.cend(); ++it) {
+        (*it)->pretty_text(out);
+        if(it + 1 != terms.cend()) {
+            out << "*";
+        }
+    }
 }
 
 Var::Var(int varNum)
-    : varNum(varNum)
+    : Var(varNum, nullptr)
+{
+}
+
+Var::Var(int varNum, const char *name)
+    : varNum(varNum),
+      name(name)
 {
 }
 
@@ -294,9 +463,9 @@ double Var::eval(const std::vector<double> &x) const
     return x.at(varNum);
 }
 
-Term *Var::derivative(int x) const
+Term *Var::derivative(Var x) const
 {
-    if(x == varNum) {
+    if(x.getVarNum() == varNum) {
         return new Const(1);
     }
     else
@@ -307,7 +476,7 @@ Term *Var::derivative(int x) const
 
 Term *Var::clone() const
 {
-    return new Var(varNum);
+    return new Var(varNum, name);
 }
 
 Term *Var::simplify()
@@ -317,11 +486,15 @@ Term *Var::simplify()
 
 void Var::pretty_text(std::ostream &out) const
 {
-    out << "x" << varNum;
+    if(name != nullptr) {
+        out << name;
+    } else {
+        out << "x" << varNum;
+    }
 }
 
 Const::Const(double val)
-        : val(val)
+    : val(val)
 {
 }
 
@@ -330,7 +503,7 @@ double Const::eval(const std::vector<double> &x) const
     return val;
 }
 
-Term *Const::derivative(int x) const
+Term *Const::derivative(Var x) const
 {
     return new Const(0);
 }
@@ -350,9 +523,24 @@ void Const::pretty_text(std::ostream &out) const
     out << val;
 }
 
-Exp::Exp(const Term *base, const Term *exponent)
-    : base(base->clone()),
-      exponent(exponent->clone())
+Exp::Exp(const Term &base, const Term &exponent)
+    : Exp(base.clone(), exponent.clone())
+{
+}
+
+Exp::Exp(const Term &base, Term *exponent)
+    : Exp(base.clone(), exponent)
+{
+}
+
+Exp::Exp(Term *base, const Term &exponent)
+    : Exp(base, exponent.clone())
+{
+}
+
+Exp::Exp(Term *base, Term *exponent)
+    : base(base),
+      exponent(exponent)
 {
 }
 
@@ -361,89 +549,98 @@ double Exp::eval(const std::vector<double> &x) const
     auto baseVal = base->eval(x);
     auto expVal = exponent->eval(x);
 
-    double res = 0.0;
-    // baseVal can be 0.0 if this is a derivative, because of insufficient
-    // simplification of the resulting function. Example:
-    // d(x^2)/dx is represented as 2*(x^2)*(x^-1)
-    // if we try to evaluate that at x = 0.0 we get a division by 0 error,
-    // even though we should get 2*(0.0^1) = 0. We can therefore safely
-    // return 0 if the base is 0 and the exponent is <= 0
-    if(baseVal != 0.0 || expVal > 0){
-        res = std::pow(baseVal, expVal);
-    }
-
-    return res;
+    return std::pow(baseVal, expVal);
 }
 
-Term *Exp::derivative(int x) const
+Term *Exp::derivative(Var x) const
 {
     auto f = base;
-    auto df = f->derivative(x);
     auto g = exponent;
-    auto dg = g->derivative(x);
 
     // f^g
     auto fg = this;
 
-    auto minus_one = Const(-1);
-
     // 1/f
-    auto one_over_f = Exp(f, &minus_one);
+    auto one_over_f = new Exp(f->clone(), new Const(-1));
 
-    auto g_over_f = Mul(g, &one_over_f);
+    auto g_over_f = new Mul(g->clone(), one_over_f);
 
     // df * g/f
-    auto df_mul_g_over_f = Mul(df, &g_over_f);
+    auto df_mul_g_over_f = new Mul(f->derivative(x), g_over_f);
 
     // ln(f)
-    auto lnf = Log(std::exp(1.0), f);
+    auto lnf = new Log(std::exp(1.0), f->clone());
 
     // dg * ln(f)
-    auto dg_ln_f = Mul(dg, &lnf);
+    auto dg_ln_f = new Mul(g->derivative(x), lnf);
 
-    auto temp = Plus(&df_mul_g_over_f, &dg_ln_f);
+    auto temp = new Plus(df_mul_g_over_f, dg_ln_f);
 
-    auto result = new Mul(fg, &temp);
-
-    delete df;
-    delete dg;
-
-    return result;
+    return new Mul(fg->clone(), temp);
 }
 
 Term *Exp::clone() const
 {
-    return new Exp(base, exponent);
+    return new Exp(base->clone(), exponent->clone());
 }
 
 Term *Exp::simplify()
 {
-    auto l = const_cast<Term *>(base);
-    auto r = const_cast<Term *>(exponent);
+    base = base->simplify();
 
-    base = l->simplify();
+    exponent = exponent->simplify();
 
-    exponent = r->simplify();
+    auto constantBase = dynamic_cast<Const *>(base);
+    auto constantExponent = dynamic_cast<Const *>(exponent);
+    if(constantExponent != nullptr) {
+        // Both are constants, eval and return constant
+        if(constantBase != nullptr) {
+            std::vector<double> dummy;
+            auto constVal = eval(dummy);
+            delete this;
+            return new Const(constVal);
+        }
+        auto exponentVal = constantExponent->getVal();
+        if(exponentVal == 0.0) {
+            delete this;
+            return new Const(1.0);
+        }
+        // Don't do anything is exponentVal is 1, it will get
+        // converted from x^1 ->x -> x^1 forever
+    }
+    // Handle case where base = 0, so:
+    // 0^x
+    else if(constantBase != nullptr) {
+        if(constantBase->getVal() == 0.0) {
+            delete this;
+            return new Const(0.0);
+        }
+    }
 
     return this;
 }
 
 void Exp::pretty_text(std::ostream &out) const
 {
-    base->pretty_text(out);
-    out << "^(";
-    exponent->pretty_text(out);
-    out << ")";
+    if(exponent->isConstant() && dynamic_cast<Const *>(exponent)->getVal() == 1.0) {
+        base->pretty_text(out);
+    } else {
+        out << "(";
+        base->pretty_text(out);
+        out << "^";
+        exponent->pretty_text(out);
+        out << ")";
+    }
 }
 
-Log::Log(double base, const Term *arg)
+Log::Log(double base, Term *arg)
         : base(base),
-          arg(arg->clone())
+          arg(arg)
 {
 }
 
 Log::Log(double base, const Term &arg)
-        : Log(base, &arg)
+        : Log(base, arg.clone())
 {
 }
 
@@ -452,35 +649,33 @@ double Log::eval(const std::vector<double> &x) const
     return log(base, arg->eval(x));
 }
 
-Term *Log::derivative(int x) const
+Term *Log::derivative(Var x) const
 {
     // d(log(f(x)))/dx = df(x) / (f(x) * ln(base))
-    auto d_arg = arg->derivative(x);
-    auto minus_one = Const(-1);
+    auto log_base_of_e = new Const(log(base, std::exp(1.0)));
 
-    auto log_base_of_e = Const(log(base, std::exp(1.0)));
+    auto one_over_arg = new Exp(arg->clone(), new Const(-1));
 
-    auto one_over_arg = Exp(arg, &minus_one);
+    auto darg_over_arg = new Mul(arg->derivative(x), one_over_arg);
 
-    auto temp = Mul(d_arg, &one_over_arg);
-
-    auto result = new Mul(&log_base_of_e, &temp);
-
-    delete d_arg;
-
-    return result;
+    return new Mul(log_base_of_e, darg_over_arg);
 }
 
 Term *Log::clone() const
 {
-    return new Log(base, arg);
+    return new Log(base, arg->clone());
 }
 
 Term *Log::simplify()
 {
-    auto r = const_cast<Term *>(arg);
+    arg = arg->simplify();
 
-    arg = r->simplify();
+    if(arg->isConstant()) {
+        std::vector<double> dummy;
+        auto constantVal = eval(dummy);
+        delete this;
+        return new Const(constantVal);
+    }
 
     return this;
 }
@@ -493,13 +688,13 @@ void Log::pretty_text(std::ostream &out) const
 }
 
 
-Sin::Sin(const Term *arg)
-        : arg(arg->clone())
+Sin::Sin(Term *arg)
+        : arg(arg)
 {
 }
 
 Sin::Sin(const Term &arg)
-        : Sin(&arg)
+        : Sin(arg.clone())
 {
 }
 
@@ -508,30 +703,20 @@ double Sin::eval(const std::vector<double> &x) const
     return std::sin(arg->eval(x));
 }
 
-Term *Sin::derivative(int x) const
+Term *Sin::derivative(Var x) const
 {
     // dsin(f(x))/dx = df(x)/dx * cos(f(x))
-    auto d_arg = arg->derivative(x);
-
-    auto cos = Cos(arg);
-
-    auto result = new Mul(d_arg, &cos);
-
-    delete d_arg;
-
-    return result;
+    return new Mul(arg->derivative(x), new Cos(arg->clone()));
 }
 
 Term *Sin::clone() const
 {
-    return new Sin(arg);
+    return new Sin(arg->clone());
 }
 
 Term *Sin::simplify()
 {
-    auto r = const_cast<Term *>(arg);
-
-    arg = r->simplify();
+    arg = arg->simplify();
 
     return this;
 }
@@ -544,13 +729,13 @@ void Sin::pretty_text(std::ostream &out) const
 }
 
 
-Cos::Cos(const Term *arg)
-        : arg(arg->clone())
+Cos::Cos(Term *arg)
+        : arg(arg)
 {
 }
 
 Cos::Cos(const Term &arg)
-        : Cos(&arg)
+        : Cos(arg.clone())
 {
 }
 
@@ -559,34 +744,22 @@ double Cos::eval(const std::vector<double> &x) const
     return std::cos(arg->eval(x));
 }
 
-Term *Cos::derivative(int x) const
+Term *Cos::derivative(Var x) const
 {
     // dcos(f(x))/dx = -1 * df(x)/dx * sin(f(x))
-    auto d_arg = arg->derivative(x);
+    auto temp = new Mul(new Const(-1), new Sin(arg->clone()));
 
-    auto sin = Sin(arg);
-
-    auto minus_one = Const(-1);
-
-    auto temp = Mul(&minus_one, &sin);
-
-    auto result = new Mul(d_arg, &temp);
-
-    delete d_arg;
-
-    return result;
+    return new Mul(arg->derivative(x), temp);
 }
 
 Term *Cos::clone() const
 {
-    return new Cos(arg);
+    return new Cos(arg->clone());
 }
 
 Term *Cos::simplify()
 {
-    auto r = const_cast<Term *>(arg);
-
-    arg = r->simplify();
+    arg = arg->simplify();
 
     return this;
 }
@@ -599,13 +772,13 @@ void Cos::pretty_text(std::ostream &out) const
 }
 
 
-Tan::Tan(const Term *arg)
-        : arg(arg->clone())
+Tan::Tan(Term *arg)
+        : arg(arg)
 {
 }
 
 Tan::Tan(const Term &arg)
-        : Tan(&arg)
+        : Tan(arg.clone())
 {
 }
 
@@ -614,36 +787,24 @@ double Tan::eval(const std::vector<double> &x) const
     return std::tan(arg->eval(x));
 }
 
-Term *Tan::derivative(int x) const
+Term *Tan::derivative(Var x) const
 {
     // dtan(f(x))/dx = df(x) / cos^2(x)
-    auto d_arg = arg->derivative(x);
+    auto denominator = new Mul(new Cos(arg->clone()), new Cos(arg->clone()));
 
-    auto cos = Cos(arg);
+    auto temp = new Exp(denominator, new Const(-1));
 
-    auto denominator = Mul(&cos, &cos);
-
-    auto minus_one = Const(-1);
-
-    auto temp = Exp(&denominator, &minus_one);
-
-    auto result = new Mul(d_arg, &temp);
-
-    delete d_arg;
-
-    return result;
+    return new Mul(arg->derivative(x), temp);
 }
 
 Term *Tan::clone() const
 {
-    return new Tan(arg);
+    return new Tan(arg->clone());
 }
 
 Term *Tan::simplify()
 {
-    auto r = const_cast<Term *>(arg);
-
-    arg = r->simplify();
+    arg = arg->simplify();
 
     return this;
 }
@@ -656,13 +817,13 @@ void Tan::pretty_text(std::ostream &out) const
 }
 
 
-E::E(const Term *arg)
-        : arg(arg->clone())
+E::E(Term *arg)
+        : arg(arg)
 {
 }
 
 E::E(const Term &arg)
-        : E(&arg)
+        : E(arg.clone())
 {
 }
 
@@ -671,30 +832,20 @@ double E::eval(const std::vector<double> &x) const
     return std::exp(arg->eval(x));
 }
 
-Term *E::derivative(int x) const
+Term *E::derivative(Var x) const
 {
     // de(f(x))/dx = df(x) * e(f(x))
-    auto d_arg = arg->derivative(x);
-
-    auto e = E(arg);
-
-    auto result = new Mul(d_arg, &e);
-
-    delete d_arg;
-
-    return result;
+    return new Mul(arg->derivative(x), new E(arg->clone()));
 }
 
 Term *E::clone() const
 {
-    return new E(arg);
+    return new E(arg->clone());
 }
 
 Term *E::simplify()
 {
-    auto r = const_cast<Term *>(arg);
-
-    arg = r->simplify();
+    arg = arg->simplify();
 
     return this;
 }
@@ -712,94 +863,94 @@ void E::pretty_text(std::ostream &out) const
 
 Plus operator+(const Term &lhs, const Term &rhs)
 {
-    return Plus(&lhs, &rhs);
+    return Plus(lhs, rhs);
 }
 
 Plus operator+(const Term &lhs, double rhs)
 {
     Const temp(rhs);
-    return Plus(&lhs, &temp);
+    return Plus(lhs, temp);
 }
 
 Plus operator+(double lhs, const Term &rhs)
 {
     Const temp(lhs);
-    return Plus(&temp, &rhs);
+    return Plus(temp, rhs);
 }
 
 
 Plus operator-(const Term &lhs, const Term &rhs)
 {
     Const temp(-1);
-    return Plus(&lhs, new Mul(&temp, &rhs));
+    return Plus(lhs, new Mul(temp, rhs));
 }
 
 Plus operator-(const Term &lhs, double rhs)
 {
     Const temp(-rhs);
-    return Plus(&lhs, &temp);
+    return Plus(lhs, temp);
 }
 
 Plus operator-(double lhs, const Term &rhs)
 {
     Const temp(lhs);
     Const temp2(-1);
-    return Plus(&temp, new Mul(&temp2, &rhs));
+    return Plus(temp, new Mul(temp2, rhs));
 }
 
 
 Mul operator*(const Term &lhs, const Term &rhs)
 {
-    return Mul(&lhs, &rhs);
+    return Mul(lhs, rhs);
 }
 
 Mul operator*(double lhs, const Term &rhs)
 {
     Const temp(lhs);
-    return Mul(&temp, &rhs);
+    return Mul(temp, rhs);
 }
 
 Mul operator*(const Term &lhs, double rhs)
 {
     Const temp(rhs);
-    return Mul(&lhs, &temp);
+    return Mul(lhs, temp);
 }
 
 
 Mul operator/(const Term &lhs, const Term &rhs)
 {
     Const temp(-1);
-    return Mul(&lhs, new Exp(&rhs, &temp));
+    return Mul(lhs, new Exp(rhs, temp));
 }
 
 Mul operator/(double lhs, const Term &rhs)
 {
     Const temp(lhs);
     Const temp2(-1);
-    return Mul(&temp, new Exp(&rhs, &temp2));
+    return Mul(temp, new Exp(rhs, temp2));
 }
 
 Mul operator/(const Term &lhs, double rhs)
 {
     Const temp(rhs);
     Const temp2(-1);
-    return Mul(&lhs, new Exp(&temp, &temp2));
+    return Mul(lhs, new Exp(temp, temp2));
 }
 
 
 Exp operator^(const Term &lhs, const Term &rhs)
 {
-    return Exp(&lhs, &rhs);
+    return Exp(lhs, rhs);
 }
 
 Exp operator^(const Term &base, double exp)
 {
     Const temp(exp);
-    return Exp(&base, &temp);
+    return Exp(base, temp);
 }
 
 Exp operator^(double base, const Term &exp)
 {
     Const temp(base);
-    return Exp(&temp, &exp);
+    return Exp(temp, exp);
 }

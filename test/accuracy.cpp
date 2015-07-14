@@ -29,17 +29,29 @@ TEST_CASE("BSpline accuracy test", "[bspline]") {
 //    DataTable fewSamples = sample(exact, fewSamplePoints);
 //    DataTable manySamples = sample(exact, manySamplePoints);
 
-    for(auto &exact : testFunctions) {
-        auto dim = exact->getNumVariables();
-        auto samplePoints = linspace(dim, -5, 5, 10);
-        auto evalPoints = linspace(dim, -4.95, 4.95, 11);
+    auto exact = testFunctions.at(0);
+    auto dim = exact->getNumVariables();
+    auto samplePoints = linspace(dim, -5, 5, 10);
+    auto evalPoints = linspace(dim, -4.95, 4.95, 11);
 
-        DataTable table = sample(*exact, samplePoints);
+    DataTable table = sample(*exact, samplePoints);
 
-        BSpline b(table, BSplineType::CUBIC);
+    BSpline b(table, BSplineType::CUBIC);
 
-        INFO("Function: " << *(exact->getF()));
+    INFO("Function: " << *(exact->getF()));
 
-        compareFunctions(*exact, b, evalPoints);
-    }
+    compareFunctions(*exact, b, evalPoints);
+//    for(auto &exact : testFunctions) {
+//        auto dim = exact->getNumVariables();
+//        auto samplePoints = linspace(dim, -5, 5, 10);
+//        auto evalPoints = linspace(dim, -4.95, 4.95, 11);
+
+//        DataTable table = sample(*exact, samplePoints);
+
+//        BSpline b(table, BSplineType::CUBIC);
+
+//        INFO("Function: " << *(exact->getF()));
+
+//        compareFunctions(*exact, b, evalPoints);
+//    }
 }
