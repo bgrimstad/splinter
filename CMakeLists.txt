@@ -84,7 +84,7 @@ elseif(GCC OR CLANG)
         # Treat warning return-type as error to avoid undefined behaviour
         # when a non-void function does not return a value.
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m${BITNESS} -std=c++11 -Werror=return-type")
-        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wno-long-long -Werror=return-type")
+        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wno-long-long")
 #   TODO: Intel flags
 endif()
 
@@ -145,7 +145,8 @@ set(TEST_SRC_LIST
     ${SRC_LIST}
     test/main.cpp
     test/serialize.cpp
-    test/testingutilities.h
+    test/operator_overloads.h
+    test/operator_overloads.cpp
     test/testingutilities.cpp
     test/test_functions.h
     test/test_functions.cpp
