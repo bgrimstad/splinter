@@ -18,74 +18,70 @@ void setupTestFunctions() {
 
     // Mono-variable functions
     {
-        unsigned int dim = 1;
         Var x(0, "x");
 
         {
             auto f =  -5.1*x + 13.37;
-            testFunctions.push_back(new TestFunction(dim, f));
+            testFunctions.push_back(new TestFunction(f));
         }
 
         {
             auto f = 8.1*(x^2) - 0.2*x + 13.37;
-            testFunctions.push_back(new TestFunction(dim, f));
+            testFunctions.push_back(new TestFunction(f));
         }
 
         {
             auto f = -4.5*(x^3) + 2.2*(x^2);
-            testFunctions.push_back(new TestFunction(dim, f));
+            testFunctions.push_back(new TestFunction(f));
         }
 
         {
             auto f = 4.5*(x^4) + 3*(x^3) - (x^2);
-            testFunctions.push_back(new TestFunction(dim, f));
+            testFunctions.push_back(new TestFunction(f));
         }
     }
 
     // Duo-variable functions
     {
-        unsigned int dim = 2;
         Var x(0, "x");
         Var y(1, "y");
 
         {
             auto f = - 5.1*x + 13.37*y;
-            testFunctions.push_back(new TestFunction(dim, f));
+            testFunctions.push_back(new TestFunction(f));
         }
 
         {
             auto f = 8.1*(x^2)*(y^2) - 0.2*x*y + 13.37;
-            testFunctions.push_back(new TestFunction(dim, f));
+            testFunctions.push_back(new TestFunction(f));
         }
 
         {
             auto f = -4.5*(x^3) + 2.2*(x^2) - (y^2);
-            testFunctions.push_back(new TestFunction(dim, f));
+            testFunctions.push_back(new TestFunction(f));
         }
 
         {
             auto f = 4.5*(x^4) - (x^2) + 3*x*y;
-            testFunctions.push_back(new TestFunction(dim, f));
+            testFunctions.push_back(new TestFunction(f));
         }
     }
 
     // Special
     {
         {
-            unsigned int dim = 3;
             Var x(0, "x");
             Var y(1, "y");
             Var z(2, "z");
             auto f = z * ((2^x) + (y^x));
-            testFunctions.push_back(new TestFunction(dim, f));
+            testFunctions.push_back(new TestFunction(f));
         }
         {
             // Six-hump camelback function
-            unsigned int dim = 2;
             Var x(0, "x");
             Var y(1, "y");
             auto f = (4 - 2.1*x*x + (1/3.)*x*x*x*x)*x*x + x*y + (-4 + 4*y*y)*y*y;
-            testFunctions.push_back(new TestFunction(dim, f));
+            testFunctions.push_back(new TestFunction(f));
         }
     }
 }

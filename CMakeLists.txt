@@ -166,8 +166,7 @@ add_library(${SHARED_LIBRARY} SHARED ${SRC_LIST})
 add_library(${STATIC_LIBRARY} STATIC ${SRC_LIST})
 add_library(${MATLAB_LIBRARY} SHARED ${MATLAB_SRC_LIST})
 
-
-# Serialize testing executable
+# Testing executable
 add_executable(${TEST} ${TEST_SRC_LIST})
 target_link_libraries(${TEST} ${STATIC_LIBRARY})
 

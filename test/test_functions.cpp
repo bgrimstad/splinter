@@ -11,6 +11,9 @@
 #include <iostream>
 #include <testingutilities.h>
 
+bool operator<(const Var &lhs, const Var &rhs) {
+    return lhs.getVarNum() < rhs.getVarNum();
+}
 
 std::ostream &operator<<(std::ostream &out, const Term &term)
 {
@@ -168,6 +171,19 @@ Term *Plus::simplify()
     }
 
     return this;
+}
+
+std::set<Var> Plus::getVariables() const {
+    auto vars = std::set<Var>();
+
+    for(auto &term : terms) {
+        auto termVars = term->getVariables();
+        for(auto &termVar : termVars) {
+            vars.insert(termVar);
+        }
+    }
+
+    return vars;
 }
 
 void Plus::pretty_text(std::ostream &out) const
@@ -437,6 +453,19 @@ Term *Mul::simplify()
     return this;
 }
 
+std::set<Var> Mul::getVariables() const {
+    auto vars = std::set<Var>();
+
+    for(auto &term : terms) {
+        auto termVars = term->getVariables();
+        for(auto &termVar : termVars) {
+            vars.insert(termVar);
+        }
+    }
+
+    return vars;
+}
+
 void Mul::pretty_text(std::ostream &out) const
 {
     for(auto it = terms.cbegin(); it != terms.cend(); ++it) {
@@ -484,6 +513,12 @@ Term *Var::simplify()
     return this;
 }
 
+std::set<Var> Var::getVariables() const {
+    auto var = std::set<Var>();
+    var.insert(*this);
+    return var;
+}
+
 void Var::pretty_text(std::ostream &out) const
 {
     if(name != nullptr) {
@@ -516,6 +551,10 @@ Term *Const::clone() const
 Term *Const::simplify()
 {
     return this;
+}
+
+std::set<Var> Const::getVariables() const {
+    return std::set<Var>();
 }
 
 void Const::pretty_text(std::ostream &out) const
@@ -620,6 +659,21 @@ Term *Exp::simplify()
     return this;
 }
 
+std::set<Var> Exp::getVariables() const {
+    auto vars = std::set<Var>();
+
+    auto termVars = base->getVariables();
+    for(auto &termVar : termVars) {
+        vars.insert(termVar);
+    }
+    termVars = exponent->getVariables();
+    for(auto &termVar : termVars) {
+        vars.insert(termVar);
+    }
+
+    return vars;
+}
+
 void Exp::pretty_text(std::ostream &out) const
 {
     if(exponent->isConstant() && dynamic_cast<Const *>(exponent)->getVal() == 1.0) {
@@ -680,6 +734,17 @@ Term *Log::simplify()
     return this;
 }
 
+std::set<Var> Log::getVariables() const {
+    auto vars = std::set<Var>();
+
+    auto termVars = arg->getVariables();
+    for(auto &termVar : termVars) {
+        vars.insert(termVar);
+    }
+
+    return vars;
+}
+
 void Log::pretty_text(std::ostream &out) const
 {
     out << "log_" << base << "(";
@@ -719,6 +784,17 @@ Term *Sin::simplify()
     arg = arg->simplify();
 
     return this;
+}
+
+std::set<Var> Sin::getVariables() const {
+    auto vars = std::set<Var>();
+
+    auto termVars = arg->getVariables();
+    for(auto &termVar : termVars) {
+        vars.insert(termVar);
+    }
+
+    return vars;
 }
 
 void Sin::pretty_text(std::ostream &out) const
@@ -762,6 +838,17 @@ Term *Cos::simplify()
     arg = arg->simplify();
 
     return this;
+}
+
+std::set<Var> Cos::getVariables() const {
+    auto vars = std::set<Var>();
+
+    auto termVars = arg->getVariables();
+    for(auto &termVar : termVars) {
+        vars.insert(termVar);
+    }
+
+    return vars;
 }
 
 void Cos::pretty_text(std::ostream &out) const
@@ -809,6 +896,17 @@ Term *Tan::simplify()
     return this;
 }
 
+std::set<Var> Tan::getVariables() const {
+    auto vars = std::set<Var>();
+
+    auto termVars = arg->getVariables();
+    for(auto &termVar : termVars) {
+        vars.insert(termVar);
+    }
+
+    return vars;
+}
+
 void Tan::pretty_text(std::ostream &out) const
 {
     out << "tan(";
@@ -848,6 +946,17 @@ Term *E::simplify()
     arg = arg->simplify();
 
     return this;
+}
+
+std::set<Var> E::getVariables() const {
+    auto vars = std::set<Var>();
+
+    auto termVars = arg->getVariables();
+    for(auto &termVar : termVars) {
+        vars.insert(termVar);
+    }
+
+    return vars;
 }
 
 void E::pretty_text(std::ostream &out) const

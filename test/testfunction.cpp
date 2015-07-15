@@ -13,18 +13,36 @@
 
 using namespace SPLINTER;
 
-TestFunction::TestFunction(unsigned int n, Term *func)
-        : numVariables(n),
-          f(func->simplify())
+TestFunction::TestFunction(Term *func)
+        : f(func->simplify())
 {
+#ifndef NDEBUG
     std::cout << "f: ";
     f->pretty_text(std::cout); std::cout << std::endl;
+#endif
+
+    gatherVariables();
     calculateJacobian();
     calculateHessian();
 }
-TestFunction::TestFunction(unsigned int n, Term &func)
-        : TestFunction(n, func.clone())
+
+TestFunction::TestFunction(Term &func)
+        : TestFunction(func.clone())
 {
+}
+
+void TestFunction::gatherVariables()
+{
+    auto vars = f->getVariables();
+    for(auto &var : vars) {
+        variables.push_back(var);
+    }
+    sort(variables.begin(), variables.end());
+    numVariables = variables.size();
+
+#ifndef NDEBUG
+    std::cout << "NumVariables: " << numVariables << std::endl;
+#endif
 }
 
 double TestFunction::eval(DenseVector x) const
@@ -66,19 +84,30 @@ void TestFunction::calculateJacobian()
 {
     jac.clear();
     for(size_t i = 0; i < numVariables; i++) {
-        auto df = f->derivative(i);
+        auto dx = variables.at(i);
+        auto dfdx = f->derivative(dx);
 
-        std::cout << "df/dx: ";
-        df->pretty_text(std::cout);
+#ifndef NDEBUG
+        std::cout << "df/d";
+        dx.pretty_text(std::cout);
+        std::cout << ": ";
+        dfdx->pretty_text(std::cout);
         std::cout << std::endl;
+#endif // ifndef NDEBUG
 
-        auto simplified_df = df->simplify();
-        std::cout << "simplified df/dx" << i << ": ";
-        simplified_df->pretty_text(std::cout);
-        std::cout << std::endl;
-        std::cout << std::endl;
+        auto simplified_dfdx = dfdx->simplify();
 
-        jac.push_back(simplified_df);
+#ifndef NDEBUG
+        std::cout << "simplified df/d";
+        dx.pretty_text(std::cout);
+        std::cout << ": ";
+
+        simplified_dfdx->pretty_text(std::cout);
+        std::cout << std::endl;
+        std::cout << std::endl;
+#endif // ifndef NDEBUG
+
+        jac.push_back(simplified_dfdx);
     }
 }
 
@@ -90,17 +119,35 @@ void TestFunction::calculateHessian()
         hes.push_back(std::vector<Term *>());
 
         for(size_t j = 0; j < numVariables; j++) {
-            auto ddf = jac.at(i)->derivative(j);
+            Var dx = variables.at(j);
+            auto ddf = jac.at(i)->derivative(dx);
 
-            std::cout << "d^2f/dx" << i << "dx" << j << ": ";
+#ifndef NDEBUG
+            std::cout << "d^2f/d";
+            variables.at(i).pretty_text(std::cout);
+            std::cout << "d";
+            dx.pretty_text(std::cout);
+            std::cout << ": ";
             ddf->pretty_text(std::cout);
             std::cout << std::endl;
+#endif // ifndef NDEBUG
 
             auto simplified_ddf = ddf->simplify();
-            std::cout << "simplified d^2f/dx" << i << "dx" << j << ": ";
+
+#ifndef NDEBUG
+            std::cout << "simplified d^2f/d";
+            variables.at(i).pretty_text(std::cout);
+            if(i == j) {
+                std::cout << "^2";
+            } else {
+                std::cout << "d";
+                dx.pretty_text(std::cout);
+            }
+            std::cout << ": ";
             simplified_ddf->pretty_text(std::cout);
             std::cout << std::endl;
             std::cout << std::endl;
+#endif // ifndef NDEBUG
 
             hes.at(i).push_back(simplified_ddf);
         }

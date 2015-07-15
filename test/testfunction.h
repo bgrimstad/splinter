@@ -15,14 +15,15 @@
 using namespace SPLINTER;
 
 class Term;
+class Var;
 
 // TODO: Keep track of the domain of the function
 // This is very useful for testing functions that have "interesting" regions
 class TestFunction : public Function
 {
 public:
-    TestFunction(unsigned int n, Term *func);
-    TestFunction(unsigned int n, Term &func);
+    TestFunction(Term *func);
+    TestFunction(Term &func);
 
     double eval(DenseVector x) const override;
     DenseMatrix evalJacobian(DenseVector x) const override;
@@ -36,11 +37,13 @@ public:
 
 private:
     unsigned int numVariables;
+    std::vector<Var> variables;
 
     Term *f;
     std::vector<Term *> jac;
     std::vector<std::vector<Term *>> hes;
 
+    void gatherVariables();
     void calculateJacobian();
     void calculateHessian();
 };

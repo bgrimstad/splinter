@@ -15,10 +15,13 @@
 #include <string.h>
 #include <iostream>
 #include <testfunction.h>
+#include <set>
 
 using namespace SPLINTER;
 
 extern std::vector<TestFunction *> testFunctions;
+
+bool operator<(const Var &lhs, const Var &rhs);
 
 class Var;
 class Term
@@ -32,6 +35,8 @@ public:
     virtual Term *clone() const = 0;
 
     virtual Term *simplify() = 0;
+
+    virtual std::set<Var> getVariables() const = 0;
 
     bool isConstant() const;
 
@@ -63,6 +68,8 @@ public:
     Term *clone() const override;
 
     Term *simplify() override;
+
+    std::set<Var> getVariables() const override;
 
     void pretty_text(std::ostream &out) const override;
 
@@ -97,6 +104,8 @@ public:
 
     Term *simplify() override;
 
+    std::set<Var> getVariables() const override;
+
     void pretty_text(std::ostream &out) const override;
 
 private:
@@ -120,6 +129,8 @@ public:
 
     Term *simplify() override;
 
+    std::set<Var> getVariables() const override;
+
     void pretty_text(std::ostream &out) const override;
 
     inline int getVarNum() const { return varNum; }
@@ -142,6 +153,8 @@ public:
     Term *clone() const override;
 
     Term *simplify() override;
+
+    std::set<Var> getVariables() const override;
 
     void pretty_text(std::ostream &out) const override;
 
@@ -167,6 +180,8 @@ public:
 
     Term *simplify() override;
 
+    std::set<Var> getVariables() const override;
+
     void pretty_text(std::ostream &out) const override;
 
     inline Term *getBase() { return base; }
@@ -191,6 +206,8 @@ public:
 
     Term *simplify() override;
 
+    std::set<Var> getVariables() const override;
+
     void pretty_text(std::ostream &out) const override;
 
 private:
@@ -212,6 +229,8 @@ public:
 
     Term *simplify() override;
 
+    std::set<Var> getVariables() const override;
+
     void pretty_text(std::ostream &out) const override;
 
 private:
@@ -231,6 +250,8 @@ public:
     Term *clone() const override;
 
     Term *simplify() override;
+
+    std::set<Var> getVariables() const override;
 
     void pretty_text(std::ostream &out) const override;
 
@@ -252,6 +273,8 @@ public:
 
     Term *simplify() override;
 
+    std::set<Var> getVariables() const override;
+
     void pretty_text(std::ostream &out) const override;
 
 private:
@@ -271,6 +294,8 @@ public:
     Term *clone() const override;
 
     Term *simplify() override;
+
+    std::set<Var> getVariables() const override;
 
     void pretty_text(std::ostream &out) const override;
 
