@@ -14,14 +14,18 @@
 using namespace SPLINTER;
 
 TestFunction::TestFunction(Term *func)
-        : f(func->simplify())
+        : f(func)
 {
 #ifndef NDEBUG
     std::cout << "f: ";
     f->pretty_text(std::cout); std::cout << std::endl;
 #endif
 
+    // Gather variables before simplification so we don't lose the number
+    // of variables. If a func: f = 0*x + 0*y + 13 is passed in,
+    // we still want it to be treated as a function of two variables, not one.
     gatherVariables();
+    f = f->simplify();
     calculateJacobian();
     calculateHessian();
 }
