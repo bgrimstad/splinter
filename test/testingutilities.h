@@ -14,23 +14,26 @@
 #include <function.h>
 #include <generaldefinitions.h>
 #include <bspline.h>
+#include <testfunction.h>
+#include <operator_overloads.h>
 
 namespace SPLINTER
 {
+
+extern std::vector<std::vector<TestFunction *>> testFunctions;
 
 bool equalsWithinRange(double a, double b, double margin = 0.0);
 
 bool compareFunctions(const Function &exact, const Function &approx, const std::vector<std::vector<double>> &points);
 
-bool compareFunctions(const Function &exact, const Function &approx, const std::vector<std::vector<double>> &points, double val_epsilon, double one_norm_epsilon, double two_norm_epsilon, double inf_norm_epsilon);
+bool compareFunctions(const Function &exact, const Function &approx, const std::vector<std::vector<double>> &points, double one_norm_epsilon, double two_norm_epsilon, double inf_norm_epsilon);
 
 bool compareFunctions(const Function &exact, const Function &approx);
 
 bool compareBSplines(const BSpline &left, const BSpline &right);
 
-bool compareDataTables(DataTable &a, DataTable &b);
-
 DataTable sample(const Function &func, std::vector<std::vector<double>> &points);
+DataTable sample(const Function *func, std::vector<std::vector<double>> &points);
 
 std::vector<double> linspace(double start, double stop, unsigned int points);
 
@@ -45,11 +48,11 @@ std::vector<std::vector<double>> linspace(int dim, unsigned int pointsPerDim);
 
 double sixHumpCamelBack(DenseVector x);
 
-double oneNorm(const DenseMatrix &m);
+double getOneNorm(const DenseMatrix &m);
 
-double twoNorm(const DenseMatrix &m);
+double getTwoNorm(const DenseMatrix &m);
 
-double maxNorm(const DenseMatrix &m);
+double getInfNorm(const DenseMatrix &m);
 
 // returns log(x) in base base
 double log(double base, double x);
@@ -59,6 +62,15 @@ std::vector<double> denseToVec(const DenseVector &dense);
 DenseVector vecToDense(const std::vector<double> &vec);
 
 std::string pretty_print(const DenseVector &denseVec);
+
+TestFunction *getTestFunction(int numVariables, int degree);
+std::vector<TestFunction *> getTestFunctionsOfDegree(int degree);
+std::vector<TestFunction *> getTestFunctionWithNumVariables(int numVariables);
+std::vector<TestFunction *> getNiceTestFunctions();
+std::vector<TestFunction *> getNastyTestFunctions();
+
+void setupTestFunctions();
+
 
 } // namespace SPLINTER
 

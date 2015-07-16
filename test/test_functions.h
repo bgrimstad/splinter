@@ -19,8 +19,6 @@
 
 using namespace SPLINTER;
 
-extern std::vector<TestFunction *> testFunctions;
-
 bool operator<(const Var &lhs, const Var &rhs);
 
 class Var;

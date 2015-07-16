@@ -10,11 +10,14 @@
 #include "testingutilities.h"
 #include <iostream>
 #include <Catch.h>
+#include <test_functions.h>
 
 using namespace std;
 
 namespace SPLINTER
 {
+
+std::vector<std::vector<TestFunction *>> testFunctions = std::vector<std::vector<TestFunction *>>();
 
 // Checks if a is within margin of b
 bool equalsWithinRange(double a, double b, double margin)
@@ -45,14 +48,14 @@ bool compareFunctions(const Function &f1, const Function &f2)
 bool compareFunctions(const Function &exact, const Function &approx, const std::vector<std::vector<double>> &points)
 {
     // Max error in function value
-    const double val_epsilon = 0.01;
     const double one_norm_epsilon = 0.1;
     const double two_norm_epsilon = 0.1;
     const double inf_norm_epsilon = 0.1;
 
-    return compareFunctions(exact, approx, points, val_epsilon, one_norm_epsilon, two_norm_epsilon, inf_norm_epsilon);
+    return compareFunctions(exact, approx, points, one_norm_epsilon, two_norm_epsilon, inf_norm_epsilon);
 }
-bool compareFunctions(const Function &exact, const Function &approx, const std::vector<std::vector<double>> &points, double val_epsilon, double one_norm_epsilon, double two_norm_epsilon, double inf_norm_epsilon)
+
+bool compareFunctions(const Function &exact, const Function &approx, const std::vector<std::vector<double>> &points, double one_norm_epsilon, double two_norm_epsilon, double inf_norm_epsilon)
 {
     REQUIRE(exact.getNumVariables() == approx.getNumVariables());
 
@@ -74,7 +77,8 @@ bool compareFunctions(const Function &exact, const Function &approx, const std::
 
 //        INFO("Evaluation point: " << pretty_print(x));
 
-        /*SECTION("Function approximates the value within tolerance")*/ {
+        /*SECTION("Function approximates the value within tolerance")*/
+        {
             DenseMatrix exactValue(1,1);
             exactValue(0,0) = exact.eval(x);
             DenseMatrix approxValue(1,1);
@@ -88,9 +92,9 @@ bool compareFunctions(const Function &exact, const Function &approx, const std::
 //            INFO("Exact - approx:");
 //            INFO(error);
 
-            normOneVal(i) = oneNorm(error);
-            normTwoVal(i) = twoNorm(error);
-            normInfVal(i) = maxNorm(error);
+            normOneVal(i) = getOneNorm(error);
+            normTwoVal(i) = getTwoNorm(error);
+            normInfVal(i) = getInfNorm(error);
 
 //            REQUIRE(oneNorm(error) <= one_norm_epsilon);
 //            REQUIRE(twoNorm(error) <= two_norm_epsilon);
@@ -98,14 +102,15 @@ bool compareFunctions(const Function &exact, const Function &approx, const std::
         }
 
 
-        /*SECTION("Function approximates the Jacobian within tolerance")*/ {
+        /*SECTION("Function approximates the Jacobian within tolerance")*/
+        {
             auto exactJacobian = exact.evalJacobian(x);
             auto approxJacobian = approx.evalJacobian(x);
             auto errorJacobian = exactJacobian - approxJacobian;
 
-            normOneJac(i) = oneNorm(errorJacobian);
-            normTwoJac(i) = twoNorm(errorJacobian);
-            normInfJac(i) = maxNorm(errorJacobian);
+            normOneJac(i) = getOneNorm(errorJacobian);
+            normTwoJac(i) = getTwoNorm(errorJacobian);
+            normInfJac(i) = getInfNorm(errorJacobian);
 //            INFO("Exact Jacobian:");
 //            INFO(exactJacobian);
 //            INFO("Approximated Jacobian:");
@@ -119,41 +124,44 @@ bool compareFunctions(const Function &exact, const Function &approx, const std::
         }
 
 
-        /*SECTION("Function approximates the Hessian within tolerance")*/ {
+        /*SECTION("Function approximates the Hessian within tolerance")*/
+        {
             auto exactHessian = exact.evalHessian(x);
             auto approxHessian = approx.evalHessian(x);
             auto errorHessian = exactHessian - approxHessian;
 
-            normOneHes(i) = oneNorm(errorHessian);
-            normTwoHes(i) = twoNorm(errorHessian);
-            normInfHes(i) = maxNorm(errorHessian);
+            normOneHes(i) = getOneNorm(errorHessian);
+            normTwoHes(i) = getTwoNorm(errorHessian);
+            normInfHes(i) = getInfNorm(errorHessian);
 
+//            INFO("x: ");
+//            INFO(x);
 //            INFO("Exact Hessian:");
 //            INFO(exactHessian);
 //            INFO("Approximated Hessian:");
 //            INFO(approxHessian);
 //            INFO("Exact - Approx: ");
 //            INFO(errorHessian);
-//
-//            CHECK(oneNorm(errorHessian) <= one_norm_epsilon);
-//            CHECK(twoNorm(errorHessian) <= two_norm_epsilon);
-//            CHECK(maxNorm(errorHessian) <= inf_norm_epsilon);
+
+//            CHECK(getOneNorm(errorHessian) <= one_norm_epsilon);
+//            CHECK(getTwoNorm(errorHessian) <= two_norm_epsilon);
+//            CHECK(getInfNorm(errorHessian) <= inf_norm_epsilon);
         }
 
         i++;
     }
 
-    CHECK(oneNorm(normOneVal) <= one_norm_epsilon);
-    CHECK(oneNorm(normOneJac) <= one_norm_epsilon);
-    CHECK(oneNorm(normOneHes) <= one_norm_epsilon);
+    CHECK(getOneNorm(normOneVal) <= one_norm_epsilon);
+    CHECK(getTwoNorm(normTwoVal) <= two_norm_epsilon);
+    CHECK(getInfNorm(normInfVal) <= inf_norm_epsilon);
 
-    CHECK(twoNorm(normTwoVal) <= two_norm_epsilon);
-    CHECK(twoNorm(normTwoJac) <= two_norm_epsilon);
-    CHECK(twoNorm(normTwoHes) <= two_norm_epsilon);
+    CHECK(getOneNorm(normOneJac) <= one_norm_epsilon);
+    CHECK(getTwoNorm(normTwoJac) <= two_norm_epsilon);
+    CHECK(getInfNorm(normInfJac) <= inf_norm_epsilon);
 
-    CHECK(maxNorm(normInfVal) <= inf_norm_epsilon);
-    CHECK(maxNorm(normInfJac) <= inf_norm_epsilon);
-    CHECK(maxNorm(normInfHes) <= inf_norm_epsilon);
+    CHECK(getOneNorm(normOneHes) <= one_norm_epsilon);
+    CHECK(getTwoNorm(normTwoHes) <= two_norm_epsilon);
+    CHECK(getInfNorm(normInfHes) <= inf_norm_epsilon);
 
     return true;
 }
@@ -205,39 +213,18 @@ bool compareBSplines(const BSpline &left, const BSpline &right)
 //    return true;
 }
 
-bool compareDataTables(DataTable &a, DataTable &b)
-{
-    if (a.getNumVariables() != b.getNumVariables())
-        return false;
 
-    auto ait = a.cbegin(), bit = b.cbegin();
-    for (; ait != a.cend() && bit != b.cend(); ait++, bit++)
-    {
-        for (unsigned int i = 0; i < a.getNumVariables(); i++)
-        {
-//            std::cout << std::setprecision(SAVE_DOUBLE_PRECISION) << ait->getX().at(i) << " == " << std::setprecision(SAVE_DOUBLE_PRECISION) << bit->getX().at(i) << " ";
-            if (!equalsWithinRange(ait->getX().at(i), bit->getX().at(i)))
-                return false;
-        }
-
-//            std::cout << std::setprecision(SAVE_DOUBLE_PRECISION) << ait->getY().at(j) << " == " << std::setprecision(SAVE_DOUBLE_PRECISION) << bit->getY().at(j) << " ";
-        if (!equalsWithinRange(ait->getY(), bit->getY()))
-            return false;
-//        std::cout << std::endl;
-    }
-
-//    std::cout << "Finished comparing samples..." << std::endl;
-
-    return ait == a.cend() && bit == b.cend();
+DataTable sample(const Function &func, std::vector<std::vector<double>> &points) {
+    return sample(&func, points);
 }
 
-DataTable sample(const Function &func, std::vector<std::vector<double>> &points)
+DataTable sample(const Function *func, std::vector<std::vector<double>> &points)
 {
     DataTable table;
 
     for(auto &point : points) {
         DenseVector x = vecToDense(point);
-        table.addSample(point, func.eval(x));
+        table.addSample(point, func->eval(x));
     }
 
     return table;
@@ -260,7 +247,7 @@ double sixHumpCamelBack(DenseVector x)
     return (4 - 2.1*x(0)*x(0) + (1/3.)*x(0)*x(0)*x(0)*x(0))*x(0)*x(0) + x(0)*x(1) + (-4 + 4*x(1)*x(1))*x(1)*x(1);
 }
 
-double oneNorm(const DenseMatrix &m)
+double getOneNorm(const DenseMatrix &m)
 {
     return m.lpNorm<1>();
     double norm = 0.0;
@@ -273,7 +260,7 @@ double oneNorm(const DenseMatrix &m)
     return norm;
 }
 
-double twoNorm(const DenseMatrix &m)
+double getTwoNorm(const DenseMatrix &m)
 {
     return m.lpNorm<2>();
     double norm = 0.0;
@@ -288,7 +275,7 @@ double twoNorm(const DenseMatrix &m)
     return norm;
 }
 
-double maxNorm(const DenseMatrix &m)
+double getInfNorm(const DenseMatrix &m)
 {
     return m.lpNorm<Eigen::Infinity>();
     double norm = 0.0;
@@ -317,9 +304,11 @@ std::vector<std::vector<double>> linspace(std::vector<double> start, std::vector
         numPoints *= points.at(i);
     }
 
-    if(true || numPoints > 10000) {
+#ifndef NDEBUG
+    if(numPoints > 10000) {
         std::cout << "Warning: Enumerating " << numPoints << " points." << std::endl;
     }
+#endif // ifndef NDEBUG
 
     auto result = std::vector<std::vector<double>>(numPoints);
 
@@ -396,9 +385,9 @@ std::vector<std::vector<double>> linspace(int dim)
 
 std::vector<std::vector<double>> linspace(int dim, unsigned int pointsPerDim)
 {
-    auto start = std::vector<double>();
-    auto end = std::vector<double>();
-    auto numPoints = std::vector<unsigned int>();
+    auto start = std::vector<double>(dim);
+    auto end = std::vector<double>(dim);
+    auto numPoints = std::vector<unsigned int>(dim);
 
 
     for(int i = 0; i < dim; i++) {
@@ -445,5 +434,112 @@ std::string pretty_print(const DenseVector &denseVec)
 
     return str;
 }
+
+
+
+void setupTestFunctions() {
+    // f_x_y: function of x variables and y degrees
+
+    Var x(0, "x");
+    Var y(1, "y");
+    Var z(2, "z");
+    Var x1(3, "x1");
+    Var y1(4, "y1");
+    Var z1(5, "z1");
+    Var x2(6, "x2");
+    Var y2(7, "y2");
+    Var z2(8, "z2");
+
+    // Functions of one variable
+    auto f_1_0 = -13.37 + 0*x;
+    auto f_1_1 = -5.1*x + 13.37;
+    auto f_1_2 = 8.1*(x^2) - 0.2*x + 2313.1;
+    auto f_1_3 = -4.5*(x^3) + 2.2*(x^2);
+    auto f_1_4 = x*(4.5*(x^3) + 3*(x^2) - x);
+
+    // Functions of two variables
+    auto f_2_0 = 0.1 + 0*x*y;
+    auto f_2_1 = - 5.1*x + 13.37*y;
+    auto f_2_2 = 8.1*(x^2)*(y^2) - 0.2*x*y + 13.37;
+    auto f_2_3 = -4.5*(x^3) + 2.2*(x^2) - (y^2) + 3;
+    auto f_2_4 = x*(4.5*(x^4) - (x^2) + 3*x*y);
+    auto f_2_5 = -57*(y^5)*(x^3) - 0.1*(x^4)*(y^2) + 1.1*y*(x^2) + y - 1e10;
+    // Six-hump camelback function
+    auto f_2_6 = (4 - 2.1*(x^2) + (1/3.)*(x^4))*(x^2) + x*y + (-4 + 4*(y^2))*(y^2) + 1.553e-1;
+
+    // Functions of three variables
+    auto f_3_0 = 6534460297 + 0*x*y*z;
+    auto f_3_1 = x+y-z-1;
+    auto f_3_2 = (x^2)*y*z + 3.9*(z^2) + z*(y^2) + 13.1*(z^2) - x - 10;
+    auto f_3_3 = f_3_2 * f_3_1;
+
+    // Non-polynomial (aka. nasty) functions
+    auto f_nasty_x = E(z) * ((1.3^x) + (y^x));
+
+
+    // First vector is the vector of nasty functions
+    testFunctions.push_back(std::vector<TestFunction *>());
+    testFunctions.at(0).push_back(new TestFunction(f_nasty_x));
+
+    testFunctions.push_back(std::vector<TestFunction *>());
+    testFunctions.at(1).push_back(new TestFunction(f_1_0));
+    testFunctions.at(1).push_back(new TestFunction(f_1_1));
+    testFunctions.at(1).push_back(new TestFunction(f_1_2));
+    testFunctions.at(1).push_back(new TestFunction(f_1_3));
+    testFunctions.at(1).push_back(new TestFunction(f_1_4));
+
+    testFunctions.push_back(std::vector<TestFunction *>());
+    testFunctions.at(2).push_back(new TestFunction(f_2_0));
+    testFunctions.at(2).push_back(new TestFunction(f_2_1));
+    testFunctions.at(2).push_back(new TestFunction(f_2_2));
+    testFunctions.at(2).push_back(new TestFunction(f_2_3));
+    testFunctions.at(2).push_back(new TestFunction(f_2_4));
+    testFunctions.at(2).push_back(new TestFunction(f_2_5));
+    testFunctions.at(2).push_back(new TestFunction(f_2_6));
+
+    testFunctions.push_back(std::vector<TestFunction *>());
+    testFunctions.at(3).push_back(new TestFunction(f_3_0));
+    testFunctions.at(3).push_back(new TestFunction(f_3_1));
+    testFunctions.at(3).push_back(new TestFunction(f_3_2));
+    testFunctions.at(3).push_back(new TestFunction(f_3_3));
+}
+
+TestFunction *getTestFunction(int numVariables, int degree)
+{
+    return testFunctions.at(numVariables).at(degree);
+}
+
+std::vector<TestFunction *> getTestFunctionsOfDegree(int degree)
+{
+    auto testFuncs = std::vector<TestFunction *>();
+    for(int i = 1; i < testFunctions.size(); ++i) {
+        if(degree < testFunctions.at(i).size()) {
+            testFuncs.push_back(testFunctions.at(i).at(degree));
+        }
+    }
+    return testFuncs;
+}
+
+std::vector<TestFunction *> getTestFunctionWithNumVariables(int numVariables)
+{
+    return testFunctions.at(numVariables);
+}
+
+std::vector<TestFunction *> getNiceTestFunctions()
+{
+    auto testFuncs = std::vector<TestFunction *>();
+    for(int i = 1; i < testFunctions.size(); ++i) {
+        for(int j = 0; j < testFunctions.at(i).size(); ++j) {
+            testFuncs.push_back(testFunctions.at(i).at(j));
+        }
+    }
+    return testFuncs;
+}
+
+std::vector<TestFunction *> getNastyTestFunctions()
+{
+    return testFunctions.at(0);
+}
+
 
 } // namespace SPLINTER
