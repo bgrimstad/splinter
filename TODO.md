@@ -19,3 +19,4 @@
 - Complete and test implementation of ordinary least squares
 - Add Python interface (2 and 3?)
 - Automatically download Catch? See https://github.com/philsquared/Catch/blob/master/docs/build-systems.md#cmake
+- BSplines of degree 3 and 4 (and possibly more) fails when given samples where all samples have the value 0.0
