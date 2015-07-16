@@ -25,300 +25,92 @@ TEST_CASE("DataTables can be saved and loaded", "[serialize][datatable]")
     const char *fileName = "test.datatable";
 
 
-    SECTION("DataTable with samples from f_1")
-    {
-        auto x = std::vector<double>(1);
-        double y;
-        for (double i = -0.3; i <= 0.3; i += 0.04)
-        {
-            x.at(0) = i;
-            y = 2 * i;
-            table.addSample(x, y);
-        }
-
+    SECTION("DataTable with 0 samples") {
         table.save(fileName);
         DataTable loadedTable(fileName);
 
-        REQUIRE(compareDataTables(table, loadedTable));
+        REQUIRE(table == loadedTable);
     }
 
-    SECTION("DataTable with samples from f_2")
+    SECTION("DataTable with samples from f_1_1")
     {
-        auto x = std::vector<double>(1);
-        double y;
-        for (double i = -0.3; i <= 0.3; i += 0.04)
-        {
-            x.at(0) = i;
-            y = 2 * i;
-            table.addSample(x, y);
-        }
+        auto testFunc = getTestFunction(1, 1);
+        auto dim = testFunc->getNumVariables();
+        auto points = linspace(dim, std::pow(1000, 1.0/dim));
+        table = sample(testFunc, points);
 
         table.save(fileName);
         DataTable loadedTable(fileName);
 
-        REQUIRE(compareDataTables(table, loadedTable));
+        REQUIRE(table == loadedTable);
+    }
+
+    SECTION("DataTable with samples from f_2_1")
+    {
+        auto testFunc = getTestFunction(2, 1);
+        auto dim = testFunc->getNumVariables();
+        auto points = linspace(dim, std::pow(1000, 1.0/dim));
+        table = sample(testFunc, points);
+
+        table.save(fileName);
+        DataTable loadedTable(fileName);
+
+        REQUIRE(table == loadedTable);
     }
 
     remove(fileName);
 }
 
-//TEST_CASE("Testing math lib", "[mathlib]")
-//{
-//    Var x(0);
-//    Var y(1);
-//    Var z(2);
-//    auto f = z * ((2^x) + (y^2));
-//
-//    DataTable d;
-//    std::vector<double> xvec(3);
-//    for(int i = 0; i < 5; i++) {
-//        xvec.at(0) = 0.1 * i;
-//
-//        for(int j = 0; j < 5; j++) {
-//            xvec.at(1) = 0.1 * j;
-//
-//            for(int k = 0; k < 5; k++) {
-//                xvec.at(2) = 0.1 * k;
-//
-//                d.addSample(xvec, f.eval(xvec));
-//            }
-//        }
-//    }
-//
-//    BSpline b(d, BSplineType::QUARTIC);
-//    TestFunction func(3, f);
-//
-//    DenseVector denseX(3);
-////    for(int i = 0; i < 9; i++) {
-////        denseX(0) = 0.05 + 0.1 * i;
-////
-////        for(int j = 0; j < 9; j++) {
-////            denseX(1) = 0.05 + 0.1 * j;
-////
-////            std::cout << func.eval(denseX) - b.eval(denseX) << std::endl;
-////        }
-////    }
-//    denseX(0) = 0.15;
-//    denseX(1) = 0.15;
-//    denseX(2) = 0.15;
-//
-//    auto exactJacobian = func.evalJacobian(denseX);
-//    auto approxJacobian = b.evalJacobian(denseX);
-//    auto errorJacobian = exactJacobian - approxJacobian;
-//
-//    auto exactHessian = func.evalHessian(denseX);
-//    auto approxHessian = b.evalHessian(denseX);
-//    auto errorHessian = exactHessian - approxHessian;
-//
-//    std::cout << "-------------------------------------" << std::endl;
-//    std::cout << "Exact Jacobian:" << std::endl;
-//    std::cout << exactJacobian << std::endl;
-//    std::cout << "-------------------------------------" << std::endl;
-//
-//    std::cout << "Approx Jacobian:" << std::endl;
-//    std::cout << approxJacobian << std::endl;
-//    std::cout << "-------------------------------------" << std::endl;
-//
-//    std::cout << "Jacobian error:" << std::endl;
-//    std::cout << errorJacobian << std::endl;
-//    std::cout << "-------------------------------------" << std::endl;
-//
-//    std::cout << "Norms according to Eigen:" << std::endl;
-//    std::cout << "Jacobian error l1-norm: " << errorJacobian.lpNorm<1>() << std::endl;
-//    std::cout << "Jacobian error l2-norm: " << errorJacobian.lpNorm<2>() << std::endl;
-//    std::cout << "Jacobian error linf-norm: " << errorJacobian.lpNorm<Eigen::Infinity>() << std::endl;
-//    std::cout << "-------------------------------------" << std::endl;
-//
-//    std::cout << "Norms according to us:" << std::endl;
-//    std::cout << "Jacobian error l1-norm: " << oneNorm(errorJacobian) << std::endl;
-//    std::cout << "Jacobian error l2-norm: " << twoNorm(errorJacobian) << std::endl;
-//    std::cout << "Jacobian error linf-norm: " << maxNorm(errorJacobian) << std::endl;
-//    std::cout << "-------------------------------------" << std::endl;
-//
-//    std::cout << "-------------------------------------" << std::endl;
-//    std::cout << "Exact Hessian:" << std::endl;
-//    std::cout << exactHessian << std::endl;
-//    std::cout << "-------------------------------------" << std::endl;
-//
-//    std::cout << "Approx Hessian:" << std::endl;
-//    std::cout << approxHessian << std::endl;
-//    std::cout << "-------------------------------------" << std::endl;
-//
-//    std::cout << "Hessian error:" << std::endl;
-//    std::cout << errorHessian << std::endl;
-//    std::cout << "-------------------------------------" << std::endl;
-//
-//    std::cout << "Norms according to Eigen:" << std::endl;
-//    std::cout << "Hessian error l1-norm: " << errorHessian.lpNorm<1>() << std::endl;
-//    std::cout << "Hessian error l2-norm: " << errorHessian.lpNorm<2>() << std::endl;
-//    std::cout << "Hessian error linf-norm: " << errorHessian.lpNorm<Eigen::Infinity>() << std::endl;
-//    std::cout << "-------------------------------------" << std::endl;
-//
-//    std::cout << "Norms according to us:" << std::endl;
-//    std::cout << "Hessian error l1-norm: " << oneNorm(errorHessian) << std::endl;
-//    std::cout << "Hessian error l2-norm: " << twoNorm(errorHessian) << std::endl;
-//    std::cout << "Hessian error linf-norm: " << maxNorm(errorHessian) << std::endl;
-//    std::cout << "-------------------------------------" << std::endl;
-//
-//
-////    double oneNorm = 0.0;
-////    double twoNorm = 0.0;
-////    double maxNorm = 0.0;
-////    for(int i = 0; i < hessianError.rows(); i++) {
-////        for(int j = 0; j < hessianError.cols(); j++) {
-////            double err = hessianError(i, j);
-////            std::cout << err << " ";
-////            oneNorm += std::abs(err);
-////            twoNorm += std::pow(err, 2);
-////            maxNorm = std::max(maxNorm, err); // This line makes Eigen shit itself
-////        }
-////        std::cout << std::endl;
-////    }
-////    std::cout << "oneNorm: " << oneNorm << std::endl;
-////    std::cout << "twoNorm: " << std::sqrt(twoNorm) << std::endl;
-////    std::cout << "maxNorm: " << maxNorm << std::endl;
-//
-//
-//
-////    std::vector<double> xval(2);
-////    xval.at(0) = 13;
-////    xval.at(1) = 5;
-////
-////
-////    std::cout << "f: ";
-////    f.pretty_text(std::cout);
-////    std::cout << std::endl;
-////
-////    std::cout << "Value of f(";
-////    for(size_t i = 0; i < xval.size(); i++) {
-////        std::cout << xval.at(i);
-////        if(i + 1 < xval.size()) {
-////            std::cout << ", ";
-////        }
-////    }
-////    std::cout << "): " << f.eval(xval) << std::endl;
-////
-////
-////
-////    auto df = f.derivative(0)->simplify();
-////    std::cout << "df: ";
-////    df->pretty_text(std::cout);
-////    std::cout << std::endl;
-////
-////    std::cout << "Value of df(";
-////    for(size_t i = 0; i < xval.size(); i++) {
-////        std::cout << xval.at(i);
-////        if(i + 1 < xval.size()) {
-////            std::cout << ", ";
-////        }
-////    }
-////    std::cout << "): " << df->eval(xval) << std::endl;
-////
-////
-////
-////    auto ddf = df->derivative(0)->simplify();
-////    std::cout << "ddf: ";
-////    ddf->pretty_text(std::cout);
-////    std::cout << std::endl;
-////
-////    std::cout << "Value of df(";
-////    for(size_t i = 0; i < xval.size(); i++) {
-////        std::cout << xval.at(i);
-////        if(i + 1 < xval.size()) {
-////            std::cout << ", ";
-////        }
-////    }
-////    std::cout << "): " << ddf->eval(xval) << std::endl;
-////
-////
-////    delete df;
-////    delete ddf;
-//
-//    REQUIRE(1);
-//}
-
-TEST_CASE("Accuracy test 1", "[accuracy]")
+TEST_CASE("BSplines can be saved and loaded", "[serialize][bspline]")
 {
-    Var x(0);
-    Var y(1);
-    Var z(2);
-    auto f = z * ((x^2) + (y^2));
+    auto func = getTestFunction(1, 1);
+    auto dim = func->getNumVariables();
+    // Don't sample too fine, this test isn't supposed to test the speed
+    auto points = linspace(dim, std::pow(100, 1.0/dim));
+    DataTable table = sample(func, points);
 
-    auto dim = 3;
+    const char *fileName = "test.bspline";
 
-    auto fewSamplePoints = linspace(dim, -5, 5, 7);
-    auto manySamplePoints = linspace(dim, -5, 5, 10);
-    auto evalPoints = linspace(dim, -4.95, 4.95, 11);
+    SECTION("Linear BSpline") {
+        BSpline bspline(table, BSplineType::LINEAR);
 
-    TestFunction exact(dim, f);
-    DataTable fewSamples = sample(exact, fewSamplePoints);
-    DataTable manySamples = sample(exact, manySamplePoints);
+        bspline.save(fileName);
+        BSpline loadedBSpline(fileName);
 
-
-    SECTION("BSpline approximates the function within tolerance") {
-        BSpline b(manySamples, BSplineType::CUBIC);
-
-        INFO("Function: " << *(exact.getF()));
-
-        compareFunctions(exact, b, evalPoints);
+        REQUIRE(bspline == loadedBSpline);
     }
 
-    SECTION("PSpline approximates the function within tolerance") {
-        PSpline p(manySamples);
 
-        INFO("Function: " << *(exact.getF()));
+    SECTION("Quadratic BSpline") {
+        BSpline bspline(table, BSplineType::QUADRATIC);
 
-        compareFunctions(exact, p, evalPoints);
+        bspline.save(fileName);
+        BSpline loadedBSpline(fileName);
+
+        REQUIRE(bspline == loadedBSpline);
     }
 
-    SECTION("Gaussian RadialBasisFunction approximates the function within tolerance") {
-        RadialBasisFunction rbf(fewSamples, RadialBasisFunctionType::GAUSSIAN);
+    SECTION("Cubic BSpline") {
+        BSpline bspline(table, BSplineType::CUBIC);
 
-        INFO("Function: " << *(exact.getF()));
+        bspline.save(fileName);
+        BSpline loadedBSpline(fileName);
 
-        compareFunctions(exact, rbf, evalPoints);
+        REQUIRE(bspline == loadedBSpline);
     }
 
-    SECTION("Inverse multiquadric RadialBasisFunction approximates the function within tolerance") {
-        RadialBasisFunction rbf(fewSamples, RadialBasisFunctionType::INVERSE_MULTIQUADRIC);
+    SECTION("Quartic BSpline") {
+        BSpline bspline(table, BSplineType::QUARTIC);
 
-        INFO("Function: " << *(exact.getF()));
+        bspline.save(fileName);
+        BSpline loadedBSpline(fileName);
 
-        compareFunctions(exact, rbf, evalPoints);
+        REQUIRE(bspline == loadedBSpline);
     }
 
-    SECTION("Inverse quadric RadialBasisFunction approximates the function within tolerance") {
-        RadialBasisFunction rbf(fewSamples, RadialBasisFunctionType::INVERSE_QUADRIC);
-
-        INFO("Function: " << *(exact.getF()));
-
-        compareFunctions(exact, rbf, evalPoints);
-    }
-
-    SECTION("Multiquadric RadialBasisFunction approximates the function within tolerance") {
-        RadialBasisFunction rbf(fewSamples, RadialBasisFunctionType::MULTIQUADRIC);
-
-        INFO("Function: " << *(exact.getF()));
-
-        compareFunctions(exact, rbf, evalPoints);
-    }
-
-    SECTION("Thin plate spline RadialBasisFunction approximates the function within tolerance") {
-        RadialBasisFunction rbf(fewSamples, RadialBasisFunctionType::THIN_PLATE_SPLINE);
-
-        INFO("Function: " << *(exact.getF()));
-
-        compareFunctions(exact, rbf, evalPoints);
-    }
-
-    SECTION("PolynomialRegression approximates the function within tolerance") {
-        PolynomialRegression polyfit(manySamples, 2);
-
-        INFO("Function: " << *(exact.getF()));
-
-        compareFunctions(exact, polyfit, evalPoints);
-    }
+    remove(fileName);
 }
+
 
 //#include <datatable.h>
 //#include <datasample.h>

@@ -13,45 +13,20 @@
 
 using namespace SPLINTER;
 
-TEST_CASE("BSpline accuracy test", "[bspline]") {
-//    Var x(0);
-//    Var y(1);
-//    Var z(2);
-//    auto f = z * ((x^2) + (y^2));
-//
-//    auto dim = 3;
-//
-//    auto fewSamplePoints = linspace(dim, -5, 5, 7);
-//    auto manySamplePoints = linspace(dim, -5, 5, 10);
-//    auto evalPoints = linspace(dim, -4.95, 4.95, 11);
-//
-//    TestFunction exact(dim, f);
-//    DataTable fewSamples = sample(exact, fewSamplePoints);
-//    DataTable manySamples = sample(exact, manySamplePoints);
+TEST_CASE("Quartic BSpline accuracy test with nice functions", "[bspline][nice]") {
+    auto niceFunctions = getNiceTestFunctions();
+    for(auto &exact : niceFunctions) {
+        INFO("Function: " << *(exact->getF()));
 
-    auto exact = testFunctions.at(0);
-    auto dim = exact->getNumVariables();
-    auto samplePoints = linspace(dim, -5, 5, 10);
-    auto evalPoints = linspace(dim, -4.95, 4.95, 11);
+        auto dim = exact->getNumVariables();
+        REQUIRE(dim > 0);
+        auto samplePoints = linspace(dim, -5, 5, std::pow(500, 1.0/dim));
+        auto evalPoints = linspace(dim, -4.95, 4.95, std::pow(1337, 1.0/dim));
 
-    DataTable table = sample(*exact, samplePoints);
+        DataTable table = sample(exact, samplePoints);
 
-    BSpline b(table, BSplineType::CUBIC);
+        BSpline b(table, BSplineType::CUBIC);
 
-    INFO("Function: " << *(exact->getF()));
-
-    compareFunctions(*exact, b, evalPoints);
-//    for(auto &exact : testFunctions) {
-//        auto dim = exact->getNumVariables();
-//        auto samplePoints = linspace(dim, -5, 5, 10);
-//        auto evalPoints = linspace(dim, -4.95, 4.95, 11);
-
-//        DataTable table = sample(*exact, samplePoints);
-
-//        BSpline b(table, BSplineType::CUBIC);
-
-//        INFO("Function: " << *(exact->getF()));
-
-//        compareFunctions(*exact, b, evalPoints);
-//    }
+        compareFunctions(*exact, b, evalPoints);
+    }
 }
