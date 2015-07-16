@@ -27,7 +27,6 @@ public:
     DataSample(DenseVector x, double y);
 
     bool operator<(const DataSample &rhs) const; // Returns false if the two are equal
-    friend std::ostream &operator<<(std::ostream &outputStream, const DataSample &sample);
 
     std::vector<double> getX() const { return x; }
     double getY() const { return y; }

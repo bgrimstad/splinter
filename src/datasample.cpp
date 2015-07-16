@@ -59,23 +59,4 @@ bool DataSample::operator<(const DataSample &rhs) const
     return false;
 }
 
-std::ostream &operator<<(std::ostream &outputStream, const DataSample &sample)
-{
-    outputStream << "Sample: (";
-
-    bool firstLoop = true;
-    for (auto &coordinate : sample.getX())
-    {
-        if (!firstLoop)
-            outputStream << ", ";
-
-        outputStream << coordinate;
-        firstLoop = false;
-    }
-
-    outputStream << ") = (" << sample.getY() << ")";
-
-    return outputStream;
-}
-
 } // namespace SPLINTER
