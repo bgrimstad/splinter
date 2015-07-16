@@ -7,6 +7,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
+/*
+ * Regarding the suiciding the objects in this file does:
+ * https://isocpp.org/wiki/faq/freestore-mgmt#delete-this
+ */
+
 #include <test_functions.h>
 #include <iostream>
 #include <testingutilities.h>
@@ -281,7 +286,7 @@ Term *Mul::clone() const
     auto result = new Mul();
     result->terms.reserve(terms.size());
     for(auto &term : terms) {
-        result->terms.push_back(term);
+        result->terms.push_back(term->clone());
     }
     return result;
 }
@@ -330,12 +335,12 @@ Term *Mul::multiply_by_plus() {
 
             for(auto &plus_term : plus_terms) {
                 auto temp = new Mul();
-                temp->add(plus_term);
+                temp->add(plus_term->clone());
                 temp->add(this->clone());
                 result->add(temp);
             }
 
-            delete this;
+            //delete this;
             return result->simplify();
         }
     }
@@ -505,7 +510,7 @@ Term *Var::derivative(Var x) const
 
 Term *Var::clone() const
 {
-    return new Var(varNum, name);
+    return new Var(varNum, name); // TODO: Copy name?
 }
 
 Term *Var::simplify()
