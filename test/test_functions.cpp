@@ -7,11 +7,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-/*
- * Regarding the suiciding the objects in this file does:
- * https://isocpp.org/wiki/faq/freestore-mgmt#delete-this
- */
-
 #include <test_functions.h>
 #include <iostream>
 #include <testingutilities.h>
@@ -140,7 +135,11 @@ void Plus::steal_children() {
 Term *Plus::simplify()
 {
     for(auto &term : terms) {
-        term = term->simplify();
+        auto temp = term->simplify();
+        if(temp != term) {
+            delete term;
+        }
+        term = temp;
     }
 
     steal_children();
@@ -166,13 +165,10 @@ Term *Plus::simplify()
 
     // If this is empty it means all terms summed to 0.0
     if(terms.size() == 0) {
-        delete this;
         return new Const(0.0);
 
     } else if(terms.size() == 1) {
-        auto temp = terms.at(0)->clone();
-        delete this;
-        return temp;
+        return terms.at(0)->clone();
     }
 
     return this;
@@ -340,7 +336,6 @@ Term *Mul::multiply_by_plus() {
                 result->add(temp);
             }
 
-            //delete this;
             return result->simplify();
         }
     }
@@ -355,7 +350,11 @@ Term *Mul::simplify()
      * concatenate identical variables
      */
     for(auto &term : terms) {
-        term = term->simplify();
+        auto temp = term->simplify();
+        if(temp != term) {
+            delete term;
+        }
+        term = temp;
     }
 
     steal_children();
@@ -378,7 +377,6 @@ Term *Mul::simplify()
     }
 
     if(totConstVal == 0.0) {
-        delete this;
         return new Const(0.0);
     }
     if(totConstVal != 1.0) {
@@ -440,18 +438,15 @@ Term *Mul::simplify()
 
     // If this is empty it means all terms was a constant with value 1.0
     if(terms.size() == 0) {
-        delete this;
         return new Const(1.0);
 
     } else if(terms.size() == 1) {
         auto temp = terms.at(0)->clone();
-        delete this;
         return temp;
     }
 
     auto temp = multiply_by_plus();
     if(temp != this) {
-        // Don't delete this, it has been deleted already by multiply_by_plus()
         return temp;
     }
 
@@ -630,9 +625,17 @@ Term *Exp::clone() const
 
 Term *Exp::simplify()
 {
-    base = base->simplify();
+    auto temp = base->simplify();
+    if(temp != base) {
+        delete base;
+        base = temp;
+    }
 
-    exponent = exponent->simplify();
+    temp = exponent->simplify();
+    if(temp != exponent) {
+        delete exponent;
+        exponent = temp;
+    }
 
     auto constantBase = dynamic_cast<Const *>(base);
     auto constantExponent = dynamic_cast<Const *>(exponent);
@@ -641,12 +644,10 @@ Term *Exp::simplify()
         if(constantBase != nullptr) {
             std::vector<double> dummy;
             auto constVal = eval(dummy);
-            delete this;
             return new Const(constVal);
         }
         auto exponentVal = constantExponent->getVal();
         if(exponentVal == 0.0) {
-            delete this;
             return new Const(1.0);
         }
         // Don't do anything is exponentVal is 1, it will get
@@ -656,7 +657,6 @@ Term *Exp::simplify()
     // 0^x
     else if(constantBase != nullptr) {
         if(constantBase->getVal() == 0.0) {
-            delete this;
             return new Const(0.0);
         }
     }
@@ -727,12 +727,15 @@ Term *Log::clone() const
 
 Term *Log::simplify()
 {
-    arg = arg->simplify();
+    auto temp = arg->simplify();
+    if(temp != arg) {
+        delete arg;
+        arg = temp;
+    }
 
     if(arg->isConstant()) {
         std::vector<double> dummy;
         auto constantVal = eval(dummy);
-        delete this;
         return new Const(constantVal);
     }
 
@@ -786,7 +789,11 @@ Term *Sin::clone() const
 
 Term *Sin::simplify()
 {
-    arg = arg->simplify();
+    auto temp = arg->simplify();
+    if(temp != arg) {
+        delete arg;
+        arg = temp;
+    }
 
     return this;
 }
@@ -840,7 +847,11 @@ Term *Cos::clone() const
 
 Term *Cos::simplify()
 {
-    arg = arg->simplify();
+    auto temp = arg->simplify();
+    if(temp != arg) {
+        delete arg;
+        arg = temp;
+    }
 
     return this;
 }
@@ -896,7 +907,11 @@ Term *Tan::clone() const
 
 Term *Tan::simplify()
 {
-    arg = arg->simplify();
+    auto temp = arg->simplify();
+    if(temp != arg) {
+        delete arg;
+        arg = temp;
+    }
 
     return this;
 }
@@ -948,7 +963,11 @@ Term *E::clone() const
 
 Term *E::simplify()
 {
-    arg = arg->simplify();
+    auto temp = arg->simplify();
+    if(temp != arg) {
+        delete arg;
+        arg = temp;
+    }
 
     return this;
 }
