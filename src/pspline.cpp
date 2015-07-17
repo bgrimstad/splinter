@@ -324,4 +324,20 @@ void PSpline::load(const std::string fileName)
     s.deserialize(*this);
 }
 
+const std::string PSpline::getDescription() const
+{
+    std::string bsplineDescription = BSpline::getDescription();
+    // Search for "BSpline ", not "BSpline" to avoid matching "BSplineType" etc.
+    size_t bsplineOccurence = bsplineDescription.find("BSpline ");
+    while(bsplineOccurence != std::string::npos) {
+        bsplineDescription.replace(bsplineOccurence, 1, "P");
+        bsplineOccurence = bsplineDescription.find("BSpline ");
+    }
+
+    bsplineDescription.append(" with lambda ");
+    bsplineDescription.append(std::to_string(lambda));
+
+    return bsplineDescription;
+}
+
 } // namespace SPLINTER

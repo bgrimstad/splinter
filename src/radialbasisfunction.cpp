@@ -359,5 +359,31 @@ void RadialBasisFunction::load(const std::string fileName)
     s.deserialize(*this);
 }
 
+const std::string RadialBasisFunction::getDescription() const {
+    std::string description("RadialBasisFunction of type ");
+    switch(type) {
+    case RadialBasisFunctionType::GAUSSIAN:
+        description.append("Gaussian");
+        break;
+    case RadialBasisFunctionType::INVERSE_MULTIQUADRIC:
+        description.append("Inverse multiquadric");
+        break;
+    case RadialBasisFunctionType::INVERSE_QUADRIC:
+        description.append("Inverse quadric");
+        break;
+    case RadialBasisFunctionType::MULTIQUADRIC:
+        description.append("Multiquadric");
+        break;
+    case RadialBasisFunctionType::THIN_PLATE_SPLINE:
+        description.append("Thin plate spline");
+        break;
+
+    default:
+        description.append("Error: Unknown!");
+        break;
+    }
+
+    return description;
+}
 
 } // namespace SPLINTER

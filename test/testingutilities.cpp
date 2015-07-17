@@ -698,7 +698,6 @@ void testApproximation(std::vector<TestFunction *> funcs,
                        double one_eps, double two_eps, double inf_eps)
 {
     for(auto &exact : funcs) {
-        INFO("Function: " << *(exact->getF()));
 
         auto dim = exact->getNumVariables();
         CHECK(dim > 0);
@@ -709,6 +708,9 @@ void testApproximation(std::vector<TestFunction *> funcs,
             DataTable table = sample(exact, samplePoints);
 
             Approximant *approx = approx_gen_func(table);
+
+            INFO("Function: " << *(exact->getF()));
+            INFO("Approximant: " << approx->getDescription());
 
             DenseMatrix errorNorms = getErrorNorms(exact, approx, evalPoints);
 

@@ -38,6 +38,8 @@ public:
 
     void save(const std::string fileName) const override;
 
+    const std::string getDescription() const override;
+
 private:
     PolynomialRegression();
 
