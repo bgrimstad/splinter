@@ -173,7 +173,7 @@ double RadialBasisFunction::eval(std::vector<double> x) const
 /*
  * TODO: test for errors
  */
-//DenseMatrix RBFSpline::evalJacobian(DenseVector x) const
+//DenseMatrix RadialBasisFunction::evalJacobian(DenseVector x) const
 //{
 //    std::vector<double> x_vec;
 //    for (unsigned int i = 0; i<x.size(); i++)
