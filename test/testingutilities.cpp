@@ -47,7 +47,7 @@ bool compareFunctions(const Function &f1, const Function &f2)
 
 bool compareFunctions(const Function &exact, const Function &approx, const std::vector<std::vector<double>> &points)
 {
-    // Max error in function value
+    // Max value of the norms of function/jacobian/hessian errors
     const double one_norm_epsilon = 0.1;
     const double two_norm_epsilon = 0.1;
     const double inf_norm_epsilon = 0.1;
@@ -57,19 +57,21 @@ bool compareFunctions(const Function &exact, const Function &approx, const std::
 
 bool compareFunctions(const Function &exact, const Function &approx, const std::vector<std::vector<double>> &points, double one_norm_epsilon, double two_norm_epsilon, double inf_norm_epsilon)
 {
+    bool equal = true;
+
     REQUIRE(exact.getNumVariables() == approx.getNumVariables());
 
-    DenseVector normOneVal(points.size());
-    DenseVector normTwoVal(points.size());
-    DenseVector normInfVal(points.size());
+    DenseVector normOneValVec(points.size());
+    DenseVector normTwoValVec(points.size());
+    DenseVector normInfValVec(points.size());
 
-    DenseVector normOneJac(points.size());
-    DenseVector normTwoJac(points.size());
-    DenseVector normInfJac(points.size());
+    DenseVector normOneJacVec(points.size());
+    DenseVector normTwoJacVec(points.size());
+    DenseVector normInfJacVec(points.size());
 
-    DenseVector normOneHes(points.size());
-    DenseVector normTwoHes(points.size());
-    DenseVector normInfHes(points.size());
+    DenseVector normOneHesVec(points.size());
+    DenseVector normTwoHesVec(points.size());
+    DenseVector normInfHesVec(points.size());
 
     int i = 0;
     for (auto &point : points) {
@@ -92,9 +94,9 @@ bool compareFunctions(const Function &exact, const Function &approx, const std::
 //            INFO("Exact - approx:");
 //            INFO(error);
 
-            normOneVal(i) = getOneNorm(error);
-            normTwoVal(i) = getTwoNorm(error);
-            normInfVal(i) = getInfNorm(error);
+            normOneValVec(i) = getOneNorm(error);
+            normTwoValVec(i) = getTwoNorm(error);
+            normInfValVec(i) = getInfNorm(error);
 
 //            REQUIRE(oneNorm(error) <= one_norm_epsilon);
 //            REQUIRE(twoNorm(error) <= two_norm_epsilon);
@@ -108,9 +110,9 @@ bool compareFunctions(const Function &exact, const Function &approx, const std::
             auto approxJacobian = approx.evalJacobian(x);
             auto errorJacobian = exactJacobian - approxJacobian;
 
-            normOneJac(i) = getOneNorm(errorJacobian);
-            normTwoJac(i) = getTwoNorm(errorJacobian);
-            normInfJac(i) = getInfNorm(errorJacobian);
+            normOneJacVec(i) = getOneNorm(errorJacobian);
+            normTwoJacVec(i) = getTwoNorm(errorJacobian);
+            normInfJacVec(i) = getInfNorm(errorJacobian);
 //            INFO("Exact Jacobian:");
 //            INFO(exactJacobian);
 //            INFO("Approximated Jacobian:");
@@ -130,9 +132,9 @@ bool compareFunctions(const Function &exact, const Function &approx, const std::
             auto approxHessian = approx.evalHessian(x);
             auto errorHessian = exactHessian - approxHessian;
 
-            normOneHes(i) = getOneNorm(errorHessian);
-            normTwoHes(i) = getTwoNorm(errorHessian);
-            normInfHes(i) = getInfNorm(errorHessian);
+            normOneHesVec(i) = getOneNorm(errorHessian);
+            normTwoHesVec(i) = getTwoNorm(errorHessian);
+            normInfHesVec(i) = getInfNorm(errorHessian);
 
 //            INFO("x: ");
 //            INFO(x);
@@ -151,19 +153,61 @@ bool compareFunctions(const Function &exact, const Function &approx, const std::
         i++;
     }
 
-    CHECK(getOneNorm(normOneVal) <= one_norm_epsilon);
-    CHECK(getTwoNorm(normTwoVal) <= two_norm_epsilon);
-    CHECK(getInfNorm(normInfVal) <= inf_norm_epsilon);
+    DenseVector valNorms(3);
+    valNorms(0) = getOneNorm(normOneValVec);
+    valNorms(1) = getTwoNorm(normTwoValVec);
+    valNorms(2) = getInfNorm(normInfValVec);
 
-    CHECK(getOneNorm(normOneJac) <= one_norm_epsilon);
-    CHECK(getTwoNorm(normTwoJac) <= two_norm_epsilon);
-    CHECK(getInfNorm(normInfJac) <= inf_norm_epsilon);
+    DenseVector jacNorms(3);
+    jacNorms(0) = getOneNorm(normOneJacVec);
+    jacNorms(1) = getTwoNorm(normTwoJacVec);
+    jacNorms(2) = getInfNorm(normInfJacVec);
 
-    CHECK(getOneNorm(normOneHes) <= one_norm_epsilon);
-    CHECK(getTwoNorm(normTwoHes) <= two_norm_epsilon);
-    CHECK(getInfNorm(normInfHes) <= inf_norm_epsilon);
+    DenseVector hesNorms(3);
+    hesNorms(0) = getOneNorm(normOneHesVec);
+    hesNorms(1) = getTwoNorm(normTwoHesVec);
+    hesNorms(2) = getInfNorm(normInfHesVec);
 
-    return true;
+    if(valNorms(0) / points.size() > one_norm_epsilon) {
+        INFO("1-norm function value (\"avg\"): " << valNorms(0) / points.size());
+        equal = false;
+    }
+    if(valNorms(1) > two_norm_epsilon) {
+        INFO("2-norm function value: " << valNorms(1));
+        equal = false;
+    }
+    if(valNorms(2) > inf_norm_epsilon) {
+        INFO("inf-norm function value: " << valNorms(2));
+        equal = false;
+    }
+
+    if(jacNorms(0) / points.size() > one_norm_epsilon) {
+        INFO("1-norm jacobian value (\"avg\"): " << jacNorms(0) / points.size());
+        equal = false;
+    }
+    if(jacNorms(1) > two_norm_epsilon) {
+        INFO("2-norm jacobian value: " << jacNorms(1));
+        equal = false;
+    }
+    if(jacNorms(2) > inf_norm_epsilon) {
+        INFO("inf-norm jacobian value: " << jacNorms(2));
+        equal = false;
+    }
+
+    if(hesNorms(0) / points.size() > one_norm_epsilon) {
+        INFO("1-norm hessian value (\"avg\"): " << hesNorms(0) / points.size());
+        equal = false;
+    }
+    if(hesNorms(1) > two_norm_epsilon) {
+        INFO("2-norm hessian value: " << hesNorms(1));
+        equal = false;
+    }
+    if(hesNorms(2) > inf_norm_epsilon) {
+        CAPTURE("inf-norm hessian value: " << hesNorms(2));
+        equal = false;
+    }
+
+    return equal;
 }
 
 bool compareBSplines(const BSpline &left, const BSpline &right)
@@ -460,17 +504,17 @@ void setupTestFunctions() {
     // Functions of two variables
     auto f_2_0 = 0.1 + 0*x*y;
     auto f_2_1 = - 5.1*x + 13.37*y;
-    auto f_2_2 = 8.1*(x^2)*(y^2) - 0.2*x*y + 13.37;
+    auto f_2_2 = 8.1*(x^2) - 0.2*x*y + 13.37*(y^2);
     auto f_2_3 = -4.5*(x^3) + 2.2*(x^2) - (y^2) + 3;
-    auto f_2_4 = x*(4.5*(x^4) - (x^2) + 3*x*y);
-    auto f_2_5 = -57*(y^5)*(x^3) - 0.1*(x^4)*(y^2) + 1.1*y*(x^2) + y - 1e10;
+    auto f_2_4 = x*(4.5*(x^3) - (x^2) + 3*x*y);
+    auto f_2_5 = -57*(y^2)*(x^3) - 0.1*(x^3)*(y^2) + 1.1*y*(x^2) + y - 1e10;
     // Six-hump camelback function
     auto f_2_6 = (4 - 2.1*(x^2) + (1/3.)*(x^4))*(x^2) + x*y + (-4 + 4*(y^2))*(y^2) + 1.553e-1;
 
     // Functions of three variables
     auto f_3_0 = 6534460297 + 0*x*y*z;
     auto f_3_1 = x+y-z-1;
-    auto f_3_2 = (x^2)*y*z + 3.9*(z^2) + z*(y^2) + 13.1*(z^2) - x - 10;
+    auto f_3_2 = y*z + 3.9*(z^2) + (y^2) + 13.1*(z^2) - x - 10;
     auto f_3_3 = f_3_2 * f_3_1;
 
     // Non-polynomial (aka. nasty) functions
@@ -525,7 +569,7 @@ std::vector<TestFunction *> getTestFunctionWithNumVariables(int numVariables)
     return testFunctions.at(numVariables);
 }
 
-std::vector<TestFunction *> getNiceTestFunctions()
+std::vector<TestFunction *> getPolynomialFunctions()
 {
     auto testFuncs = std::vector<TestFunction *>();
     for(int i = 1; i < testFunctions.size(); ++i) {
@@ -541,5 +585,138 @@ std::vector<TestFunction *> getNastyTestFunctions()
     return testFunctions.at(0);
 }
 
+DenseMatrix getErrorNorms(const Function *exact, const Function *approx, const std::vector<std::vector<double>> &points)
+{
+    assert(exact->getNumVariables() == approx->getNumVariables());
+
+    DenseVector normOneValVec(points.size());
+    DenseVector normTwoValVec(points.size());
+    DenseVector normInfValVec(points.size());
+
+    DenseVector normOneJacVec(points.size());
+    DenseVector normTwoJacVec(points.size());
+    DenseVector normInfJacVec(points.size());
+
+    DenseVector normOneHesVec(points.size());
+    DenseVector normTwoHesVec(points.size());
+    DenseVector normInfHesVec(points.size());
+
+    int i = 0;
+    for (auto &point : points) {
+        DenseVector x = vecToDense(point);
+
+        {
+            DenseMatrix exactValue(1,1);
+            exactValue(0,0) = exact->eval(x);
+            DenseMatrix approxValue(1,1);
+            approxValue(0,0) = approx->eval(x);
+            DenseMatrix error = exactValue - approxValue;
+
+            normOneValVec(i) = getOneNorm(error);
+            normTwoValVec(i) = getTwoNorm(error);
+            normInfValVec(i) = getInfNorm(error);
+        }
+
+        {
+            auto exactJacobian = exact->evalJacobian(x);
+            auto approxJacobian = approx->evalJacobian(x);
+            auto errorJacobian = exactJacobian - approxJacobian;
+
+            normOneJacVec(i) = getOneNorm(errorJacobian);
+            normTwoJacVec(i) = getTwoNorm(errorJacobian);
+            normInfJacVec(i) = getInfNorm(errorJacobian);
+        }
+
+        {
+            auto exactHessian = exact->evalHessian(x);
+            auto approxHessian = approx->evalHessian(x);
+            auto errorHessian = exactHessian - approxHessian;
+
+            normOneHesVec(i) = getOneNorm(errorHessian);
+            normTwoHesVec(i) = getTwoNorm(errorHessian);
+            normInfHesVec(i) = getInfNorm(errorHessian);
+        }
+
+        i++;
+    }
+
+    DenseMatrix errorNorms(3,3);
+    errorNorms(0,0) = getOneNorm(normOneValVec);
+    errorNorms(0,1) = getTwoNorm(normTwoValVec);
+    errorNorms(0,2) = getInfNorm(normInfValVec);
+
+    errorNorms(1,0) = getOneNorm(normOneJacVec);
+    errorNorms(1,1) = getTwoNorm(normTwoJacVec);
+    errorNorms(1,2) = getInfNorm(normInfJacVec);
+
+    errorNorms(2,0) = getOneNorm(normOneHesVec);
+    errorNorms(2,1) = getTwoNorm(normTwoHesVec);
+    errorNorms(2,2) = getInfNorm(normInfHesVec);
+
+    return errorNorms;
+}
+
+void checkNorms(DenseMatrix normValues, size_t numPoints, double one_eps, double two_eps, double inf_eps)
+{
+    checkNorm(normValues, TestType::All, numPoints, one_eps, two_eps, inf_eps);
+}
+
+void checkNorm(DenseMatrix normValues, TestType type, size_t numPoints, double one_eps, double two_eps, double inf_eps)
+{
+    if(type == TestType::All || type == TestType::FunctionValue) {
+        INFO("Function value error:");
+        _checkNorm(normValues, 0, numPoints, one_eps, two_eps, inf_eps);
+    }
+    if(type == TestType::All || type == TestType::Jacobian) {
+        INFO("Jacobian value error:");
+        _checkNorm(normValues, 1, numPoints, one_eps, two_eps, inf_eps);
+    }
+    if(type == TestType::All || type == TestType::Hessian) {
+        INFO("Hessian value error:");
+        _checkNorm(normValues, 2, numPoints, one_eps, two_eps, inf_eps);
+    }
+}
+
+void _checkNorm(DenseMatrix normValues, int row, size_t numPoints, double one_eps, double two_eps, double inf_eps)
+{
+    bool withinThreshold =\
+            normValues(row,0) / numPoints <= one_eps
+         && normValues(row,1)             <= two_eps
+         && normValues(row,2)             <= inf_eps;
+
+    INFO(std::setw(16) << std::left << "1-norm (\"avg\"):" << std::setw(16) << std::right << normValues(row,0) / numPoints);
+    INFO(std::setw(16) << std::left << "2-norm:"           << std::setw(16) << std::right << normValues(row,1));
+    INFO(std::setw(16) << std::left << "inf-norm:"         << std::setw(16) << std::right << normValues(row,2));
+
+    CHECK(withinThreshold);
+}
+
+// Must use std::function because a capturing lambda cannot be converted to a function pointer
+void testApproximation(std::vector<TestFunction *> funcs,
+                       std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                       TestType type, size_t numSamplePoints, size_t numEvalPoints,
+                       double one_eps, double two_eps, double inf_eps)
+{
+    for(auto &exact : funcs) {
+        INFO("Function: " << *(exact->getF()));
+
+        auto dim = exact->getNumVariables();
+        CHECK(dim > 0);
+        if(dim > 0) {
+            auto samplePoints = linspace(dim, -5, 5, std::pow(numSamplePoints, 1.0/dim));
+            auto evalPoints = linspace(dim, -4.95, 4.95, std::pow(numEvalPoints, 1.0/dim));
+
+            DataTable table = sample(exact, samplePoints);
+
+            Approximant *approx = approx_gen_func(table);
+
+            DenseMatrix errorNorms = getErrorNorms(exact, approx, evalPoints);
+
+            checkNorm(errorNorms, type, evalPoints.size(), one_eps, two_eps, inf_eps);
+
+            delete approx;
+        }
+    }
+}
 
 } // namespace SPLINTER

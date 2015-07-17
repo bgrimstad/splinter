@@ -17,8 +17,16 @@
 #include <testfunction.h>
 #include <operator_overloads.h>
 
+
 namespace SPLINTER
 {
+
+enum class TestType {
+    All,
+    FunctionValue,
+    Jacobian,
+    Hessian
+};
 
 extern std::vector<std::vector<TestFunction *>> testFunctions;
 
@@ -66,11 +74,30 @@ std::string pretty_print(const DenseVector &denseVec);
 TestFunction *getTestFunction(int numVariables, int degree);
 std::vector<TestFunction *> getTestFunctionsOfDegree(int degree);
 std::vector<TestFunction *> getTestFunctionWithNumVariables(int numVariables);
-std::vector<TestFunction *> getNiceTestFunctions();
+std::vector<TestFunction *> getPolynomialFunctions();
 std::vector<TestFunction *> getNastyTestFunctions();
 
 void setupTestFunctions();
 
+/*
+ * Returns 3x3 matrix,
+ * first row: function value error norms
+ * second row: jacobian value error norms
+ * third row: hessian value error norms
+ * first col: 1-norms
+ * second col: 2-norms
+ * third col: inf-norms
+ */
+DenseMatrix getErrorNorms(const Function *exact, const Function *approx, const std::vector<std::vector<double>> &points);
+
+void checkNorms(DenseMatrix normValues, size_t numPoints, double one_eps, double two_eps, double inf_eps);
+void checkNorm(DenseMatrix normValues, TestType type, size_t numPoints, double one_eps, double two_eps, double inf_eps);
+void _checkNorm(DenseMatrix normValues, int row, size_t numPoints, double one_eps, double two_eps, double inf_eps);
+
+void testApproximation(std::vector<TestFunction *> funcs,
+                       std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                       TestType type, size_t numSamplePoints, size_t numEvalPoints,
+                       double one_eps, double two_eps, double inf_eps);
 
 } // namespace SPLINTER
 
