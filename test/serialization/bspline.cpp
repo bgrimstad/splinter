@@ -12,7 +12,7 @@
 #include <bspline.h>
 #include "testingutilities.h"
 
-#include <test_functions.h>
+#include "term.h"
 
 using namespace SPLINTER;
 

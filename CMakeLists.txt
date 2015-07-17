@@ -144,22 +144,26 @@ set(MATLAB_SRC_LIST ${SRC_LIST} include/matlab.h src/matlab.cpp)
 set(TEST_SRC_LIST
     ${SRC_LIST}
     test/main.cpp
+    test/approximation/bspline.cpp
+    test/approximation/pspline.cpp
+    test/approximation/radialbasisfunction.cpp
+    test/approximation/polynomialregression.cpp
     test/serialization/datatable.cpp
     test/serialization/bspline.cpp
     test/serialization/pspline.cpp
     test/serialization/radialbasisfunction.cpp
     test/serialization/polynomialregression.cpp
-    test/approximation/bspline.cpp
-    test/approximation/pspline.cpp
-    test/approximation/radialbasisfunction.cpp
-    test/approximation/polynomialregression.cpp
+
     test/operator_overloads.h
     test/operator_overloads.cpp
+    test/term.h
+    test/term.cpp
+    test/termfunction.h
+    test/termfunction.cpp
+    test/testfunctions.h
+    test/testfunctions.cpp
+    test/testingutilities.h
     test/testingutilities.cpp
-    test/test_functions.h
-    test/test_functions.cpp
-    test/testfunction.h
-    test/testfunction.cpp
 )
 
 set(SHARED_LIBRARY ${PROJECT_NAME_LOWER}-${VERSION})

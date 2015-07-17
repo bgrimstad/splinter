@@ -19,11 +19,11 @@ class Var;
 
 // TODO: Keep track of the domain of the function
 // This is very useful for testing functions that have "interesting" regions
-class TestFunction : public Function
+class TermFunction : public Function
 {
 public:
-    TestFunction(Term *func);
-    TestFunction(Term &func);
+    TermFunction(Term *func);
+    TermFunction(Term &func);
 
     double eval(DenseVector x) const override;
     DenseMatrix evalJacobian(DenseVector x) const override;

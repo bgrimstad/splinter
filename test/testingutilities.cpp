@@ -8,16 +8,14 @@
 */
 
 #include "testingutilities.h"
-#include <iostream>
+#include <testfunctions.h>
 #include <Catch.h>
-#include <test_functions.h>
+#include "term.h"
 
 using namespace std;
 
 namespace SPLINTER
 {
-
-std::vector<std::vector<TestFunction *>> testFunctions = std::vector<std::vector<TestFunction *>>();
 
 // Checks if a is within margin of b
 bool equalsWithinRange(double a, double b, double margin)
@@ -480,82 +478,14 @@ std::string pretty_print(const DenseVector &denseVec)
 }
 
 
-
-void setupTestFunctions() {
-    // f_x_y: function of x variables and y degrees
-
-    Var x(0, "x");
-    Var y(1, "y");
-    Var z(2, "z");
-    Var x1(3, "x1");
-    Var y1(4, "y1");
-    Var z1(5, "z1");
-    Var x2(6, "x2");
-    Var y2(7, "y2");
-    Var z2(8, "z2");
-
-    // Functions of one variable
-    auto f_1_0 = -13.37 + 0*x;
-    auto f_1_1 = -5.1*x + 13.37;
-    auto f_1_2 = 8.1*(x^2) - 0.2*x + 2313.1;
-    auto f_1_3 = -4.5*(x^3) + 2.2*(x^2);
-    auto f_1_4 = x*(4.5*(x^3) + 3*(x^2) - x);
-
-    // Functions of two variables
-    auto f_2_0 = 0.1 + 0*x*y;
-    auto f_2_1 = - 5.1*x + 13.37*y;
-    auto f_2_2 = 8.1*(x^2) - 0.2*x*y + 13.37*(y^2);
-    auto f_2_3 = -4.5*(x^3) + 2.2*(x^2) - (y^2) + 3;
-    auto f_2_4 = x*(4.5*(x^3) - (x^2) + 3*x*y);
-    auto f_2_5 = -57*(y^2)*(x^3) - 0.1*(x^3)*(y^2) + 1.1*y*(x^2) + y - 1e10;
-    // Six-hump camelback function
-    auto f_2_6 = (4 - 2.1*(x^2) + (1/3.)*(x^4))*(x^2) + x*y + (-4 + 4*(y^2))*(y^2) + 1.553e-1;
-
-    // Functions of three variables
-    auto f_3_0 = 6534460297 + 0*x*y*z;
-    auto f_3_1 = x+y-z-1;
-    auto f_3_2 = y*z + 3.9*(z^2) + (y^2) + 13.1*(z^2) - x - 10;
-    auto f_3_3 = f_3_2 * f_3_1;
-
-    // Non-polynomial (aka. nasty) functions
-    auto f_nasty_x = E(z) * ((1.3^x) + (y^x));
-
-
-    // First vector is the vector of nasty functions
-    testFunctions.push_back(std::vector<TestFunction *>());
-    testFunctions.at(0).push_back(new TestFunction(f_nasty_x));
-
-    testFunctions.push_back(std::vector<TestFunction *>());
-    testFunctions.at(1).push_back(new TestFunction(f_1_0));
-    testFunctions.at(1).push_back(new TestFunction(f_1_1));
-    testFunctions.at(1).push_back(new TestFunction(f_1_2));
-    testFunctions.at(1).push_back(new TestFunction(f_1_3));
-    testFunctions.at(1).push_back(new TestFunction(f_1_4));
-
-    testFunctions.push_back(std::vector<TestFunction *>());
-    testFunctions.at(2).push_back(new TestFunction(f_2_0));
-    testFunctions.at(2).push_back(new TestFunction(f_2_1));
-    testFunctions.at(2).push_back(new TestFunction(f_2_2));
-    testFunctions.at(2).push_back(new TestFunction(f_2_3));
-    testFunctions.at(2).push_back(new TestFunction(f_2_4));
-    testFunctions.at(2).push_back(new TestFunction(f_2_5));
-    testFunctions.at(2).push_back(new TestFunction(f_2_6));
-
-    testFunctions.push_back(std::vector<TestFunction *>());
-    testFunctions.at(3).push_back(new TestFunction(f_3_0));
-    testFunctions.at(3).push_back(new TestFunction(f_3_1));
-    testFunctions.at(3).push_back(new TestFunction(f_3_2));
-    testFunctions.at(3).push_back(new TestFunction(f_3_3));
-}
-
-TestFunction *getTestFunction(int numVariables, int degree)
+TermFunction *getTestFunction(int numVariables, int degree)
 {
     return testFunctions.at(numVariables).at(degree);
 }
 
-std::vector<TestFunction *> getTestFunctionsOfDegree(int degree)
+std::vector<TermFunction *> getTestFunctionsOfDegree(int degree)
 {
-    auto testFuncs = std::vector<TestFunction *>();
+    auto testFuncs = std::vector<TermFunction *>();
     for(int i = 1; i < testFunctions.size(); ++i) {
         if(degree < testFunctions.at(i).size()) {
             testFuncs.push_back(testFunctions.at(i).at(degree));
@@ -564,14 +494,14 @@ std::vector<TestFunction *> getTestFunctionsOfDegree(int degree)
     return testFuncs;
 }
 
-std::vector<TestFunction *> getTestFunctionWithNumVariables(int numVariables)
+std::vector<TermFunction *> getTestFunctionWithNumVariables(int numVariables)
 {
     return testFunctions.at(numVariables);
 }
 
-std::vector<TestFunction *> getPolynomialFunctions()
+std::vector<TermFunction *> getPolynomialFunctions()
 {
-    auto testFuncs = std::vector<TestFunction *>();
+    auto testFuncs = std::vector<TermFunction *>();
     for(int i = 1; i < testFunctions.size(); ++i) {
         for(int j = 0; j < testFunctions.at(i).size(); ++j) {
             testFuncs.push_back(testFunctions.at(i).at(j));
@@ -580,7 +510,7 @@ std::vector<TestFunction *> getPolynomialFunctions()
     return testFuncs;
 }
 
-std::vector<TestFunction *> getNastyTestFunctions()
+std::vector<TermFunction *> getNastyTestFunctions()
 {
     return testFunctions.at(0);
 }
@@ -692,7 +622,7 @@ void _checkNorm(DenseMatrix normValues, int row, size_t numPoints, double one_ep
 }
 
 // Must use std::function because a capturing lambda cannot be converted to a function pointer
-void testApproximation(std::vector<TestFunction *> funcs,
+void testApproximation(std::vector<TermFunction *> funcs,
                        std::function<Approximant *(const DataTable &table)> approx_gen_func,
                        TestType type, size_t numSamplePoints, size_t numEvalPoints,
                        double one_eps, double two_eps, double inf_eps)

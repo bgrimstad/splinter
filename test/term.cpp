@@ -7,19 +7,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include <test_functions.h>
+#include "term.h"
 #include <iostream>
 #include <testingutilities.h>
 
-bool operator<(const Var &lhs, const Var &rhs) {
-    return lhs.getVarNum() < rhs.getVarNum();
-}
-
-std::ostream &operator<<(std::ostream &out, const Term &term)
-{
-    term.pretty_text(out);
-    return out;
-}
 
 bool Term::isConstant() const
 {
@@ -31,6 +22,10 @@ Term::~Term()
 {
 }
 
+
+/*
+ * Addition: term0 + term1 + ... + termn
+ */
 Plus::Plus()
 {
 }
@@ -58,9 +53,6 @@ Plus::Plus(Term *lhs, Term *rhs)
 
 Plus::~Plus()
 {
-//    for(auto &term : terms) {
-//        delete term;
-//    }
 }
 
 void Plus::add(const Term &term)
@@ -78,6 +70,9 @@ void Plus::add(Term *term)
  * temp0 = term0 + term1
  * temp1 = term2 + term3
  * return temp0 + temp1
+ * instead of
+ * temp = 0.0
+ * temp += termi for all i
  */
 double Plus::eval(const std::vector<double> &x) const
 {
@@ -200,6 +195,9 @@ void Plus::pretty_text(std::ostream &out) const
 }
 
 
+/*
+ * Multiplication: term0 * term1 * ... * termn
+ */
 Mul::Mul()
 {
 }
@@ -227,9 +225,6 @@ Mul::Mul(Term *lhs, Term *rhs)
 
 Mul::~Mul()
 {
-//    for(auto &term : terms) {
-//        delete term;
-//    }
 }
 
 void Mul::add(const Term &term)
@@ -247,6 +242,9 @@ void Mul::add(Term *term)
  * temp0 = term0 * term1
  * temp1 = term2 * term3
  * return temp0 * temp1
+ * instead of
+ * temp = 0.0
+ * temp *= termi for all i
  */
 double Mul::eval(const std::vector<double> &x) const
 {
@@ -476,6 +474,10 @@ void Mul::pretty_text(std::ostream &out) const
     }
 }
 
+
+/*
+ * Variable
+ */
 Var::Var(int varNum)
     : Var(varNum, nullptr)
 {
@@ -528,6 +530,10 @@ void Var::pretty_text(std::ostream &out) const
     }
 }
 
+
+/*
+ * Constant value
+ */
 Const::Const(double val)
     : val(val)
 {
@@ -562,6 +568,11 @@ void Const::pretty_text(std::ostream &out) const
     out << val;
 }
 
+
+/*
+ * Power: x^y
+ * TODO: Rename to Pow?
+ */
 Exp::Exp(const Term &base, const Term &exponent)
     : Exp(base.clone(), exponent.clone())
 {
@@ -692,6 +703,10 @@ void Exp::pretty_text(std::ostream &out) const
     }
 }
 
+
+/*
+ * Logarithm with base n: log_n(x)
+ */
 Log::Log(double base, Term *arg)
         : base(base),
           arg(arg)
@@ -761,6 +776,9 @@ void Log::pretty_text(std::ostream &out) const
 }
 
 
+/*
+ * Sinus: sin(x)
+ */
 Sin::Sin(Term *arg)
         : arg(arg)
 {
@@ -817,6 +835,9 @@ void Sin::pretty_text(std::ostream &out) const
 }
 
 
+/*
+ * Cosinus: cos(x)
+ */
 Cos::Cos(Term *arg)
         : arg(arg)
 {
@@ -875,6 +896,9 @@ void Cos::pretty_text(std::ostream &out) const
 }
 
 
+/*
+ * Tangential: tan(x)
+ */
 Tan::Tan(Term *arg)
         : arg(arg)
 {
@@ -935,6 +959,9 @@ void Tan::pretty_text(std::ostream &out) const
 }
 
 
+/*
+ * Exponential function e^x
+ */
 E::E(Term *arg)
         : arg(arg)
 {
@@ -993,6 +1020,15 @@ void E::pretty_text(std::ostream &out) const
 
 
 
+bool operator<(const Var &lhs, const Var &rhs) {
+    return lhs.getVarNum() < rhs.getVarNum();
+}
+
+std::ostream &operator<<(std::ostream &out, const Term &term)
+{
+    term.pretty_text(out);
+    return out;
+}
 
 Plus operator+(const Term &lhs, const Term &rhs)
 {

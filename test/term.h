@@ -14,12 +14,11 @@
 #include "function.h"
 #include <string.h>
 #include <iostream>
-#include <testfunction.h>
+#include "termfunction.h"
 #include <set>
 
 using namespace SPLINTER;
 
-bool operator<(const Var &lhs, const Var &rhs);
 
 class Var;
 class Term
@@ -43,7 +42,6 @@ public:
     virtual ~Term();
 };
 
-std::ostream &operator<<(std::ostream &out, const Term &term);
 
 class Plus : public Term
 {
@@ -113,6 +111,7 @@ private:
     Term *multiply_by_plus();
 };
 
+
 class Var : public Term
 {
 public:
@@ -162,6 +161,7 @@ private:
     double val;
 };
 
+
 class Exp : public Term
 {
 public:
@@ -190,6 +190,7 @@ private:
     Term *exponent;
 };
 
+
 class Log : public Term
 {
 public:
@@ -213,6 +214,7 @@ private:
     Term *arg;
 };
 
+
 class Sin : public Term
 {
 public:
@@ -234,6 +236,7 @@ public:
 private:
     Term *arg;
 };
+
 
 class Cos : public Term
 {
@@ -257,6 +260,7 @@ private:
     Term *arg;
 };
 
+
 class Tan : public Term
 {
 public:
@@ -279,6 +283,7 @@ private:
     Term *arg;
 };
 
+
 class E : public Term
 {
 public:
@@ -300,6 +305,10 @@ public:
 private:
     Term *arg;
 };
+
+
+bool operator<(const Var &lhs, const Var &rhs);
+std::ostream &operator<<(std::ostream &out, const Term &term);
 
 Plus operator+(const Term &lhs, const Term &rhs);
 Plus operator+(const Term &lhs, double rhs);

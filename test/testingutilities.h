@@ -14,21 +14,23 @@
 #include <function.h>
 #include <generaldefinitions.h>
 #include <bspline.h>
-#include <testfunction.h>
+#include "termfunction.h"
 #include <operator_overloads.h>
 
 
 namespace SPLINTER
 {
 
+/*
+ * TODO:
+ * Rename this?
+ */
 enum class TestType {
     All,
     FunctionValue,
     Jacobian,
     Hessian
 };
-
-extern std::vector<std::vector<TestFunction *>> testFunctions;
 
 bool equalsWithinRange(double a, double b, double margin = 0.0);
 
@@ -45,8 +47,10 @@ DataTable sample(const Function *func, std::vector<std::vector<double>> &points)
 
 std::vector<double> linspace(double start, double stop, unsigned int points);
 
+// points is a vector where each element is the number of points for that dim
 std::vector<std::vector<double>> linspace(std::vector<double> start, std::vector<double> end, std::vector<unsigned int> points);
 
+// points is the total number of points, not per dim
 std::vector<std::vector<double>> linspace(int dim, double start, double end, unsigned int points);
 
 // Returns a default linspace of dim dim
@@ -71,13 +75,12 @@ DenseVector vecToDense(const std::vector<double> &vec);
 
 std::string pretty_print(const DenseVector &denseVec);
 
-TestFunction *getTestFunction(int numVariables, int degree);
-std::vector<TestFunction *> getTestFunctionsOfDegree(int degree);
-std::vector<TestFunction *> getTestFunctionWithNumVariables(int numVariables);
-std::vector<TestFunction *> getPolynomialFunctions();
-std::vector<TestFunction *> getNastyTestFunctions();
+TermFunction *getTestFunction(int numVariables, int degree);
+std::vector<TermFunction *> getTestFunctionsOfDegree(int degree);
+std::vector<TermFunction *> getTestFunctionWithNumVariables(int numVariables);
+std::vector<TermFunction *> getPolynomialFunctions();
+std::vector<TermFunction *> getNastyTestFunctions();
 
-void setupTestFunctions();
 
 /*
  * Returns 3x3 matrix,
@@ -94,7 +97,7 @@ void checkNorms(DenseMatrix normValues, size_t numPoints, double one_eps, double
 void checkNorm(DenseMatrix normValues, TestType type, size_t numPoints, double one_eps, double two_eps, double inf_eps);
 void _checkNorm(DenseMatrix normValues, int row, size_t numPoints, double one_eps, double two_eps, double inf_eps);
 
-void testApproximation(std::vector<TestFunction *> funcs,
+void testApproximation(std::vector<TermFunction *> funcs,
                        std::function<Approximant *(const DataTable &table)> approx_gen_func,
                        TestType type, size_t numSamplePoints, size_t numEvalPoints,
                        double one_eps, double two_eps, double inf_eps);

@@ -7,13 +7,13 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include <testfunction.h>
-#include <test_functions.h>
+#include "termfunction.h"
+#include "term.h"
 #include <testingutilities.h>
 
 using namespace SPLINTER;
 
-TestFunction::TestFunction(Term *func)
+TermFunction::TermFunction(Term *func)
         : f(func)
 {
 #ifndef NDEBUG
@@ -30,12 +30,12 @@ TestFunction::TestFunction(Term *func)
     calculateHessian();
 }
 
-TestFunction::TestFunction(Term &func)
-        : TestFunction(func.clone())
+TermFunction::TermFunction(Term &func)
+        : TermFunction(func.clone())
 {
 }
 
-void TestFunction::gatherVariables()
+void TermFunction::gatherVariables()
 {
     auto vars = f->getVariables();
     for(auto &var : vars) {
@@ -49,14 +49,14 @@ void TestFunction::gatherVariables()
 #endif
 }
 
-double TestFunction::eval(DenseVector x) const
+double TermFunction::eval(DenseVector x) const
 {
     auto xvec = denseToVec(x);
 
     return f->eval(xvec);
 }
 
-DenseMatrix TestFunction::evalJacobian(DenseVector x) const
+DenseMatrix TermFunction::evalJacobian(DenseVector x) const
 {
     DenseMatrix jacobian(1, numVariables);
 
@@ -69,7 +69,7 @@ DenseMatrix TestFunction::evalJacobian(DenseVector x) const
     return jacobian;
 }
 
-DenseMatrix TestFunction::evalHessian(DenseVector x) const
+DenseMatrix TermFunction::evalHessian(DenseVector x) const
 {
     DenseMatrix hessian(numVariables, numVariables);
 
@@ -84,7 +84,7 @@ DenseMatrix TestFunction::evalHessian(DenseVector x) const
     return hessian;
 }
 
-void TestFunction::calculateJacobian()
+void TermFunction::calculateJacobian()
 {
     jac.clear();
     for(size_t i = 0; i < numVariables; i++) {
@@ -115,7 +115,7 @@ void TestFunction::calculateJacobian()
     }
 }
 
-void TestFunction::calculateHessian()
+void TermFunction::calculateHessian()
 {
     hes.clear();
 
