@@ -84,6 +84,10 @@ void PolynomialRegression::computeCoefficients(const DataTable &samples)
     coefficients.transposeInPlace();
 }
 
+/*
+ * Computes Vandermonde matrix
+ * TODO: centering and scaling can improve the numerical properties
+ */
 DenseMatrix PolynomialRegression::computeDesignMatrix(const DataTable &samples) const
 {
     DenseMatrix X = DenseMatrix::Zero(samples.getNumSamples(), numCoefficients);
