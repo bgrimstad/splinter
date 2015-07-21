@@ -17,6 +17,7 @@ using namespace SPLINTER;
 
 #define COMMON_TAGS "[approximation][polynomialregression][polynomial]"
 #define COMMON_TEXT " value approximation test with polynomials"
+#define MAX_DEGREE 10
 
 
 TEST_CASE("PolynomialRegression function" COMMON_TEXT, COMMON_TAGS "[function-value]") {
@@ -25,7 +26,7 @@ TEST_CASE("PolynomialRegression function" COMMON_TEXT, COMMON_TAGS "[function-va
     double two_eps = 0.1;
     double inf_eps = 0.1;
 
-    for(int degree = 1; degree < 10; ++degree) {
+    for(int degree = 1; degree < MAX_DEGREE; ++degree) {
         testApproximation(getPolynomialFunctions(),
         [degree](const DataTable &table) {
             return (Approximant *) new PolynomialRegression(table, degree);
@@ -43,7 +44,7 @@ TEST_CASE("PolynomialRegression jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian]")
     double two_eps = 0.1;
     double inf_eps = 0.1;
 
-    for(int degree = 1; degree < 10; ++degree) {
+    for(int degree = 1; degree < MAX_DEGREE; ++degree) {
         testApproximation(getPolynomialFunctions(),
         [degree](const DataTable &table) {
             return (Approximant *) new PolynomialRegression(table, degree);
@@ -61,7 +62,7 @@ TEST_CASE("PolynomialRegression hessian" COMMON_TEXT, COMMON_TAGS "[hessian]") {
     double two_eps = 0.1;
     double inf_eps = 0.1;
 
-    for(int degree = 1; degree < 10; ++degree) {
+    for(int degree = 1; degree < MAX_DEGREE; ++degree) {
         testApproximation(getPolynomialFunctions(),
         [degree](const DataTable &table) {
             return (Approximant *) new PolynomialRegression(table, degree);

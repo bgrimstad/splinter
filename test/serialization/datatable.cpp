@@ -11,15 +11,13 @@
 #include <datatable.h>
 #include "testingutilities.h"
 
-#include "term.h"
-
 using namespace SPLINTER;
 
-TEST_CASE("DataTables can be saved and loaded", "[serialize][datatable]")
+
+TEST_CASE("DataTable can be saved and loaded", "[serialization][datatable]")
 {
     DataTable table;
     const char *fileName = "test.datatable";
-
 
     SECTION("DataTable with 0 samples") {
         table.save(fileName);

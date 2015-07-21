@@ -14,6 +14,7 @@
 
 using namespace SPLINTER;
 
+
 #define COMMON_TAGS "[approximation][pspline][polynomial]"
 #define COMMON_TEXT " value approximation test with polynomials"
 
