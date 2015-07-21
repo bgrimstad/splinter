@@ -15,6 +15,9 @@
 #include <datasample.h>
 #include <datatable.h>
 #include <bspline.h>
+#include <radialbasisfunction.h>
+#include <polynomialregression.h>
+#include <pspline.h>
 
 namespace SPLINTER
 {
@@ -25,6 +28,9 @@ namespace SPLINTER
 bool operator==(const DataTable &lhs, const DataTable &rhs);
 bool operator==(const DataSample &lhs, const DataSample &rhs);
 bool operator==(const BSpline &lhs, const BSpline &rhs);
+bool operator==(const PSpline &lhs, const PSpline &rhs);
+bool operator==(const RadialBasisFunction &lhs, const RadialBasisFunction &rhs);
+bool operator==(const PolynomialRegression &lhs, const PolynomialRegression &rhs);
 template <class T>
 bool operator==(const std::vector<T> &lhs, const std::vector<T> &rhs);
 template <class T>

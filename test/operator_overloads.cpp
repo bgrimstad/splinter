@@ -51,6 +51,24 @@ bool operator==(const BSpline &lhs, const BSpline &rhs)
             && lhs.getDomainUpperBound() == rhs.getDomainUpperBound();
 }
 
+bool operator==(const PSpline &lhs, const PSpline &rhs)
+{
+    return
+            lhs.getNumVariables() == rhs.getNumVariables();
+}
+
+bool operator==(const RadialBasisFunction &lhs, const RadialBasisFunction &rhs)
+{
+    return
+            lhs.getNumVariables() == rhs.getNumVariables();
+}
+
+bool operator==(const PolynomialRegression &lhs, const PolynomialRegression &rhs)
+{
+    return
+            lhs.getNumVariables() == rhs.getNumVariables();
+}
+
 template <class T>
 bool operator==(const std::vector<T> &lhs, const std::vector<T> &rhs)
 {
