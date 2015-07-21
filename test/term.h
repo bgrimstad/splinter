@@ -33,7 +33,7 @@ public:
 
     virtual Term *simplify() = 0;
 
-    virtual std::set<Var> getVariables() const = 0;
+    virtual void getVariables(std::set<Var> &vars) const = 0;
 
     bool isConstant() const;
 
@@ -65,7 +65,7 @@ public:
 
     Term *simplify() override;
 
-    std::set<Var> getVariables() const override;
+    void getVariables(std::set<Var> &vars) const override;
 
     void pretty_text(std::ostream &out) const override;
 
@@ -100,7 +100,7 @@ public:
 
     Term *simplify() override;
 
-    std::set<Var> getVariables() const override;
+    void getVariables(std::set<Var> &vars) const override;
 
     void pretty_text(std::ostream &out) const override;
 
@@ -118,6 +118,13 @@ public:
     Var(int varNum);
     Var(int varNum, const char *name);
 
+    Var(const Var &var);
+
+    // Used by std::sort
+    Var &operator=(Var &&other);
+
+    virtual ~Var();
+
     double eval(const std::vector<double> &x) const override;
 
     Term *derivative(Var x) const override;
@@ -126,7 +133,7 @@ public:
 
     Term *simplify() override;
 
-    std::set<Var> getVariables() const override;
+    void getVariables(std::set<Var> &vars) const override;
 
     void pretty_text(std::ostream &out) const override;
 
@@ -151,7 +158,7 @@ public:
 
     Term *simplify() override;
 
-    std::set<Var> getVariables() const override;
+    void getVariables(std::set<Var> &vars) const override;
 
     void pretty_text(std::ostream &out) const override;
 
@@ -170,6 +177,8 @@ public:
     Exp(Term *base, const Term &exponent);
     Exp(Term *base, Term *exponent);
 
+    virtual ~Exp();
+
     double eval(const std::vector<double> &x) const override;
 
     Term *derivative(Var x) const override;
@@ -178,7 +187,7 @@ public:
 
     Term *simplify() override;
 
-    std::set<Var> getVariables() const override;
+    void getVariables(std::set<Var> &vars) const override;
 
     void pretty_text(std::ostream &out) const override;
 
@@ -197,6 +206,8 @@ public:
     Log(double base, Term *arg);
     Log(double base, const Term &arg);
 
+    virtual ~Log();
+
     double eval(const std::vector<double> &x) const override;
 
     Term *derivative(Var x) const override;
@@ -205,7 +216,7 @@ public:
 
     Term *simplify() override;
 
-    std::set<Var> getVariables() const override;
+    void getVariables(std::set<Var> &vars) const override;
 
     void pretty_text(std::ostream &out) const override;
 
@@ -221,6 +232,8 @@ public:
     Sin(Term *arg);
     Sin(const Term &arg);
 
+    virtual ~Sin();
+
     double eval(const std::vector<double> &x) const override;
 
     Term *derivative(Var x) const override;
@@ -229,7 +242,7 @@ public:
 
     Term *simplify() override;
 
-    std::set<Var> getVariables() const override;
+    void getVariables(std::set<Var> &vars) const override;
 
     void pretty_text(std::ostream &out) const override;
 
@@ -244,6 +257,8 @@ public:
     Cos(Term *arg);
     Cos(const Term &arg);
 
+    virtual ~Cos();
+
     double eval(const std::vector<double> &x) const override;
 
     Term *derivative(Var x) const override;
@@ -252,7 +267,7 @@ public:
 
     Term *simplify() override;
 
-    std::set<Var> getVariables() const override;
+    void getVariables(std::set<Var> &vars) const override;
 
     void pretty_text(std::ostream &out) const override;
 
@@ -267,6 +282,8 @@ public:
     Tan(Term *arg);
     Tan(const Term &arg);
 
+    virtual ~Tan();
+
     double eval(const std::vector<double> &x) const override;
 
     Term *derivative(Var x) const override;
@@ -275,7 +292,7 @@ public:
 
     Term *simplify() override;
 
-    std::set<Var> getVariables() const override;
+    void getVariables(std::set<Var> &vars) const override;
 
     void pretty_text(std::ostream &out) const override;
 
@@ -290,6 +307,8 @@ public:
     E(Term *arg);
     E(const Term &arg);
 
+    virtual ~E();
+
     double eval(const std::vector<double> &x) const override;
 
     Term *derivative(Var x) const override;
@@ -298,7 +317,7 @@ public:
 
     Term *simplify() override;
 
-    std::set<Var> getVariables() const override;
+    void getVariables(std::set<Var> &vars) const override;
 
     void pretty_text(std::ostream &out) const override;
 

@@ -53,6 +53,9 @@ Plus::Plus(Term *lhs, Term *rhs)
 
 Plus::~Plus()
 {
+    for(auto &term : terms) {
+        delete term;
+    }
 }
 
 void Plus::add(const Term &term)
@@ -169,17 +172,10 @@ Term *Plus::simplify()
     return this;
 }
 
-std::set<Var> Plus::getVariables() const {
-    auto vars = std::set<Var>();
-
+void Plus::getVariables(std::set<Var> &vars) const {
     for(auto &term : terms) {
-        auto termVars = term->getVariables();
-        for(auto &termVar : termVars) {
-            vars.insert(termVar);
-        }
+        term->getVariables(vars);
     }
-
-    return vars;
 }
 
 void Plus::pretty_text(std::ostream &out) const
@@ -225,6 +221,9 @@ Mul::Mul(Term *lhs, Term *rhs)
 
 Mul::~Mul()
 {
+    for(auto &term : terms) {
+        delete term;
+    }
 }
 
 void Mul::add(const Term &term)
@@ -334,7 +333,11 @@ Term *Mul::multiply_by_plus() {
                 result->add(temp);
             }
 
-            return result->simplify();
+            auto temp = result->simplify();
+            if(temp != result) {
+                delete result;
+            }
+            return temp;
         }
     }
 
@@ -421,16 +424,20 @@ Term *Mul::simplify()
                         } else {
                             replacementExponent->add(new Const(1.0));
                         }
-                        delete terms.at(j); // free memory
+                        delete terms.at(j); // free memory of the second term
                         terms.erase(terms.begin() + j);
                     }
                 }
             }
 
             auto replacement = new Exp(var0->clone(), replacementExponent); // MUST be done before the next call
-            //delete terms.at(i); // free memory (This causes segfault!)
+            delete terms.at(i); // free memory of the first term (note: this line has caused segfaults earlier, and the reason has not been found, so be careful!)
 
-            terms.at(i) = replacement->simplify();
+            auto temp = replacement->simplify();
+            if(temp != replacement) {
+                delete replacement;
+            }
+            terms.at(i) = temp;
         }
     }
 
@@ -439,8 +446,9 @@ Term *Mul::simplify()
         return new Const(1.0);
 
     } else if(terms.size() == 1) {
-        auto temp = terms.at(0)->clone();
-        return temp;
+        // Return clone because the term will be deleted when
+        // this is deleted
+        return terms.at(0)->clone();
     }
 
     auto temp = multiply_by_plus();
@@ -451,17 +459,10 @@ Term *Mul::simplify()
     return this;
 }
 
-std::set<Var> Mul::getVariables() const {
-    auto vars = std::set<Var>();
-
+void Mul::getVariables(std::set<Var> &vars) const {
     for(auto &term : terms) {
-        auto termVars = term->getVariables();
-        for(auto &termVar : termVars) {
-            vars.insert(termVar);
-        }
+        term->getVariables(vars);
     }
-
-    return vars;
 }
 
 void Mul::pretty_text(std::ostream &out) const
@@ -484,9 +485,26 @@ Var::Var(int varNum)
 }
 
 Var::Var(int varNum, const char *name)
-    : varNum(varNum),
-      name(name)
+        : varNum(varNum),
+          name(strdup(name))
 {
+}
+
+Var::Var(const Var &var)
+        : Var(var.varNum, var.name)
+{
+}
+
+Var &Var::operator=(Var &&other)
+{
+    name = std::move(other.name);
+    other.name = nullptr;
+    return *this;
+}
+
+Var::~Var()
+{
+    free((void *) name);
 }
 
 double Var::eval(const std::vector<double> &x) const
@@ -507,7 +525,7 @@ Term *Var::derivative(Var x) const
 
 Term *Var::clone() const
 {
-    return new Var(varNum, name); // TODO: Copy name?
+    return new Var(varNum, name);
 }
 
 Term *Var::simplify()
@@ -515,10 +533,8 @@ Term *Var::simplify()
     return this;
 }
 
-std::set<Var> Var::getVariables() const {
-    auto var = std::set<Var>();
-    var.insert(*this);
-    return var;
+void Var::getVariables(std::set<Var> &vars) const {
+    vars.insert(*this);
 }
 
 void Var::pretty_text(std::ostream &out) const
@@ -559,8 +575,8 @@ Term *Const::simplify()
     return this;
 }
 
-std::set<Var> Const::getVariables() const {
-    return std::set<Var>();
+void Const::getVariables(std::set<Var> &vars) const
+{
 }
 
 void Const::pretty_text(std::ostream &out) const
@@ -592,6 +608,12 @@ Exp::Exp(Term *base, Term *exponent)
     : base(base),
       exponent(exponent)
 {
+}
+
+Exp::~Exp()
+{
+    delete base;
+    delete exponent;
 }
 
 double Exp::eval(const std::vector<double> &x) const
@@ -675,19 +697,9 @@ Term *Exp::simplify()
     return this;
 }
 
-std::set<Var> Exp::getVariables() const {
-    auto vars = std::set<Var>();
-
-    auto termVars = base->getVariables();
-    for(auto &termVar : termVars) {
-        vars.insert(termVar);
-    }
-    termVars = exponent->getVariables();
-    for(auto &termVar : termVars) {
-        vars.insert(termVar);
-    }
-
-    return vars;
+void Exp::getVariables(std::set<Var> &vars) const {
+    base->getVariables(vars);
+    exponent->getVariables(vars);
 }
 
 void Exp::pretty_text(std::ostream &out) const
@@ -716,6 +728,11 @@ Log::Log(double base, Term *arg)
 Log::Log(double base, const Term &arg)
         : Log(base, arg.clone())
 {
+}
+
+Log::~Log()
+{
+    delete arg;
 }
 
 double Log::eval(const std::vector<double> &x) const
@@ -757,15 +774,8 @@ Term *Log::simplify()
     return this;
 }
 
-std::set<Var> Log::getVariables() const {
-    auto vars = std::set<Var>();
-
-    auto termVars = arg->getVariables();
-    for(auto &termVar : termVars) {
-        vars.insert(termVar);
-    }
-
-    return vars;
+void Log::getVariables(std::set<Var> &vars) const {
+    arg->getVariables(vars);
 }
 
 void Log::pretty_text(std::ostream &out) const
@@ -787,6 +797,11 @@ Sin::Sin(Term *arg)
 Sin::Sin(const Term &arg)
         : Sin(arg.clone())
 {
+}
+
+Sin::~Sin()
+{
+    delete arg;
 }
 
 double Sin::eval(const std::vector<double> &x) const
@@ -816,15 +831,8 @@ Term *Sin::simplify()
     return this;
 }
 
-std::set<Var> Sin::getVariables() const {
-    auto vars = std::set<Var>();
-
-    auto termVars = arg->getVariables();
-    for(auto &termVar : termVars) {
-        vars.insert(termVar);
-    }
-
-    return vars;
+void Sin::getVariables(std::set<Var> &vars) const {
+    arg->getVariables(vars);
 }
 
 void Sin::pretty_text(std::ostream &out) const
@@ -846,6 +854,11 @@ Cos::Cos(Term *arg)
 Cos::Cos(const Term &arg)
         : Cos(arg.clone())
 {
+}
+
+Cos::~Cos()
+{
+    delete arg;
 }
 
 double Cos::eval(const std::vector<double> &x) const
@@ -877,15 +890,8 @@ Term *Cos::simplify()
     return this;
 }
 
-std::set<Var> Cos::getVariables() const {
-    auto vars = std::set<Var>();
-
-    auto termVars = arg->getVariables();
-    for(auto &termVar : termVars) {
-        vars.insert(termVar);
-    }
-
-    return vars;
+void Cos::getVariables(std::set<Var> &vars) const {
+    arg->getVariables(vars);
 }
 
 void Cos::pretty_text(std::ostream &out) const
@@ -907,6 +913,11 @@ Tan::Tan(Term *arg)
 Tan::Tan(const Term &arg)
         : Tan(arg.clone())
 {
+}
+
+Tan::~Tan()
+{
+    delete arg;
 }
 
 double Tan::eval(const std::vector<double> &x) const
@@ -940,15 +951,8 @@ Term *Tan::simplify()
     return this;
 }
 
-std::set<Var> Tan::getVariables() const {
-    auto vars = std::set<Var>();
-
-    auto termVars = arg->getVariables();
-    for(auto &termVar : termVars) {
-        vars.insert(termVar);
-    }
-
-    return vars;
+void Tan::getVariables(std::set<Var> &vars) const {
+    arg->getVariables(vars);
 }
 
 void Tan::pretty_text(std::ostream &out) const
@@ -970,6 +974,11 @@ E::E(Term *arg)
 E::E(const Term &arg)
         : E(arg.clone())
 {
+}
+
+E::~E()
+{
+    delete arg;
 }
 
 double E::eval(const std::vector<double> &x) const
@@ -999,15 +1008,8 @@ Term *E::simplify()
     return this;
 }
 
-std::set<Var> E::getVariables() const {
-    auto vars = std::set<Var>();
-
-    auto termVars = arg->getVariables();
-    for(auto &termVar : termVars) {
-        vars.insert(termVar);
-    }
-
-    return vars;
+void E::getVariables(std::set<Var> &vars) const {
+    arg->getVariables(vars);
 }
 
 void E::pretty_text(std::ostream &out) const
