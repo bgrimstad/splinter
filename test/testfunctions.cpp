@@ -81,3 +81,11 @@ void setupTestFunctions() {
     testFunctions.at(3).push_back(new TermFunction(f_3_2));
     testFunctions.at(3).push_back(new TermFunction(f_3_3));
 }
+
+void tearDownTestFunctions() {
+    for(auto &vec : testFunctions) {
+        for(auto &term : vec) {
+            delete term;
+        }
+    }
+}

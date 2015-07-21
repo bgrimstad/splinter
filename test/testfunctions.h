@@ -16,4 +16,6 @@ extern std::vector<std::vector<TermFunction *>> testFunctions;
 
 void setupTestFunctions();
 
+void tearDownTestFunctions();
+
 #endif // SPLINTER_TESTFUNCTIONS_H
