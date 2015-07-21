@@ -22,10 +22,14 @@ TermFunction::TermFunction(Term *func)
 #endif
 
     // Gather variables before simplification so we don't lose the number
-    // of variables. If a func: f = 0*x + 0*y + 13 is passed in,
+    // of variables. If a func: f = 0*x + y + 13 is passed in,
     // we still want it to be treated as a function of two variables, not one.
     gatherVariables();
-    f = f->simplify();
+    auto temp = f->simplify();
+    if(temp != f) {
+        delete f;
+    }
+    f = temp;
     calculateJacobian();
     calculateHessian();
 }
@@ -35,12 +39,28 @@ TermFunction::TermFunction(Term &func)
 {
 }
 
+TermFunction::~TermFunction()
+{
+    delete f;
+    for(auto &df : jac) {
+        delete df;
+    }
+    for(auto &ddfvec : hes) {
+        for(auto &ddf : ddfvec) {
+            delete ddf;
+        }
+    }
+}
+
 void TermFunction::gatherVariables()
 {
-    auto vars = f->getVariables();
-    for(auto &var : vars) {
+    std::set<Var> temp;
+    f->getVariables(temp);
+
+    for(auto &var : temp) {
         variables.push_back(var);
     }
+
     sort(variables.begin(), variables.end());
     numVariables = variables.size();
 
@@ -100,6 +120,9 @@ void TermFunction::calculateJacobian()
 #endif // ifndef NDEBUG
 
         auto simplified_dfdx = dfdx->simplify();
+        if(simplified_dfdx != dfdx) {
+            delete dfdx;
+        }
 
 #ifndef NDEBUG
         std::cout << "simplified df/d";
@@ -137,6 +160,9 @@ void TermFunction::calculateHessian()
 #endif // ifndef NDEBUG
 
             auto simplified_ddf = ddf->simplify();
+            if(simplified_ddf != ddf) {
+                delete ddf;
+            }
 
 #ifndef NDEBUG
             std::cout << "simplified d^2f/d";

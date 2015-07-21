@@ -25,6 +25,8 @@ public:
     TermFunction(Term *func);
     TermFunction(Term &func);
 
+    virtual ~TermFunction();
+
     double eval(DenseVector x) const override;
     DenseMatrix evalJacobian(DenseVector x) const override;
     DenseMatrix evalHessian(DenseVector x) const override;
