@@ -16,25 +16,31 @@ using namespace SPLINTER;
 TermFunction::TermFunction(Term *func)
         : f(func)
 {
-#ifndef NDEBUG
-    std::cout << "f: ";
-    f->pretty_text(std::cout); std::cout << std::endl;
-#endif
-
     // Gather variables before simplification so we don't lose the number
     // of variables. If a func: f = 0*x + y + 13 is passed in,
     // we still want it to be treated as a function of two variables, not one.
     gatherVariables();
+
     auto temp = f->simplify();
     if(temp != f) {
         delete f;
+        f = temp;
     }
-    f = temp;
+
     calculateJacobian();
     calculateHessian();
+
+#ifndef NDEBUG
+    printAll();
+#endif // ifndef NDEBUG
 }
 
 TermFunction::TermFunction(Term &func)
+        : TermFunction(func.clone())
+{
+}
+
+TermFunction::TermFunction(Term &&func)
         : TermFunction(func.clone())
 {
 }
@@ -111,33 +117,17 @@ void TermFunction::calculateJacobian()
         auto dx = variables.at(i);
         auto dfdx = f->derivative(dx);
 
-#ifndef NDEBUG
-        std::cout << "df/d";
-        dx.pretty_text(std::cout);
-        std::cout << ": ";
-        dfdx->pretty_text(std::cout);
-        std::cout << std::endl;
-#endif // ifndef NDEBUG
-
         auto simplified_dfdx = dfdx->simplify();
         if(simplified_dfdx != dfdx) {
             delete dfdx;
         }
 
-#ifndef NDEBUG
-        std::cout << "simplified df/d";
-        dx.pretty_text(std::cout);
-        std::cout << ": ";
-
-        simplified_dfdx->pretty_text(std::cout);
-        std::cout << std::endl;
-        std::cout << std::endl;
-#endif // ifndef NDEBUG
-
         jac.push_back(simplified_dfdx);
     }
 }
 
+// TODO: Take advantage of the fact that the Hessian is symmetric
+// over the diagonal. If we do this we can skip almost half the differentations
 void TermFunction::calculateHessian()
 {
     hes.clear();
@@ -149,37 +139,46 @@ void TermFunction::calculateHessian()
             Var dx = variables.at(j);
             auto ddf = jac.at(i)->derivative(dx);
 
-#ifndef NDEBUG
-            std::cout << "d^2f/d";
-            variables.at(i).pretty_text(std::cout);
-            std::cout << "d";
-            dx.pretty_text(std::cout);
-            std::cout << ": ";
-            ddf->pretty_text(std::cout);
-            std::cout << std::endl;
-#endif // ifndef NDEBUG
-
             auto simplified_ddf = ddf->simplify();
             if(simplified_ddf != ddf) {
                 delete ddf;
             }
 
-#ifndef NDEBUG
-            std::cout << "simplified d^2f/d";
+            hes.at(i).push_back(simplified_ddf);
+        }
+    }
+}
+
+void TermFunction::printAll() const
+{
+    std::cout << "Function: ";
+    f->pretty_text(std::cout);
+    std::cout << std::endl;
+
+    std::cout << "Jacobian: " << std::endl;
+    for(size_t i = 0; i < numVariables; i++) {
+        std::cout << "df/d";
+        variables.at(i).pretty_text(std::cout);
+        std::cout << ": ";
+        jac.at(i)->pretty_text(std::cout);
+        std::cout << std::endl;
+    }
+
+    std::cout << "Hessian: " << std::endl;
+    for(size_t i = 0; i < numVariables; i++) {
+        for(size_t j = 0; j < numVariables; j++) {
+            std::cout << "d^2f/d";
             variables.at(i).pretty_text(std::cout);
             if(i == j) {
                 std::cout << "^2";
             } else {
                 std::cout << "d";
-                dx.pretty_text(std::cout);
+                variables.at(j).pretty_text(std::cout);
             }
             std::cout << ": ";
-            simplified_ddf->pretty_text(std::cout);
+            hes.at(i).at(j)->pretty_text(std::cout);
             std::cout << std::endl;
-            std::cout << std::endl;
-#endif // ifndef NDEBUG
-
-            hes.at(i).push_back(simplified_ddf);
         }
     }
+    std::cout << std::endl;
 }

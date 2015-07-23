@@ -24,6 +24,7 @@ class TermFunction : public Function
 public:
     TermFunction(Term *func);
     TermFunction(Term &func);
+    TermFunction(Term &&func);
 
     virtual ~TermFunction();
 
@@ -36,6 +37,8 @@ public:
     inline std::vector<std::vector<Term *>> getDDF() const { return hes; }
 
     inline unsigned int getNumVariables() const override { return numVariables; }
+
+    void printAll() const;
 
 private:
     unsigned int numVariables;

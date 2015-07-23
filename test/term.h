@@ -31,30 +31,53 @@ public:
 
     virtual Term *clone() const = 0;
 
-    virtual Term *simplify() = 0;
+    Term *simplify();
+
+    virtual Term *concatenate() = 0;
+
+    virtual Term *flatten() = 0;
 
     virtual void getVariables(std::set<Var> &vars) const = 0;
 
-    bool isConstant() const;
+    virtual inline bool isConstant() const { return false; }
+
+    virtual inline double getConstValue() const { return 0.0; }
+
+    virtual inline bool isConstDegree() const { return true; }
+
+    virtual inline double getConstDegree() const { return 1.0; }
+
+    virtual inline void sort() {}
 
     virtual void pretty_text(std::ostream &out) const = 0;
 
     virtual ~Term();
 };
 
+class MultiTerm : public Term
+{
+public:
+    virtual ~MultiTerm();
 
-class Plus : public Term
+    //void add(Term *term);
+    void getVariables(std::set<Var> &vars) const override;
+    Term *concatenate() override;
+    Term *flatten() override;
+    bool isConstDegree() const override;
+    inline const std::vector<Term *> &getTerms() const { return terms; }
+
+protected:
+    std::vector<Term *> terms;
+};
+
+class Plus : public MultiTerm
 {
 public:
     Plus();
-    Plus(const Term &lhs, const Term &rhs);
-    Plus(const Term &lhs, Term *rhs);
-    Plus(Term *lhs, const Term &rhs);
     Plus(Term *lhs, Term *rhs);
 
     virtual ~Plus();
 
-    void add(const Term &term);
     void add(Term *term);
 
     double eval(const std::vector<double> &x) const override;
@@ -63,49 +86,59 @@ public:
 
     Term *clone() const override;
 
-    Term *simplify() override;
+    void sort() override;
 
-    void getVariables(std::set<Var> &vars) const override;
+    Term *concatenate() override;
+
+    Term *flatten() override;
+
+    double getConstDegree() const override;
 
     void pretty_text(std::ostream &out) const override;
 
-    inline const std::vector<Term *> &getTerms() const { return terms; }
-
 private:
-    std::vector<Term *> terms;
-
     void steal_children();
 };
 
 
-class Mul : public Term
+class Mul : public MultiTerm
 {
 public:
     Mul();
-    Mul(const Term &lhs, const Term &rhs);
-    Mul(const Term &lhs, Term *rhs);
-    Mul(Term *lhs, const Term &rhs);
+    Mul(double coefficient);
     Mul(Term *lhs, Term *rhs);
 
     virtual ~Mul();
 
-    void add(const Term &term);
     void add(Term *term);
+
+    inline void setCoefficient(double newCoefficient) { coefficient = newCoefficient; }
+    inline double getCoefficient() { return coefficient; }
+
+    void multiply(double coefficient);
 
     double eval(const std::vector<double> &x) const override;
 
     Term *derivative(Var x) const override;
 
+    void sort() override;
+
     Term *clone() const override;
 
-    Term *simplify() override;
+    Term *concatenate() override;
 
-    void getVariables(std::set<Var> &vars) const override;
+    Term *flatten() override;
+
+    bool isConstant() const override;
+
+    inline double getConstValue() const override { return coefficient; }
+
+    double getConstDegree() const override;
 
     void pretty_text(std::ostream &out) const override;
 
 private:
-    std::vector<Term *> terms;
+    double coefficient;
 
     void steal_children();
     Term *multiply_by_plus();
@@ -131,7 +164,9 @@ public:
 
     Term *clone() const override;
 
-    Term *simplify() override;
+    inline Term *concatenate() { return this; }
+
+    inline Term *flatten() { return this; }
 
     void getVariables(std::set<Var> &vars) const override;
 
@@ -156,9 +191,17 @@ public:
 
     Term *clone() const override;
 
-    Term *simplify() override;
+    inline Term *concatenate() { return this; }
 
-    void getVariables(std::set<Var> &vars) const override;
+    inline Term *flatten() { return this; }
+
+    inline bool isConstant() const override { return true; }
+
+    inline double getConstValue() const override { return val; }
+
+    inline double getConstDegree() const override { return 0.0; }
+
+    void getVariables(std::set<Var> &vars) const override {}
 
     void pretty_text(std::ostream &out) const override;
 
@@ -168,13 +211,9 @@ private:
     double val;
 };
 
-
 class Exp : public Term
 {
 public:
-    Exp(const Term &base, const Term &exponent);
-    Exp(const Term &base, Term *exponent);
-    Exp(Term *base, const Term &exponent);
     Exp(Term *base, Term *exponent);
 
     virtual ~Exp();
@@ -185,14 +224,24 @@ public:
 
     Term *clone() const override;
 
-    Term *simplify() override;
+    Term *concatenate() override;
+
+    Term *flatten() override;
 
     void getVariables(std::set<Var> &vars) const override;
+
+    bool isConstDegree() const { return exponent->isConstant(); }
+
+    double getConstDegree() const { return exponent->getConstValue(); }
+
+    void sort() override;
 
     void pretty_text(std::ostream &out) const override;
 
     inline Term *getBase() { return base; }
     inline Term *getExponent() { return exponent; }
+    inline void setExponent(Term *newExponent) { exponent = newExponent; }
+    inline void setBase(Term *newBase) { base = newBase; }
 
 private:
     Term *base;
@@ -200,7 +249,24 @@ private:
 };
 
 
-class Log : public Term
+class FuncTerm : public Term
+{
+public:
+    FuncTerm(Term *arg);
+    virtual ~FuncTerm();
+
+    Term *concatenate() override;
+    inline Term *flatten() override { arg->flatten(); return this; }
+    void getVariables(std::set<Var> &vars) const override;
+    inline void sort() override { arg->sort(); }
+    inline Term *getArg() { return arg; }
+
+protected:
+    Term *arg;
+};
+
+
+class Log : public FuncTerm
 {
 public:
     Log(double base, Term *arg);
@@ -214,19 +280,16 @@ public:
 
     Term *clone() const override;
 
-    Term *simplify() override;
-
-    void getVariables(std::set<Var> &vars) const override;
-
     void pretty_text(std::ostream &out) const override;
+
+    inline double getBase() const { return base; }
 
 private:
     double base;
-    Term *arg;
 };
 
 
-class Sin : public Term
+class Sin : public FuncTerm
 {
 public:
     Sin(Term *arg);
@@ -240,18 +303,11 @@ public:
 
     Term *clone() const override;
 
-    Term *simplify() override;
-
-    void getVariables(std::set<Var> &vars) const override;
-
     void pretty_text(std::ostream &out) const override;
-
-private:
-    Term *arg;
 };
 
 
-class Cos : public Term
+class Cos : public FuncTerm
 {
 public:
     Cos(Term *arg);
@@ -265,18 +321,11 @@ public:
 
     Term *clone() const override;
 
-    Term *simplify() override;
-
-    void getVariables(std::set<Var> &vars) const override;
-
     void pretty_text(std::ostream &out) const override;
-
-private:
-    Term *arg;
 };
 
 
-class Tan : public Term
+class Tan : public FuncTerm
 {
 public:
     Tan(Term *arg);
@@ -290,18 +339,11 @@ public:
 
     Term *clone() const override;
 
-    Term *simplify() override;
-
-    void getVariables(std::set<Var> &vars) const override;
-
     void pretty_text(std::ostream &out) const override;
-
-private:
-    Term *arg;
 };
 
 
-class E : public Term
+class E : public FuncTerm
 {
 public:
     E(Term *arg);
@@ -315,16 +357,14 @@ public:
 
     Term *clone() const override;
 
-    Term *simplify() override;
-
-    void getVariables(std::set<Var> &vars) const override;
-
     void pretty_text(std::ostream &out) const override;
-
-private:
-    Term *arg;
 };
 
+bool equal(Term *lhs, Term *rhs);
+
+bool plusCompare(Term *lhs, Term *rhs);
+bool mulCompare(Term *lhs, Term *rhs);
+bool compare(Term *lhs, Term *rhs);
 
 bool operator<(const Var &lhs, const Var &rhs);
 std::ostream &operator<<(std::ostream &out, const Term &term);

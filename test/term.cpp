@@ -12,36 +12,113 @@
 #include <testingutilities.h>
 
 
-bool Term::isConstant() const
-{
-    auto temp = const_cast<Term *>(this);
-    return dynamic_cast<Const *>(temp) != nullptr;
-}
-
 Term::~Term()
 {
 }
 
+Term *Term::simplify()
+{
+    auto flattened = flatten();
+//    std::cout << "Flattened: ";
+//    flattened->pretty_text(std::cout);
+//    std::cout << std::endl;
+
+    auto concatenated = flattened->concatenate();
+//    std::cout << "Concatenated: ";
+//    concatenated->pretty_text(std::cout);
+//    std::cout << std::endl;
+
+    if(concatenated != flattened && flattened != this) {
+        delete flattened;
+    }
+    return concatenated;
+}
+
+MultiTerm::~MultiTerm()
+{
+    for(auto &term : terms) {
+        delete term;
+    }
+}
+
+//void MultiTerm::add(Term *term)
+//{
+//    // Make sure all Var's are represented as Exp(Var, 1)
+//    auto var = dynamic_cast<Var *>(term);
+//    if(var != nullptr) {
+//        auto temp = new Mul();
+//        temp->add(new Exp(var, new Mul(1.0)));
+//        terms.push_back(temp);
+//    }
+//    else
+//    {
+//        auto constant = dynamic_cast<Const *>(term);
+//        if(constant != nullptr) {
+//            terms.push_back(new Mul(constant->getConstValue()));
+//        }
+//        else
+//        {
+//            auto exp = dynamic_cast<Exp *>(term);
+//            if(exp != nullptr) {
+//                auto temp = new Mul();
+//                temp->terms.push_back(exp);
+//                terms.push_back(temp);
+//            }
+//            else {
+//                terms.push_back(term);
+//            }
+//        }
+//    }
+//}
+
+void MultiTerm::getVariables(std::set<Var> &vars) const
+{
+    for(auto &term : terms) {
+        term->getVariables(vars);
+    }
+}
+
+Term *MultiTerm::concatenate()
+{
+    for(auto &term : terms) {
+        auto temp = term->concatenate();
+        if(temp != term) {
+            delete term;
+        }
+        term = temp;
+    }
+
+    return this;
+}
+
+Term *MultiTerm::flatten()
+{
+    for(auto &term : terms) {
+        auto temp = term->flatten();
+        if(temp != term) {
+            delete term;
+        }
+        term = temp;
+    }
+
+    return this;
+}
+
+bool MultiTerm::isConstDegree() const
+{
+    for(auto &term : terms) {
+        if(!term->isConstDegree()) {
+            return false;
+        }
+    }
+
+    return true;
+}
 
 /*
  * Addition: term0 + term1 + ... + termn
  */
 Plus::Plus()
-{
-}
-
-Plus::Plus(const Term &lhs, const Term &rhs)
-    : Plus(lhs.clone(), rhs.clone())
-{
-}
-
-Plus::Plus(const Term &lhs, Term *rhs)
-    : Plus(lhs.clone(), rhs)
-{
-}
-
-Plus::Plus(Term *lhs, const Term &rhs)
-    : Plus(lhs, rhs.clone())
 {
 }
 
@@ -53,18 +130,17 @@ Plus::Plus(Term *lhs, Term *rhs)
 
 Plus::~Plus()
 {
-    for(auto &term : terms) {
-        delete term;
-    }
-}
-
-void Plus::add(const Term &term)
-{
-    terms.push_back(term.clone());
 }
 
 void Plus::add(Term *term)
 {
+    auto mul = dynamic_cast<Mul *>(term);
+    auto plus = dynamic_cast<Plus *>(term);
+    if(mul == nullptr && plus == nullptr) {
+        auto temp = new Mul();
+        temp->add(term);
+        term = temp;
+    }
     terms.push_back(term);
 }
 
@@ -107,12 +183,21 @@ Term *Plus::clone() const
     return result;
 }
 
+void Plus::sort()
+{
+    for(auto &term : terms) {
+        term->sort();
+    }
+
+    std::sort(terms.begin(), terms.end(), plusCompare);
+}
+
 // Find all terms that are Plus *, and "steal" their children.
 // This can be done because x0 + (x1 + x2) = x0 + x1 + x2
 void Plus::steal_children() {
     // Store the current size. It will increase if we need to steal terms,
     // and there's no need to see if those need stealing, as that has been
-    // done in the simplify loop above.
+    // done in the concatenate loop above.
     size_t size = terms.size();
     for(int i = size - 1; i >= 0; --i) {
         // See if the term is a Plus, and if so, we "steal" all its children
@@ -130,52 +215,92 @@ void Plus::steal_children() {
     }
 }
 
-Term *Plus::simplify()
+Term *Plus::concatenate()
 {
-    for(auto &term : terms) {
-        auto temp = term->simplify();
-        if(temp != term) {
-            delete term;
+    MultiTerm::concatenate();
+
+    sort();
+
+//    std::cout << "Before Plus::concatenate: ";
+//    pretty_text(std::cout);
+//    std::cout << std::endl;
+//    std::cout << std::endl;
+
+    int term_size = terms.size();
+    for(int i = 0, new_i = 0; i < term_size; ++i) {
+        new_i = i;
+        // All children of a Plus are of type Mul if the Plus is in proper form
+        auto cur = dynamic_cast<Mul *>(terms.at(i));
+
+        // See if cur and next can be summed:
+        // cur == 1.1*y^1*x^2
+        // next == -0.3*y^1*x^2
+        // new cur = 0.8*y^1*x^2
+        if(i+1 < term_size) {
+            auto next = dynamic_cast<Mul *>(terms.at(i+1));
+
+            if(equal(cur, next)) {
+                auto newCoefficient = cur->getCoefficient() + next->getCoefficient();
+                cur->setCoefficient(newCoefficient);
+
+                delete next;
+                terms.erase(terms.begin() + i+1);
+                --term_size;
+                new_i = i-1;
+            }
         }
-        term = temp;
-    }
 
-    steal_children();
-
-    size_t size = terms.size();
-    double totConstVal = 0.0;
-    for(int i = size - 1; i >= 0; --i) {
-        auto constant = dynamic_cast<Const *>(terms.at(i));
-        if(constant != nullptr) {
-            totConstVal += constant->getVal();
-
-            auto term = terms.at(i);
+        // Remove terms that have a coefficient of 0
+        if(cur->getCoefficient() == 0.0) {
+            delete cur;
             terms.erase(terms.begin() + i);
-            delete term;
+            --term_size;
+            new_i = i-1;
         }
+
+        i = new_i;
     }
 
-    if(totConstVal != 0.0) {
-        add(new Const(totConstVal));
+//    std::cout << "After Plus::concatenate: ";
+//    pretty_text(std::cout);
+//    std::cout << std::endl;
+//    std::cout << std::endl;
+//    std::cout << std::endl;
+
+    if(terms.size() == 1) {
+        auto temp = terms.at(0);
+        terms.at(0) = nullptr;
+        return temp;
     }
 
-    // TODO: Sort terms, then concatenate as possible
-
-    // If this is empty it means all terms summed to 0.0
     if(terms.size() == 0) {
-        return new Const(0.0);
-
-    } else if(terms.size() == 1) {
-        return terms.at(0)->clone();
+        return new Mul(0.0);
     }
 
     return this;
 }
 
-void Plus::getVariables(std::set<Var> &vars) const {
+Term *Plus::flatten()
+{
+    MultiTerm::flatten();
+
+    steal_children();
+
+    return this;
+}
+
+double Plus::getConstDegree() const
+{
+    double highest = 0.0;
     for(auto &term : terms) {
-        term->getVariables(vars);
+        if(term->isConstDegree()) {
+            if(term->getConstDegree() > highest) {
+                highest = term->getConstDegree();
+            }
+        }
     }
+
+    return highest;
 }
 
 void Plus::pretty_text(std::ostream &out) const
@@ -192,28 +317,20 @@ void Plus::pretty_text(std::ostream &out) const
 
 
 /*
- * Multiplication: term0 * term1 * ... * termn
+ * Multiplication: coefficient * term0 * term1 * ... * termn
  */
 Mul::Mul()
+    : Mul(1.0)
 {
 }
 
-Mul::Mul(const Term &lhs, const Term &rhs)
-    : Mul(lhs.clone(), rhs.clone())
-{
-}
-
-Mul::Mul(const Term &lhs, Term *rhs)
-    : Mul(lhs.clone(), rhs)
-{
-}
-
-Mul::Mul(Term *lhs, const Term &rhs)
-    : Mul(lhs, rhs.clone())
+Mul::Mul(double coefficient)
+    : coefficient(coefficient)
 {
 }
 
 Mul::Mul(Term *lhs, Term *rhs)
+    : coefficient(1.0)
 {
     add(lhs);
     add(rhs);
@@ -221,19 +338,22 @@ Mul::Mul(Term *lhs, Term *rhs)
 
 Mul::~Mul()
 {
-    for(auto &term : terms) {
-        delete term;
-    }
-}
-
-void Mul::add(const Term &term)
-{
-    terms.push_back(term.clone());
 }
 
 void Mul::add(Term *term)
 {
+    auto exp = dynamic_cast<Exp *>(term);
+    auto mul = dynamic_cast<Mul *>(term);
+    auto plus = dynamic_cast<Plus *>(term);
+    if(exp == nullptr && mul == nullptr && plus == nullptr) {
+        term = new Exp(term, new Mul(1.0));
+    }
     terms.push_back(term);
+}
+
+void Mul::multiply(double coefficient)
+{
+    this->coefficient *= coefficient;
 }
 
 /* TODO: Maybe better to evaluate in a tree-like fashion so
@@ -247,7 +367,7 @@ void Mul::add(Term *term)
  */
 double Mul::eval(const std::vector<double> &x) const
 {
-    auto tot = 1.0;
+    auto tot = coefficient;
     for(auto &term : terms) {
         tot *= term->eval(x);
     }
@@ -256,10 +376,14 @@ double Mul::eval(const std::vector<double> &x) const
 
 Term *Mul::derivative(Var x) const
 {
+    if(terms.size() == 0) {
+        return new Mul(0.0);
+    }
+
     Plus *result = new Plus();
     for(int i = 0; i < terms.size(); ++i) {
 
-        Mul *temp = new Mul();
+        Mul *temp = new Mul(coefficient);
         for(int j = 0; j < terms.size(); ++j) {
             if(i == j) {
                 temp->add(terms.at(j)->derivative(x));
@@ -276,7 +400,7 @@ Term *Mul::derivative(Var x) const
 
 Term *Mul::clone() const
 {
-    auto result = new Mul();
+    auto result = new Mul(coefficient);
     result->terms.reserve(terms.size());
     for(auto &term : terms) {
         result->terms.push_back(term->clone());
@@ -284,17 +408,27 @@ Term *Mul::clone() const
     return result;
 }
 
+void Mul::sort()
+{
+    for(auto &term : terms) {
+        term->sort();
+    }
+
+    std::sort(terms.begin(), terms.end(), mulCompare);
+}
+
 // Find all terms that are Mul *, and "steal" their children.
 // This can be done because x0 * (x1 * x2) = x0 * x1 * x2
 void Mul::steal_children() {
     // Store the current size. It will increase if we need to steal terms,
     // and there's no need to see if those need stealing, as that has been
-    // done in the simplify loop above.
+    // done in the concatenate loop above.
     size_t size = terms.size();
     for(int i = size - 1; i >= 0; --i) {
         // See if the term is a Mul, and if so, we "steal" all its children
         auto mul = dynamic_cast<Mul *>(terms.at(i));
         if(mul != nullptr) {
+            this->coefficient *= mul->coefficient;
             // Resize now for efficiency
             terms.erase(terms.begin() + i); // Erase the Mul entry
             terms.reserve(terms.size() + mul->terms.size());
@@ -312,6 +446,9 @@ void Mul::steal_children() {
  * as the previous Plus
  */
 Term *Mul::multiply_by_plus() {
+    if(terms.size() <= 0) {
+        return this;
+    }
     for(auto it = terms.end() - 1; it >= terms.begin(); --it) {
         auto term = *it;
         auto plus = dynamic_cast<Plus *>(term);
@@ -333,7 +470,10 @@ Term *Mul::multiply_by_plus() {
                 result->add(temp);
             }
 
-            auto temp = result->simplify();
+            // Delete the Plus that we copied from
+            delete plus;
+
+            auto temp = result->flatten();
             if(temp != result) {
                 delete result;
             }
@@ -344,134 +484,93 @@ Term *Mul::multiply_by_plus() {
     return this;
 }
 
-Term *Mul::simplify()
+Term *Mul::concatenate()
 {
-    /* TODO:
-     * look for Plus terms to multiply by,
-     * concatenate identical variables
-     */
-    for(auto &term : terms) {
-        auto temp = term->simplify();
-        if(temp != term) {
-            delete term;
-        }
-        term = temp;
-    }
+    MultiTerm::concatenate();
 
+    // This must be done because when we concatenate the children,
+    // some children may be constant and replace themselves with
+    // a Mul(constantValue)
     steal_children();
 
-    /* TODO:
-     * Sort and concatenate */
+    sort();
 
-    /* Multiply all the constants and see what we end up with */
-    size_t size = terms.size();
-    double totConstVal = 1.0;
-    for(int i = size - 1; i >= 0; --i) {
-        auto constant = dynamic_cast<Const *>(terms.at(i));
-        if(constant != nullptr) {
-            totConstVal *= constant->getVal();
+//    std::cout << "Before Mul::concatenate: ";
+//    pretty_text(std::cout);
+//    std::cout << std::endl;
 
-            auto term = terms.at(i);
-            terms.erase(terms.begin() + i);
-            delete term;
+    /*
+     * Concatenate
+     */
+    int term_size = terms.size() - 1;
+    for(int i = 0; i < term_size; ++i) {
+        // All children of a Mul should be of type Exp if the Mul is in proper form
+        auto cur = dynamic_cast<Exp *>(terms.at(i));
+        auto next = dynamic_cast<Exp *>(terms.at(i+1));
+        if(equal(cur->getBase(), next->getBase())) {
+            auto newExponent = new Plus();
+            newExponent->add(cur->getExponent());
+            newExponent->add(next->getExponent());
+            auto temp = newExponent->simplify();
+            if(temp != newExponent) {
+                delete newExponent;
+            }
+            cur->setExponent(temp);
+
+
+            // Set to nullptr to avoid deleting
+            next->setExponent(nullptr);
+            delete next;
+            terms.erase(terms.begin() + i+1);
+
+            if(cur->isConstDegree() && cur->getConstDegree() == 0.0) {
+                delete cur;
+                terms.erase(terms.begin() + i);
+                --term_size;
+            }
+            --term_size;
+            --i;
         }
     }
 
-    if(totConstVal == 0.0) {
-        return new Const(0.0);
-    }
-    if(totConstVal != 1.0) {
-        terms.insert(terms.begin(), new Const(totConstVal));
-    }
-
-
-    for(int i = 0; i < terms.size(); ++i) {
-        Var *var0 = dynamic_cast<Var *>(terms.at(i));
-        Term *exp0 = nullptr;
-
-        if(var0 == nullptr) {
-            auto exp = dynamic_cast<Exp *>(terms.at(i));
-            if(exp != nullptr) {
-                var0 = dynamic_cast<Var *>(exp->getBase());
-                exp0 = exp->getExponent();
-            }
-        }
-
-        if(var0 != nullptr) {
-            auto replacementExponent = new Plus();
-            if(exp0 != nullptr) {
-                replacementExponent->add(exp0->clone());
-            } else {
-                replacementExponent->add(new Const(1.0));
-            }
-
-            for(int j = i+1; j < terms.size(); ++j) {
-                Var *var1 = dynamic_cast<Var *>(terms.at(j));
-                Term *exp1 = nullptr;
-
-                if(var1 == nullptr) {
-                    auto exp = dynamic_cast<Exp *>(terms.at(j));
-                    if(exp != nullptr) {
-                        var1 = dynamic_cast<Var *>(exp->getBase());
-                        exp1 = exp->getExponent();
-                    }
-                }
-
-                if(var1 != nullptr) {
-                    if(var0->getVarNum() == var1->getVarNum()) {
-                        if(exp1 != nullptr) {
-                            replacementExponent->add(exp1->clone());
-                        } else {
-                            replacementExponent->add(new Const(1.0));
-                        }
-                        delete terms.at(j); // free memory of the second term
-                        terms.erase(terms.begin() + j);
-                    }
-                }
-            }
-
-            auto replacement = new Exp(var0->clone(), replacementExponent); // MUST be done before the next call
-            delete terms.at(i); // free memory of the first term (note: this line has caused segfaults earlier, and the reason has not been found, so be careful!)
-
-            auto temp = replacement->simplify();
-            if(temp != replacement) {
-                delete replacement;
-            }
-            terms.at(i) = temp;
-        }
-    }
-
-    // If this is empty it means all terms was a constant with value 1.0
-    if(terms.size() == 0) {
-        return new Const(1.0);
-
-    } else if(terms.size() == 1) {
-        // Return clone because the term will be deleted when
-        // this is deleted
-        return terms.at(0)->clone();
-    }
-
-    auto temp = multiply_by_plus();
-    if(temp != this) {
-        return temp;
-    }
+//    std::cout << "After Mul::concatenate: ";
+//    pretty_text(std::cout);
+//    std::cout << std::endl;
 
     return this;
 }
 
-void Mul::getVariables(std::set<Var> &vars) const {
+// (x+y)((x+y)*x) = (x+y)(x+y)*x
+// = x*(x+y)*x + y*(x+y)*x
+Term *Mul::flatten()
+{
+    MultiTerm::flatten();
+
+    steal_children();
+
+    return multiply_by_plus();
+}
+
+bool Mul::isConstant() const
+{
+    return terms.size() == 0;
+}
+
+double Mul::getConstDegree() const
+{
+    double degree = 0.0;
     for(auto &term : terms) {
-        term->getVariables(vars);
+        degree += term->getConstDegree();
     }
+    return degree;
 }
 
 void Mul::pretty_text(std::ostream &out) const
 {
+    out << coefficient;
     for(auto it = terms.cbegin(); it != terms.cend(); ++it) {
+        out << "*";
         (*it)->pretty_text(out);
-        if(it + 1 != terms.cend()) {
-            out << "*";
-        }
     }
 }
 
@@ -515,22 +614,17 @@ double Var::eval(const std::vector<double> &x) const
 Term *Var::derivative(Var x) const
 {
     if(x.getVarNum() == varNum) {
-        return new Const(1);
+        return new Mul(1);
     }
     else
     {
-        return new Const(0);
+        return new Mul(0);
     }
 }
 
 Term *Var::clone() const
 {
     return new Var(varNum, name);
-}
-
-Term *Var::simplify()
-{
-    return this;
 }
 
 void Var::getVariables(std::set<Var> &vars) const {
@@ -562,21 +656,12 @@ double Const::eval(const std::vector<double> &x) const
 
 Term *Const::derivative(Var x) const
 {
-    return new Const(0);
+    return new Mul(0);
 }
 
 Term *Const::clone() const
 {
     return new Const(val);
-}
-
-Term *Const::simplify()
-{
-    return this;
-}
-
-void Const::getVariables(std::set<Var> &vars) const
-{
 }
 
 void Const::pretty_text(std::ostream &out) const
@@ -589,21 +674,6 @@ void Const::pretty_text(std::ostream &out) const
  * Power: x^y
  * TODO: Rename to Pow?
  */
-Exp::Exp(const Term &base, const Term &exponent)
-    : Exp(base.clone(), exponent.clone())
-{
-}
-
-Exp::Exp(const Term &base, Term *exponent)
-    : Exp(base.clone(), exponent)
-{
-}
-
-Exp::Exp(Term *base, const Term &exponent)
-    : Exp(base, exponent.clone())
-{
-}
-
 Exp::Exp(Term *base, Term *exponent)
     : base(base),
       exponent(exponent)
@@ -624,6 +694,7 @@ double Exp::eval(const std::vector<double> &x) const
     return std::pow(baseVal, expVal);
 }
 
+// https://en.wikipedia.org/wiki/Differentiation_rules#Generalized_power_rule
 Term *Exp::derivative(Var x) const
 {
     auto f = base;
@@ -633,12 +704,13 @@ Term *Exp::derivative(Var x) const
     auto fg = this;
 
     // 1/f
-    auto one_over_f = new Exp(f->clone(), new Const(-1));
-
-    auto g_over_f = new Mul(g->clone(), one_over_f);
+    auto one_over_f = new Exp(f->clone(), new Mul(-1));
 
     // df * g/f
-    auto df_mul_g_over_f = new Mul(f->derivative(x), g_over_f);
+    auto df_mul_g_over_f = new Mul();
+    df_mul_g_over_f->add(f->derivative(x));
+    df_mul_g_over_f->add(g->clone());
+    df_mul_g_over_f->add(one_over_f);
 
     // ln(f)
     auto lnf = new Log(std::exp(1.0), f->clone());
@@ -656,42 +728,54 @@ Term *Exp::clone() const
     return new Exp(base->clone(), exponent->clone());
 }
 
-Term *Exp::simplify()
+Term *Exp::concatenate()
 {
-    auto temp = base->simplify();
+    auto temp = base->concatenate();
     if(temp != base) {
         delete base;
         base = temp;
     }
 
-    temp = exponent->simplify();
+    temp = exponent->concatenate();
     if(temp != exponent) {
         delete exponent;
         exponent = temp;
     }
 
-    auto constantBase = dynamic_cast<Const *>(base);
-    auto constantExponent = dynamic_cast<Const *>(exponent);
-    if(constantExponent != nullptr) {
-        // Both are constants, eval and return constant
-        if(constantBase != nullptr) {
+    if(base->isConstant()) {
+        // a^b
+        if(exponent->isConstant()) {
             std::vector<double> dummy;
             auto constVal = eval(dummy);
-            return new Const(constVal);
+            return new Mul(constVal);
         }
-        auto exponentVal = constantExponent->getVal();
-        if(exponentVal == 0.0) {
-            return new Const(1.0);
+
+        // 0^x
+        // Ignore the case of x == 0
+        if(base->getConstValue() == 0.0) {
+            return new Mul(0.0);
         }
-        // Don't do anything is exponentVal is 1, it will get
-        // converted from x^1 ->x -> x^1 forever
     }
-    // Handle case where base = 0, so:
-    // 0^x
-    else if(constantBase != nullptr) {
-        if(constantBase->getVal() == 0.0) {
-            return new Const(0.0);
-        }
+    // x^0
+    else if(exponent->isConstant() && exponent->getConstValue() == 0.0) {
+        return new Mul(1.0);
+    }
+
+    return this;
+}
+
+Term *Exp::flatten()
+{
+    auto temp = base->flatten();
+    if(temp != base) {
+        delete base;
+        base = temp;
+    }
+
+    temp = exponent->flatten();
+    if(temp != exponent) {
+        delete exponent;
+        exponent = temp;
     }
 
     return this;
@@ -702,9 +786,15 @@ void Exp::getVariables(std::set<Var> &vars) const {
     exponent->getVariables(vars);
 }
 
+void Exp::sort()
+{
+    base->sort();
+    exponent->sort();
+}
+
 void Exp::pretty_text(std::ostream &out) const
 {
-    if(exponent->isConstant() && dynamic_cast<Const *>(exponent)->getVal() == 1.0) {
+    if(isConstDegree() && getConstDegree() == 1.0) {
         base->pretty_text(out);
     } else {
         out << "(";
@@ -715,24 +805,55 @@ void Exp::pretty_text(std::ostream &out) const
     }
 }
 
+FuncTerm::FuncTerm(Term *arg)
+    : arg(arg)
+{
+}
+
+FuncTerm::~FuncTerm()
+{
+    delete arg;
+}
+
+Term *FuncTerm::concatenate()
+{
+    auto temp = arg->concatenate();
+    if(temp != arg) {
+        delete arg;
+        arg = temp;
+    }
+
+    if(arg->isConstant()) {
+        std::vector<double> dummy;
+        auto constantVal = eval(dummy);
+        return new Mul(constantVal);
+    }
+
+    return this;
+}
+
+void FuncTerm::getVariables(std::set<Var> &vars) const
+{
+    arg->getVariables(vars);
+}
+
 
 /*
  * Logarithm with base n: log_n(x)
  */
 Log::Log(double base, Term *arg)
         : base(base),
-          arg(arg)
+          FuncTerm(arg)
 {
 }
 
 Log::Log(double base, const Term &arg)
-        : Log(base, arg.clone())
+    : Log(base, arg.clone())
 {
 }
 
 Log::~Log()
 {
-    delete arg;
 }
 
 double Log::eval(const std::vector<double> &x) const
@@ -742,40 +863,21 @@ double Log::eval(const std::vector<double> &x) const
 
 Term *Log::derivative(Var x) const
 {
-    // d(log(f(x)))/dx = df(x) / (f(x) * ln(base))
-    auto log_base_of_e = new Const(log(base, std::exp(1.0)));
+    // d(log(f(x)))/dx = log_base(e) * (df(x) / f(x))
+    // Actually it is 1/ln(base) * (df(x) / f(x)), but because
+    // log_base(e) = ln(e) / ln(base) = 1/ln(base) we avoid the extra division
 
-    auto one_over_arg = new Exp(arg->clone(), new Const(-1));
+    auto one_over_arg = new Exp(arg->clone(), new Mul(-1));
 
-    auto darg_over_arg = new Mul(arg->derivative(x), one_over_arg);
-
-    return new Mul(log_base_of_e, darg_over_arg);
+    auto result = new Mul(log(base, std::exp(1.0)));
+    result->add(arg->derivative(x));
+    result->add(one_over_arg);
+    return result;
 }
 
 Term *Log::clone() const
 {
     return new Log(base, arg->clone());
-}
-
-Term *Log::simplify()
-{
-    auto temp = arg->simplify();
-    if(temp != arg) {
-        delete arg;
-        arg = temp;
-    }
-
-    if(arg->isConstant()) {
-        std::vector<double> dummy;
-        auto constantVal = eval(dummy);
-        return new Const(constantVal);
-    }
-
-    return this;
-}
-
-void Log::getVariables(std::set<Var> &vars) const {
-    arg->getVariables(vars);
 }
 
 void Log::pretty_text(std::ostream &out) const
@@ -790,18 +892,17 @@ void Log::pretty_text(std::ostream &out) const
  * Sinus: sin(x)
  */
 Sin::Sin(Term *arg)
-        : arg(arg)
+    : FuncTerm(arg)
 {
 }
 
 Sin::Sin(const Term &arg)
-        : Sin(arg.clone())
+    : Sin(arg.clone())
 {
 }
 
 Sin::~Sin()
 {
-    delete arg;
 }
 
 double Sin::eval(const std::vector<double> &x) const
@@ -820,21 +921,6 @@ Term *Sin::clone() const
     return new Sin(arg->clone());
 }
 
-Term *Sin::simplify()
-{
-    auto temp = arg->simplify();
-    if(temp != arg) {
-        delete arg;
-        arg = temp;
-    }
-
-    return this;
-}
-
-void Sin::getVariables(std::set<Var> &vars) const {
-    arg->getVariables(vars);
-}
-
 void Sin::pretty_text(std::ostream &out) const
 {
     out << "sin(";
@@ -847,18 +933,17 @@ void Sin::pretty_text(std::ostream &out) const
  * Cosinus: cos(x)
  */
 Cos::Cos(Term *arg)
-        : arg(arg)
+    : FuncTerm(arg)
 {
 }
 
 Cos::Cos(const Term &arg)
-        : Cos(arg.clone())
+    : Cos(arg.clone())
 {
 }
 
 Cos::~Cos()
 {
-    delete arg;
 }
 
 double Cos::eval(const std::vector<double> &x) const
@@ -869,29 +954,14 @@ double Cos::eval(const std::vector<double> &x) const
 Term *Cos::derivative(Var x) const
 {
     // dcos(f(x))/dx = -1 * df(x)/dx * sin(f(x))
-    auto temp = new Mul(new Const(-1), new Sin(arg->clone()));
-
-    return new Mul(arg->derivative(x), temp);
+    auto temp = new Mul(arg->derivative(x), new Sin(arg->clone()));
+    temp->multiply(-1.0);
+    return temp;
 }
 
 Term *Cos::clone() const
 {
     return new Cos(arg->clone());
-}
-
-Term *Cos::simplify()
-{
-    auto temp = arg->simplify();
-    if(temp != arg) {
-        delete arg;
-        arg = temp;
-    }
-
-    return this;
-}
-
-void Cos::getVariables(std::set<Var> &vars) const {
-    arg->getVariables(vars);
 }
 
 void Cos::pretty_text(std::ostream &out) const
@@ -906,18 +976,17 @@ void Cos::pretty_text(std::ostream &out) const
  * Tangential: tan(x)
  */
 Tan::Tan(Term *arg)
-        : arg(arg)
+    : FuncTerm(arg)
 {
 }
 
 Tan::Tan(const Term &arg)
-        : Tan(arg.clone())
+    : Tan(arg.clone())
 {
 }
 
 Tan::~Tan()
 {
-    delete arg;
 }
 
 double Tan::eval(const std::vector<double> &x) const
@@ -930,7 +999,7 @@ Term *Tan::derivative(Var x) const
     // dtan(f(x))/dx = df(x) / cos^2(x)
     auto denominator = new Mul(new Cos(arg->clone()), new Cos(arg->clone()));
 
-    auto temp = new Exp(denominator, new Const(-1));
+    auto temp = new Exp(denominator, new Mul(-1));
 
     return new Mul(arg->derivative(x), temp);
 }
@@ -938,21 +1007,6 @@ Term *Tan::derivative(Var x) const
 Term *Tan::clone() const
 {
     return new Tan(arg->clone());
-}
-
-Term *Tan::simplify()
-{
-    auto temp = arg->simplify();
-    if(temp != arg) {
-        delete arg;
-        arg = temp;
-    }
-
-    return this;
-}
-
-void Tan::getVariables(std::set<Var> &vars) const {
-    arg->getVariables(vars);
 }
 
 void Tan::pretty_text(std::ostream &out) const
@@ -967,18 +1021,17 @@ void Tan::pretty_text(std::ostream &out) const
  * Exponential function e^x
  */
 E::E(Term *arg)
-        : arg(arg)
+        : FuncTerm(arg)
 {
 }
 
 E::E(const Term &arg)
-        : E(arg.clone())
+    : E(arg.clone())
 {
 }
 
 E::~E()
 {
-    delete arg;
 }
 
 double E::eval(const std::vector<double> &x) const
@@ -997,21 +1050,6 @@ Term *E::clone() const
     return new E(arg->clone());
 }
 
-Term *E::simplify()
-{
-    auto temp = arg->simplify();
-    if(temp != arg) {
-        delete arg;
-        arg = temp;
-    }
-
-    return this;
-}
-
-void E::getVariables(std::set<Var> &vars) const {
-    arg->getVariables(vars);
-}
-
 void E::pretty_text(std::ostream &out) const
 {
     out << "exp(";
@@ -1020,7 +1058,380 @@ void E::pretty_text(std::ostream &out) const
 }
 
 
+// Returns true if the terms are of equal type, and their children are of equal type
+bool equal(Term *lhs, Term *rhs) {
+//    std::cout << "Comparing ";
+//    lhs->pretty_text(std::cout);
+//    std::cout << " to ";
+//    rhs->pretty_text(std::cout);
 
+    bool termsEqual = true;
+
+    auto lconst = dynamic_cast<Const *>(lhs);
+    auto lvar = dynamic_cast<Var *>(lhs);
+    auto lexp = dynamic_cast<Exp *>(lhs);
+    auto lmul = dynamic_cast<Mul *>(lhs);
+    auto lplus = dynamic_cast<Plus *>(lhs);
+    auto le = dynamic_cast<E *>(lhs);
+    auto llog = dynamic_cast<Log *>(lhs);
+    auto lsin = dynamic_cast<Sin *>(lhs);
+    auto lcos = dynamic_cast<Cos *>(lhs);
+    auto ltan = dynamic_cast<Tan *>(lhs);
+
+    auto rconst = dynamic_cast<Const *>(rhs);
+    auto rvar = dynamic_cast<Var *>(rhs);
+    auto rexp = dynamic_cast<Exp *>(rhs);
+    auto rmul = dynamic_cast<Mul *>(rhs);
+    auto rplus = dynamic_cast<Plus *>(rhs);
+    auto re = dynamic_cast<E *>(rhs);
+    auto rlog = dynamic_cast<Log *>(rhs);
+    auto rsin = dynamic_cast<Sin *>(rhs);
+    auto rcos = dynamic_cast<Cos *>(rhs);
+    auto rtan = dynamic_cast<Tan *>(rhs);
+
+    // Sort by degree increasing
+    double ldegree = lhs->getConstDegree();
+    double rdegree = rhs->getConstDegree();
+
+    // Constant degrees before non constant degrees
+    if(lhs->isConstDegree() && rhs->isConstDegree()) {
+//        std::cout << "both are const degrees!";
+//        std::cout << "ldegree: " << ldegree << ", rdegree: " << rdegree;
+        termsEqual = ldegree == rdegree;
+    }
+
+    // If we have come this far, it means the degree is equal
+
+    // lpri < rpri means lhs should be before rhs
+    int lpri =
+            (lconst != nullptr) * 1
+            + (lvar != nullptr) * 2
+            + (lexp != nullptr) * 3
+            + (lmul != nullptr) * 4
+            + (lplus != nullptr) * 5
+            + (le != nullptr) * 6
+            + (llog != nullptr) * 7
+            + (lsin != nullptr) * 8
+            + (lcos != nullptr) * 9
+            + (ltan != nullptr) * 10
+            + (lplus != nullptr) * 11;
+    int rpri =
+            (rconst != nullptr) * 1
+            + (rvar != nullptr) * 2
+            + (rexp != nullptr) * 3
+            + (rmul != nullptr) * 4
+            + (rplus != nullptr) * 5
+            + (re != nullptr) * 6
+            + (rlog != nullptr) * 7
+            + (rsin != nullptr) * 8
+            + (rcos != nullptr) * 9
+            + (rtan != nullptr) * 10
+            + (rplus != nullptr) * 11;
+
+    if(termsEqual) {
+        if(lpri != rpri) {
+            termsEqual = false;
+        }
+
+        else if(lvar != nullptr) {
+            termsEqual = lvar->getVarNum() == rvar->getVarNum();
+        }
+
+        else if(lexp != nullptr) {
+            termsEqual = equal(lexp->getBase(), rexp->getBase())
+                    && equal(lexp->getExponent(), rexp->getExponent());
+        }
+
+        else if(lmul != nullptr) {
+            auto lterms = lmul->getTerms();
+            auto rterms = rmul->getTerms();
+            if(lterms.size() != rterms.size()) {
+                termsEqual = false;
+            }
+            else
+            {
+                int n_terms = lterms.size();
+                for(int i = n_terms-1; i >= 0; --i) {
+                    if(!equal(lterms.at(i), rterms.at(i))) {
+                        termsEqual = false;
+                        break;
+                    }
+                }
+            }
+        }
+
+        else if(le != nullptr || lsin != nullptr || lcos != nullptr || ltan != nullptr) {
+            termsEqual = equal(le->getArg(), re->getArg());
+        }
+
+        else if(llog != nullptr) {
+            if(llog->getBase() != rlog->getBase()) {
+                termsEqual = false;
+            }
+            else {
+                termsEqual = equal(llog->getArg(), rlog->getArg());
+            }
+        }
+
+        else {
+            assert(lplus != nullptr && rplus != nullptr);
+
+            if(lplus->getTerms().size() != rplus->getTerms().size()) {
+                termsEqual = false;
+            }
+
+            for(int i = lplus->getTerms().size() - 1; i >= 0; --i) {
+                auto lterm = lplus->getTerms().at(i);
+                auto rterm = rplus->getTerms().at(i);
+                if(!equal(lterm, rterm)) {
+                    termsEqual = false;
+                    break;
+                }
+            }
+        }
+    }
+
+
+//    if(termsEqual) {
+//        std::cout << ", Equal!";
+//    } else {
+//        std::cout << ", Not equal!";
+//    }
+//    std::cout << std::endl;
+
+    return termsEqual;
+}
+
+// Returns true if lhs should be before rhs in a sorted range
+bool plusCompare(Term *lhs, Term *rhs) {
+    auto lmul = dynamic_cast<Mul *>(lhs);
+    auto rmul = dynamic_cast<Mul *>(rhs);
+
+    assert(lmul != nullptr && rmul != nullptr);
+
+    double ldegree = lhs->getConstDegree();
+    double rdegree = rhs->getConstDegree();
+
+    // Constant degrees before non constant degrees
+    if(lhs->isConstDegree() != rhs->isConstDegree()) {
+        return lhs->isConstDegree();
+    }
+
+    if(ldegree != rdegree) {
+        return ldegree < rdegree;
+    }
+
+    // If we have come this far, it means the degree is equal
+    auto lterms = lmul->getTerms();
+    auto rterms = rmul->getTerms();
+    if(lterms.size() != rterms.size()) {
+        return lterms.size() < rterms.size();
+    }
+    else
+    {
+        int n_terms = lterms.size();
+        for(int i = n_terms-1; i >= 0; --i) {
+            if(compare(lterms.at(i), rterms.at(i))) {
+                return true;
+            }
+            if(compare(rterms.at(i), lterms.at(i))) {
+                return false;
+            }
+        }
+
+        // Equal, default to false to avoid stopping further comparison in the caller
+        return false;
+    }
+}
+
+// Returns true if lhs should be before rhs in a sorted range
+bool mulCompare(Term *lhs, Term *rhs) {
+    auto lexp = dynamic_cast<Exp *>(lhs);
+    auto rexp = dynamic_cast<Exp *>(rhs);
+
+    assert(lexp != nullptr && rexp != nullptr);
+
+    if(compare(lexp->getBase(), rexp->getBase()))
+    {
+        return true;
+    }
+    else if(compare(rexp->getBase(), lexp->getBase())) {
+        return false;
+    }
+    else {
+        if(compare(lexp->getExponent(), rexp->getExponent()))
+        {
+            return true;
+        }
+        else if(compare(rexp->getExponent(), lexp->getExponent())) {
+            return false;
+        }
+        else
+        {
+            // Equal, default to false to avoid stopping further comparison in the caller
+            return false;
+        }
+    }
+}
+
+// Returns true if lhs should be before rhs in a sorted range
+bool compare(Term *lhs, Term *rhs) {
+    auto lconst = dynamic_cast<Const *>(lhs);
+    auto lvar = dynamic_cast<Var *>(lhs);
+    auto lexp = dynamic_cast<Exp *>(lhs);
+    auto lmul = dynamic_cast<Mul *>(lhs);
+    auto lplus = dynamic_cast<Plus *>(lhs);
+    auto le = dynamic_cast<E *>(lhs);
+    auto llog = dynamic_cast<Log *>(lhs);
+    auto lsin = dynamic_cast<Sin *>(lhs);
+    auto lcos = dynamic_cast<Cos *>(lhs);
+    auto ltan = dynamic_cast<Tan *>(lhs);
+
+    auto rconst = dynamic_cast<Const *>(rhs);
+    auto rvar = dynamic_cast<Var *>(rhs);
+    auto rexp = dynamic_cast<Exp *>(rhs);
+    auto rmul = dynamic_cast<Mul *>(rhs);
+    auto rplus = dynamic_cast<Plus *>(rhs);
+    auto re = dynamic_cast<E *>(rhs);
+    auto rlog = dynamic_cast<Log *>(rhs);
+    auto rsin = dynamic_cast<Sin *>(rhs);
+    auto rcos = dynamic_cast<Cos *>(rhs);
+    auto rtan = dynamic_cast<Tan *>(rhs);
+
+    double ldegree = lhs->getConstDegree();
+    double rdegree = rhs->getConstDegree();
+
+    // Constant degrees before non constant degrees
+    if(lhs->isConstDegree() != rhs->isConstDegree()) {
+        return lhs->isConstDegree();
+    }
+
+    if(ldegree != rdegree) {
+        return ldegree < rdegree;
+    }
+
+    // If we have come this far, it means the degree is equal
+
+    // lpri < rpri means lhs should be before rhs
+    int lpri =
+            (lconst != nullptr) * 1
+            + (lvar != nullptr) * 2
+            + (lexp != nullptr) * 3
+            + (lmul != nullptr) * 4
+            + (lplus != nullptr) * 5
+            + (le != nullptr) * 6
+            + (llog != nullptr) * 7
+            + (lsin != nullptr) * 8
+            + (lcos != nullptr) * 9
+            + (ltan != nullptr) * 10
+            + (lplus != nullptr) * 11;
+    int rpri =
+            (rconst != nullptr) * 1
+            + (rvar != nullptr) * 2
+            + (rexp != nullptr) * 3
+            + (rmul != nullptr) * 4
+            + (rplus != nullptr) * 5
+            + (re != nullptr) * 6
+            + (rlog != nullptr) * 7
+            + (rsin != nullptr) * 8
+            + (rcos != nullptr) * 9
+            + (rtan != nullptr) * 10
+            + (rplus != nullptr) * 11;
+
+    if(lpri != rpri) {
+        return lpri < rpri;
+    }
+
+    else if(lconst != nullptr) {
+        return lconst->getVal() < rconst->getVal();
+    }
+
+    else if(lvar != nullptr) {
+        return lvar->getVarNum() < rvar->getVarNum();
+    }
+
+    else if(lexp != nullptr) {
+        if(compare(lexp->getBase(), rexp->getBase()))
+        {
+            return true;
+        }
+        else if(compare(rexp->getBase(), lexp->getBase())) {
+            return false;
+        }
+        else {
+            if(compare(lexp->getExponent(), rexp->getExponent()))
+            {
+                return true;
+            }
+            else if(compare(rexp->getExponent(), lexp->getExponent())) {
+                return false;
+            }
+            else {
+
+                // Equal, default to false to avoid stopping further comparison
+                return false;
+            }
+        }
+    }
+
+    else if(lmul != nullptr) {
+        auto lterms = lmul->getTerms();
+        auto rterms = rmul->getTerms();
+        if(lterms.size() != rterms.size()) {
+            return lterms.size() < rterms.size();
+        }
+        else
+        {
+            int n_terms = lterms.size();
+            for(int i = n_terms-1; i >= 0; --i) {
+                if(compare(lterms.at(i), rterms.at(i))) {
+                    return true;
+                }
+                if(compare(rterms.at(i), lterms.at(i))) {
+                    return false;
+                }
+            }
+
+            // Equal, default to false to avoid stopping further comparison
+            return false;
+        }
+    }
+
+    else if(le != nullptr || lsin != nullptr || lcos != nullptr || ltan != nullptr) {
+        return compare(le->getArg(), re->getArg());
+    }
+
+    else if(llog != nullptr) {
+        if(llog->getBase() < rlog->getBase()) {
+            return true;
+        }
+        else {
+            return compare(llog->getArg(), rlog->getArg());
+        }
+    }
+
+    else {
+        assert(lplus != nullptr && rplus != nullptr);
+
+        if(lplus->getTerms().size() != rplus->getTerms().size()) {
+            return lplus->getTerms().size() < rplus->getTerms().size();
+        }
+
+        for(int i = lplus->getTerms().size() - 1; i >= 0; --i) {
+            auto lterm = lplus->getTerms().at(i);
+            auto rterm = rplus->getTerms().at(i);
+            if(compare(lterm, rterm)) {
+                return true;
+            }
+            if(compare(rterm, lterm)) {
+                return false;
+            }
+        }
+
+        // Equal, default to false to avoid stopping further comparison
+        return false;
+    }
+}
 
 bool operator<(const Var &lhs, const Var &rhs) {
     return lhs.getVarNum() < rhs.getVarNum();
@@ -1034,94 +1445,91 @@ std::ostream &operator<<(std::ostream &out, const Term &term)
 
 Plus operator+(const Term &lhs, const Term &rhs)
 {
-    return Plus(lhs, rhs);
+    return Plus(lhs.clone(), rhs.clone());
 }
 
 Plus operator+(const Term &lhs, double rhs)
 {
-    Const temp(rhs);
-    return Plus(lhs, temp);
+    return Plus(lhs.clone(), new Mul(rhs));
 }
 
 Plus operator+(double lhs, const Term &rhs)
 {
-    Const temp(lhs);
-    return Plus(temp, rhs);
+    return Plus(new Mul(lhs), rhs.clone());
 }
 
 
 Plus operator-(const Term &lhs, const Term &rhs)
 {
-    Const temp(-1);
-    return Plus(lhs, new Mul(temp, rhs));
+    auto temp = new Mul(-1.0);
+    temp->add(rhs.clone());
+    return Plus(lhs.clone(), temp);
 }
 
 Plus operator-(const Term &lhs, double rhs)
 {
-    Const temp(-rhs);
-    return Plus(lhs, temp);
+    return Plus(lhs.clone(), new Mul(-rhs));
 }
 
 Plus operator-(double lhs, const Term &rhs)
 {
-    Const temp(lhs);
-    Const temp2(-1);
-    return Plus(temp, new Mul(temp2, rhs));
+    auto temp = new Mul(lhs);
+    auto temp2 = new Mul(-1.0);
+    temp2->add(rhs.clone());
+    return Plus(temp, temp2);
 }
 
 
 Mul operator*(const Term &lhs, const Term &rhs)
 {
-    return Mul(lhs, rhs);
+    return Mul(lhs.clone(), rhs.clone());
 }
 
 Mul operator*(double lhs, const Term &rhs)
 {
-    Const temp(lhs);
-    return Mul(temp, rhs);
+    auto temp = Mul(lhs);
+    temp.add(rhs.clone());
+    return temp;
 }
 
 Mul operator*(const Term &lhs, double rhs)
 {
-    Const temp(rhs);
-    return Mul(lhs, temp);
+    auto temp = Mul();
+    temp.multiply(rhs);
+    temp.add(lhs.clone());
+    return temp;
 }
 
 
 Mul operator/(const Term &lhs, const Term &rhs)
 {
-    Const temp(-1);
-    return Mul(lhs, new Exp(rhs, temp));
+    return Mul(lhs.clone(), new Exp(rhs.clone(), new Mul(-1.0)));
 }
 
 Mul operator/(double lhs, const Term &rhs)
 {
-    Const temp(lhs);
-    Const temp2(-1);
-    return Mul(temp, new Exp(rhs, temp2));
+    auto temp = new Mul(lhs);
+    auto temp2 = new Mul(-1.0);
+    return Mul(temp, new Exp(rhs.clone(), temp2));
 }
 
 Mul operator/(const Term &lhs, double rhs)
 {
-    Const temp(rhs);
-    Const temp2(-1);
-    return Mul(lhs, new Exp(temp, temp2));
+    return Mul(lhs.clone(), new Exp(new Mul(rhs), new Mul(-1.0)));
 }
 
 
 Exp operator^(const Term &lhs, const Term &rhs)
 {
-    return Exp(lhs, rhs);
+    return Exp(lhs.clone(), rhs.clone());
 }
 
 Exp operator^(const Term &base, double exp)
 {
-    Const temp(exp);
-    return Exp(base, temp);
+    return Exp(base.clone(), new Mul(exp));
 }
 
 Exp operator^(double base, const Term &exp)
 {
-    Const temp(base);
-    return Exp(temp, exp);
+    return Exp(new Mul(base), exp.clone());
 }
