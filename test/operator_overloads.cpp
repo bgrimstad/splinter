@@ -120,10 +120,10 @@ std::ostream &operator<<(std::ostream &out, const DataSample &sample) {
     out << "(";
     bool firstLoop = true;
     for(auto val : sample.getX()) {
-        out << val;
         if(!firstLoop) {
             out << ", ";
         }
+        out << val;
         firstLoop = false;
     }
     out << ") = (" << sample.getY() << ")";
@@ -134,14 +134,14 @@ std::ostream &operator<<(std::ostream &out, const DataSample &sample) {
 std::ostream &operator<<(std::ostream &out, const DataTable &table) {
     out << "numVariables: " << table.getNumVariables() << std::endl;
     out << "numSamples: " << table.getNumSamples() << std::endl;
-    // out << "samples: " << table.getSamples() << std::endl;
+    //out << "samples: " << table.getSamples() << std::endl;
     out << "grid dimensions: ";
     bool firstLoop = true;
     for(const auto &dimension : table.getGrid()) {
-        out << dimension.size();
         if(!firstLoop) {
             out << ", ";
         }
+        out << dimension.size();
         firstLoop = false;
     }
 
