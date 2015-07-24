@@ -1,5 +1,9 @@
 ## Changelog
 
+#### Version 1.5
+- Integrated the Catch testing framework
+- Added functionality for symbolic differentiation of functions
+
 #### Version 1.4
 - Automatic knot vector selection using moving average
 - Added PolynomialRegression (including MatLab interface)
