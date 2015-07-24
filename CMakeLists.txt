@@ -148,6 +148,7 @@ set(TEST_SRC_LIST
     test/approximation/pspline.cpp
     test/approximation/radialbasisfunction.cpp
     test/approximation/polynomialregression.cpp
+    test/general/datatable.cpp
     test/serialization/datatable.cpp
     test/serialization/bspline.cpp
     test/serialization/pspline.cpp

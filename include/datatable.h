@@ -112,6 +112,9 @@ private:
     friend class Serializer;
 };
 
+DataTable operator+(const DataTable &lhs, const DataTable &rhs);
+DataTable operator-(const DataTable &lhs, const DataTable &rhs);
+
 } // namespace SPLINTER
 
 #endif // SPLINTER_DATATABLE_H

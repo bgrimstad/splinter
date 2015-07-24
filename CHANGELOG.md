@@ -10,6 +10,7 @@
 - Refactored MatLab interface backend (no end user visible changes)
 - Integrated the Catch testing framework
 - Added functionality for symbolic differentiation of functions
+- Added set operations (union and complement) to DataTable (as operator+ and operator-)
 
 #### Version 1.3
 - Library renamed SPLINTER (from Splinter)

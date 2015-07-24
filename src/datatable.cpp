@@ -205,4 +205,39 @@ std::vector<double> DataTable::getVectorY() const
     return y;
 }
 
+DataTable operator+(const DataTable &lhs, const DataTable &rhs)
+{
+    if(lhs.getNumVariables() != rhs.getNumVariables()) {
+        throw Exception("operator+(DataTable, DataTable): trying to add two DataTable's of different dimensions!");
+    }
+
+    DataTable result;
+    for(auto it = lhs.cbegin(); it != lhs.cend(); it++) {
+        result.addSample(*it);
+    }
+    for(auto it = rhs.cbegin(); it != rhs.cend(); it++) {
+        result.addSample(*it);
+    }
+
+    return result;
+}
+
+DataTable operator-(const DataTable &lhs, const DataTable &rhs)
+{
+    if(lhs.getNumVariables() != rhs.getNumVariables()) {
+        throw Exception("operator-(DataTable, DataTable): trying to subtract two DataTable's of different dimensions!");
+    }
+
+    DataTable result;
+    auto rhsSamples = rhs.getSamples();
+    // Add all samples from lhs that are not in rhs
+    for(auto it = lhs.cbegin(); it != lhs.cend(); it++) {
+        if(rhsSamples.count(*it) == 0) {
+            result.addSample(*it);
+        }
+    }
+
+    return result;
+}
+
 } // namespace SPLINTER

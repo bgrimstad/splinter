@@ -13,7 +13,6 @@
 - Investigate integrated B-splines and tension B-splines: http://www.cas.mcmaster.ca/~modersit/Pubs/2009-SPIE-BFM.pdf
 - Fix evalHessian returning the wrong value when using Quadratic B-splines (also investigate if the issue exists elsewhere).
 - Update documentation to reflect that we also have a MatLab interface
-- Implement set operations for DataTable objects (set summation as union and set subtraction as relative complement)
 - Consider creating a class for interpolating B-splines
 - Implement functionality for appraising approximation errors
 - Complete and test implementation of ordinary least squares
