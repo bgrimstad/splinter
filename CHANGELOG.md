@@ -1,9 +1,5 @@
 ## Changelog
 
-#### Version 1.5
-- Integrated the Catch testing framework
-- Added functionality for symbolic differentiation of functions
-
 #### Version 1.4
 - Automatic knot vector selection using moving average
 - Added PolynomialRegression (including MatLab interface)
@@ -12,6 +8,8 @@
 - Added loading of serialized objects in MatLab interface: b = BSpline('save_bspline.bspline')
 - Added loading and saving of DataTable to MatLab interface
 - Refactored MatLab interface backend (no end user visible changes)
+- Integrated the Catch testing framework
+- Added functionality for symbolic differentiation of functions
 
 #### Version 1.3
 - Library renamed SPLINTER (from Splinter)
