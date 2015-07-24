@@ -31,6 +31,7 @@ Term *Term::simplify()
     if(concatenated != flattened && flattened != this) {
         delete flattened;
     }
+
     return concatenated;
 }
 
@@ -170,7 +171,11 @@ Term *Plus::derivative(Var x) const
         result->add(term->derivative(x));
     }
 
-    return result;
+    auto simplified = result->simplify();
+    if(simplified != result) {
+        delete result;
+    }
+    return simplified;
 }
 
 Term *Plus::clone() const
@@ -396,7 +401,11 @@ Term *Mul::derivative(Var x) const
         result->add(temp);
     }
 
-    return result;
+    auto simplified = result->simplify();
+    if(simplified != result) {
+        delete result;
+    }
+    return simplified;
 }
 
 Term *Mul::clone() const
@@ -735,7 +744,13 @@ Term *Exp::derivative(Var x) const
 
     auto temp = new Plus(df_mul_g_over_f, dg_ln_f);
 
-    return new Mul(fg->clone(), temp);
+    auto result = new Mul(fg->clone(), temp);
+
+    auto simplified = result->simplify();
+    if(simplified != result) {
+        delete result;
+    }
+    return simplified;
 }
 
 Term *Exp::clone() const
@@ -897,7 +912,12 @@ Term *Log::derivative(Var x) const
     auto result = new Mul(log(base, std::exp(1.0)));
     result->add(arg->derivative(x));
     result->add(one_over_arg);
-    return result;
+
+    auto simplified = result->simplify();
+    if(simplified != result) {
+        delete result;
+    }
+    return simplified;
 }
 
 Term *Log::clone() const
@@ -942,7 +962,13 @@ double Sin::eval(const std::vector<double> &x) const
 Term *Sin::derivative(Var x) const
 {
     // dsin(f(x))/dx = df(x)/dx * cos(f(x))
-    return new Mul(arg->derivative(x), new Cos(arg->clone()));
+    auto result = new Mul(arg->derivative(x), new Cos(arg->clone()));
+
+    auto simplified = result->simplify();
+    if(simplified != result) {
+        delete result;
+    }
+    return simplified;
 }
 
 Term *Sin::clone() const
@@ -983,9 +1009,14 @@ double Cos::eval(const std::vector<double> &x) const
 Term *Cos::derivative(Var x) const
 {
     // dcos(f(x))/dx = -1 * df(x)/dx * sin(f(x))
-    auto temp = new Mul(arg->derivative(x), new Sin(arg->clone()));
-    temp->multiply(-1.0);
-    return temp;
+    auto result = new Mul(arg->derivative(x), new Sin(arg->clone()));
+    result->multiply(-1.0);
+
+    auto simplified = result->simplify();
+    if(simplified != result) {
+        delete result;
+    }
+    return simplified;
 }
 
 Term *Cos::clone() const
@@ -1030,7 +1061,13 @@ Term *Tan::derivative(Var x) const
 
     auto temp = new Exp(denominator, new Mul(-1));
 
-    return new Mul(arg->derivative(x), temp);
+    auto result = new Mul(arg->derivative(x), temp);
+
+    auto simplified = result->simplify();
+    if(simplified != result) {
+        delete result;
+    }
+    return simplified;
 }
 
 Term *Tan::clone() const
@@ -1071,7 +1108,13 @@ double E::eval(const std::vector<double> &x) const
 Term *E::derivative(Var x) const
 {
     // de(f(x))/dx = df(x) * e(f(x))
-    return new Mul(arg->derivative(x), new E(arg->clone()));
+    auto result = new Mul(arg->derivative(x), new E(arg->clone()));
+
+    auto simplified = result->simplify();
+    if(simplified != result) {
+        delete result;
+    }
+    return simplified;
 }
 
 Term *E::clone() const

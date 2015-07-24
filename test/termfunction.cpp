@@ -115,14 +115,7 @@ void TermFunction::calculateJacobian()
     jac.clear();
     for(size_t i = 0; i < numVariables; i++) {
         auto dx = variables.at(i);
-        auto dfdx = f->derivative(dx);
-
-        auto simplified_dfdx = dfdx->simplify();
-        if(simplified_dfdx != dfdx) {
-            delete dfdx;
-        }
-
-        jac.push_back(simplified_dfdx);
+        jac.push_back(f->derivative(dx));
     }
 }
 
@@ -137,14 +130,7 @@ void TermFunction::calculateHessian()
 
         for(size_t j = 0; j < numVariables; j++) {
             Var dx = variables.at(j);
-            auto ddf = jac.at(i)->derivative(dx);
-
-            auto simplified_ddf = ddf->simplify();
-            if(simplified_ddf != ddf) {
-                delete ddf;
-            }
-
-            hes.at(i).push_back(simplified_ddf);
+            hes.at(i).push_back(jac.at(i)->derivative(dx));
         }
     }
 }

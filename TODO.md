@@ -24,4 +24,3 @@
 - Replace assertions with exceptions (assertions halts execution when testing)
 - Finish implementation of operator== overloads in operator_overloads.cpp
 - Add tests that provoke errors
-- Make sure Term::simplify() is called inside Term::derivative so the caller doesn't have to do it themselves.

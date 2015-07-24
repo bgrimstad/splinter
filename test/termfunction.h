@@ -38,6 +38,7 @@ public:
 
     inline unsigned int getNumVariables() const override { return numVariables; }
 
+    // Prints the function, jacobian and hessian
     void printAll() const;
 
 private:
