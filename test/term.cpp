@@ -308,6 +308,7 @@ void Plus::pretty_text(std::ostream &out) const
     out << "(";
     for(auto it = terms.cbegin(); it != terms.cend(); ++it) {
         (*it)->pretty_text(out);
+
         if(it + 1 != terms.cend()) {
             out << " + ";
         }
@@ -567,10 +568,24 @@ double Mul::getConstDegree() const
 
 void Mul::pretty_text(std::ostream &out) const
 {
-    out << coefficient;
+    if(terms.size() == 0) {
+        out << coefficient;
+    }
+    else {
+        if(coefficient != 1.0) {
+            if(coefficient == -1.0) {
+                out << "-";
+            } else {
+                out << coefficient << "*";
+            }
+        }
+    }
+
     for(auto it = terms.cbegin(); it != terms.cend(); ++it) {
-        out << "*";
         (*it)->pretty_text(out);
+        if(it + 1 < terms.cend()) {
+            out << "*";
+        }
     }
 }
 
@@ -713,7 +728,7 @@ Term *Exp::derivative(Var x) const
     df_mul_g_over_f->add(one_over_f);
 
     // ln(f)
-    auto lnf = new Log(std::exp(1.0), f->clone());
+    auto lnf = new Log(f->clone());
 
     // dg * ln(f)
     auto dg_ln_f = new Mul(g->derivative(x), lnf);
@@ -841,6 +856,16 @@ void FuncTerm::getVariables(std::set<Var> &vars) const
 /*
  * Logarithm with base n: log_n(x)
  */
+Log::Log(Term *arg)
+    : Log(std::exp(1.0), arg)
+{
+}
+
+Log::Log(const Term &arg)
+    : Log(arg.clone())
+{
+}
+
 Log::Log(double base, Term *arg)
         : base(base),
           FuncTerm(arg)
@@ -882,7 +907,11 @@ Term *Log::clone() const
 
 void Log::pretty_text(std::ostream &out) const
 {
-    out << "log_" << base << "(";
+    if(base == std::exp(1.0)) {
+        out << "ln(";
+    } else {
+        out << "log_" << base << "(";
+    }
     arg->pretty_text(out);
     out << ")";
 }
@@ -1161,7 +1190,9 @@ bool equal(Term *lhs, Term *rhs) {
         }
 
         else if(le != nullptr || lsin != nullptr || lcos != nullptr || ltan != nullptr) {
-            termsEqual = equal(le->getArg(), re->getArg());
+            auto lFunc = dynamic_cast<FuncTerm *>(lhs);
+            auto rFunc = dynamic_cast<FuncTerm *>(rhs);
+            return equal(lFunc->getArg(), rFunc->getArg());
         }
 
         else if(llog != nullptr) {
@@ -1217,8 +1248,9 @@ bool plusCompare(Term *lhs, Term *rhs) {
         return lhs->isConstDegree();
     }
 
+    // Sort by degree descending
     if(ldegree != rdegree) {
-        return ldegree < rdegree;
+        return ldegree > rdegree;
     }
 
     // If we have come this far, it means the degree is equal
@@ -1398,7 +1430,9 @@ bool compare(Term *lhs, Term *rhs) {
     }
 
     else if(le != nullptr || lsin != nullptr || lcos != nullptr || ltan != nullptr) {
-        return compare(le->getArg(), re->getArg());
+        auto lFunc = dynamic_cast<FuncTerm *>(lhs);
+        auto rFunc = dynamic_cast<FuncTerm *>(rhs);
+        return compare(lFunc->getArg(), rFunc->getArg());
     }
 
     else if(llog != nullptr) {
