@@ -269,6 +269,8 @@ protected:
 class Log : public FuncTerm
 {
 public:
+    Log(Term *arg);
+    Log(const Term &arg);
     Log(double base, Term *arg);
     Log(double base, const Term &arg);
 
