@@ -43,7 +43,7 @@ void setupTestFunctions() {
     auto f_2_4 = x*(4.5*(x^3) - (x^2) + 3*x*y);
     auto f_2_5 = -57*(y^2)*(x^3) - 0.1*(x^3)*(y^2) + 1.1*y*(x^2) + y - 1e10;
     // Six-hump camel back function
-    auto f_2_6 = (4 - 2.1*(x^2) + (1/3.)*(x^4))*(x^2) + x*y + (-4 + 4*(y^2))*(y^2) + 1.553e-1;
+    auto f_2_6 = (4 - 2.1*(x^2) + (1/3.)*(x^4))*(x^2) + x*y + (-4 + 4*(y^2))*(y^2);
 
     // Functions of three variables
     auto f_3_0 = 6534460297 + 0*x*y*z;
@@ -52,12 +52,15 @@ void setupTestFunctions() {
     auto f_3_3 = f_3_2 * f_3_1;
 
     // Non-polynomial (aka. nasty) functions
-    auto f_3_nasty = E(z) * ((1.3^x) + (y^x));
-
+    auto f_nasty_0 = E(z) * ((1.3^x) + (y^x));
+    auto f_nasty_1 = 3*x/((x^2) + 3*(y^3));
+    auto f_nasty_2 = Sin(x)*E(x)*Log(y)+Cos(y)*Tan(x);
 
     // First vector is the vector of nasty functions
     testFunctions.push_back(std::vector<TermFunction *>());
-    testFunctions.at(0).push_back(new TermFunction(f_3_nasty));
+    testFunctions.at(0).push_back(new TermFunction(f_nasty_0));
+    testFunctions.at(0).push_back(new TermFunction(f_nasty_1));
+    testFunctions.at(0).push_back(new TermFunction(f_nasty_2));
 
     testFunctions.push_back(std::vector<TermFunction *>());
     testFunctions.at(1).push_back(new TermFunction(f_1_0));
