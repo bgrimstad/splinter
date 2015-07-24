@@ -38,14 +38,16 @@ public:
     double eval(DenseVector x) const;
     double eval(std::vector<double> x) const;
 
-    DenseMatrix evalJacobian(DenseVector x) const { return DenseMatrix(); }; // TODO: implement
-    DenseMatrix evalHessian(DenseVector x) const { return DenseMatrix(); }; // TODO: implement
+    DenseMatrix evalJacobian(DenseVector x) const { return DenseMatrix(1, dim); }; // TODO: implement
+    DenseMatrix evalHessian(DenseVector x) const { return DenseMatrix(dim, dim); }; // TODO: implement
     //    std::vector<double> getDomainUpperBound() const;
     //    std::vector<double> getDomainLowerBound() const;
 
     unsigned int getNumVariables() const override { return dim; }
 
     void save(const std::string fileName) const override;
+
+    const std::string getDescription() const override;
 
 private:
     RadialBasisFunction();

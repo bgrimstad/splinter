@@ -28,8 +28,8 @@ public:
 
     // Evaluation
     double eval(DenseVector x) const override;
-    DenseMatrix evalJacobian(DenseVector x) const override { return DenseMatrix(); } // TODO: Implement
-    DenseMatrix evalHessian(DenseVector x) const override { return DenseMatrix(); } // TODO: Implement
+    DenseMatrix evalJacobian(DenseVector x) const override { return DenseMatrix(1, numVariables); } // TODO: Implement
+    DenseMatrix evalHessian(DenseVector x) const override { return DenseMatrix(numVariables, numVariables); } // TODO: Implement
 
     // Getters
     unsigned int getNumVariables() const override { return numVariables; }
@@ -37,6 +37,8 @@ public:
     DenseMatrix getCoefficients() const { return coefficients; }
 
     void save(const std::string fileName) const override;
+
+    const std::string getDescription() const override;
 
 private:
     PolynomialRegression();

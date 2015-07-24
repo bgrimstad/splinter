@@ -48,6 +48,10 @@ public:
      */
     //double relDist2(DataTable realValues);
     //double relDistInf(DataTable realValues);
+
+    // Returns a name describing this Approximant.
+    // Will typically include name of the class and degree
+    virtual const std::string getDescription() const = 0;
 };
 
 } // namespace SPLINTER

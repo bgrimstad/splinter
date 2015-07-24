@@ -52,7 +52,7 @@ public:
     }
     double evalDerivative(double r) const
     {
-        return (r<=0.0) ? 0.0 : r*(2*log(r) + 1);
+        return (r<=0.0) ? 0.0 : r*(2*std::log(r) + 1);
     }
 };
 

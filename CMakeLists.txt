@@ -81,8 +81,10 @@ if(MSVC)
 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Ox")
 
 elseif(GCC OR CLANG)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m${BITNESS} -std=c++11")
-	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wno-long-long")
+        # Treat warning return-type as error to avoid undefined behaviour
+        # when a non-void function does not return a value.
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m${BITNESS} -std=c++11 -Werror=return-type")
+        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wno-long-long")
 #   TODO: Intel flags
 endif()
 
@@ -108,6 +110,7 @@ set(LIBRARY_INSTALL_DIRECTORY ${LIBRARY_INSTALL_DIRECTORY} CACHE STRING "Absolut
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${EIGEN_DIRECTORY})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/test)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/Catch)
 
 # These are the sources we need for compilation of the library
 set(SRC_LIST
@@ -138,6 +141,30 @@ set(SRC_LIST
     src/serializer.cpp
 )
 set(MATLAB_SRC_LIST ${SRC_LIST} include/matlab.h src/matlab.cpp)
+set(TEST_SRC_LIST
+    ${SRC_LIST}
+    test/main.cpp
+    test/approximation/bspline.cpp
+    test/approximation/pspline.cpp
+    test/approximation/radialbasisfunction.cpp
+    test/approximation/polynomialregression.cpp
+    test/serialization/datatable.cpp
+    test/serialization/bspline.cpp
+    test/serialization/pspline.cpp
+    test/serialization/radialbasisfunction.cpp
+    test/serialization/polynomialregression.cpp
+
+    test/operator_overloads.h
+    test/operator_overloads.cpp
+    test/term.h
+    test/term.cpp
+    test/termfunction.h
+    test/termfunction.cpp
+    test/testfunctions.h
+    test/testfunctions.cpp
+    test/testingutilities.h
+    test/testingutilities.cpp
+)
 
 set(SHARED_LIBRARY ${PROJECT_NAME_LOWER}-${VERSION})
 set(STATIC_LIBRARY ${PROJECT_NAME_LOWER}-static-${VERSION})
@@ -146,22 +173,16 @@ set(MATLAB_LIBRARY ${PROJECT_NAME_LOWER}-matlab-${VERSION})
 set(SHARED_LIBRARY_TEST "${PROJECT_NAME_LOWER}-shared-test")
 set(STATIC_LIBRARY_TEST "${PROJECT_NAME_LOWER}-static-test")
 set(SERIALIZE_TEST "${PROJECT_NAME_LOWER}-serialize-test")
-set(TESTING_UTILITIES ${CMAKE_CURRENT_SOURCE_DIR}/test/testingutilities.cpp)
+set(TEST "${PROJECT_NAME_LOWER}-test")
 
 # Add output library: add_library(libname [SHARED | STATIC] sourcelist)
 add_library(${SHARED_LIBRARY} SHARED ${SRC_LIST})
 add_library(${STATIC_LIBRARY} STATIC ${SRC_LIST})
 add_library(${MATLAB_LIBRARY} SHARED ${MATLAB_SRC_LIST})
 
-# Testing executables
-add_executable(${SHARED_LIBRARY_TEST} ${CMAKE_CURRENT_SOURCE_DIR}/test/main.cpp ${TESTING_UTILITIES})
-target_link_libraries(${SHARED_LIBRARY_TEST} ${SHARED_LIBRARY})
-add_executable(${STATIC_LIBRARY_TEST} ${CMAKE_CURRENT_SOURCE_DIR}/test/main.cpp ${TESTING_UTILITIES})
-target_link_libraries(${STATIC_LIBRARY_TEST} ${STATIC_LIBRARY})
-
-# Serialize testing executable
-add_executable(${SERIALIZE_TEST} ${CMAKE_CURRENT_SOURCE_DIR}/test/serialize.cpp ${TESTING_UTILITIES})
-target_link_libraries(${SERIALIZE_TEST} ${STATIC_LIBRARY})
+# Testing executable
+add_executable(${TEST} ${TEST_SRC_LIST})
+target_link_libraries(${TEST} ${STATIC_LIBRARY})
 
 # Make the directory structure expected by the MatLab interface
 install(

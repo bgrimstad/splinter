@@ -580,4 +580,32 @@ void BSpline::load(const std::string fileName)
     s.deserialize(*this);
 }
 
+const std::string BSpline::getDescription() const
+{
+    std::string description("BSpline of degree");
+    auto degrees = getBasisDegrees();
+    // See if all degrees are the same.
+    bool equal = true;
+    for(size_t i = 1; i < degrees.size(); ++i) {
+        equal = equal && (degrees.at(i) == degrees.at(i-1));
+    }
+
+    if(equal) {
+        description.append(" ");
+        description.append(std::to_string(degrees.at(0)));
+
+    } else {
+        description.append("s (");
+        for(size_t i = 0; i < degrees.size(); ++i) {
+            description.append(std::to_string(degrees.at(i)));
+            if(i + 1 < degrees.size()) {
+                description.append(", ");
+            }
+        }
+        description.append(")");
+    }
+
+    return description;
+}
+
 } // namespace SPLINTER
