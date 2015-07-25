@@ -1,25 +1,30 @@
 ### TODO list
-- Organize the testing code and add more tests 
+
+#### Critical
+- BSplines of degree 3 and 4 (and possibly more) fails when given samples where all samples have the value 0.0
+- The Hessian of BSplines of all degrees seems to be wrong (it is not symmetrical over the diagonal). Test function: 4.5*(x^4)-(x^3)+3*(x^2)*y
+
+#### Important
 - Improve the documentation
+- Update documentation to reflect that we also have a MatLab interface
+- Write Doxygen for classes and methods that are visible to the end user
+- Implement Hessian for radial basis function splines
+- Test Jacobian for radial basis function splines
+- Complete and test implementation of ordinary least squares
+- Finish implementation of operator== overloads in operator_overloads.cpp
+- Add Python interface (2 and 3?)
+
+#### Normal
 - Remove code redundancy by wrapping affine operations on the control points (bspline) and tensor products (bsplinebasis)
 - Improve constructors of BSpline
 - Implement support for scattered data interpolation with B-Splines (look into MBA algorithm)
 - Implement NURBS
-- Implement Hessian for radial basis function splines
-- Test Jacobian for radial basis function splines
 - Implement a proper preconditioning matrix for radial basis function weight computation
 - Implement Kriging interpolation
-- Test executable runtime speed on different compilers
 - Investigate integrated B-splines and tension B-splines: http://www.cas.mcmaster.ca/~modersit/Pubs/2009-SPIE-BFM.pdf
-- Fix evalHessian returning the wrong value when using Quadratic B-splines (also investigate if the issue exists elsewhere).
-- Update documentation to reflect that we also have a MatLab interface
 - Consider creating a class for interpolating B-splines
 - Implement functionality for appraising approximation errors
-- Complete and test implementation of ordinary least squares
-- Add Python interface (2 and 3?)
-- Automatically download Catch? See https://github.com/philsquared/Catch/blob/master/docs/build-systems.md#cmake
-- BSplines of degree 3 and 4 (and possibly more) fails when given samples where all samples have the value 0.0
-- Write Doxygen for classes and methods that are visible to the end user
 - Replace assertions with exceptions (assertions halts execution when testing)
-- Finish implementation of operator== overloads in operator_overloads.cpp
+- Test executable runtime speed on different compilers
 - Add tests that provoke errors
+- Automatically download Catch? See https://github.com/philsquared/Catch/blob/master/docs/build-systems.md#cmake
