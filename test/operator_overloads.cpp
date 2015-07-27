@@ -108,10 +108,11 @@ bool operator==(const std::multiset<T> &lhs, const std::multiset<T> &rhs)
     return true;
 }
 
-template <class T>
-bool operator!=(const T &lhs, const T &rhs) {
-    return !(lhs == rhs);
+bool operator!=(const DataSample &lhs, const DataSample &rhs)
+{
+	return !(lhs == rhs);
 }
+
 
 /*
  * Output stream operator
