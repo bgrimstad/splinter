@@ -84,11 +84,9 @@ if(WINDOWS AND GCC)
 		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fipa-cp-clone")
 	endif()
 	
-	# If compiling with the SEH exception model (which is only available with 64 bits MinGW)
-	# we should statically link libgcc_s_seh_1.dll to avoid the dependency
-	if(BITNESS STREQUAL "64")
-		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -static")
-	endif()
+	# To avoid an external dependency (libgcc_s_seh11.dll or libgcc_s_dw2-1.dll)
+	# we statically link the libraries required by MinGW runtimes
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -static")
 endif()
 
 if(MSVC)

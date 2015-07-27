@@ -7,8 +7,19 @@ NPROC="unknown"
 
 # Defaults
 SPLINTER_DIR="../" # This file should reside in SPLINTER_DIR/scripts
-MSBUILD_DIR="/C/Program Files (x86)/MSBuild/12.0/Bin"
-VCVARSALL_DIR="/C/Program Files (x86)/Microsoft Visual Studio 12.0/VC"
+CMAKE_CMD="cmake"
+
+#MinGW config
+MINGW_32_BIT="/C/mingw-w64/i686-4.9.2-posix-dwarf-rt_v4-rev3/mingw32/bin"
+MINGW_64_BIT="/C/mingw-w64/x86_64-4.9.2-posix-seh-rt_v4-rev3/mingw64/bin"
+
+# MSVC config
+#MSBUILD_DIR="/C/Program Files (x86)/MSBuild/12.0/Bin"
+#VCVARSALL_DIR="/C/Program Files (x86)/Microsoft Visual Studio 12.0/VC"
+#MSVC_GENERATOR="Visual Studio 12 2013"
+MSBUILD_DIR="/C/Program Files (x86)/MSBuild/14.0/Bin"
+VCVARSALL_DIR="/C/Program Files (x86)/Microsoft Visual Studio 14.0/VC"
+MSVC_GENERATOR="Visual Studio 14 2015"
 
 # Capture the command argument for use in help messages
 COMMAND=$0
@@ -58,8 +69,7 @@ BUILD_ROOT=$SPLINTER_DIR/build
 SPLINTER_VERSION=$(cat $SPLINTER_DIR/version.txt)
 
 # Check that we can find CMake
-CMAKE_CMD=$(which cmake)
-if [[ $CMAKE_CMD == "" ]]; then
+if [[ $(which cmake) == "" ]]; then
 	echo "Error: Can't find CMake, make sure it is in your PATH environment variable"
 	echo "and try again!"
 	echo "If you don't want to add CMake to your PATH, you can specify the path to it with:"
@@ -95,7 +105,7 @@ function build_gcc_clang {
 	cd $BUILD_ROOT/.build/$COMPILER/$ARCH
 	
 	rm CMakeCache.txt
-	echo "Building SPLINTER for $ARCH with $CXX"
+	echo "Building SPLINTER for $ARCH with $COMPILER"
 	"$CMAKE_CMD" "$SPLINTER_DIR" -DCMAKE_BUILD_TYPE=release -DARCH=$ARCH -G "Unix Makefiles" -DCMAKE_MAKE_PROGRAM="$MAKE_CMD"
 	"$MAKE_CMD" -j$NPROC
 }
@@ -165,10 +175,10 @@ function build_msvc {
 	
 	if [[ $ARCH == "x86" ]]; then
 		cmd "/C vcvarsall.bat x86"
-		GENERATOR="Visual Studio 12 2013"
+		GENERATOR=$MSVC_GENERATOR
 	elif [[ $ARCH == "x86-64" ]]; then
 		cmd "/C vcvarsall.bat x64"
-		GENERATOR="Visual Studio 12 2013 Win64"
+		GENERATOR="$MSVC_GENERATOR Win64"
 	else
 		echo "Error: Unknown architecture given to build_msvc: $ARCH"
 		exit 1
@@ -201,20 +211,26 @@ function build_windows {
 	NPROC="${NPROC_STRING//[!0-9]/}"
 	
 	# First build with MinGW if it is installed and in PATH
-	GPP=$(which g++)
-	MAKE_CMD=$(which mingw32-make)
+	GPP="g++"
+	MAKE_CMD="mingw32-make"
 	if [[ $GPP != "" && $MAKE_CMD != "" ]]; then
 		export CXX=$GPP
 		COMPILER=gcc
 		COMPILER_VERSION=$($CXX -dumpversion)
+
+		if [[ $MINGW_64_BIT != "" ]]; then
+			export PATH="$MINGW_32_BIT:$PATH"
+			build_gcc_clang x86 $COMPILER
+		fi
 		
-		build_gcc_clang x86 $COMPILER
 		cp libsplinter-$SPLINTER_VERSION.dll libsplinter-static-$SPLINTER_VERSION.a "$BUILD_ROOT/$OS/$COMPILER/$ARCH"
 
+		if [[ $MINGW_64_BIT != "" ]]; then
+			export PATH="$MINGW_64_BIT:$PATH"
+			build_gcc_clang x86-64 $COMPILER
+		fi
+		
 		copy_header_files
-
-		# Only x86 supported with GCC on Windows for now
-#		build_gcc_clang x86-64 $COMPILER
 		
 		# Write down the commit id this was compiled from
 		update_commit_id
