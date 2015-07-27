@@ -61,12 +61,34 @@ else()
     message("Unknown architecture selected, defaulting to x86")
 endif()
 
-# MinGW (GCC on Windows) version 4.8.1 has a bug where _hypot is not found
-# when using any level of optimization. Defining __NO_INLINE__ fixes the bug.
 if(WINDOWS AND GCC)
+	# MinGW (GCC on Windows) version 4.8.1 has a bug where _hypot is not found
+	# when using any level of optimization. Defining __NO_INLINE__ fixes the bug.
     if(CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL "4.8.1")
         set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -D__NO_INLINE__")
     endif()
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL "4.9.2")
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
+		# TODO:
+		# -O3 enables all the following optimizations, but on Windows GCC produces
+		# wrong code with -O3, yet when manually enabling -O2 + the flags it works as intended.
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -finline-functions")
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -funswitch-loops")
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fpredictive-commoning")
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fgcse-after-reload")
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ftree-loop-vectorize")
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ftree-loop-distribute-patterns")
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ftree-slp-vectorize")
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fvect-cost-model")
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ftree-partial-pre")
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fipa-cp-clone")
+	endif()
+	
+	# If compiling with the SEH exception model (which is only available with 64 bits MinGW)
+	# we should statically link libgcc_s_seh_1.dll to avoid the dependency
+	if(BITNESS STREQUAL "64")
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -static")
+	endif()
 endif()
 
 if(MSVC)
