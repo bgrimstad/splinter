@@ -5,8 +5,17 @@ OS="unknown"
 COMPILER="unknown"
 NPROC="unknown"
 
+# Try to find CMakeLists.txt in this directory or its parent
+SPLINTER_DIR="./"
+if [ ! -f $SPLINTER_DIR/CMakeLists.txt ]; then
+       SPLINTER_DIR="../"
+       if [ ! -f $SPLINTER_DIR/CMakeLists.txt ]; then
+               echo "Error: Unable to locate CMakeLists.txt!"
+               exit 1
+       fi
+fi
+
 # Defaults
-SPLINTER_DIR="../" # This file should reside in SPLINTER_DIR/scripts
 CMAKE_CMD="cmake"
 
 #MinGW config
