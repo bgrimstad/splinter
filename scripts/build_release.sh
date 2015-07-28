@@ -6,9 +6,9 @@ COMPILER="unknown"
 NPROC="unknown"
 
 # Try to find CMakeLists.txt in this directory or its parent
-SPLINTER_DIR="./"
+SPLINTER_DIR="$(pwd)"
 if [ ! -f $SPLINTER_DIR/CMakeLists.txt ]; then
-       SPLINTER_DIR="../"
+       SPLINTER_DIR="$SPLINTER_DIR/.."
        if [ ! -f $SPLINTER_DIR/CMakeLists.txt ]; then
                echo "Error: Unable to locate CMakeLists.txt!"
                exit 1
@@ -222,12 +222,11 @@ function build_windows {
 	# First build with MinGW if it is installed and in PATH
 	GPP="g++"
 	MAKE_CMD="mingw32-make"
-	if [[ $GPP != "" && $MAKE_CMD != "" ]]; then
+	if [[ $GPP != "" && $MAKE_CMD != "" && $MINGW_32_BIT != "" && $MINGW_64_BIT != "" ]]; then
 		export CXX=$GPP
 		COMPILER=gcc
-		COMPILER_VERSION=$($CXX -dumpversion)
 
-		if [[ $MINGW_64_BIT != "" ]]; then
+		if [[ $MINGW_32_BIT != "" ]]; then
 			export PATH="$MINGW_32_BIT:$PATH"
 			build_gcc_clang x86 $COMPILER
 		fi
@@ -238,6 +237,8 @@ function build_windows {
 			export PATH="$MINGW_64_BIT:$PATH"
 			build_gcc_clang x86-64 $COMPILER
 		fi
+		
+		COMPILER_VERSION=$($CXX -dumpversion)
 		
 		copy_header_files
 		
