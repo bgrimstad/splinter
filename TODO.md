@@ -24,3 +24,4 @@
 - Finish implementation of operator== overloads in operator_overloads.cpp
 - Add tests that provoke errors
 - Investigate why Windows with dwarf exception model fails (It is probably due to uncaught exceptions)
+- Provide precompiled debug binaries?
