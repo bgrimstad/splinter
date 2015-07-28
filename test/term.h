@@ -75,6 +75,7 @@ class Plus : public MultiTerm
 public:
     Plus();
     Plus(Term *lhs, Term *rhs);
+	Plus(const Plus &other);
 
     virtual ~Plus();
 
@@ -107,6 +108,7 @@ public:
     Mul();
     Mul(double coefficient);
     Mul(Term *lhs, Term *rhs);
+	Mul(const Mul &other);
 
     virtual ~Mul();
 

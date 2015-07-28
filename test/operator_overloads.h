@@ -38,8 +38,7 @@ bool operator==(const std::set<T> &lhs, const std::set<T> &rhs);
 template <class T>
 bool operator==(const std::multiset<T> &lhs, const std::multiset<T> &rhs);
 
-template <class T>
-bool operator!=(const T &lhs, const T &rhs);
+bool operator!=(const DataSample &lhs, const DataSample &rhs);
 
 /*
  * Output stream operator

@@ -9,9 +9,8 @@ project(SPLINTER CXX)
 cmake_minimum_required(VERSION 2.8)
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
 
-set(VERSION_MAJOR 1)
-set(VERSION_MINOR 4)
-set(VERSION ${VERSION_MAJOR}-${VERSION_MINOR})
+# Read the SPLINTER version from version.txt
+file(STRINGS "version.txt" VERSION)
 
 # Default configuration values
 set(DEFAULT_BUILD_TYPE "Release")
@@ -62,12 +61,32 @@ else()
     message("Unknown architecture selected, defaulting to x86")
 endif()
 
-# MinGW (GCC on Windows) version 4.8.1 has a bug where _hypot is not found
-# when using any level of optimization. Defining __NO_INLINE__ fixes the bug.
 if(WINDOWS AND GCC)
+	# MinGW (GCC on Windows) version 4.8.1 has a bug where _hypot is not found
+	# when using any level of optimization. Defining __NO_INLINE__ fixes the bug.
     if(CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL "4.8.1")
         set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -D__NO_INLINE__")
     endif()
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL "4.9.2")
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
+		# TODO:
+		# -O3 enables all the following optimizations, but on Windows GCC produces
+		# wrong code with -O3, yet when manually enabling -O2 + the flags it works as intended.
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -finline-functions")
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -funswitch-loops")
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fpredictive-commoning")
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fgcse-after-reload")
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ftree-loop-vectorize")
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ftree-loop-distribute-patterns")
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ftree-slp-vectorize")
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fvect-cost-model")
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ftree-partial-pre")
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fipa-cp-clone")
+	endif()
+	
+	# To avoid an external dependency (libgcc_s_seh11.dll or libgcc_s_dw2-1.dll)
+	# we statically link the libraries required by MinGW runtimes
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -static")
 endif()
 
 if(MSVC)

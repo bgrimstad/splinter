@@ -129,6 +129,14 @@ Plus::Plus(Term *lhs, Term *rhs)
     add(rhs);
 }
 
+Plus::Plus(const Plus &other)
+{
+	terms.reserve(other.terms.size());
+	for (auto term : other.terms) {
+		terms.push_back(term->clone());
+	}
+}
+
 Plus::~Plus()
 {
 }
@@ -342,6 +350,15 @@ Mul::Mul(Term *lhs, Term *rhs)
     add(rhs);
 }
 
+Mul::Mul(const Mul &other)
+	: coefficient(other.coefficient)
+{
+	terms.reserve(other.terms.size());
+	for (auto term : other.terms) {
+		terms.push_back(term->clone());
+	}
+}
+
 Mul::~Mul()
 {
 }
@@ -459,8 +476,8 @@ Term *Mul::multiply_by_plus() {
     if(terms.size() <= 0) {
         return this;
     }
-    for(auto it = terms.end() - 1; it >= terms.begin(); --it) {
-        auto term = *it;
+	for (int i = terms.size() - 1; i >= 0; --i) {
+		auto term = terms.at(i);
         auto plus = dynamic_cast<Plus *>(term);
 
         if(plus != nullptr) {
@@ -471,7 +488,7 @@ Term *Mul::multiply_by_plus() {
             // Important to erase this _before_ the call to
             // this->clone below, else the plus will get
             // cloned too and start an infinite loop
-            terms.erase(it);
+            terms.erase(terms.begin() + i);
 
             for(auto &plus_term : plus_terms) {
                 auto temp = new Mul();
