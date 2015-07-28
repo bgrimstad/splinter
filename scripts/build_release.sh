@@ -287,6 +287,7 @@ cd $BUILD_ROOT
 # Check that all commit ids are the same
 # If they are we can make a release
 # TODO: Add osx
+# List of required OS's
 OSES="windows
 linux"
 COMMIT_ID=""
@@ -297,13 +298,13 @@ do
 		exit 1
 	fi
 	
-	for compiler in $(ls $BUILD_ROOT/.build/$os_dir)
+	for compiler in $(ls $BUILD_ROOT/$os_dir)
 	do
 		if [[ $COMMIT_ID == "" ]]; then
-			COMMIT_ID=$(cat $BUILD_ROOT/.build/$os_dir/$compiler/commit_id)
+			COMMIT_ID=$(cat $BUILD_ROOT/$os_dir/$compiler/commit_id)
 		else
-			if [[ $(cat $BUILD_ROOT/.build/$os_dir/$compiler/commit_id) != $COMMIT_ID ]]; then
-				echo "Commit id mismatch, $os_dir/$compiler differs from previous."
+			if [[ $(cat $BUILD_ROOT/$os_dir/$compiler/commit_id) != $COMMIT_ID ]]; then
+				echo "Commit id mismatch, $os_dir/$compiler differs."
 				echo "Cannot make release."
 				exit 1
 			fi
@@ -322,15 +323,16 @@ if [[ $TAR == ""  || $ZIP == "" ]]; then
 	exit 1
 fi
 
-mkdir -p $BUILD_ROOT/releases
-rm $BUILD_ROOT/releases/*
+RELEASE_DIR=$BUILD_ROOT/releases
+mkdir -p $RELEASE_DIR
+rm $RELEASE_DIR/* # In case theres an old release there
 for os_dir in $OSES
 do
-	cd $BUILD_ROOT/.build/$os_dir
+	cd $BUILD_ROOT/$os_dir
 	for compiler_dir in $(echo */) # echo */ gives us a list of the directories
 	do
 		compiler_name=${compiler_dir%?} # compiler_dir includes the last /, remove it.
-		cd $BUILD_ROOT/.build/$os_dir/$compiler_dir
+		cd $BUILD_ROOT/$os_dir/$compiler_dir
 		files=""
 		for arch in $(echo */)
 		do
@@ -338,10 +340,10 @@ do
 		done
 
 		filename=$os_dir"_"$compiler_name$(cat compiler_version)
-		full_filename=$BUILD_ROOT/releases/$filename
+		full_filename=$RELEASE_DIR/$filename
 
 		OLDWD=$(pwd)
-		cd $BUILD_ROOT/.build/$os_dir/$compiler_dir
+		cd $BUILD_ROOT/$os_dir/$compiler_dir
 
 		echo "Creating archive $filename.tar.gz"
 		$TAR -czf $full_filename.tar.gz $files > /dev/null
@@ -353,10 +355,10 @@ do
 done
 
 # Make an archive of splinter-matlab
-filename="splinter-matlab"
-full_filename="$BUILD_ROOT/releases/$filename"
-files="splinter-matlab"
 cd $BUILD_ROOT
+filename="splinter-matlab"
+full_filename="$RELEASE_DIR/$filename"
+files="splinter-matlab"
 echo "Creating archive $filename.tar.gz"
 $TAR -czf $full_filename.tar.gz $files > /dev/null
 
