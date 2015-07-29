@@ -5,20 +5,10 @@ OS="unknown"
 COMPILER="unknown"
 NPROC="unknown"
 
-# Try to find CMakeLists.txt in this directory or its parent
-SPLINTER_DIR="$(pwd)"
-if [ ! -f $SPLINTER_DIR/CMakeLists.txt ]; then
-       SPLINTER_DIR="$SPLINTER_DIR/.."
-       if [ ! -f $SPLINTER_DIR/CMakeLists.txt ]; then
-               echo "Error: Unable to locate CMakeLists.txt!"
-               exit 1
-       fi
-fi
-
 # Defaults
 CMAKE_CMD="cmake"
 
-#MinGW config
+#MinGW config (comment out if you don't have the respective version installed)
 MINGW_32_BIT="/C/mingw-w64/i686-4.9.2-posix-dwarf-rt_v4-rev3/mingw32/bin"
 MINGW_64_BIT="/C/mingw-w64/x86_64-4.9.2-posix-seh-rt_v4-rev3/mingw64/bin"
 
@@ -67,6 +57,16 @@ esac
 shift # past argument or value
 done
 
+# Try to find CMakeLists.txt in this directory or its parent
+SPLINTER_DIR="$(pwd)"
+if [ ! -f $SPLINTER_DIR/CMakeLists.txt ]; then
+       SPLINTER_DIR="$SPLINTER_DIR/.."
+       if [ ! -f $SPLINTER_DIR/CMakeLists.txt ]; then
+               echo "Error: Unable to locate CMakeLists.txt!"
+               exit 1
+       fi
+fi
+
 # Make sure SPLINTER_DIR is an absolute path
 if [[ $SPLINTER_DIR != /* ]]; then
 	SPLINTER_DIR="$(pwd)/$SPLINTER_DIR"
@@ -83,10 +83,11 @@ if [[ $(which cmake) == "" ]]; then
 	echo "and try again!"
 	echo "If you don't want to add CMake to your PATH, you can specify the path to it with:"
 	echo "$COMMAND -c /path/to/cmake/binary/directory"
-	echo "Note that on Windows, the path \"C:/Program Files (x86)/CMake/bin\" has to be written as \"/c/Program Files (x86)/CMake/bin\""
+	echo "Note that on Windows, the path \"C:/Program Files (x86)/CMake/bin\" has to be written as \"/C/Program Files (x86)/CMake/bin\""
 	exit 1
 fi
 
+# Gets the id of the last commit to the repository at $SPLINTER_DIR
 function get_commit_id {
 	COMMIT_ID=$(git -C "$SPLINTER_DIR" log -n 1 --pretty=format:"%H")
 }
@@ -102,7 +103,8 @@ function update_compiler_version {
 
 function copy_header_files {	
 	cp -r $SPLINTER_DIR/include $BUILD_ROOT/$OS/$COMPILER/
-	cp -r $SPLINTER_DIR/thirdparty/Eigen $BUILD_ROOT/$OS/$COMPILER/include
+	cp -r $SPLINTER_DIR/thirdparty/Eigen/Eigen $BUILD_ROOT/$OS/$COMPILER/include
+	cp -r $SPLINTER_DIR/thirdparty/Eigen/unsupported $BUILD_ROOT/$OS/$COMPILER/include
 }
 
 function build_gcc_clang {
@@ -274,9 +276,11 @@ cd $BUILD_ROOT
 
 PLATFORM=$(uname)
 if [[ $PLATFORM == MINGW* ]]; then
+	rm -r $BUILD_ROOT/windows
 	build_windows
 	
 elif [[ $PLATFORM == Linux ]]; then
+	rm -r $BUILD_ROOT/linux
 	build_linux
 	
 else

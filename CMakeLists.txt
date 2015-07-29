@@ -219,17 +219,14 @@ install(
     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-matlab/lib/${OS_STRING}/${ARCH}
 )
 
-# Install the header files
+# Install the header files (including Eigen) to the header directory
 install(
-    DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
-    DESTINATION ${HEADER_INSTALL_DIRECTORY}
+    DIRECTORY
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/
+    ${EIGEN_DIRECTORY}/Eigen
+    ${EIGEN_DIRECTORY}/unsupported
+    DESTINATION ${HEADER_INSTALL_DIRECTORY}/SPLINTER
 )
-# Install Eigen to the header directory
-install(
-	DIRECTORY ${EIGEN_DIRECTORY}
-	DESTINATION ${HEADER_INSTALL_DIRECTORY}
-)
-
 # Install the shared library file
 install(
     TARGETS ${SHARED_LIBRARY}
