@@ -57,20 +57,17 @@ case $key in
 	;;
 	*)
 	# No preceding: path to SPLINTER
-	SPLINTER_DIR=$1
+	SPLINTER_DIR="$1"
 	;;
 esac
 shift # past argument or value
 done
 
-# Try to find CMakeLists.txt in this directory or its parent
-SPLINTER_DIR="$(pwd)"
+SPLINTER_DIR=$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)/..
+# Verify that CMakeLists.txt exists in $SPLINTER_DIR
 if [ ! -f $SPLINTER_DIR/CMakeLists.txt ]; then
-       SPLINTER_DIR="$SPLINTER_DIR/.."
-       if [ ! -f $SPLINTER_DIR/CMakeLists.txt ]; then
-               echo "Error: Unable to locate CMakeLists.txt!"
-               exit 1
-       fi
+	echo "Error: Unable to locate CMakeLists.txt!"
+	exit 1
 fi
 
 # Make sure SPLINTER_DIR is an absolute path
