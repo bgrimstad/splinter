@@ -74,8 +74,6 @@ function check_directory {
 	done
 }
 
-check_license
-
 for __ENTRY in $TO_CHECK
 do
 	check_entry $__ENTRY
