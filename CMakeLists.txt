@@ -64,14 +64,14 @@ endif()
 if(WINDOWS AND GCC)
 	# MinGW (GCC on Windows) version 4.8.1 has a bug where _hypot is not found
 	# when using any level of optimization. Defining __NO_INLINE__ fixes the bug.
+	# The bug probably exists on other versions of MinGW as well, but that has not been verified by us.
     if(CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL "4.8.1")
         set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -D__NO_INLINE__")
     endif()
     if(CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL "4.9.2")
 		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
-		# TODO:
-		# -O3 enables all the following optimizations, but on Windows GCC produces
-		# wrong code with -O3, yet when manually enabling -O2 + the flags it works as intended.
+		# From the GCC man pages:
+		# If you use multiple -O options, with or without level numbers, the last such option is the one that is effective.
 		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -finline-functions")
 		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -funswitch-loops")
 		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fpredictive-commoning")
@@ -81,7 +81,8 @@ if(WINDOWS AND GCC)
 		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ftree-slp-vectorize")
 		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fvect-cost-model")
 		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ftree-partial-pre")
-		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fipa-cp-clone")
+		# -fipa-cp-clone causes a SegFault in Eigen when enabled with MinGW i686 4.9.2 with dwarf exception model
+		#set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fipa-cp-clone")
 	endif()
 	
 	# To avoid an external dependency (libgcc_s_seh11.dll or libgcc_s_dw2-1.dll)
