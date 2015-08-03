@@ -36,6 +36,7 @@ When you are done populating the DataTable you can create an Approximant of your
 - BSpline
 - PSpline
 - RadialBasisFunction
+- PolynomialRegression
 
 All these derive from the Approximant base class, and their usage mainly differ in the signature of the constructor.
 
