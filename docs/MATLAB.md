@@ -2,7 +2,7 @@
 We have made an interface so you can use SPLINTER through MatLab. If you follow the instructions provided below you should be good to go in a matter of minutes (unless you choose to compile the library yourself).
 
 ###Setup
-First, head to the [releases tab](https://github.com/bgrimstad/splinter/releases) and download a copy of matlab-splinter. Or, you can compile the library for yourself (as described in the [documentation](https://github.com/bgrimstad/splinter/edit/matlabInterface/docs/install.md)), and arrange the files so the directory structure looks like this:
+First, head to the [releases tab](https://github.com/bgrimstad/splinter/releases) and download a copy of matlab-splinter. Or, you can compile the library for yourself (as described in the [documentation](../docs/compile.md)), and arrange the files so the directory structure looks like this:
 - main
   - lib
     - Windows

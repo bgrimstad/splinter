@@ -5,8 +5,6 @@
 - The Hessian of BSplines of all degrees seems to be wrong (it is not symmetrical over the diagonal). Test function: 4.5*(x^4)-(x^3)+3*(x^2)*y
 
 #### Important
-- Improve the documentation
-- Update documentation to reflect that we also have a MatLab interface
 - Write Doxygen for classes and methods that are visible to the end user
 - Implement Hessian for radial basis function splines
 - Test Jacobian for radial basis function splines

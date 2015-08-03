@@ -11,6 +11,8 @@
 - Integrated the Catch testing framework
 - Added functionality for symbolic differentiation of functions
 - Added set operations (union and complement) to DataTable (as operator+ and operator-)
+- Added script (scripts/build_release) for easier compilation (especially on Windows with MSVC)
+- Improved compilation documentation
 
 #### Version 1.3
 - Library renamed SPLINTER (from Splinter)

@@ -15,9 +15,9 @@ When sampling is expensive and/or scattered (not on a grid) a radial basis funct
 Figure: Illustration of a cubic B-spline generated with the SPLINTER library.
 
 ###Sharing
-SPLINTER is the result of several years of development towards a fast and general library for function approximation. The initial intention with the library was to build splines for use in mathematical programming (nonlinear optimization). Thus, some effort has been put into functionality that supports this, e.g. Jacobian and Hessian computations for the B-spline. The current goals with the library are: 1) to improve the current code and make it more accessible for users (for instance by adding a Matlab and Python interface), and 2) to implement and test new function approximation methods.
+SPLINTER is the result of several years of development towards a fast and general library for function approximation. The initial intention with the library was to build splines for use in mathematical programming (nonlinear optimization). Thus, some effort has been put into functionality that supports this, e.g. Jacobian and Hessian computations for the B-spline. The current goals with the library are: 1) to improve the current code and make it more accessible for users (for instance by adding a Python interface), and 2) to implement and test new function approximation methods.
 
-By making SPLINTER publicly available we hope to help anyone looking for a multivariate function approximation library. In return,  we expect nothing but your suggestions, improvements, and feature requests. As the TODO-list reflects, there is still much honing to be done!
+By making SPLINTER publicly available we hope to help anyone looking for a multivariate function approximation library. In return, we expect nothing but your suggestions, improvements, and feature requests. As the TODO-list reflects, there is still much honing to be done!
 
 Please let us know by what you think about the library. Together we can make a great library - one that appears to be simple and dull, but that is packing some serious horsepower under the hood.
 
@@ -33,11 +33,9 @@ If you use SPLINTER in a scientific work we kindly ask you to cite it. You can c
 ```
 
 ###Requirements for use
-* [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page) (tested with versions 3.2.1, 3.2.2 and 3.2.3)
-
-Note that the sparse matrix support of Eigen is particularly important for the speed of the tensor product B-spline implementation.
+A standards compliant C++11 compiler.
 
 ###Guides
-* [Installation](docs/install.md)
 * [Basic usage](docs/basic_usage.md)
+* [Compilation](docs/compile.md)
 * [MatLab interface](docs/MATLAB.md)
