@@ -10,7 +10,7 @@
 - Test Jacobian for radial basis function splines
 - Complete and test implementation of ordinary least squares
 - Finish implementation of operator== overloads in operator_overloads.cpp
-- Add Python interface (2 and 3?)
+- Add Python interface (2 and 3?)  (Investigate if a single C interface may be used by both Python and MatLab)
 
 #### Normal
 - Remove code redundancy by wrapping affine operations on the control points (bspline) and tensor products (bsplinebasis)
