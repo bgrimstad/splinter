@@ -6,11 +6,29 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-PROJECT_DIR="$(pwd)/.."
+SPLINTER_DIR=$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)/..
+# Verify that CMakeLists.txt exists in $SPLINTER_DIR
+if [ ! -f $SPLINTER_DIR/CMakeLists.txt ]; then
+	echo "Error: Unable to locate CMakeLists.txt!"
+	exit 1
+fi
+
+RED_COLOR="\033[0;31m"
+GREEN_COLOR="\033[0;32m"
+NO_COLOR="\033[0m"
 
 NUM_MISSING=0
 NUM_OK=0
-TO_CHECK="$PROJECT_DIR/CMakeLists.txt $PROJECT_DIR/src $PROJECT_DIR/include $PROJECT_DIR/matlab $PROJECT_DIR/test $PROJECT_DIR/scripts"
+TO_CHECK="$SPLINTER_DIR/CMakeLists.txt $SPLINTER_DIR/src $SPLINTER_DIR/include $SPLINTER_DIR/matlab $SPLINTER_DIR/test $SPLINTER_DIR/scripts"
+
+function print_red {
+	echo -e "$RED_COLOR$1$NO_COLOR"
+}
+
+function print_green {
+	echo -e "$GREEN_COLOR$1$NO_COLOR"
+}
+
 
 function check_license {
 	while read p; do
@@ -19,7 +37,7 @@ function check_license {
 			MISSING_LICENSE="true"
 			return
 		fi
-	done < LICENSE_HEADER
+	done < $SPLINTER_DIR/scripts/LICENSE_HEADER
 }
 
 function check_entry {
@@ -37,9 +55,10 @@ function check_file {
 	check_license $1
 	if [ $MISSING_LICENSE == "true" ]
 	then
-		echo "$(readlink -m $1) is missing the license header"
+		print_red "$(readlink -m $1)"
 		NUM_MISSING=$(($NUM_MISSING + 1))
 	else
+		print_green "$(readlink -m $1)"
 		NUM_OK=$(($NUM_OK + 1))
 	fi
 }
@@ -54,8 +73,6 @@ function check_directory {
 		check_entry $ENTRY
 	done
 }
-
-check_license
 
 for __ENTRY in $TO_CHECK
 do

@@ -28,5 +28,4 @@
 - Test executable runtime speed on different compilers
 - Add tests that provoke errors
 - Automatically download Catch? See https://github.com/philsquared/Catch/blob/master/docs/build-systems.md#cmake
-- Investigate why Windows with dwarf exception model fails (It is probably due to uncaught exceptions)
 - Provide precompiled debug binaries?
