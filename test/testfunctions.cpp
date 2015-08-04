@@ -48,7 +48,7 @@ void setupTestFunctions() {
     // Functions of three variables
     auto f_3_0 = 6534460297 + 0*x*y*z;
     auto f_3_1 = x+y-z-1;
-    auto f_3_2 = y*z + 3.9*(z^2) + (y^2) + 13.1*(z^2) - x - 10;
+    auto f_3_2 = y*z + (y^2) + 17.0*(z^2) - x - 10;
     auto f_3_3 = f_3_2 * f_3_1;
 
     // Non-polynomial (aka. nasty) functions
