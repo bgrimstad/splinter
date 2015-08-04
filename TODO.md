@@ -1,13 +1,11 @@
 ### TODO list
 
 #### Critical
-- BSplines of degree 3 and 4 (and possibly more) fails when given samples where all samples have the value 0.0
 - The Hessian of BSplines of all degrees seems to be wrong (it is not symmetrical over the diagonal). Test function: 4.5*(x^4)-(x^3)+3*(x^2)*y
 
 #### Important
 - Write Doxygen for classes and methods that are visible to the end user
 - Implement Hessian for radial basis function splines
-- Test Jacobian for radial basis function splines
 - Complete and test implementation of ordinary least squares
 - Finish implementation of operator== overloads in operator_overloads.cpp
 - Add Python interface (2 and 3?)  (Investigate if a single C interface may be used by both Python and MatLab)
