@@ -40,7 +40,7 @@ All the commands shown here should be entered into a terminal window if on UNIX,
 
 A new directory called build will be created, and the binaries can be found in build/OS/COMPILER/ARCHITECTURE, where the capitalized directories are variables depending on your configuration.
 
-##"Advanced"
+##Advanced
 Please use the guide corresponding to your platform:
 * [UNIX](#compile-on-unix-tested-with-ubuntu)
 * [Windows](#compile-on-windows-mingw)
