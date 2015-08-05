@@ -53,14 +53,22 @@ void compareFunctionValue(std::vector<TermFunction *> funcs,
                           size_t numSamplePoints, size_t numEvalPoints,
                           double one_eps, double two_eps, double inf_eps);
 
-void compareFunctionValue(TermFunction *funcs,
+void compareFunctionValue(TermFunction *exact,
+                          std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                          size_t numSamplePoints, size_t numEvalPoints,
+                          double one_eps, double two_eps, double inf_eps);
+
+void compareJacobianValue(TermFunction *exact,
                           std::function<Approximant *(const DataTable &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints,
                           double one_eps, double two_eps, double inf_eps);
 
 bool compareBSplines(const BSpline &left, const BSpline &right);
 
-//DenseVector centralDifference(const DenseVector &x);
+/*
+ * Computes the central difference at x. Returns a 1xN row-vector.
+ */
+DenseMatrix centralDifference(const Approximant &approx, const DenseVector &x);
 
 DataTable sample(const Function &func, std::vector<std::vector<double>> &points);
 DataTable sample(const Function *func, std::vector<std::vector<double>> &points);
