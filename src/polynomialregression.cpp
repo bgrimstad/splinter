@@ -138,7 +138,7 @@ DenseVector PolynomialRegression::evalMonomials(DenseVector x) const
         monomials = kroneckerProduct(temp, powers.at(i));
     }
 
-    if (monomials.rows() == numCoefficients)
+    if (monomials.rows() != numCoefficients)
     {
         throw Exception("PolynomialRegression::evalMonomials: monomials.rows() != numCoefficients.");
     }
