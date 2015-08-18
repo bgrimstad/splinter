@@ -19,50 +19,74 @@ using namespace SPLINTER;
 #define COMMON_TEXT " value approximation test with polynomials"
 
 
-TEST_CASE("PSpline function" COMMON_TEXT, COMMON_TAGS "[function-value][polynomial]") {
-    // TODO: These should probably be global?
-    double one_eps = 0.1;
-    double two_eps = 0.1;
-    double inf_eps = 0.1;
+TEST_CASE("PSpline function" COMMON_TEXT, COMMON_TAGS "[function-value][polynomial]")
+{
+    for(auto testFunc : getPolynomialFunctions())
+    {
+        double one_eps = 0.1;
+        double two_eps = 0.1;
+        double inf_eps = 0.1;
 
-    testApproximation(getPolynomialFunctions(),
-                      [](const DataTable &table) {
-                          return (Approximant *) new PSpline(table);
-                      },
-                      TestType::FunctionValue,
-                      300,  // Number of points to sample at
-                      1337, // Number of points to test against
-                      one_eps, two_eps, inf_eps);
+        // If the degree of the exact function is less than or equal to the degree
+        // of the P-Spline we are using to approximate it, the P-Spline should approximate
+        // the function exactly.
+        if(testFunc->getF()->isConstDegree() && testFunc->getF()->getConstDegree() <= 3.0)
+        {
+            one_eps = 1e-5;
+            two_eps = 1e-5;
+            inf_eps = 1e-5;
+        }
+
+        compareFunctionValue(testFunc,
+                             [](const DataTable &table)
+                             {
+                                 return (Approximant *) new PSpline(table);
+                             },
+                             300,  // Number of points to sample at
+                             1337, // Number of points to test against
+                             one_eps, two_eps, inf_eps);
+    }
 }
 
-TEST_CASE("PSpline jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian][polynomial]") {
-    // TODO: These should probably be global?
-    double one_eps = 0.1;
-    double two_eps = 0.1;
-    double inf_eps = 0.1;
+TEST_CASE("PSpline jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian][polynomial]")
+{
+    for(auto testFunc : getPolynomialFunctions())
+    {
+        double one_eps = 0.1;
+        double two_eps = 0.1;
+        double inf_eps = 0.1;
 
-    testApproximation(getPolynomialFunctions(),
-                      [](const DataTable &table) {
-                          return (Approximant *) new PSpline(table);
-                      },
-                      TestType::Jacobian,
-                      300,  // Number of points to sample at
-                      1337, // Number of points to test against
-                      one_eps, two_eps, inf_eps);
+        // If the degree of the exact function is less than or equal to the degree
+        // of the P-Spline we are using to approximate it, the P-Spline should approximate
+        // the function exactly.
+        if(testFunc->getF()->isConstDegree() && testFunc->getF()->getConstDegree() <= 3.0)
+        {
+            one_eps = 1e-5;
+            two_eps = 1e-5;
+            inf_eps = 1e-5;
+        }
+
+        compareJacobianValue(testFunc,
+                             [](const DataTable &table)
+                             {
+                                 return (Approximant *) new PSpline(table);
+                             },
+                             300,  // Number of points to sample at
+                             1337, // Number of points to test against
+                             one_eps, two_eps, inf_eps);
+    }
 }
 
-TEST_CASE("PSpline hessian" COMMON_TEXT, COMMON_TAGS "[hessian][polynomial]") {
-    // TODO: These should probably be global?
-    double one_eps = 0.1;
-    double two_eps = 0.1;
-    double inf_eps = 0.1;
-
-    testApproximation(getPolynomialFunctions(),
-                      [](const DataTable &table) {
-                          return (Approximant *) new PSpline(table);
-                      },
-                      TestType::Hessian,
-                      300,  // Number of points to sample at
-                      1337, // Number of points to test against
-                      one_eps, two_eps, inf_eps);
+TEST_CASE("PSpline hessian" COMMON_TEXT, COMMON_TAGS "[hessian][polynomial]")
+{
+    for(auto testFunc : getPolynomialFunctions())
+    {
+        checkHessianSymmetry(testFunc,
+                             [](const DataTable &table)
+                             {
+                                 return (Approximant *) new PSpline(table);
+                             },
+                             300,   // Number of points to sample at
+                             1337); // Number of points to test against
+    }
 }
