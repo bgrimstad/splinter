@@ -255,7 +255,7 @@ void compareFunctionValue(TermFunction *exact,
         DenseVector errorVec(evalPoints.size());
 
         double maxError = 0.0;
-        DenseVector maxErrorPoint;
+        DenseVector maxErrorPoint = vecToDense(evalPoints.at(0));
 
         int i = 0;
         for (auto &point : evalPoints)
@@ -298,7 +298,9 @@ void compareFunctionValue(TermFunction *exact,
             maxErrorPointStr.append(std::to_string(maxErrorPoint(i)));
         }
         maxErrorPointStr.append(")");
-        INFO(std::setw(16) << std::left << "Max error:"        << std::setw(16) << std::right << maxError << " at " << maxErrorPointStr);
+        INFO("");
+        INFO(std::setw(16) << std::left << "Max error:"        << std::setw(16) << std::right << maxError);
+        INFO(" at " << maxErrorPointStr);
         INFO(std::setw(16) << std::left << "Exact value:"      << std::setw(16) << std::right << exact->eval(maxErrorPoint));
         INFO(std::setw(16) << std::left << "Approx value:"     << std::setw(16) << std::right << approx->eval(maxErrorPoint));
 
@@ -311,6 +313,7 @@ void compareFunctionValue(TermFunction *exact,
 }
 
 
+/* Compares the jacobian of the approximant to the central difference of the approximant function value */
 void compareJacobianValue(TermFunction *exact,
                           std::function<Approximant *(const DataTable &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints,
@@ -330,9 +333,9 @@ void compareJacobianValue(TermFunction *exact,
         INFO(exact->getFunctionStr());
         INFO(exact->getJacobianStr());
 
-        DenseVector oneNormVec(numEvalPoints);
-        DenseVector twoNormVec(numEvalPoints);
-        DenseVector infNormVec(numEvalPoints);
+        DenseVector oneNormVec(evalPoints.size());
+        DenseVector twoNormVec(evalPoints.size());
+        DenseVector infNormVec(evalPoints.size());
 
         double maxOneNormError = 0.0;
         double maxTwoNormError = 0.0;
@@ -347,11 +350,11 @@ void compareJacobianValue(TermFunction *exact,
         {
             DenseVector x = vecToDense(point);
 
-            DenseMatrix exactValue = exact->evalJacobian(x);
-            // double approxValue = approx->eval(x);
-            DenseMatrix approxValue = centralDifference(*approx, x);
+            // "exact" value
+            DenseMatrix exactValue = centralDifference(*approx, x);
+            DenseMatrix approxValue = approx->evalJacobian(x);
 
-            DenseVector error(exactValue.size());
+            DenseVector error = DenseVector::Zero(exactValue.cols());
             for(size_t j = 0; j < error.size(); ++j)
             {
                 error(j) = getError(exactValue(j), approxValue(j));
@@ -392,7 +395,7 @@ void compareJacobianValue(TermFunction *exact,
 
         auto getDenseAsStrOneLine = [](const DenseMatrix &x) {
             std::string denseAsStrOneLine("(");
-            for(size_t i = 0; i < x.cols(); ++i)
+            for(size_t i = 0; i < x.size(); ++i)
             {
                 if(i != 0)
                 {
@@ -405,24 +408,74 @@ void compareJacobianValue(TermFunction *exact,
         };
 
         // Print out the points with the largest errors
+        INFO("");
         INFO("Max errors:");
         INFO("");
-        INFO(std::setw(16) << std::left << "1-norm:"           << std::setw(32) << std::right << maxOneNormError << " at " << getDenseAsStrOneLine(maxOneNormErrorPoint));
-        INFO(std::setw(16) << std::left << "Exact value:"      << std::setw(32) << std::right << getDenseAsStrOneLine(exact->evalJacobian(maxOneNormErrorPoint)));
-        INFO(std::setw(16) << std::left << "Approx value:"     << std::setw(32) << std::right << getDenseAsStrOneLine(centralDifference(*approx, maxOneNormErrorPoint)));
+        INFO(std::setw(16) << std::left << "1-norm:"           << std::setw(32) << std::right << maxOneNormError);
+        INFO(" at " << getDenseAsStrOneLine(maxOneNormErrorPoint));
+        INFO(std::setw(16) << std::left << "Approx value:"      << std::setw(32) << std::right << getDenseAsStrOneLine(approx->evalJacobian(maxOneNormErrorPoint)));
+        INFO(std::setw(16) << std::left << "Central difference:"     << std::setw(32) << std::right << getDenseAsStrOneLine(centralDifference(*approx, maxOneNormErrorPoint)));
 
         INFO("");
-        INFO(std::setw(16) << std::left << "2-norm:"           << std::setw(32) << std::right << maxTwoNormError << " at " << getDenseAsStrOneLine(maxTwoNormErrorPoint));
-        INFO(std::setw(16) << std::left << "Exact value:"      << std::setw(32) << std::right << getDenseAsStrOneLine(exact->evalJacobian(maxTwoNormErrorPoint)));
-        INFO(std::setw(16) << std::left << "Approx value:"     << std::setw(32) << std::right << getDenseAsStrOneLine(centralDifference(*approx, maxTwoNormErrorPoint)));
+        INFO(std::setw(16) << std::left << "2-norm:"           << std::setw(32) << std::right << maxTwoNormError);
+        INFO(" at " << getDenseAsStrOneLine(maxTwoNormErrorPoint));
+        INFO(std::setw(16) << std::left << "Approx value:"      << std::setw(32) << std::right << getDenseAsStrOneLine(approx->evalJacobian(maxTwoNormErrorPoint)));
+        INFO(std::setw(16) << std::left << "Central difference:"     << std::setw(32) << std::right << getDenseAsStrOneLine(centralDifference(*approx, maxTwoNormErrorPoint)));
 
         INFO("");
-        INFO(std::setw(16) << std::left << "Inf-norm:"         << std::setw(32) << std::right << maxInfNormError << " at " << getDenseAsStrOneLine(maxInfNormErrorPoint));
-        INFO(std::setw(16) << std::left << "Exact value:"      << std::setw(32) << std::right << getDenseAsStrOneLine(exact->evalJacobian(maxInfNormErrorPoint)));
-        INFO(std::setw(16) << std::left << "Approx value:"     << std::setw(32) << std::right << getDenseAsStrOneLine(centralDifference(*approx, maxInfNormErrorPoint)));
+        INFO(std::setw(16) << std::left << "Inf-norm:"         << std::setw(32) << std::right << maxInfNormError);
+        INFO(" at " << getDenseAsStrOneLine(maxInfNormErrorPoint));
+        INFO(std::setw(16) << std::left << "Approx value:"      << std::setw(32) << std::right << getDenseAsStrOneLine(approx->evalJacobian(maxInfNormErrorPoint)));
+        INFO(std::setw(16) << std::left << "Central difference:"     << std::setw(32) << std::right << getDenseAsStrOneLine(centralDifference(*approx, maxInfNormErrorPoint)));
 
         if(norms(0) / evalPoints.size() > one_eps || norms(1) > two_eps || norms(2) > inf_eps) {
             CHECK(false);
+        }
+
+        delete approx;
+    }
+}
+
+void checkHessianSymmetry(TermFunction *exact,
+                          std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                          size_t numSamplePoints, size_t numEvalPoints)
+{
+    auto dim = exact->getNumVariables();
+    CHECK(dim > 0);
+    if(dim > 0) {
+        auto samplePoints = linspace(dim, -5, 5, std::pow(numSamplePoints, 1.0/dim));
+        auto evalPoints = linspace(dim, -4.9999, 4.9999, std::pow(numEvalPoints, 1.0/dim));
+
+        DataTable table = sample(exact, samplePoints);
+
+        Approximant *approx = approx_gen_func(table);
+
+        INFO("Approximant: " << approx->getDescription());
+        INFO(exact->getFunctionStr());
+        INFO("Exact " << exact->getJacobianStr());
+        INFO("Exact " << exact->getHessianStr());
+
+
+        for (auto &point : evalPoints)
+        {
+            DenseVector x = vecToDense(point);
+
+            if(!isSymmetricHessian(*approx, x))
+            {
+                std::string x_str;
+                for(size_t i = 0; i < x.size(); ++i)
+                {
+                    if(i != 0)
+                    {
+                        x_str.append(", ");
+                    }
+                    x_str.append(to_string(x(i)));
+                }
+                INFO("Approximated hessian at " << x_str << ":");
+                INFO(approx->evalHessian(x));
+                CHECK(isSymmetricHessian(*approx, x));
+                break;
+            }
         }
 
         delete approx;
@@ -909,6 +962,27 @@ DenseMatrix centralDifference(const Approximant &approx, const DenseVector &x)
     }
 
     return dx;
+}
+
+/*
+ * Checks that the hessian is symmetric across the diagonal
+ */
+bool isSymmetricHessian(const Approximant &approx, const DenseVector &x)
+{
+    DenseMatrix hessian = approx.evalHessian(x);
+
+    for(size_t row = 0; row < hessian.rows(); ++row)
+    {
+        for(size_t col = 0; col < hessian.cols(); ++col)
+        {
+            if(getError(hessian(row, col), hessian(col, row)) > 1e-9)
+            {
+                return false;
+            }
+        }
+    }
+
+    return true;
 }
 
 } // namespace SPLINTER
