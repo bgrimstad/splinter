@@ -89,7 +89,7 @@ DenseMatrix TermFunction::evalJacobian(DenseVector x) const
     auto xvec = denseToVec(x);
 
     for(size_t i = 0; i < numVariables; i++) {
-        jacobian(0, i) = jac.at(i)->eval(xvec);
+        jacobian(i) = jac.at(i)->eval(xvec);
     }
 
     return jacobian;
@@ -137,34 +137,53 @@ void TermFunction::calculateHessian()
 
 void TermFunction::printAll() const
 {
-    std::cout << "Function: ";
-    f->pretty_text(std::cout);
+    std::cout << getFunctionStr();
+    std::cout << getJacobianStr();
+    std::cout << getHessianStr();
     std::cout << std::endl;
+}
 
-    std::cout << "Jacobian: " << std::endl;
+std::string TermFunction::getFunctionStr() const
+{
+    std::stringstream s;
+    s << "Function: ";
+    f->pretty_text(s);
+    s << std::endl;
+    return s.str();
+}
+
+std::string TermFunction::getJacobianStr() const
+{
+    std::stringstream s;
+    s << "Jacobian: " << std::endl;
     for(size_t i = 0; i < numVariables; i++) {
-        std::cout << "df/d";
-        variables.at(i).pretty_text(std::cout);
-        std::cout << ": ";
-        jac.at(i)->pretty_text(std::cout);
-        std::cout << std::endl;
+        s << "df/d";
+        variables.at(i).pretty_text(s);
+        s << ": ";
+        jac.at(i)->pretty_text(s);
+        s << std::endl;
     }
+    return s.str();
+}
 
-    std::cout << "Hessian: " << std::endl;
+std::string TermFunction::getHessianStr() const
+{
+    std::stringstream s;
+    s << "Hessian: " << std::endl;
     for(size_t i = 0; i < numVariables; i++) {
         for(size_t j = 0; j < numVariables; j++) {
-            std::cout << "d^2f/d";
-            variables.at(i).pretty_text(std::cout);
+            s << "d^2f/d";
+            variables.at(i).pretty_text(s);
             if(i == j) {
-                std::cout << "^2";
+                s << "^2";
             } else {
-                std::cout << "d";
-                variables.at(j).pretty_text(std::cout);
+                s << "d";
+                variables.at(j).pretty_text(s);
             }
-            std::cout << ": ";
-            hes.at(i).at(j)->pretty_text(std::cout);
-            std::cout << std::endl;
+            s << ": ";
+            hes.at(i).at(j)->pretty_text(s);
+            s << std::endl;
         }
     }
-    std::cout << std::endl;
+    return s.str();
 }

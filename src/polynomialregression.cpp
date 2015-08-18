@@ -103,7 +103,11 @@ DenseMatrix PolynomialRegression::computeDesignMatrix(const DataTable &samples) 
 
         // Evaluate monomials at x
         DenseVector Xi = evalMonomials(x);
-        assert(Xi.cols() == numCoefficients);
+
+        if (Xi.rows() != numCoefficients)
+        {
+            throw Exception("PolynomialRegression::computeDesignMatrix: Xi.rows() != numCoefficients.");
+        }
 
         // Add row to design matrix X
         X.block(i,0,1,numCoefficients) = Xi.transpose();
@@ -134,7 +138,10 @@ DenseVector PolynomialRegression::evalMonomials(DenseVector x) const
         monomials = kroneckerProduct(temp, powers.at(i));
     }
 
-    assert(monomials.cols() == numCoefficients);
+    if (monomials.rows() != numCoefficients)
+    {
+        throw Exception("PolynomialRegression::evalMonomials: monomials.rows() != numCoefficients.");
+    }
 
     return monomials;
 }

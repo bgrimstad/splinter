@@ -17,6 +17,22 @@ using namespace std;
 namespace SPLINTER
 {
 
+// See https://en.wikipedia.org/wiki/Relative_change_and_difference#Formulae
+double getError(double exactVal, double approxVal)
+{
+    double maxAbsVal = std::max(std::abs(exactVal), std::abs(approxVal));
+
+    // Both are ~0
+    if(maxAbsVal < 1e-14)
+    {
+        return 0.0;
+    }
+
+    double absError = std::abs(exactVal - approxVal);
+
+    return std::min(absError, absError / maxAbsVal);
+}
+
 // Checks if a is within margin of b
 bool equalsWithinRange(double a, double b, double margin)
 {
@@ -201,11 +217,269 @@ bool compareFunctions(const Function &exact, const Function &approx, const std::
         equal = false;
     }
     if(hesNorms(2) > inf_norm_epsilon) {
-        CAPTURE("inf-norm hessian value: " << hesNorms(2));
+        INFO("inf-norm hessian value: " << hesNorms(2));
         equal = false;
     }
 
     return equal;
+}
+
+void compareFunctionValue(std::vector<TermFunction *> funcs,
+                          std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                          size_t numSamplePoints, size_t numEvalPoints,
+                          double one_eps, double two_eps, double inf_eps)
+{
+    for(auto &exact : funcs)
+    {
+        compareFunctionValue(exact, approx_gen_func, numSamplePoints, numEvalPoints, one_eps, two_eps, inf_eps);
+    }
+}
+void compareFunctionValue(TermFunction *exact,
+                          std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                          size_t numSamplePoints, size_t numEvalPoints,
+                          double one_eps, double two_eps, double inf_eps)
+{
+    auto dim = exact->getNumVariables();
+    CHECK(dim > 0);
+    if(dim > 0) {
+        auto samplePoints = linspace(dim, -5, 5, std::pow(numSamplePoints, 1.0/dim));
+        auto evalPoints = linspace(dim, -5, 5, std::pow(numEvalPoints, 1.0/dim));
+
+        DataTable table = sample(exact, samplePoints);
+
+        Approximant *approx = approx_gen_func(table);
+
+        INFO("Approximant: " << approx->getDescription());
+        INFO("Function: " << *(exact->getF()));
+
+        DenseVector errorVec(evalPoints.size());
+
+        double maxError = 0.0;
+        DenseVector maxErrorPoint = vecToDense(evalPoints.at(0));
+
+        int i = 0;
+        for (auto &point : evalPoints)
+        {
+            DenseVector x = vecToDense(point);
+
+            double exactValue = exact->eval(x);
+            double approxValue = approx->eval(x);
+            double error = getError(exactValue, approxValue);
+
+            if(error > maxError)
+            {
+                maxError = error;
+                maxErrorPoint = x;
+            }
+
+            errorVec(i) = error;
+
+            i++;
+        }
+
+        DenseVector norms(3);
+        norms(0) = getOneNorm(errorVec);
+        norms(1) = getTwoNorm(errorVec);
+        norms(2) = getInfNorm(errorVec);
+
+        INFO(std::setw(16) << std::left << "1-norm (\"avg\"):" << std::setw(16) << std::right << norms(0) / evalPoints.size() << " <= " << one_eps);
+        INFO(std::setw(16) << std::left << "2-norm:"           << std::setw(16) << std::right << norms(1) << " <= " << two_eps);
+        INFO(std::setw(16) << std::left << "Inf-norm:"         << std::setw(16) << std::right << norms(2) << " <= " << inf_eps);
+
+
+        // Print out the point with the largest error
+        std::string maxErrorPointStr("(");
+        for(size_t i = 0; i < maxErrorPoint.size(); ++i)
+        {
+            if(i != 0)
+            {
+                maxErrorPointStr.append(", ");
+            }
+            maxErrorPointStr.append(std::to_string(maxErrorPoint(i)));
+        }
+        maxErrorPointStr.append(")");
+        INFO("");
+        INFO(std::setw(16) << std::left << "Max error:"        << std::setw(16) << std::right << maxError);
+        INFO(" at " << maxErrorPointStr);
+        INFO(std::setw(16) << std::left << "Exact value:"      << std::setw(16) << std::right << exact->eval(maxErrorPoint));
+        INFO(std::setw(16) << std::left << "Approx value:"     << std::setw(16) << std::right << approx->eval(maxErrorPoint));
+
+        if(norms(0) / evalPoints.size() > one_eps || norms(1) > two_eps || norms(2) > inf_eps) {
+            CHECK(false);
+        }
+
+        delete approx;
+    }
+}
+
+
+/* Compares the jacobian of the approximant to the central difference of the approximant function value */
+void compareJacobianValue(TermFunction *exact,
+                          std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                          size_t numSamplePoints, size_t numEvalPoints,
+                          double one_eps, double two_eps, double inf_eps)
+{
+    auto dim = exact->getNumVariables();
+    CHECK(dim > 0);
+    if(dim > 0) {
+        auto samplePoints = linspace(dim, -5, 5, std::pow(numSamplePoints, 1.0/dim));
+        auto evalPoints = linspace(dim, -4.95, 4.95, std::pow(numEvalPoints, 1.0/dim));
+
+        DataTable table = sample(exact, samplePoints);
+
+        Approximant *approx = approx_gen_func(table);
+
+        INFO("Approximant: " << approx->getDescription());
+        INFO(exact->getFunctionStr());
+        INFO(exact->getJacobianStr());
+
+        DenseVector oneNormVec(evalPoints.size());
+        DenseVector twoNormVec(evalPoints.size());
+        DenseVector infNormVec(evalPoints.size());
+
+        double maxOneNormError = 0.0;
+        double maxTwoNormError = 0.0;
+        double maxInfNormError = 0.0;
+
+        DenseVector maxOneNormErrorPoint;
+        DenseVector maxTwoNormErrorPoint;
+        DenseVector maxInfNormErrorPoint;
+
+        int i = 0;
+        for (auto &point : evalPoints)
+        {
+            DenseVector x = vecToDense(point);
+
+            // "exact" value
+            DenseMatrix exactValue = centralDifference(*approx, x);
+            DenseMatrix approxValue = approx->evalJacobian(x);
+
+            DenseVector error = DenseVector::Zero(exactValue.cols());
+            for(size_t j = 0; j < error.size(); ++j)
+            {
+                error(j) = getError(exactValue(j), approxValue(j));
+            }
+
+            oneNormVec(i) = getOneNorm(error) / error.size(); // "Average"
+            twoNormVec(i) = getTwoNorm(error);
+            infNormVec(i) = getInfNorm(error);
+
+            if(oneNormVec(i) > maxOneNormError)
+            {
+                maxOneNormError = oneNormVec(i);
+                maxOneNormErrorPoint = x;
+            }
+            if(twoNormVec(i) > maxTwoNormError)
+            {
+                maxTwoNormError = twoNormVec(i);
+                maxTwoNormErrorPoint = x;
+            }
+            if(infNormVec(i) > maxInfNormError)
+            {
+                maxInfNormError = infNormVec(i);
+                maxInfNormErrorPoint = x;
+            }
+
+            i++;
+        }
+
+        DenseVector norms(3);
+        norms(0) = getOneNorm(oneNormVec);
+        norms(1) = getTwoNorm(twoNormVec);
+        norms(2) = getInfNorm(infNormVec);
+
+        INFO(std::setw(16) << std::left << "1-norm (\"avg\"):" << std::setw(16) << std::right << norms(0) / evalPoints.size() << " <= " << one_eps);
+        INFO(std::setw(16) << std::left << "2-norm:"           << std::setw(16) << std::right << norms(1) << " <= " << two_eps);
+        INFO(std::setw(16) << std::left << "Inf-norm:"         << std::setw(16) << std::right << norms(2) << " <= " << inf_eps);
+
+
+        auto getDenseAsStrOneLine = [](const DenseMatrix &x) {
+            std::string denseAsStrOneLine("(");
+            for(size_t i = 0; i < x.size(); ++i)
+            {
+                if(i != 0)
+                {
+                    denseAsStrOneLine.append(", ");
+                }
+                denseAsStrOneLine.append(std::to_string(x(i)));
+            }
+            denseAsStrOneLine.append(")");
+            return denseAsStrOneLine;
+        };
+
+        // Print out the points with the largest errors
+        INFO("");
+        INFO("Max errors:");
+        INFO("");
+        INFO(std::setw(16) << std::left << "1-norm:"           << std::setw(32) << std::right << maxOneNormError);
+        INFO(" at " << getDenseAsStrOneLine(maxOneNormErrorPoint));
+        INFO(std::setw(16) << std::left << "Approx value:"      << std::setw(32) << std::right << getDenseAsStrOneLine(approx->evalJacobian(maxOneNormErrorPoint)));
+        INFO(std::setw(16) << std::left << "Central difference:"     << std::setw(32) << std::right << getDenseAsStrOneLine(centralDifference(*approx, maxOneNormErrorPoint)));
+
+        INFO("");
+        INFO(std::setw(16) << std::left << "2-norm:"           << std::setw(32) << std::right << maxTwoNormError);
+        INFO(" at " << getDenseAsStrOneLine(maxTwoNormErrorPoint));
+        INFO(std::setw(16) << std::left << "Approx value:"      << std::setw(32) << std::right << getDenseAsStrOneLine(approx->evalJacobian(maxTwoNormErrorPoint)));
+        INFO(std::setw(16) << std::left << "Central difference:"     << std::setw(32) << std::right << getDenseAsStrOneLine(centralDifference(*approx, maxTwoNormErrorPoint)));
+
+        INFO("");
+        INFO(std::setw(16) << std::left << "Inf-norm:"         << std::setw(32) << std::right << maxInfNormError);
+        INFO(" at " << getDenseAsStrOneLine(maxInfNormErrorPoint));
+        INFO(std::setw(16) << std::left << "Approx value:"      << std::setw(32) << std::right << getDenseAsStrOneLine(approx->evalJacobian(maxInfNormErrorPoint)));
+        INFO(std::setw(16) << std::left << "Central difference:"     << std::setw(32) << std::right << getDenseAsStrOneLine(centralDifference(*approx, maxInfNormErrorPoint)));
+
+        if(norms(0) / evalPoints.size() > one_eps || norms(1) > two_eps || norms(2) > inf_eps) {
+            CHECK(false);
+        }
+
+        delete approx;
+    }
+}
+
+void checkHessianSymmetry(TermFunction *exact,
+                          std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                          size_t numSamplePoints, size_t numEvalPoints)
+{
+    auto dim = exact->getNumVariables();
+    CHECK(dim > 0);
+    if(dim > 0) {
+        auto samplePoints = linspace(dim, -5, 5, std::pow(numSamplePoints, 1.0/dim));
+        auto evalPoints = linspace(dim, -4.9999, 4.9999, std::pow(numEvalPoints, 1.0/dim));
+
+        DataTable table = sample(exact, samplePoints);
+
+        Approximant *approx = approx_gen_func(table);
+
+        INFO("Approximant: " << approx->getDescription());
+        INFO(exact->getFunctionStr());
+        INFO("Exact " << exact->getJacobianStr());
+        INFO("Exact " << exact->getHessianStr());
+
+
+        for (auto &point : evalPoints)
+        {
+            DenseVector x = vecToDense(point);
+
+            if(!isSymmetricHessian(*approx, x))
+            {
+                std::string x_str;
+                for(size_t i = 0; i < x.size(); ++i)
+                {
+                    if(i != 0)
+                    {
+                        x_str.append(", ");
+                    }
+                    x_str.append(to_string(x(i)));
+                }
+                INFO("Approximated hessian at " << x_str << ":");
+                INFO(approx->evalHessian(x));
+                CHECK(isSymmetricHessian(*approx, x));
+                break;
+            }
+        }
+
+        delete approx;
+    }
 }
 
 bool compareBSplines(const BSpline &left, const BSpline &right)
@@ -649,6 +923,66 @@ void testApproximation(std::vector<TermFunction *> funcs,
             delete approx;
         }
     }
+}
+
+DenseMatrix centralDifference(const Approximant &approx, const DenseVector &x)
+{
+    DenseMatrix dx(1, x.size());
+
+    double h = 1e-6; // perturbation step size
+    double hForward = 0.5*h;
+    double hBackward = 0.5*h;
+
+    for (unsigned int i = 0; i < approx.getNumVariables(); ++i)
+    {
+        DenseVector xForward(x);
+//        if (xForward(i) + hForward > variables.at(i)->getUpperBound())
+//        {
+//            hForward = 0;
+//        }
+//        else
+//        {
+        xForward(i) = xForward(i) + hForward;
+//        }
+
+        DenseVector xBackward(x);
+//        if (xBackward(i) - hBackward < variables.at(i)->getLowerBound())
+//        {
+//            hBackward = 0;
+//        }
+//        else
+//        {
+            xBackward(i) = xBackward(i) - hBackward;
+//        }
+
+        double yForward = approx.eval(xForward);
+        double yBackward = approx.eval(xBackward);
+
+        dx(i) = (yForward - yBackward)/(hBackward + hForward);
+    }
+
+    return dx;
+}
+
+/*
+ * Checks that the hessian is symmetric across the diagonal
+ */
+bool isSymmetricHessian(const Approximant &approx, const DenseVector &x)
+{
+    DenseMatrix hessian = approx.evalHessian(x);
+
+    for(size_t row = 0; row < hessian.rows(); ++row)
+    {
+        for(size_t col = 0; col < hessian.cols(); ++col)
+        {
+            if(getError(hessian(row, col), hessian(col, row)) > 1e-9)
+            {
+                return false;
+            }
+        }
+    }
+
+    return true;
 }
 
 } // namespace SPLINTER

@@ -22,258 +22,283 @@ using namespace SPLINTER;
 /*
  * Gaussian
  */
-TEST_CASE("Gaussian RadialBasisFunction function" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::gaussian][function-value]") {
-    // TODO: These should probably be global?
+TEST_CASE("Gaussian RadialBasisFunction function" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::gaussian][function-value]")
+{
     double one_eps = 0.1;
     double two_eps = 0.1;
     double inf_eps = 0.1;
 
-    testApproximation(getPolynomialFunctions(),
-        [](const DataTable &table) {
-        return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::GAUSSIAN);
-    },
-    TestType::FunctionValue,
-    300,  // Number of points to sample at
-    1337, // Number of points to test against
-    one_eps, two_eps, inf_eps);
+    for(auto testFunc : getPolynomialFunctions())
+    {
+        compareFunctionValue(testFunc,
+                             [](const DataTable &table)
+                             {
+                                 return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::GAUSSIAN);
+                             },
+                             200,  // Number of points to sample at
+                             1337, // Number of points to test against
+                             one_eps, two_eps, inf_eps);
+    }
 }
 
-TEST_CASE("Gaussian RadialBasisFunction jacobian" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::gaussian][jacobian]") {
-    // TODO: These should probably be global?
+TEST_CASE("Gaussian RadialBasisFunction jacobian" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::gaussian][jacobian]")
+{
     double one_eps = 0.1;
     double two_eps = 0.1;
     double inf_eps = 0.1;
 
-    testApproximation(getPolynomialFunctions(),
-        [](const DataTable &table) {
-        return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::GAUSSIAN);
-    },
-    TestType::Jacobian,
-    300,  // Number of points to sample at
-    1337, // Number of points to test against
-    one_eps, two_eps, inf_eps);
+    for(auto testFunc : getPolynomialFunctions())
+    {
+        compareJacobianValue(testFunc,
+                             [](const DataTable &table)
+                             {
+                                 return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::GAUSSIAN);
+                             },
+                             200,  // Number of points to sample at
+                             999, // Number of points to test against
+                             one_eps, two_eps, inf_eps);
+    }
 }
 
-TEST_CASE("Gaussian RadialBasisFunction hessian" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::gaussian][hessian]") {
-    // TODO: These should probably be global?
-    double one_eps = 0.1;
-    double two_eps = 0.1;
-    double inf_eps = 0.1;
-
-    testApproximation(getPolynomialFunctions(),
-        [](const DataTable &table) {
-        return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::GAUSSIAN);
-    },
-    TestType::Hessian,
-    300,  // Number of points to sample at
-    1337, // Number of points to test against
-    one_eps, two_eps, inf_eps);
-}
+// TODO: Uncomment when implemented
+//TEST_CASE("Gaussian RadialBasisFunction hessian" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::gaussian][hessian]")
+//{
+//    for(auto testFunc : getPolynomialFunctions())
+//    {
+//        checkHessianSymmetry(testFunc,
+//                             [](const DataTable &table)
+//                             {
+//                                 return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::GAUSSIAN);
+//                             },
+//                             200,   // Number of points to sample at
+//                             999); // Number of points to test against
+//    }
+//}
 
 
 /*
  * Inverse multiquadric
  */
-TEST_CASE("Inverse Multiquadric RadialBasisFunction function" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::inverse-multiquadric][function-value]") {
-    // TODO: These should probably be global?
+TEST_CASE("Inverse Multiquadric RadialBasisFunction function" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::inverse-multiquadric][function-value]")
+{
     double one_eps = 0.1;
     double two_eps = 0.1;
     double inf_eps = 0.1;
 
-    testApproximation(getPolynomialFunctions(),
-        [](const DataTable &table) {
-        return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::INVERSE_MULTIQUADRIC);
-    },
-    TestType::FunctionValue,
-    300,  // Number of points to sample at
-    1337, // Number of points to test against
-    one_eps, two_eps, inf_eps);
+    for(auto testFunc : getPolynomialFunctions())
+    {
+        compareFunctionValue(testFunc,
+                             [](const DataTable &table)
+                             {
+                                 return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::INVERSE_MULTIQUADRIC);
+                             },
+                             200,  // Number of points to sample at
+                             1337, // Number of points to test against
+                             one_eps, two_eps, inf_eps);
+    }
 }
 
-TEST_CASE("Inverse Multiquadric RadialBasisFunction jacobian" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::inverse-multiquadric][jacobian]") {
-    // TODO: These should probably be global?
+TEST_CASE("Inverse Multiquadric RadialBasisFunction jacobian" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::inverse-multiquadric][jacobian]")
+{
     double one_eps = 0.1;
     double two_eps = 0.1;
     double inf_eps = 0.1;
 
-    testApproximation(getPolynomialFunctions(),
-        [](const DataTable &table) {
-        return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::INVERSE_MULTIQUADRIC);
-    },
-    TestType::Jacobian,
-    300,  // Number of points to sample at
-    1337, // Number of points to test against
-    one_eps, two_eps, inf_eps);
+    for(auto testFunc : getPolynomialFunctions())
+    {
+        compareJacobianValue(testFunc,
+                             [](const DataTable &table)
+                             {
+                                 return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::INVERSE_MULTIQUADRIC);
+                             },
+                             200,  // Number of points to sample at
+                             999, // Number of points to test against
+                             one_eps, two_eps, inf_eps);
+    }
 }
 
-TEST_CASE("Inverse Multiquadric RadialBasisFunction hessian" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::inverse-multiquadric][hessian]") {
-    // TODO: These should probably be global?
-    double one_eps = 0.1;
-    double two_eps = 0.1;
-    double inf_eps = 0.1;
-
-    testApproximation(getPolynomialFunctions(),
-        [](const DataTable &table) {
-        return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::INVERSE_MULTIQUADRIC);
-    },
-    TestType::Hessian,
-    300,  // Number of points to sample at
-    1337, // Number of points to test against
-    one_eps, two_eps, inf_eps);
-}
+// TODO: Uncomment when implemented
+//TEST_CASE("Inverse Multiquadric RadialBasisFunction hessian" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::inverse-multiquadric][hessian]")
+//{
+//    for(auto testFunc : getPolynomialFunctions())
+//    {
+//        checkHessianSymmetry(testFunc,
+//                             [](const DataTable &table)
+//                             {
+//                                 return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::INVERSE_MULTIQUADRIC);
+//                             },
+//                             200,   // Number of points to sample at
+//                             999); // Number of points to test against
+//    }
+//}
 
 
 /*
  * Inverse quadric
  */
-TEST_CASE("Inverse Quadric RadialBasisFunction function" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::inverse-quadric][function-value]") {
-    // TODO: These should probably be global?
+TEST_CASE("Inverse Quadric RadialBasisFunction function" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::inverse-quadric][function-value]")
+{
     double one_eps = 0.1;
     double two_eps = 0.1;
     double inf_eps = 0.1;
 
-    testApproximation(getPolynomialFunctions(),
-        [](const DataTable &table) {
-        return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::INVERSE_QUADRIC);
-    },
-    TestType::FunctionValue,
-    300,  // Number of points to sample at
-    1337, // Number of points to test against
-    one_eps, two_eps, inf_eps);
+    for(auto testFunc : getPolynomialFunctions())
+    {
+        compareFunctionValue(testFunc,
+                             [](const DataTable &table)
+                             {
+                                 return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::INVERSE_QUADRIC);
+                             },
+                             200,  // Number of points to sample at
+                             1337, // Number of points to test against
+                             one_eps, two_eps, inf_eps);
+    }
 }
 
-TEST_CASE("Inverse Quadric RadialBasisFunction jacobian" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::inverse-quadric][jacobian]") {
-    // TODO: These should probably be global?
+TEST_CASE("Inverse Quadric RadialBasisFunction jacobian" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::inverse-quadric][jacobian]")
+{
     double one_eps = 0.1;
     double two_eps = 0.1;
     double inf_eps = 0.1;
 
-    testApproximation(getPolynomialFunctions(),
-        [](const DataTable &table) {
-        return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::INVERSE_QUADRIC);
-    },
-    TestType::Jacobian,
-    300,  // Number of points to sample at
-    1337, // Number of points to test against
-    one_eps, two_eps, inf_eps);
+    for(auto testFunc : getPolynomialFunctions())
+    {
+        compareJacobianValue(testFunc,
+                             [](const DataTable &table)
+                             {
+                                 return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::INVERSE_QUADRIC);
+                             },
+                             200,  // Number of points to sample at
+                             999, // Number of points to test against
+                             one_eps, two_eps, inf_eps);
+    }
 }
 
-TEST_CASE("Inverse Quadric RadialBasisFunction hessian" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::inverse-quadric][hessian]") {
-    // TODO: These should probably be global?
-    double one_eps = 0.1;
-    double two_eps = 0.1;
-    double inf_eps = 0.1;
-
-    testApproximation(getPolynomialFunctions(),
-        [](const DataTable &table) {
-        return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::INVERSE_QUADRIC);
-    },
-    TestType::Hessian,
-    300,  // Number of points to sample at
-    1337, // Number of points to test against
-    one_eps, two_eps, inf_eps);
-}
+// TODO: Uncomment when implemented
+//TEST_CASE("Inverse Quadric RadialBasisFunction hessian" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::inverse-quadric][hessian]")
+//{
+//    for(auto testFunc : getPolynomialFunctions())
+//    {
+//        checkHessianSymmetry(testFunc,
+//                             [](const DataTable &table)
+//                             {
+//                                 return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::INVERSE_QUADRIC);
+//                             },
+//                             200,   // Number of points to sample at
+//                             999); // Number of points to test against
+//    }
+//}
 
 
 /*
  * Multiquadric
  */
-TEST_CASE("Multiquadric RadialBasisFunction function" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::multiquadric][function-value]") {
-    // TODO: These should probably be global?
+TEST_CASE("Multiquadric RadialBasisFunction function" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::multiquadric][function-value]")
+{
     double one_eps = 0.1;
     double two_eps = 0.1;
     double inf_eps = 0.1;
 
-    testApproximation(getPolynomialFunctions(),
-        [](const DataTable &table) {
-        return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::MULTIQUADRIC);
-    },
-    TestType::FunctionValue,
-    300,  // Number of points to sample at
-    1337, // Number of points to test against
-    one_eps, two_eps, inf_eps);
+    for(auto testFunc : getPolynomialFunctions())
+    {
+        compareFunctionValue(testFunc,
+                             [](const DataTable &table)
+                             {
+                                 return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::MULTIQUADRIC);
+                             },
+                             200,  // Number of points to sample at
+                             1337, // Number of points to test against
+                             one_eps, two_eps, inf_eps);
+    }
 }
 
-TEST_CASE("Multiquadric RadialBasisFunction jacobian" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::multiquadric][jacobian]") {
-    // TODO: These should probably be global?
+TEST_CASE("Multiquadric RadialBasisFunction jacobian" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::multiquadric][jacobian]")
+{
     double one_eps = 0.1;
     double two_eps = 0.1;
     double inf_eps = 0.1;
 
-    testApproximation(getPolynomialFunctions(),
-        [](const DataTable &table) {
-        return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::MULTIQUADRIC);
-    },
-    TestType::Jacobian,
-    300,  // Number of points to sample at
-    1337, // Number of points to test against
-    one_eps, two_eps, inf_eps);
+    for(auto testFunc : getPolynomialFunctions())
+    {
+        compareJacobianValue(testFunc,
+                             [](const DataTable &table)
+                             {
+                                 return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::MULTIQUADRIC);
+                             },
+                             200,  // Number of points to sample at
+                             999, // Number of points to test against
+                             one_eps, two_eps, inf_eps);
+    }
 }
 
-TEST_CASE("Multiquadric RadialBasisFunction hessian" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::multiquadric][hessian]") {
-    // TODO: These should probably be global?
-    double one_eps = 0.1;
-    double two_eps = 0.1;
-    double inf_eps = 0.1;
-
-    testApproximation(getPolynomialFunctions(),
-        [](const DataTable &table) {
-        return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::MULTIQUADRIC);
-    },
-    TestType::Hessian,
-    300,  // Number of points to sample at
-    1337, // Number of points to test against
-    one_eps, two_eps, inf_eps);
-}
+// TODO: Uncomment when implemented
+//TEST_CASE("Multiquadric RadialBasisFunction hessian" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::multiquadric][hessian]")
+//{
+//    for(auto testFunc : getPolynomialFunctions())
+//    {
+//        checkHessianSymmetry(testFunc,
+//                             [](const DataTable &table)
+//                             {
+//                                 return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::MULTIQUADRIC);
+//                             },
+//                             200,   // Number of points to sample at
+//                             999); // Number of points to test against
+//    }
+//}
 
 
 /*
  * Thin plate spline
  */
-TEST_CASE("Thin plate spline RadialBasisFunction function" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::thin-plate-spline][function-value]") {
-    // TODO: These should probably be global?
+TEST_CASE("Thin plate spline RadialBasisFunction function" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::thin-plate-spline][function-value]")
+{
     double one_eps = 0.1;
     double two_eps = 0.1;
     double inf_eps = 0.1;
 
-    testApproximation(getPolynomialFunctions(),
-        [](const DataTable &table) {
-        return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::THIN_PLATE_SPLINE);
-    },
-    TestType::FunctionValue,
-    300,  // Number of points to sample at
-    1337, // Number of points to test against
-    one_eps, two_eps, inf_eps);
+    for(auto testFunc : getPolynomialFunctions())
+    {
+        compareFunctionValue(testFunc,
+                             [](const DataTable &table)
+                             {
+                                 return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::THIN_PLATE_SPLINE);
+                             },
+                             200,  // Number of points to sample at
+                             1337, // Number of points to test against
+                             one_eps, two_eps, inf_eps);
+    }
 }
 
-TEST_CASE("Thin plate spline RadialBasisFunction jacobian" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::thin-plate-spline][jacobian]") {
-    // TODO: These should probably be global?
+TEST_CASE("Thin plate spline RadialBasisFunction jacobian" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::thin-plate-spline][jacobian]")
+{
     double one_eps = 0.1;
     double two_eps = 0.1;
     double inf_eps = 0.1;
 
-    testApproximation(getPolynomialFunctions(),
-        [](const DataTable &table) {
-        return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::THIN_PLATE_SPLINE);
-    },
-    TestType::Jacobian,
-    300,  // Number of points to sample at
-    1337, // Number of points to test against
-    one_eps, two_eps, inf_eps);
+    for(auto testFunc : getPolynomialFunctions())
+    {
+        compareJacobianValue(testFunc,
+                             [](const DataTable &table)
+                             {
+                                 return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::THIN_PLATE_SPLINE);
+                             },
+                             200,  // Number of points to sample at
+                             999, // Number of points to test against
+                             one_eps, two_eps, inf_eps);
+    }
 }
 
-TEST_CASE("Thin plate spline RadialBasisFunction hessian" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::thin-plate-spline][hessian]") {
-    // TODO: These should probably be global?
-    double one_eps = 0.1;
-    double two_eps = 0.1;
-    double inf_eps = 0.1;
-
-    testApproximation(getPolynomialFunctions(),
-        [](const DataTable &table) {
-        return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::THIN_PLATE_SPLINE);
-    },
-    TestType::Hessian,
-    300,  // Number of points to sample at
-    1337, // Number of points to test against
-    one_eps, two_eps, inf_eps);
-}
+// TODO: Uncomment when implemented
+//TEST_CASE("Thin plate spline RadialBasisFunction hessian" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::thin-plate-spline][hessian]")
+//{
+//    for(auto testFunc : getPolynomialFunctions())
+//    {
+//        checkHessianSymmetry(testFunc,
+//                             [](const DataTable &table)
+//                             {
+//                                 return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::THIN_PLATE_SPLINE);
+//                             },
+//                             200,   // Number of points to sample at
+//                             999); // Number of points to test against
+//    }
+//}

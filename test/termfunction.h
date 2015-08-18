@@ -38,6 +38,9 @@ public:
 
     inline unsigned int getNumVariables() const override { return numVariables; }
 
+    std::string getFunctionStr() const;
+    std::string getJacobianStr() const;
+    std::string getHessianStr() const;
     // Prints the function, jacobian and hessian
     void printAll() const;
 
