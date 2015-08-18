@@ -28,8 +28,8 @@ public:
 
     // Evaluation
     double eval(DenseVector x) const override;
-    DenseMatrix evalJacobian(DenseVector x) const override { return DenseMatrix(1, numVariables); } // TODO: Implement
-    DenseMatrix evalHessian(DenseVector x) const override { return DenseMatrix(numVariables, numVariables); } // TODO: Implement
+    DenseMatrix evalJacobian(DenseVector x) const override { DenseMatrix j(1, numVariables); j.fill(0.0); return j; } // TODO: Implement
+    DenseMatrix evalHessian(DenseVector x) const override { DenseMatrix h(numVariables, numVariables); h.fill(0.0); return h; } // TODO: Implement
 
     // Getters
     unsigned int getNumVariables() const override { return numVariables; }
