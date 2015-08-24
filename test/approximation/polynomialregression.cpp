@@ -11,6 +11,7 @@
 #include <Catch.h>
 #include <testingutilities.h>
 #include <polynomialregression.h>
+#include <testfunctions.h>
 
 using namespace SPLINTER;
 
@@ -22,7 +23,7 @@ using namespace SPLINTER;
 
 TEST_CASE("PolynomialRegression function" COMMON_TEXT, COMMON_TAGS "[function-value]")
 {
-    for(int degree = 1; degree < MAX_DEGREE; ++degree)
+    for(int degree = 1; degree <= MAX_DEGREE; ++degree)
     {
         for(auto testFunc : getPolynomialFunctions())
         {
@@ -54,7 +55,7 @@ TEST_CASE("PolynomialRegression function" COMMON_TEXT, COMMON_TAGS "[function-va
 // TODO: Uncomment these when implemented
 //TEST_CASE("PolynomialRegression jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian]")
 //{
-//    for(int degree = 1; degree < MAX_DEGREE; ++degree)
+//    for(int degree = 1; degree <= MAX_DEGREE; ++degree)
 //    {
 //        for(auto testFunc : getPolynomialFunctions())
 //        {
@@ -86,7 +87,7 @@ TEST_CASE("PolynomialRegression function" COMMON_TEXT, COMMON_TAGS "[function-va
 //
 //TEST_CASE("PolynomialRegression hessian" COMMON_TEXT, COMMON_TAGS "[hessian]")
 //{
-//    for(int degree = 1; degree < MAX_DEGREE; ++degree)
+//    for(int degree = 1; degree <= MAX_DEGREE; ++degree)
 //    {
 //        for(auto testFunc : getPolynomialFunctions())
 //        {
