@@ -6,25 +6,38 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-ROOT=$(pwd)
-OS="unknown"
-COMPILER="unknown"
-NPROC="unknown"
+# ====================== Configuration ======================
+# Note how Windows paths has to be written: C:/Program Files/ => /C/Program Files/
 
-# Defaults
-CMAKE_CMD="cmake"
+# Binary directory of CMake (the directory containing cmake.exe)
+CMAKE_PATH="/C/Program Files (x86)/CMake/bin"
 
-#MinGW config (comment out if you don't have the respective version installed)
+# MinGW config (comment out if you don't have the respective version installed)
 MINGW_32_BIT="/C/mingw-w64/i686-4.9.2-posix-dwarf-rt_v4-rev3/mingw32/bin"
 MINGW_64_BIT="/C/mingw-w64/x86_64-4.9.2-posix-seh-rt_v4-rev3/mingw64/bin"
 
 # MSVC config
+# Visual Studio 2012:
 #MSBUILD_DIR="/C/Program Files (x86)/MSBuild/12.0/Bin"
 #VCVARSALL_DIR="/C/Program Files (x86)/Microsoft Visual Studio 12.0/VC"
 #MSVC_GENERATOR="Visual Studio 12 2013"
+
+# Visual Studio 2015:
 MSBUILD_DIR="/C/Program Files (x86)/MSBuild/14.0/Bin"
 VCVARSALL_DIR="/C/Program Files (x86)/Microsoft Visual Studio 14.0/VC"
 MSVC_GENERATOR="Visual Studio 14 2015"
+
+# ====================== End configuration ==================
+
+
+
+
+
+ROOT=$(pwd)
+OS="unknown"
+COMPILER="unknown"
+NPROC="unknown"
+CMAKE_CMD="cmake"
 
 # Capture the command argument for use in help messages
 COMMAND=$0
@@ -39,12 +52,8 @@ do
 key="$1"
 
 case $key in
-	-m|--mingw-binary-dir)
-	PATH="$2:$PATH"
-	shift # past argument
-	;;
 	-c|--cmake-binary-dir)
-	PATH="$2:$PATH"
+	CMAKE_PATH="$2"
 	shift # past argument
 	;;
 	-vc|--vcvarsall-dir)
@@ -56,13 +65,16 @@ case $key in
 	shift # past argument
 	;;
 	*)
-	# No preceding: path to SPLINTER
+	# No preceding: path to SPLINTER (has no effect as of now)
 	SPLINTER_DIR="$1"
 	;;
 esac
 shift # past argument or value
 done
 
+PATH="$CMAKE_PATH:$PATH"
+
+# Parent directory of this file (build_release.sh)
 SPLINTER_DIR=$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)/..
 # Verify that CMakeLists.txt exists in $SPLINTER_DIR
 if [ ! -f $SPLINTER_DIR/CMakeLists.txt ]; then
@@ -155,7 +167,7 @@ function build_linux {
 		update_compiler_version
 	fi
 	
-	CLANG=$(which clang++-3.5)
+	CLANG=$(which clang++)
 	if [[ $CLANG != "" ]]; then
 		export CXX=$CLANG
 		COMPILER=clang
