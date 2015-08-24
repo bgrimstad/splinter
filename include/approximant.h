@@ -19,7 +19,7 @@ namespace SPLINTER
 /*
  * Interface for approximants
  */
-class API Approximant : public Function
+class SPLINTER_API Approximant : public Function
 {
 public:
     Approximant() {}

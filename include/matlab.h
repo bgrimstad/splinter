@@ -10,73 +10,75 @@
 #ifndef SPLINTER_MATLAB_H
 #define SPLINTER_MATLAB_H
 
-/*#define obj_ptr void * */
-typedef void *obj_ptr;
 
-#ifndef API
+#ifndef SPLINTER_API
 # ifdef _MSC_VER
-#  define API __declspec(dllexport)
+#  define SPLINTER_API __declspec(dllexport)
 # else
-#  define API
+#  define SPLINTER_API
 # endif
 #endif
+
+// Pointer to C++ objects, passed into the C interface then casted to the correct type.
+typedef void *obj_ptr;
+
 
 #ifdef __cplusplus
 	extern "C"
 	{
 #endif
 		/* 1 if the previous function call caused an error, 0 otherwise. */
-		API int get_error();
+SPLINTER_API int get_error();
 
-		API const char *get_error_string();
+SPLINTER_API const char *get_error_string();
 
-		API obj_ptr datatable_init();
+SPLINTER_API obj_ptr datatable_init();
 
-		API obj_ptr datatable_load_init(const char *filename);
+SPLINTER_API obj_ptr datatable_load_init(const char *filename);
 
-		API void datatable_add_samples(obj_ptr datatable_ptr, double *x, int n_samples, int x_dim, int size);
+SPLINTER_API void datatable_add_samples(obj_ptr datatable_ptr, double *x, int n_samples, int x_dim, int size);
 
-		API unsigned int datatable_get_num_variables(obj_ptr datatable_ptr);
+SPLINTER_API unsigned int datatable_get_num_variables(obj_ptr datatable_ptr);
 
-		API unsigned int datatable_get_num_samples(obj_ptr datatable_ptr);
+SPLINTER_API unsigned int datatable_get_num_samples(obj_ptr datatable_ptr);
 
-		API void datatable_save(obj_ptr datatable_ptr, const char *filename);
+SPLINTER_API void datatable_save(obj_ptr datatable_ptr, const char *filename);
 
-		API obj_ptr datatable_load(obj_ptr datatable_ptr, const char *filename);
+SPLINTER_API obj_ptr datatable_load(obj_ptr datatable_ptr, const char *filename);
 
-		API void datatable_delete(obj_ptr datatable_ptr);
-
-
-		API obj_ptr bspline_init(obj_ptr datatable_ptr, int type);
-
-		API obj_ptr bspline_load_init(const char *filename);
-
-		API obj_ptr pspline_init(obj_ptr datatable_ptr, double lambda);
-
-		API obj_ptr pspline_load_init(const char *filename);
-
-		API obj_ptr rbf_init(obj_ptr datatable_ptr, int type_index, int normalized);
-
-		API obj_ptr rbf_load_init(const char *filename);
-
-		API obj_ptr polynomial_regression_init(obj_ptr datatable_ptr, int *degrees, int degrees_dim);
-
-		API obj_ptr polynomial_regression_load_init(const char *filename);
+SPLINTER_API void datatable_delete(obj_ptr datatable_ptr);
 
 
-		API double eval(obj_ptr approximant, double *x, int x_dim);
+SPLINTER_API obj_ptr bspline_init(obj_ptr datatable_ptr, int type);
 
-		API double *eval_jacobian(obj_ptr approximant, double *x, int x_dim);
+SPLINTER_API obj_ptr bspline_load_init(const char *filename);
 
-		API double *eval_hessian(obj_ptr approximant, double *x, int x_dim);
+SPLINTER_API obj_ptr pspline_init(obj_ptr datatable_ptr, double lambda);
 
-		API int get_num_variables(obj_ptr approximant);
+SPLINTER_API obj_ptr pspline_load_init(const char *filename);
 
-		API void save(obj_ptr approximant, const char *filename);
+SPLINTER_API obj_ptr rbf_init(obj_ptr datatable_ptr, int type_index, int normalized);
 
-		API void load(obj_ptr approximant, const char *filename);
+SPLINTER_API obj_ptr rbf_load_init(const char *filename);
 
-		API void delete_approximant(obj_ptr approximant);
+SPLINTER_API obj_ptr polynomial_regression_init(obj_ptr datatable_ptr, int *degrees, int degrees_dim);
+
+SPLINTER_API obj_ptr polynomial_regression_load_init(const char *filename);
+
+
+SPLINTER_API double eval(obj_ptr approximant, double *x, int x_dim);
+
+SPLINTER_API double *eval_jacobian(obj_ptr approximant, double *x, int x_dim);
+
+SPLINTER_API double *eval_hessian(obj_ptr approximant, double *x, int x_dim);
+
+SPLINTER_API int get_num_variables(obj_ptr approximant);
+
+SPLINTER_API void save(obj_ptr approximant, const char *filename);
+
+SPLINTER_API void load(obj_ptr approximant, const char *filename);
+
+SPLINTER_API void delete_approximant(obj_ptr approximant);
 
 #ifdef __cplusplus
 	}

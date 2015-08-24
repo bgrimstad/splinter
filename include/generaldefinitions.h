@@ -10,25 +10,26 @@
 #ifndef SPLINTER_GENERALDEFINITIONS_H
 #define SPLINTER_GENERALDEFINITIONS_H
 
-#ifndef NDEBUG
-    #include <iostream>
-    #include <iomanip>
-#endif // NDEBUG
 
-#ifndef API
+#ifndef SPLINTER_API
 # ifdef _MSC_VER
-#  define API __declspec(dllexport)
+#  define SPLINTER_API __declspec(dllexport)
 # else
-#  define API
+#  define SPLINTER_API
 # endif
 #endif
 
-#include <exception>
-#include <stdexcept>
+# ifndef NDEBUG
+#  include <iostream>
+#  include <iomanip>
+# endif // NDEBUG
 
-#include <vector>
-#include <Eigen/Dense>
-#include <Eigen/Sparse>
+# include <exception>
+# include <stdexcept>
+
+# include <vector>
+# include <Eigen/Dense>
+# include <Eigen/Sparse>
 
 namespace SPLINTER
 {

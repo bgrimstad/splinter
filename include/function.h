@@ -18,7 +18,7 @@ namespace SPLINTER
 /*
  * Interface for functions
  */
-class API Function
+class SPLINTER_API Function
 {
 public:
     Function() {}

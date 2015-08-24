@@ -25,7 +25,7 @@ namespace SPLINTER
  * the solution of a fairly ill-conditioned linear system. This drawback may be
  * alleviated by applying a pre-conditioner to the linear system.
  */
-class API RadialBasisFunction : public Approximant
+class SPLINTER_API RadialBasisFunction : public Approximant
 {
 public:
     RadialBasisFunction(const char *filename);

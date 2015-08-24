@@ -29,7 +29,7 @@ enum class BSplineType
 /**
  * Class that implements the multivariate tensor product B-spline
  */
-class API BSpline : public Approximant
+class SPLINTER_API BSpline : public Approximant
 {
 public:
     /**
