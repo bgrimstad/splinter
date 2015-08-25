@@ -6,8 +6,6 @@
 - Extract symbolic function functionality into its own project
 
 #### Normal
-- Implement Hessian for radial basis function splines
-- Remove code redundancy by wrapping affine operations on the control points (bspline) and tensor products (bsplinebasis)
 - Improve constructors of BSpline
 - Implement support for scattered data interpolation with B-Splines (look into MBA algorithm)
 - Implement NURBS
