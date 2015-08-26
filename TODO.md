@@ -9,7 +9,6 @@
 - Complete and test implementation of ordinary least squares
 - Finish implementation of operator== overloads in operator_overloads.cpp
 - Add Python interface (2 and 3?)  (Investigate if a single C interface may be used by both Python and MatLab)
-- Extract symbolic function functionality into its own project
 
 #### Normal
 - Implement Hessian for radial basis function splines

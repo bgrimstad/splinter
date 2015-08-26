@@ -8,88 +8,82 @@
 */
 
 #include "testfunctions.h"
-#include <term.h>
-#include <termfunction.h>
+#include "testfunction.h"
+
+#define MAKE_TESTFUNCTION(FUNC, NUMVARIABLES, PRETTY_STRING) new TestFunction([](const std::vector<double> &x) { return FUNC; }, NUMVARIABLES, PRETTY_STRING)
+#define MAKE_CONSTDEGREE_TESTFUNCTION(FUNC, NUMVARIABLES, PRETTY_STRING, DEGREE) new TestFunction([](const std::vector<double> &x) { return FUNC; }, NUMVARIABLES, PRETTY_STRING, DEGREE)
+
+using namespace SPLINTER;
 
 
-std::vector<std::vector<TermFunction *>> testFunctions = std::vector<std::vector<TermFunction *>>();
+std::vector<std::vector<TestFunction *>> testFunctions = std::vector<std::vector<TestFunction *>>();
 
 
 void setupTestFunctions() {
     // f_x_y: function of x variables and y degrees
 
-    Var x(0, "x");
-    Var y(1, "y");
-    Var z(2, "z");
-    Var x1(3, "x1");
-    Var y1(4, "y1");
-    Var z1(5, "z1");
-    Var x2(6, "x2");
-    Var y2(7, "y2");
-    Var z2(8, "z2");
-
     // Functions of one variable
-    auto f_1_0 = -13.37 + 0*x;
-    auto f_1_1 = -5.1*x + 13.37;
-    auto f_1_2 = 8.1*(x^2) - 0.2*x + 2313.1;
-    auto f_1_3 = -4.5*(x^3) + 2.2*(x^2);
-    auto f_1_4 = x*(4.5*(x^3) + 3*(x^2) - x);
+    auto f_1_0 = MAKE_CONSTDEGREE_TESTFUNCTION(-13.37, 1, "-13.37", 0);
+    auto f_1_1 = MAKE_CONSTDEGREE_TESTFUNCTION(-5.1*x.at(0) + 13.37, 1, "-5.1*x + 13.37", 1);
+    auto f_1_2 = MAKE_CONSTDEGREE_TESTFUNCTION(8.1*x.at(0)*x.at(0) - 0.2*x.at(0) + 2313.1, 1, "8.1*x^2 - 0.2*x + 2313.1", 2);
+    auto f_1_3 = MAKE_CONSTDEGREE_TESTFUNCTION(-4.5*x.at(0)*x.at(0)*x.at(0) + 2.2*x.at(0)*x.at(0), 1, "-4.5*x^3 + 2.2*x^2", 3);
+    auto f_1_4 = MAKE_CONSTDEGREE_TESTFUNCTION(4.5*x.at(0)*x.at(0)*x.at(0)*x.at(0) + 3*x.at(0)*x.at(0)*x.at(0) - x.at(0), 1, "4.5*x^4 + x^3 - x^2", 4);
 
     // Functions of two variables
-    auto f_2_0 = 0.1 + 0*x*y;
-    auto f_2_1 = - 5.1*x + 13.37*y;
-    auto f_2_2 = 8.1*(x^2) - 0.2*x*y + 13.37*(y^2);
-    auto f_2_3 = -4.5*(x^3) + 2.2*(x^2) - (y^2) + 3;
-    auto f_2_4 = x*(4.5*(x^3) - (x^2) + 3*x*y);
-    auto f_2_5 = -57*(y^2)*(x^3) - 0.1*(x^3)*(y^2) + 1.1*y*(x^2) + y - 1e10;
+    auto f_2_0 = MAKE_CONSTDEGREE_TESTFUNCTION(0.1, 2, "0.1", 0);
+    auto f_2_1 = MAKE_CONSTDEGREE_TESTFUNCTION(- 5.1*x.at(0) + 13.37*x.at(1), 2, "-5.1*x + 13.37*y", 1);
+    auto f_2_2 = MAKE_CONSTDEGREE_TESTFUNCTION(8.1*x.at(0)*x.at(0) - 0.2*x.at(0)*x.at(1) + 13.37*x.at(1)*x.at(1), 2, "8.1*x^2 - 0.2*x*y + 13.37*y^2", 2);
+    auto f_2_3 = MAKE_CONSTDEGREE_TESTFUNCTION(-4.5*x.at(0)*x.at(0)*x.at(0) + 2.2*x.at(0)*x.at(0) - x.at(1)*x.at(1) + 3, 2, "-4.5*x^3 + 2.2*x^2 - y^2 + 3", 3);
+    auto f_2_4 = MAKE_CONSTDEGREE_TESTFUNCTION(4.5*x.at(0)*x.at(0)*x.at(0)*x.at(0) - x.at(0)*x.at(0)*x.at(0) + 3*x.at(0)*x.at(0)*x.at(1), 2, "4.5*x^4 - x^3 + 3*x^2*y", 4);
+    auto f_2_5 = MAKE_CONSTDEGREE_TESTFUNCTION(-57*x.at(1)*x.at(1)*x.at(0)*x.at(0)*x.at(0) - 0.1*x.at(0)*x.at(0)*x.at(0)*x.at(1)*x.at(1) + 1.1*x.at(1)*x.at(0)*x.at(0) + x.at(1) - 1e6, 2, "-57*x^3*y^2 - 0.1*x^3*y^2 + 1.1*x^2*y + y - 1e10", 5);
     // Six-hump camel back function
-    auto f_2_6 = (4 - 2.1*(x^2) + (1/3.)*(x^4))*(x^2) + x*y + (-4 + 4*(y^2))*(y^2);
+    auto f_2_6 = MAKE_CONSTDEGREE_TESTFUNCTION((4 - 2.1*x.at(0)*x.at(0) + (1/3.)*x.at(0)*x.at(0)*x.at(0)*x.at(0))*x.at(0)*x.at(0) + x.at(0)*x.at(1) + (-4 + 4*x.at(1)*x.at(1))*x.at(1)*x.at(1), 2, "(4 - 2.1*x^2 + 1/3*x^4) * x^2 + x*y + (-4 + 4*y^2)*y^2", 6);
 
     // Functions of three variables
     // Note: Remove the . in the constant and several tests fail
-    auto f_3_0 = 6.534460297 + 0*x*y*z;
-    auto f_3_1 = x+y-z-1;
-    auto f_3_2 = y*z + (y^2) + 17.0*(z^2) - x - 10;
-    auto f_3_3 = f_3_2 * f_3_1;
+    auto f_3_0 = MAKE_CONSTDEGREE_TESTFUNCTION(6.534460297, 3, "6.534460297", 0);
+    auto f_3_1 = MAKE_CONSTDEGREE_TESTFUNCTION(x.at(0)+x.at(1)-x.at(2)-1, 3, "x + y - z - 1", 1);
+    auto f_3_2 = MAKE_CONSTDEGREE_TESTFUNCTION(x.at(1)*x.at(2) + x.at(1)*x.at(1) + 17.0*x.at(2)*x.at(2) - x.at(0) - 10, 3, "y*z + y^2 + 17.0*z^2 - x - 10", 2);
+    auto f_3_3 = MAKE_CONSTDEGREE_TESTFUNCTION((x.at(0)+x.at(1)-x.at(2)-1) * (x.at(1)*x.at(2) + x.at(1)*x.at(1) + 17.0*x.at(2)*x.at(2) - x.at(0) - 10), 3, "(x + y - z - 1) * (y*z + y^2 + 17.0*z^2 - x - 10)", 3);
 
     // Non-polynomial (aka. nasty) functions
-    auto f_nasty_0 = E(z) * ((1.3^x) + (y^x));
-    auto f_nasty_1 = 3*x/((x^2) + 3*(y^3));
-    auto f_nasty_2 = Sin(x)*E(x)*Log(y)+Cos(y)*Tan(x);
+    auto f_nasty_0 = MAKE_TESTFUNCTION(std::exp(x.at(2)) * (std::pow(1.3, x.at(0)) + std::pow(x.at(1), x.at(0))), 3, "e^z * (1.3^x + y^x)");
+    auto f_nasty_1 = MAKE_TESTFUNCTION(3*x.at(0)/(x.at(0)*x.at(0) + 3*x.at(1)*x.at(1)*x.at(1)), 2, "3*x / (x^2 + 3*y^3)");
+    auto f_nasty_2 = MAKE_TESTFUNCTION(std::sin(x.at(0))*std::exp(x.at(0))*std::log(x.at(1))+std::cos(x.at(1))*std::tan(x.at(0)), 2, "sin(x)*e^x*log(y) + cos(y)*tan(x)");
 
     // First vector is the vector of nasty functions
-    testFunctions.push_back(std::vector<TermFunction *>());
-    testFunctions.at(0).push_back(new TermFunction(f_nasty_0));
-    testFunctions.at(0).push_back(new TermFunction(f_nasty_1));
-    testFunctions.at(0).push_back(new TermFunction(f_nasty_2));
+    testFunctions.push_back(std::vector<TestFunction *>());
+    testFunctions.at(0).push_back(f_nasty_0);
+    testFunctions.at(0).push_back(f_nasty_1);
+    testFunctions.at(0).push_back(f_nasty_2);
 
-    testFunctions.push_back(std::vector<TermFunction *>());
-    testFunctions.at(1).push_back(new TermFunction(f_1_0));
-    testFunctions.at(1).push_back(new TermFunction(f_1_1));
-    testFunctions.at(1).push_back(new TermFunction(f_1_2));
-    testFunctions.at(1).push_back(new TermFunction(f_1_3));
-    testFunctions.at(1).push_back(new TermFunction(f_1_4));
+    testFunctions.push_back(std::vector<TestFunction *>());
+    testFunctions.at(1).push_back(f_1_0);
+    testFunctions.at(1).push_back(f_1_1);
+    testFunctions.at(1).push_back(f_1_2);
+    testFunctions.at(1).push_back(f_1_3);
+    testFunctions.at(1).push_back(f_1_4);
 
-    testFunctions.push_back(std::vector<TermFunction *>());
-    testFunctions.at(2).push_back(new TermFunction(f_2_0));
-    testFunctions.at(2).push_back(new TermFunction(f_2_1));
-    testFunctions.at(2).push_back(new TermFunction(f_2_2));
-    testFunctions.at(2).push_back(new TermFunction(f_2_3));
-    testFunctions.at(2).push_back(new TermFunction(f_2_4));
-    testFunctions.at(2).push_back(new TermFunction(f_2_5));
-    testFunctions.at(2).push_back(new TermFunction(f_2_6));
+    testFunctions.push_back(std::vector<TestFunction *>());
+    testFunctions.at(2).push_back(f_2_0);
+    testFunctions.at(2).push_back(f_2_1);
+    testFunctions.at(2).push_back(f_2_2);
+    testFunctions.at(2).push_back(f_2_3);
+    testFunctions.at(2).push_back(f_2_4);
+    testFunctions.at(2).push_back(f_2_5);
+    testFunctions.at(2).push_back(f_2_6);
 
-    testFunctions.push_back(std::vector<TermFunction *>());
-    testFunctions.at(3).push_back(new TermFunction(f_3_0));
-    testFunctions.at(3).push_back(new TermFunction(f_3_1));
-    testFunctions.at(3).push_back(new TermFunction(f_3_2));
-    testFunctions.at(3).push_back(new TermFunction(f_3_3));
+    testFunctions.push_back(std::vector<TestFunction *>());
+    testFunctions.at(3).push_back(f_3_0);
+    testFunctions.at(3).push_back(f_3_1);
+    testFunctions.at(3).push_back(f_3_2);
+    testFunctions.at(3).push_back(f_3_3);
 }
 
 void tearDownTestFunctions() {
     for(auto &vec : testFunctions) {
-        for(auto &term : vec) {
-            delete term;
+        for(auto &testFunc : vec) {
+            delete testFunc;
         }
     }
 }

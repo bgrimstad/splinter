@@ -10,7 +10,7 @@
 #include "testingutilities.h"
 #include <testfunctions.h>
 #include <Catch.h>
-#include "term.h"
+#include <iostream>
 
 using namespace std;
 
@@ -224,7 +224,7 @@ bool compareFunctions(const Function &exact, const Function &approx, const std::
     return equal;
 }
 
-void compareFunctionValue(std::vector<TermFunction *> funcs,
+void compareFunctionValue(std::vector<TestFunction *> funcs,
                           std::function<Approximant *(const DataTable &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints,
                           double one_eps, double two_eps, double inf_eps)
@@ -234,7 +234,7 @@ void compareFunctionValue(std::vector<TermFunction *> funcs,
         compareFunctionValue(exact, approx_gen_func, numSamplePoints, numEvalPoints, one_eps, two_eps, inf_eps);
     }
 }
-void compareFunctionValue(TermFunction *exact,
+void compareFunctionValue(TestFunction *exact,
                           std::function<Approximant *(const DataTable &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints,
                           double one_eps, double two_eps, double inf_eps)
@@ -250,7 +250,7 @@ void compareFunctionValue(TermFunction *exact,
         Approximant *approx = approx_gen_func(table);
 
         INFO("Approximant: " << approx->getDescription());
-        INFO("Function: " << *(exact->getF()));
+        INFO("Function: " << exact->getFunctionStr());
 
         DenseVector errorVec(evalPoints.size());
 
@@ -314,7 +314,7 @@ void compareFunctionValue(TermFunction *exact,
 
 
 /* Compares the jacobian of the approximant to the central difference of the approximant function value */
-void compareJacobianValue(TermFunction *exact,
+void compareJacobianValue(TestFunction *exact,
                           std::function<Approximant *(const DataTable &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints,
                           double one_eps, double two_eps, double inf_eps)
@@ -330,8 +330,7 @@ void compareJacobianValue(TermFunction *exact,
         Approximant *approx = approx_gen_func(table);
 
         INFO("Approximant: " << approx->getDescription());
-        INFO(exact->getFunctionStr());
-        INFO(exact->getJacobianStr());
+        INFO("Function: " << exact->getFunctionStr());
 
         DenseVector oneNormVec(evalPoints.size());
         DenseVector twoNormVec(evalPoints.size());
@@ -350,8 +349,8 @@ void compareJacobianValue(TermFunction *exact,
         {
             DenseVector x = vecToDense(point);
 
-            // "exact" value
-            DenseMatrix exactValue = centralDifference(*approx, x);
+            // Compare the central difference to the approximated jacobian
+            DenseMatrix exactValue = approx->centralDifference(x);
             DenseMatrix approxValue = approx->evalJacobian(x);
 
             DenseVector error = DenseVector::Zero(exactValue.cols());
@@ -414,19 +413,19 @@ void compareJacobianValue(TermFunction *exact,
         INFO(std::setw(16) << std::left << "1-norm:"           << std::setw(32) << std::right << maxOneNormError);
         INFO(" at " << getDenseAsStrOneLine(maxOneNormErrorPoint));
         INFO(std::setw(16) << std::left << "Approx value:"      << std::setw(32) << std::right << getDenseAsStrOneLine(approx->evalJacobian(maxOneNormErrorPoint)));
-        INFO(std::setw(16) << std::left << "Central difference:"     << std::setw(32) << std::right << getDenseAsStrOneLine(centralDifference(*approx, maxOneNormErrorPoint)));
+        INFO(std::setw(16) << std::left << "Central difference:"     << std::setw(32) << std::right << getDenseAsStrOneLine(approx->centralDifference(maxOneNormErrorPoint)));
 
         INFO("");
         INFO(std::setw(16) << std::left << "2-norm:"           << std::setw(32) << std::right << maxTwoNormError);
         INFO(" at " << getDenseAsStrOneLine(maxTwoNormErrorPoint));
         INFO(std::setw(16) << std::left << "Approx value:"      << std::setw(32) << std::right << getDenseAsStrOneLine(approx->evalJacobian(maxTwoNormErrorPoint)));
-        INFO(std::setw(16) << std::left << "Central difference:"     << std::setw(32) << std::right << getDenseAsStrOneLine(centralDifference(*approx, maxTwoNormErrorPoint)));
+        INFO(std::setw(16) << std::left << "Central difference:"     << std::setw(32) << std::right << getDenseAsStrOneLine(approx->centralDifference(maxTwoNormErrorPoint)));
 
         INFO("");
         INFO(std::setw(16) << std::left << "Inf-norm:"         << std::setw(32) << std::right << maxInfNormError);
         INFO(" at " << getDenseAsStrOneLine(maxInfNormErrorPoint));
         INFO(std::setw(16) << std::left << "Approx value:"      << std::setw(32) << std::right << getDenseAsStrOneLine(approx->evalJacobian(maxInfNormErrorPoint)));
-        INFO(std::setw(16) << std::left << "Central difference:"     << std::setw(32) << std::right << getDenseAsStrOneLine(centralDifference(*approx, maxInfNormErrorPoint)));
+        INFO(std::setw(16) << std::left << "Central difference:"     << std::setw(32) << std::right << getDenseAsStrOneLine(approx->centralDifference(maxInfNormErrorPoint)));
 
         if(norms(0) / evalPoints.size() > one_eps || norms(1) > two_eps || norms(2) > inf_eps) {
             CHECK(false);
@@ -436,7 +435,7 @@ void compareJacobianValue(TermFunction *exact,
     }
 }
 
-void checkHessianSymmetry(TermFunction *exact,
+void checkHessianSymmetry(TestFunction *exact,
                           std::function<Approximant *(const DataTable &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints)
 {
@@ -451,9 +450,7 @@ void checkHessianSymmetry(TermFunction *exact,
         Approximant *approx = approx_gen_func(table);
 
         INFO("Approximant: " << approx->getDescription());
-        INFO(exact->getFunctionStr());
-        INFO("Exact " << exact->getJacobianStr());
-        INFO("Exact " << exact->getHessianStr());
+        INFO("Function: " << exact->getFunctionStr());
 
 
         for (auto &point : evalPoints)
@@ -752,14 +749,14 @@ std::string pretty_print(const DenseVector &denseVec)
 }
 
 
-TermFunction *getTestFunction(int numVariables, int degree)
+TestFunction *getTestFunction(int numVariables, int degree)
 {
     return testFunctions.at(numVariables).at(degree);
 }
 
-std::vector<TermFunction *> getTestFunctionsOfDegree(int degree)
+std::vector<TestFunction *> getTestFunctionsOfDegree(int degree)
 {
-    auto testFuncs = std::vector<TermFunction *>();
+    auto testFuncs = std::vector<TestFunction *>();
     for(int i = 1; i < testFunctions.size(); ++i) {
         if(degree < testFunctions.at(i).size()) {
             testFuncs.push_back(testFunctions.at(i).at(degree));
@@ -768,14 +765,14 @@ std::vector<TermFunction *> getTestFunctionsOfDegree(int degree)
     return testFuncs;
 }
 
-std::vector<TermFunction *> getTestFunctionWithNumVariables(int numVariables)
+std::vector<TestFunction *> getTestFunctionWithNumVariables(int numVariables)
 {
     return testFunctions.at(numVariables);
 }
 
-std::vector<TermFunction *> getPolynomialFunctions()
+std::vector<TestFunction *> getPolynomialFunctions()
 {
-    auto testFuncs = std::vector<TermFunction *>();
+    auto testFuncs = std::vector<TestFunction *>();
     for(int i = 1; i < testFunctions.size(); ++i) {
         for(int j = 0; j < testFunctions.at(i).size(); ++j) {
             testFuncs.push_back(testFunctions.at(i).at(j));
@@ -784,7 +781,7 @@ std::vector<TermFunction *> getPolynomialFunctions()
     return testFuncs;
 }
 
-std::vector<TermFunction *> getNastyTestFunctions()
+std::vector<TestFunction *> getNastyTestFunctions()
 {
     return testFunctions.at(0);
 }
@@ -896,7 +893,7 @@ void _checkNorm(DenseMatrix normValues, int row, size_t numPoints, double one_ep
 }
 
 // Must use std::function because a capturing lambda cannot be converted to a function pointer
-void testApproximation(std::vector<TermFunction *> funcs,
+void testApproximation(std::vector<TestFunction *> funcs,
                        std::function<Approximant *(const DataTable &table)> approx_gen_func,
                        TestType type, size_t numSamplePoints, size_t numEvalPoints,
                        double one_eps, double two_eps, double inf_eps)
@@ -913,7 +910,7 @@ void testApproximation(std::vector<TermFunction *> funcs,
 
             Approximant *approx = approx_gen_func(table);
 
-            INFO("Function: " << *(exact->getF()));
+            INFO("Function: " << exact->getFunctionStr());
             INFO("Approximant: " << approx->getDescription());
 
             DenseMatrix errorNorms = getErrorNorms(exact, approx, evalPoints);

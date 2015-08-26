@@ -154,6 +154,7 @@ set(SRC_LIST
     src/bsplinebasis1d.cpp
     src/datasample.cpp
     src/datatable.cpp
+    src/function.cpp
     src/mykroneckerproduct.cpp
     src/polynomialregression.cpp
     src/pspline.cpp
@@ -177,10 +178,8 @@ set(TEST_SRC_LIST
 
     test/operator_overloads.h
     test/operator_overloads.cpp
-    test/term.h
-    test/term.cpp
-    test/termfunction.h
-    test/termfunction.cpp
+    test/testfunction.h
+    test/testfunction.cpp
     test/testfunctions.h
     test/testfunctions.cpp
     test/testingutilities.h

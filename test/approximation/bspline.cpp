@@ -7,7 +7,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include "term.h"
 #include <Catch.h>
 #include <testingutilities.h>
 
@@ -29,7 +28,7 @@ TEST_CASE("Linear BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::line
         // If the degree of the exact function is less than or equal to the degree
         // of the B-Spline we are using to approximate it, the B-Spline should approximate
         // the function exactly.
-        if(testFunc->getF()->isConstDegree() && testFunc->getF()->getConstDegree() <= 1.0)
+        if(testFunc->isConstDegree() && testFunc->getConstDegree() <= 1.0)
         {
             one_eps = 1e-5;
             two_eps = 1e-5;
@@ -58,7 +57,7 @@ TEST_CASE("Linear BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::line
         // If the degree of the exact function is less than or equal to the degree
         // of the B-Spline we are using to approximate it, the B-Spline should approximate
         // the function exactly.
-        if(testFunc->getF()->isConstDegree() && testFunc->getF()->getConstDegree() <= 1.0)
+        if(testFunc->isConstDegree() && testFunc->getConstDegree() <= 1.0)
         {
             one_eps = 1e-5;
             two_eps = 1e-5;
@@ -103,7 +102,7 @@ TEST_CASE("Quadratic BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::q
         // If the degree of the exact function is less than or equal to the degree
         // of the B-Spline we are using to approximate it, the B-Spline should approximate
         // the function exactly.
-        if(testFunc->getF()->isConstDegree() && testFunc->getF()->getConstDegree() <= 2.0)
+        if(testFunc->isConstDegree() && testFunc->getConstDegree() <= 2.0)
         {
             one_eps = 1e-5;
             two_eps = 1e-5;
@@ -132,7 +131,7 @@ TEST_CASE("Quadratic BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::q
         // If the degree of the exact function is less than or equal to the degree
         // of the B-Spline we are using to approximate it, the B-Spline should approximate
         // the function exactly.
-        if(testFunc->getF()->isConstDegree() && testFunc->getF()->getConstDegree() <= 2.0)
+        if(testFunc->isConstDegree() && testFunc->getConstDegree() <= 2.0)
         {
             one_eps = 1e-5;
             two_eps = 1e-5;
@@ -177,7 +176,7 @@ TEST_CASE("Cubic BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::cubic
         // If the degree of the exact function is less than or equal to the degree
         // of the B-Spline we are using to approximate it, the B-Spline should approximate
         // the function exactly.
-        if(testFunc->getF()->isConstDegree() && testFunc->getF()->getConstDegree() <= 3.0)
+        if(testFunc->isConstDegree() && testFunc->getConstDegree() <= 3.0)
         {
             one_eps = 1e-5;
             two_eps = 1e-5;
@@ -206,7 +205,7 @@ TEST_CASE("Cubic BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::cubic
         // If the degree of the exact function is less than or equal to the degree
         // of the B-Spline we are using to approximate it, the B-Spline should approximate
         // the function exactly.
-        if(testFunc->getF()->isConstDegree() && testFunc->getF()->getConstDegree() <= 3.0)
+        if(testFunc->isConstDegree() && testFunc->getConstDegree() <= 3.0)
         {
             one_eps = 1e-5;
             two_eps = 1e-5;
@@ -251,7 +250,7 @@ TEST_CASE("Quartic BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::qua
         // If the degree of the exact function is less than or equal to the degree
         // of the B-Spline we are using to approximate it, the B-Spline should approximate
         // the function exactly.
-        if(testFunc->getF()->isConstDegree() && testFunc->getF()->getConstDegree() <= 4.0)
+        if(testFunc->isConstDegree() && testFunc->getConstDegree() <= 4.0)
         {
             one_eps = 1e-5;
             two_eps = 1e-5;
@@ -281,7 +280,7 @@ TEST_CASE("Quartic BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::qua
         // If the degree of the exact function is less than or equal to the degree
         // of the B-Spline we are using to approximate it, the B-Spline should approximate
         // the function exactly.
-        if(testFunc->getF()->isConstDegree() && testFunc->getF()->getConstDegree() <= 4.0)
+        if(testFunc->isConstDegree() && testFunc->getConstDegree() <= 4.0)
         {
             one_eps = 1e-5;
             two_eps = 1e-5;

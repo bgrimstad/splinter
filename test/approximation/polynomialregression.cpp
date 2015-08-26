@@ -7,11 +7,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include "term.h"
 #include <Catch.h>
 #include <testingutilities.h>
 #include <polynomialregression.h>
 #include <testfunctions.h>
+#include <testfunction.h>
 
 using namespace SPLINTER;
 
@@ -33,7 +33,7 @@ TEST_CASE("PolynomialRegression function" COMMON_TEXT, COMMON_TAGS "[function-va
 
             // If the degree of the exact function is less than or equal to the degree
             // of the PolynomialRegression it should fit it exactly.
-            if(testFunc->getF()->isConstDegree() && testFunc->getF()->getConstDegree() <= degree)
+            if(testFunc->isConstDegree() && testFunc->getConstDegree() <= degree)
             {
                 one_eps = 1e-9;
                 two_eps = 1e-9;
@@ -66,7 +66,7 @@ TEST_CASE("PolynomialRegression function" COMMON_TEXT, COMMON_TAGS "[function-va
 //            // If the degree of the exact function is less than or equal to the degree
 //            // of the PolynomialRegression we are using to approximate it, the approximant
 //            // should approximate the function exactly.
-//            if(testFunc->getF()->isConstDegree() && testFunc->getF()->getConstDegree() <= degree)
+//            if(testFunc->isConstDegree() && testFunc->getConstDegree() <= degree)
 //            {
 //                one_eps = 1e-5;
 //                two_eps = 1e-5;

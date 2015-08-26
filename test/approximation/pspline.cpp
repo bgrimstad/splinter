@@ -7,10 +7,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include "term.h"
 #include <Catch.h>
 #include <testingutilities.h>
 #include <pspline.h>
+#include <testfunction.h>
 
 using namespace SPLINTER;
 
@@ -30,7 +30,7 @@ TEST_CASE("PSpline function" COMMON_TEXT, COMMON_TAGS "[function-value][polynomi
         // If the degree of the exact function is less than or equal to the degree
         // of the P-Spline we are using to approximate it, the P-Spline should approximate
         // the function exactly.
-        if(testFunc->getF()->isConstDegree() && testFunc->getF()->getConstDegree() <= 3.0)
+        if(testFunc->isConstDegree() && testFunc->getConstDegree() <= 3.0)
         {
             one_eps = 1e-5;
             two_eps = 1e-5;
@@ -59,7 +59,7 @@ TEST_CASE("PSpline jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian][polynomial]")
         // If the degree of the exact function is less than or equal to the degree
         // of the P-Spline we are using to approximate it, the P-Spline should approximate
         // the function exactly.
-        if(testFunc->getF()->isConstDegree() && testFunc->getF()->getConstDegree() <= 3.0)
+        if(testFunc->isConstDegree() && testFunc->getConstDegree() <= 3.0)
         {
             one_eps = 1e-5;
             two_eps = 1e-5;

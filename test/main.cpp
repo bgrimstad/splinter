@@ -9,6 +9,7 @@
 
 #define CATCH_CONFIG_RUNNER
 #include <Catch.h>
+#include <testfunction.h>
 #include <testfunctions.h>
 
 

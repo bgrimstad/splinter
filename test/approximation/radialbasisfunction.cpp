@@ -7,10 +7,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include "term.h"
 #include <Catch.h>
 #include <testingutilities.h>
 #include <radialbasisfunction.h>
+#include <testfunction.h>
 
 using namespace SPLINTER;
 

@@ -10,9 +10,9 @@
 #ifndef SPLINTER_TESTFUNCTIONS_H
 #define SPLINTER_TESTFUNCTIONS_H
 
-#include <termfunction.h>
+#include <testfunction.h>
 
-extern std::vector<std::vector<TermFunction *>> testFunctions;
+extern std::vector<std::vector<SPLINTER::TestFunction *>> testFunctions;
 
 void setupTestFunctions();
 

@@ -14,8 +14,8 @@
 #include <function.h>
 #include <generaldefinitions.h>
 #include <bspline.h>
-#include "termfunction.h"
 #include <operator_overloads.h>
+#include <testfunction.h>
 
 
 namespace SPLINTER
@@ -48,22 +48,22 @@ bool compareFunctions(const Function &exact, const Function &approx);
  * norms are larger than the corresponding epsilon.
  * Also prints out the point with the largest error.
  */
-void compareFunctionValue(std::vector<TermFunction *> funcs,
+void compareFunctionValue(std::vector<TestFunction *> funcs,
                           std::function<Approximant *(const DataTable &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints,
                           double one_eps, double two_eps, double inf_eps);
 
-void compareFunctionValue(TermFunction *exact,
+void compareFunctionValue(TestFunction *exact,
                           std::function<Approximant *(const DataTable &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints,
                           double one_eps, double two_eps, double inf_eps);
 
-void compareJacobianValue(TermFunction *exact,
+void compareJacobianValue(TestFunction *exact,
                           std::function<Approximant *(const DataTable &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints,
                           double one_eps, double two_eps, double inf_eps);
 
-void checkHessianSymmetry(TermFunction *exact,
+void checkHessianSymmetry(TestFunction *exact,
                           std::function<Approximant *(const DataTable &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints);
 
@@ -109,11 +109,11 @@ DenseVector vecToDense(const std::vector<double> &vec);
 
 std::string pretty_print(const DenseVector &denseVec);
 
-TermFunction *getTestFunction(int numVariables, int degree);
-std::vector<TermFunction *> getTestFunctionsOfDegree(int degree);
-std::vector<TermFunction *> getTestFunctionWithNumVariables(int numVariables);
-std::vector<TermFunction *> getPolynomialFunctions();
-std::vector<TermFunction *> getNastyTestFunctions();
+TestFunction *getTestFunction(int numVariables, int degree);
+std::vector<TestFunction *> getTestFunctionsOfDegree(int degree);
+std::vector<TestFunction *> getTestFunctionWithNumVariables(int numVariables);
+std::vector<TestFunction *> getPolynomialFunctions();
+std::vector<TestFunction *> getNastyTestFunctions();
 
 
 /*
@@ -131,7 +131,7 @@ void checkNorms(DenseMatrix normValues, size_t numPoints, double one_eps, double
 void checkNorm(DenseMatrix normValues, TestType type, size_t numPoints, double one_eps, double two_eps, double inf_eps);
 void _checkNorm(DenseMatrix normValues, int row, size_t numPoints, double one_eps, double two_eps, double inf_eps);
 
-void testApproximation(std::vector<TermFunction *> funcs,
+void testApproximation(std::vector<TestFunction *> funcs,
                        std::function<Approximant *(const DataTable &table)> approx_gen_func,
                        TestType type, size_t numSamplePoints, size_t numEvalPoints,
                        double one_eps, double two_eps, double inf_eps);
