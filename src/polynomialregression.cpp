@@ -209,19 +209,23 @@ const std::string PolynomialRegression::getDescription() const
 
     // See if all degrees are the same.
     bool equal = true;
-    for(size_t i = 1; i < degrees.size(); ++i) {
+    for (size_t i = 1; i < degrees.size(); ++i)
+    {
         equal = equal && (degrees.at(i) == degrees.at(i-1));
     }
 
-    if(equal) {
+    if (equal)
+    {
         description.append(" ");
         description.append(std::to_string(degrees.at(0)));
-
-    } else {
+    }
+    else
+    {
         description.append("s (");
-        for(size_t i = 0; i < degrees.size(); ++i) {
+        for (size_t i = 0; i < degrees.size(); ++i) {
             description.append(std::to_string(degrees.at(i)));
-            if(i + 1 < degrees.size()) {
+            if (i + 1 < degrees.size())
+            {
                 description.append(", ");
             }
         }
