@@ -10,7 +10,7 @@
 #include <serializer.h>
 #include "polynomialregression.h"
 #include "linearsolvers.h"
-#include "unsupported/Eigen/KroneckerProduct"
+#include "mykroneckerproduct.h"
 
 namespace SPLINTER
 {
@@ -59,6 +59,20 @@ double PolynomialRegression::eval(DenseVector x) const
     DenseMatrix monomials = evalMonomials(x);
     DenseMatrix res = coefficients*monomials;
     return res(0,0);
+}
+
+DenseMatrix PolynomialRegression::evalJacobian(DenseVector x) const
+{
+    DenseMatrix jac(1, numVariables);
+    jac.fill(0.0);
+
+    for (unsigned int i = 0; i < numVariables; ++i)
+    {
+        DenseVector diffMonomials = evalDifferentiatedMonomials(x, i);
+        DenseVector jaci = coefficients*diffMonomials;
+        jac(i) = jaci(0);
+    }
+    return jac;
 }
 
 void PolynomialRegression::computeCoefficients(const DataTable &samples)
@@ -130,18 +144,48 @@ DenseVector PolynomialRegression::evalMonomials(DenseVector x) const
     }
 
     // Kronecker product of monovariable power basis
-    DenseVector monomials = DenseVector::Ones(1);
-
-    for (unsigned int i = 0; i < numVariables; ++i)
-    {
-        DenseVector temp = monomials;
-        monomials = kroneckerProduct(temp, powers.at(i));
-    }
+    DenseVector monomials = kroneckerProductVectors(powers);
 
     if (monomials.rows() != numCoefficients)
     {
         throw Exception("PolynomialRegression::evalMonomials: monomials.rows() != numCoefficients.");
     }
+
+    return monomials;
+}
+
+DenseVector PolynomialRegression::evalDifferentiatedMonomials(DenseVector x, unsigned int var) const
+{
+    if (var < 0 || var >= numVariables)
+        throw Exception("PolynomialRegression::evalDifferentiatedMonomials: invalid variable.");
+
+    std::vector<DenseVector> powers;
+
+    for (unsigned int i = 0; i < numVariables; ++i)
+    {
+        unsigned int deg = degrees.at(i);
+        DenseVector powi = DenseVector::Zero(deg+1);
+
+        if (var == i)
+        {
+            // Differentiate wrt. x(i)
+            for (unsigned int j = 1; j <= deg; ++j)
+                powi(j) = j*std::pow(x(i), j-1);
+        }
+        else
+        {
+            for (unsigned int j = 0; j <= deg; ++j)
+                powi(j) = std::pow(x(i), j);
+        }
+
+        powers.push_back(powi);
+    }
+
+    // Kronecker product of monovariable power basis
+    DenseVector monomials = kroneckerProductVectors(powers);
+
+    if (monomials.rows() != numCoefficients)
+        throw Exception("PolynomialRegression::evalMonomials: monomials.rows() != numCoefficients.");
 
     return monomials;
 }

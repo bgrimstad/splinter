@@ -28,7 +28,7 @@ public:
 
     // Evaluation
     double eval(DenseVector x) const override;
-    DenseMatrix evalJacobian(DenseVector x) const override { DenseMatrix j(1, numVariables); j.fill(0.0); return j; } // TODO: Implement
+    DenseMatrix evalJacobian(DenseVector x) const override;
     DenseMatrix evalHessian(DenseVector x) const override { DenseMatrix h(numVariables, numVariables); h.fill(0.0); return h; } // TODO: Implement
 
     // Getters
@@ -52,6 +52,7 @@ private:
     DenseMatrix computeDesignMatrix(const DataTable &samples) const;
 
     DenseVector evalMonomials(DenseVector x) const;
+    DenseVector evalDifferentiatedMonomials(DenseVector x, unsigned int var) const;
 
     void load(const std::string fileName) override;
 

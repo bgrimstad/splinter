@@ -119,6 +119,32 @@ SparseVector kroneckerProductVectors(const std::vector<SparseVector> &vectors)
     return temp1;
 }
 
+DenseVector kroneckerProductVectors(const std::vector<DenseVector> &vectors)
+{
+    // Create two temp matrices
+    DenseVector temp1(1);
+    temp1(0) = 1;
+    DenseVector temp2 = temp1;
+
+    // Multiply from left
+    int counter = 0;
+    for (const auto &vec : vectors)
+    {
+        // Avoid copy
+        if (counter % 2 == 0)
+            temp1 = kroneckerProduct(temp2, vec);
+        else
+            temp2 = kroneckerProduct(temp1, vec);
+
+        ++counter;
+    }
+
+    // Return correct product
+    if (counter % 2 == 0)
+        return temp2;
+    return temp1;
+}
+
 SparseMatrix kroneckerProductMatrices(const std::vector<SparseMatrix> &matrices)
 {
     // Create two temp matrices
