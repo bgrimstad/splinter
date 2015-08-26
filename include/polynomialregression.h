@@ -32,8 +32,6 @@ public:
     DenseMatrix evalHessian(DenseVector x) const override { DenseMatrix h(numVariables, numVariables); h.fill(0.0); return h; } // TODO: Implement
 
     // Getters
-    unsigned int getNumVariables() const override { return numVariables; }
-
     DenseMatrix getCoefficients() const { return coefficients; }
 
     void save(const std::string fileName) const override;
@@ -43,7 +41,6 @@ public:
 private:
     PolynomialRegression();
 
-    unsigned int numVariables;
     unsigned int numCoefficients;
     std::vector<unsigned int> degrees;
     DenseMatrix coefficients;

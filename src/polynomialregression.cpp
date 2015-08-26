@@ -16,6 +16,7 @@ namespace SPLINTER
 {
 
 PolynomialRegression::PolynomialRegression()
+    : Approximant(1)
 {
 }
 
@@ -25,6 +26,7 @@ PolynomialRegression::PolynomialRegression(const char *fileName)
 }
 
 PolynomialRegression::PolynomialRegression(const std::string fileName)
+    : Approximant(1)
 {
     load(fileName);
 }
@@ -35,8 +37,8 @@ PolynomialRegression::PolynomialRegression(const DataTable &samples, unsigned in
 }
 
 PolynomialRegression::PolynomialRegression(const DataTable &samples, std::vector<unsigned int> degrees)
-    : degrees(degrees),
-      numVariables(samples.getNumVariables()),
+    : Approximant(samples.getNumVariables()),
+      degrees(degrees),
       numCoefficients(0)
 {
     if (degrees.size() != numVariables)

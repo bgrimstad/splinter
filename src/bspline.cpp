@@ -19,19 +19,18 @@ namespace SPLINTER
 {
 
 BSpline::BSpline()
-{
-}
+    : Approximant(1)
+{}
 
 /*
  * Constructors for multivariate B-splines with explicit data
  */
 BSpline::BSpline(std::vector<double> coefficients, std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees)
-    : coefficients(DenseMatrix::Zero(1, coefficients.size()))
+    : Approximant(knotVectors.size()),
+      coefficients(DenseMatrix::Zero(1, coefficients.size()))
 {
     for (unsigned int i = 0; i < coefficients.size(); ++i)
         this->coefficients(0,i) = coefficients[i];
-
-    numVariables = knotVectors.size();
 
     if (this->coefficients.rows() != 1)
         throw Exception("BSpline::BSpline: coefficient matrix can only have one row!");
@@ -46,10 +45,9 @@ BSpline::BSpline(std::vector<double> coefficients, std::vector< std::vector<doub
 }
 
 BSpline::BSpline(DenseMatrix coefficients, std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees)
-    : coefficients(coefficients)
+    : Approximant(knotVectors.size()),
+      coefficients(coefficients)
 {
-    numVariables = knotVectors.size();
-
     if (coefficients.rows() != 1)
         throw Exception("BSpline::BSpline: coefficient matrix can only have one row!");
 
@@ -66,12 +64,11 @@ BSpline::BSpline(DenseMatrix coefficients, std::vector< std::vector<double> > kn
  * Constructors for interpolation of samples in DataTable
  */
 BSpline::BSpline(const DataTable &samples, unsigned int degree)
+    : Approximant(samples.getNumVariables())
 {
     // Check data
     if (!samples.isGridComplete())
         throw Exception("BSpline::BSpline: Cannot create B-spline from irregular (incomplete) grid.");
-
-    numVariables = samples.getNumVariables();
 
     std::vector< std::vector<double> > xdata = samples.getTableX();
 
@@ -90,12 +87,11 @@ BSpline::BSpline(const DataTable &samples, unsigned int degree)
 }
 
 BSpline::BSpline(const DataTable &samples, BSplineType type = BSplineType::CUBIC)
+    : Approximant(samples.getNumVariables())
 {
     // Check data
     if (!samples.isGridComplete())
         throw Exception("BSpline::BSpline: Cannot create B-spline from irregular (incomplete) grid.");
-
-    numVariables = samples.getNumVariables();
 
     std::vector< std::vector<double> > xdata = samples.getTableX();
 
@@ -132,6 +128,7 @@ BSpline::BSpline(const char *fileName)
 }
 
 BSpline::BSpline(const std::string fileName)
+    : Approximant(1)
 {
     load(fileName);
 }
@@ -586,19 +583,24 @@ const std::string BSpline::getDescription() const
     auto degrees = getBasisDegrees();
     // See if all degrees are the same.
     bool equal = true;
-    for(size_t i = 1; i < degrees.size(); ++i) {
+    for (size_t i = 1; i < degrees.size(); ++i)
+    {
         equal = equal && (degrees.at(i) == degrees.at(i-1));
     }
 
-    if(equal) {
+    if(equal)
+    {
         description.append(" ");
         description.append(std::to_string(degrees.at(0)));
-
-    } else {
+    }
+    else
+    {
         description.append("s (");
-        for(size_t i = 0; i < degrees.size(); ++i) {
+        for (size_t i = 0; i < degrees.size(); ++i)
+        {
             description.append(std::to_string(degrees.at(i)));
-            if(i + 1 < degrees.size()) {
+            if (i + 1 < degrees.size())
+            {
                 description.append(", ");
             }
         }

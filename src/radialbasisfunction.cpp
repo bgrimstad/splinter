@@ -16,6 +16,7 @@ namespace SPLINTER
 {
 
 RadialBasisFunction::RadialBasisFunction()
+    : Approximant(1)
 {
 }
 
@@ -25,6 +26,7 @@ RadialBasisFunction::RadialBasisFunction(const char *fileName)
 }
 
 RadialBasisFunction::RadialBasisFunction(const std::string fileName)
+    : Approximant(1)
 {
     load(fileName);
 }
@@ -35,11 +37,11 @@ RadialBasisFunction::RadialBasisFunction(const DataTable &samples, RadialBasisFu
 }
 
 RadialBasisFunction::RadialBasisFunction(const DataTable &samples, RadialBasisFunctionType type, bool normalized)
-    : samples(samples),
+    : Approximant(samples.getNumVariables()),
+      samples(samples),
       type(type),
       normalized(normalized),
       precondition(false),
-      dim(samples.getNumVariables()),
       numSamples(samples.getNumSamples())
 {
     if (type == RadialBasisFunctionType::THIN_PLATE_SPLINE)
@@ -158,7 +160,7 @@ double RadialBasisFunction::eval(DenseVector x) const
 
 double RadialBasisFunction::eval(std::vector<double> x) const
 {
-    assert(x.size() == dim);
+    assert(x.size() == numVariables);
     double fval, sum = 0, sumw = 0;
     int i = 0;
     for (auto it = samples.cbegin(); it != samples.cend(); ++it, ++i)
