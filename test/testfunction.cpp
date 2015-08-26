@@ -16,7 +16,7 @@ TestFunction::TestFunction(std::function<double (const std::vector<double> &)> f
                            size_t numVariables,
                            std::string functionString)
         : f(f),
-          numVariables(numVariables),
+          Function(numVariables),
           functionString(functionString),
           constDegree(false),
           constDegreeVal(0.0)
@@ -26,7 +26,7 @@ TestFunction::TestFunction(std::function<double (const std::vector<double> &)> f
 TestFunction::TestFunction(std::function<double (const std::vector<double> &)> f, size_t numVariables,
                            std::string functionString, double constDegreeVal)
         : f(f),
-          numVariables(numVariables),
+          Function(numVariables),
           functionString(functionString),
           constDegree(true),
           constDegreeVal(constDegreeVal)

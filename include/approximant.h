@@ -25,14 +25,9 @@ class SPLINTER_API Approximant : public Function
 {
 public:
     Approximant(unsigned int numVariables)
-        : numVariables(numVariables) {}
+        : Function(numVariables) {}
 
     virtual ~Approximant() {}
-
-    unsigned int getNumVariables() const override
-    {
-        return numVariables;
-    }
 
     /**
      * Serialize and save approximant to fileName
@@ -63,9 +58,6 @@ public:
      * Will typically include name of the class and degree
      */
     virtual const std::string getDescription() const = 0;
-
-protected:
-    unsigned int numVariables; // Dimension of domain (size of x)
 };
 
 } // namespace SPLINTER

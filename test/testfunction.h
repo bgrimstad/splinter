@@ -34,15 +34,12 @@ public:
     using Function::eval;
     double eval(const std::vector<double> &x) const override;
 
-    inline unsigned int getNumVariables() const override { return numVariables; }
-
     inline std::string getFunctionStr() const { return functionString; }
 
     inline bool isConstDegree() const { return constDegree; }
     inline double getConstDegree() const { return constDegreeVal; }
 
 private:
-    unsigned int numVariables;
     std::string functionString;
 
     bool constDegree;

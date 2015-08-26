@@ -21,7 +21,12 @@ namespace SPLINTER
 class SPLINTER_API Function
 {
 public:
-    Function() {}
+    Function()
+        : Function(1) {}
+
+    Function(unsigned int numVariables)
+        : numVariables(numVariables) {}
+
     virtual ~Function() {}
 
     /**
@@ -57,7 +62,10 @@ public:
     /**
      * Get the dimension
      */
-    virtual unsigned int getNumVariables() const = 0;
+    inline unsigned int getNumVariables() const
+    {
+        return numVariables;
+    }
 
     /**
      * Returns the central difference at x
@@ -68,6 +76,11 @@ public:
 
     std::vector<std::vector<double>> secondOrderCentralDifference(const std::vector<double> &x) const;
     DenseMatrix secondOrderCentralDifference(DenseVector x) const;
+
+protected:
+    unsigned int numVariables; // Dimension of domain (size of x)
+
+    friend class Serializer;
 };
 
 } // namespace SPLINTER
