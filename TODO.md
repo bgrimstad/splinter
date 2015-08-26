@@ -27,3 +27,4 @@
 - Add tests that provoke errors
 - Automatically download Catch? See https://github.com/philsquared/Catch/blob/master/docs/build-systems.md#cmake
 - Provide precompiled debug binaries?
+- Default compilation target architecture should be equal to the architecture of the host computer
