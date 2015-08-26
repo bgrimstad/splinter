@@ -38,12 +38,10 @@ public:
     double eval(DenseVector x) const;
     double eval(std::vector<double> x) const;
 
-    DenseMatrix evalJacobian(DenseVector x) const { return DenseMatrix(1, dim); }; // TODO: implement
-    DenseMatrix evalHessian(DenseVector x) const { return DenseMatrix(dim, dim); }; // TODO: implement
+    DenseMatrix evalJacobian(DenseVector x) const { return DenseMatrix(1, numVariables); }; // TODO: implement
+    DenseMatrix evalHessian(DenseVector x) const { return DenseMatrix(numVariables, numVariables); }; // TODO: implement
     //    std::vector<double> getDomainUpperBound() const;
     //    std::vector<double> getDomainLowerBound() const;
-
-    unsigned int getNumVariables() const override { return dim; }
 
     void save(const std::string fileName) const override;
 
@@ -54,7 +52,7 @@ private:
 
     DataTable samples;
     bool normalized, precondition;
-    unsigned int dim, numSamples;
+    unsigned int numSamples;
 
     // Store the type so we can reconstruct the object when deserializing
     RadialBasisFunctionType type;

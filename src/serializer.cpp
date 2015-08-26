@@ -121,7 +121,7 @@ size_t Serializer::get_size(const RadialBasisFunction &obj)
     return get_size(obj.samples)
            + get_size(obj.normalized)
            + get_size(obj.precondition)
-           + get_size(obj.dim)
+           + get_size(obj.numVariables)
            + get_size(obj.numSamples)
            + get_size(obj.type)
            + get_size(obj.weights);
@@ -183,7 +183,7 @@ void Serializer::_serialize(const RadialBasisFunction &obj)
     _serialize(obj.samples);
     _serialize(obj.normalized);
     _serialize(obj.precondition);
-    _serialize(obj.dim);
+    _serialize(obj.numVariables);
     _serialize(obj.numSamples);
     _serialize(obj.type);
     _serialize(obj.weights);
@@ -245,7 +245,7 @@ void Serializer::deserialize(RadialBasisFunction &obj)
     deserialize(obj.samples);
     deserialize(obj.normalized);
     deserialize(obj.precondition);
-    deserialize(obj.dim);
+    deserialize(obj.numVariables);
     deserialize(obj.numSamples);
     deserialize(obj.type);
     if (obj.type == RadialBasisFunctionType::THIN_PLATE_SPLINE)

@@ -16,14 +16,23 @@
 namespace SPLINTER
 {
 
-/*
- * Interface for approximants
+/**
+ * Interface for approximants on the form:
+ * f(x) = c(1)*b1(x) + c(2)*b2(x) + ... + c(n)*bn(x) = c^T * b(x),
+ * where c are coefficients and b is a vector of basis functions.
  */
 class SPLINTER_API Approximant : public Function
 {
 public:
-    Approximant() {}
+    Approximant(unsigned int numVariables)
+        : numVariables(numVariables) {}
+
     virtual ~Approximant() {}
+
+    unsigned int getNumVariables() const override
+    {
+        return numVariables;
+    }
 
     /**
      * Serialize and save approximant to fileName
@@ -54,6 +63,9 @@ public:
      * Will typically include name of the class and degree
      */
     virtual const std::string getDescription() const = 0;
+
+protected:
+    unsigned int numVariables; // Dimension of domain (size of x)
 };
 
 } // namespace SPLINTER

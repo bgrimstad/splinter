@@ -61,7 +61,6 @@ public:
     DenseMatrix evalHessian(DenseVector x) const override;
 
     // Getters
-    unsigned int getNumVariables() const override { return numVariables; }
     unsigned int getNumControlPoints() const { return coefficients.cols(); }
     std::vector<unsigned int> getNumBasisFunctions() const;
     std::vector< std::vector<double> > getKnotVectors() const;
@@ -100,8 +99,6 @@ protected:
     BSplineBasis basis;
     DenseMatrix knotaverages; // One row per input
     DenseMatrix coefficients; // One row per output
-
-    unsigned int numVariables; // Dimension of x
 
     // Control point computations
     void computeKnotAverages();

@@ -58,7 +58,7 @@ SparseVector BSplineBasis::eval(const DenseVector &x) const
     for (int var = 0; var < x.size(); var++)
         basisFunctionValues.push_back(bases.at(var).evaluate(x(var)));
 
-    return foldlKroneckerProductVectors(basisFunctionValues);
+    return kroneckerProductVectors(basisFunctionValues);
 }
 
 // Old implementation of Jacobian
@@ -171,7 +171,7 @@ SparseMatrix BSplineBasis::evalBasisJacobian2(DenseVector &x) const
                 values.push_back(funcValues.at(j)); // Normal basis
         }
 
-        SparseVector Ji = foldlKroneckerProductVectors(values);
+        SparseVector Ji = kroneckerProductVectors(values);
 
         // Fill out column
         for (SparseVector::InnerIterator it(Ji); it; ++it)
@@ -359,58 +359,6 @@ SparseMatrix BSplineBasis::reduceSupport(std::vector<double>& lb, std::vector<do
     A.makeCompressed();
 
     return A;
-}
-
-SparseVector BSplineBasis::foldlKroneckerProductVectors(const std::vector<SparseVector> &vectors) const
-{
-    // Create two temp matrices
-    SparseMatrix temp1(1,1);
-    temp1.insert(0,0) = 1;
-    SparseMatrix temp2 = temp1;
-
-    // Fold from left
-    int counter = 0;
-    for (const auto &vec : vectors)
-    {
-        // Avoid copy
-        if (counter % 2 == 0)
-            temp1 = kroneckerProduct(temp2, vec);
-        else
-            temp2 = kroneckerProduct(temp1, vec);
-
-        ++counter;
-    }
-
-    // Return correct product
-    if (counter % 2 == 0)
-        return temp2;
-    return temp1;
-}
-
-SparseMatrix BSplineBasis::foldlKroneckerProductMatrices(const std::vector<SparseMatrix> &matrices) const
-{
-    // Create two temp matrices
-    SparseMatrix temp1(1,1);
-    temp1.insert(0,0) = 1;
-    SparseMatrix temp2 = temp1;
-
-    // Fold from left
-    int counter = 0;
-    for (const auto &mat : matrices)
-    {
-        // Avoid copy
-        if (counter % 2 == 0)
-            temp1 = kroneckerProduct(temp2, mat);
-        else
-            temp2 = kroneckerProduct(temp1, mat);
-
-        ++counter;
-    }
-
-    // Return correct product
-    if (counter % 2 == 0)
-        return temp2;
-    return temp1;
 }
 
 std::vector<unsigned int> BSplineBasis::getBasisDegrees() const

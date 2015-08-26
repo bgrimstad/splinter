@@ -62,7 +62,7 @@ TEST_CASE("PolynomialRegression function" COMMON_TEXT, COMMON_TAGS "[function-va
 //            double one_eps = 0.1;
 //            double two_eps = 0.1;
 //            double inf_eps = 0.1;
-//
+
 //            // If the degree of the exact function is less than or equal to the degree
 //            // of the PolynomialRegression we are using to approximate it, the approximant
 //            // should approximate the function exactly.
@@ -72,7 +72,7 @@ TEST_CASE("PolynomialRegression function" COMMON_TEXT, COMMON_TAGS "[function-va
 //                two_eps = 1e-5;
 //                inf_eps = 1e-5;
 //            }
-//
+
 //            compareJacobianValue(testFunc,
 //                                 [degree](const DataTable &table)
 //                                 {

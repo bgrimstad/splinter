@@ -10,12 +10,13 @@
 #include <serializer.h>
 #include "polynomialregression.h"
 #include "linearsolvers.h"
-#include "unsupported/Eigen/KroneckerProduct"
+#include "mykroneckerproduct.h"
 
 namespace SPLINTER
 {
 
 PolynomialRegression::PolynomialRegression()
+    : Approximant(1)
 {
 }
 
@@ -25,6 +26,7 @@ PolynomialRegression::PolynomialRegression(const char *fileName)
 }
 
 PolynomialRegression::PolynomialRegression(const std::string fileName)
+    : Approximant(1)
 {
     load(fileName);
 }
@@ -35,8 +37,8 @@ PolynomialRegression::PolynomialRegression(const DataTable &samples, unsigned in
 }
 
 PolynomialRegression::PolynomialRegression(const DataTable &samples, std::vector<unsigned int> degrees)
-    : degrees(degrees),
-      numVariables(samples.getNumVariables()),
+    : Approximant(samples.getNumVariables()),
+      degrees(degrees),
       numCoefficients(0)
 {
     if (degrees.size() != numVariables)
@@ -59,6 +61,20 @@ double PolynomialRegression::eval(DenseVector x) const
     DenseMatrix monomials = evalMonomials(x);
     DenseMatrix res = coefficients*monomials;
     return res(0,0);
+}
+
+DenseMatrix PolynomialRegression::evalJacobian(DenseVector x) const
+{
+    DenseMatrix jac(1, numVariables);
+    jac.fill(0.0);
+
+    for (unsigned int i = 0; i < numVariables; ++i)
+    {
+        DenseVector diffMonomials = evalDifferentiatedMonomials(x, i);
+        DenseVector jaci = coefficients*diffMonomials;
+        jac(i) = jaci(0);
+    }
+    return jac;
 }
 
 void PolynomialRegression::computeCoefficients(const DataTable &samples)
@@ -130,18 +146,48 @@ DenseVector PolynomialRegression::evalMonomials(DenseVector x) const
     }
 
     // Kronecker product of monovariable power basis
-    DenseVector monomials = DenseVector::Ones(1);
-
-    for (unsigned int i = 0; i < numVariables; ++i)
-    {
-        DenseVector temp = monomials;
-        monomials = kroneckerProduct(temp, powers.at(i));
-    }
+    DenseVector monomials = kroneckerProductVectors(powers);
 
     if (monomials.rows() != numCoefficients)
     {
         throw Exception("PolynomialRegression::evalMonomials: monomials.rows() != numCoefficients.");
     }
+
+    return monomials;
+}
+
+DenseVector PolynomialRegression::evalDifferentiatedMonomials(DenseVector x, unsigned int var) const
+{
+    if (var < 0 || var >= numVariables)
+        throw Exception("PolynomialRegression::evalDifferentiatedMonomials: invalid variable.");
+
+    std::vector<DenseVector> powers;
+
+    for (unsigned int i = 0; i < numVariables; ++i)
+    {
+        unsigned int deg = degrees.at(i);
+        DenseVector powi = DenseVector::Zero(deg+1);
+
+        if (var == i)
+        {
+            // Differentiate wrt. x(i)
+            for (unsigned int j = 1; j <= deg; ++j)
+                powi(j) = j*std::pow(x(i), j-1);
+        }
+        else
+        {
+            for (unsigned int j = 0; j <= deg; ++j)
+                powi(j) = std::pow(x(i), j);
+        }
+
+        powers.push_back(powi);
+    }
+
+    // Kronecker product of monovariable power basis
+    DenseVector monomials = kroneckerProductVectors(powers);
+
+    if (monomials.rows() != numCoefficients)
+        throw Exception("PolynomialRegression::evalMonomials: monomials.rows() != numCoefficients.");
 
     return monomials;
 }
@@ -165,19 +211,23 @@ const std::string PolynomialRegression::getDescription() const
 
     // See if all degrees are the same.
     bool equal = true;
-    for(size_t i = 1; i < degrees.size(); ++i) {
+    for (size_t i = 1; i < degrees.size(); ++i)
+    {
         equal = equal && (degrees.at(i) == degrees.at(i-1));
     }
 
-    if(equal) {
+    if (equal)
+    {
         description.append(" ");
         description.append(std::to_string(degrees.at(0)));
-
-    } else {
+    }
+    else
+    {
         description.append("s (");
-        for(size_t i = 0; i < degrees.size(); ++i) {
+        for (size_t i = 0; i < degrees.size(); ++i) {
             description.append(std::to_string(degrees.at(i)));
-            if(i + 1 < degrees.size()) {
+            if (i + 1 < degrees.size())
+            {
                 description.append(", ");
             }
         }
