@@ -35,7 +35,7 @@ void setupTestFunctions() {
     auto f_2_2 = MAKE_CONSTDEGREE_TESTFUNCTION(8.1*x.at(0)*x.at(0) - 0.2*x.at(0)*x.at(1) + 13.37*x.at(1)*x.at(1), 2, "8.1*x^2 - 0.2*x*y + 13.37*y^2", 2);
     auto f_2_3 = MAKE_CONSTDEGREE_TESTFUNCTION(-4.5*x.at(0)*x.at(0)*x.at(0) + 2.2*x.at(0)*x.at(0) - x.at(1)*x.at(1) + 3, 2, "-4.5*x^3 + 2.2*x^2 - y^2 + 3", 3);
     auto f_2_4 = MAKE_CONSTDEGREE_TESTFUNCTION(4.5*x.at(0)*x.at(0)*x.at(0)*x.at(0) - x.at(0)*x.at(0)*x.at(0) + 3*x.at(0)*x.at(0)*x.at(1), 2, "4.5*x^4 - x^3 + 3*x^2*y", 4);
-    auto f_2_5 = MAKE_CONSTDEGREE_TESTFUNCTION(-57*x.at(1)*x.at(1)*x.at(0)*x.at(0)*x.at(0) - 0.1*x.at(0)*x.at(0)*x.at(0)*x.at(1)*x.at(1) + 1.1*x.at(1)*x.at(0)*x.at(0) + x.at(1) - 1e6, 2, "-57*x^3*y^2 - 0.1*x^3*y^2 + 1.1*x^2*y + y - 1e10", 5);
+    auto f_2_5 = MAKE_CONSTDEGREE_TESTFUNCTION(-57*x.at(1)*x.at(1)*x.at(0)*x.at(0)*x.at(0) - 0.1*x.at(0)*x.at(0)*x.at(0)*x.at(1)*x.at(1) + 1.1*x.at(1)*x.at(0)*x.at(0) + x.at(1) - 1e6, 2, "-57*x^3*y^2 - 0.1*x^3*y^2 + 1.1*x^2*y + y - 1e6", 5);
     // Six-hump camel back function
     auto f_2_6 = MAKE_CONSTDEGREE_TESTFUNCTION((4 - 2.1*x.at(0)*x.at(0) + (1/3.)*x.at(0)*x.at(0)*x.at(0)*x.at(0))*x.at(0)*x.at(0) + x.at(0)*x.at(1) + (-4 + 4*x.at(1)*x.at(1))*x.at(1)*x.at(1), 2, "(4 - 2.1*x^2 + 1/3*x^4) * x^2 + x*y + (-4 + 4*y^2)*y^2", 6);
 
