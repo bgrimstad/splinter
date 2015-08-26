@@ -52,6 +52,60 @@ bool assertNear(T x, T y, double tolAbs = 1e-8, double tolRel = 1e-8)
     return dx < err;
 }
 
+inline std::vector<double> denseVectorToVector(const DenseVector &denseVec)
+{
+    std::vector<double> vec(denseVec.size());
+
+    for(size_t i = 0; i < denseVec.size(); ++i)
+    {
+        vec.at(i) = denseVec(i);
+    }
+
+    return vec;
+}
+
+inline DenseVector vectorToDenseVector(const std::vector<double> &vec)
+{
+    DenseVector denseVec(vec.size());
+
+    for(size_t i = 0; i < vec.size(); ++i)
+    {
+        denseVec(i) = vec.at(i);
+    }
+
+    return denseVec;
+}
+
+inline std::vector<std::vector<double>> denseMatrixToVectorVector(const DenseMatrix &mat)
+{
+    std::vector<std::vector<double>> vec(mat.rows());
+
+    for(size_t i = 0; i < mat.rows(); ++i)
+    {
+        for(size_t j = 0; j < mat.cols(); ++j)
+        {
+            vec.at(i).at(j) = mat(i, j);
+        }
+    }
+
+    return vec;
+}
+
+inline DenseMatrix vectorVectorToDenseMatrix(const std::vector<std::vector<double>> &vec)
+{
+    DenseMatrix mat(vec.size(), vec.at(0).size());
+
+    for(size_t i = 0; i < vec.size(); ++i)
+    {
+        for(size_t j = 0; j < vec.at(0).size(); ++j)
+        {
+            mat(i, j) = vec.at(i).at(j);
+        }
+    }
+
+    return mat;
+}
+
 class Exception : public std::exception
 {
 private:
