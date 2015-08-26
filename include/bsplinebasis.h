@@ -66,10 +66,6 @@ private:
     std::vector<BSplineBasis1D> bases;
     unsigned int numVariables;
 
-    // Fold from left using Kronecker product
-    SparseVector foldlKroneckerProductVectors(const std::vector<SparseVector> &vectors) const;
-    SparseMatrix foldlKroneckerProductMatrices(const std::vector<SparseMatrix> &matrices) const;
-
     friend class Serializer;
 };
 

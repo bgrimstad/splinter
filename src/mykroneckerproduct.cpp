@@ -8,6 +8,7 @@
 */
 
 #include "mykroneckerproduct.h"
+#include "unsupported/Eigen/KroneckerProduct"
 
 namespace SPLINTER
 {
@@ -15,7 +16,7 @@ namespace SPLINTER
 /* 
  * Implementation of Kronecker product. 
  * Eigen has an implementation of the Kronecker product,
- * but it is very slow due to poor memory reserving.
+ * but it is very slow due to poor memory reservation.
  * See: https://forum.kde.org/viewtopic.php?f=74&t=106955&p=309990&hilit=kronecker#p309990
  * When Eigen update their implementation, and officially support it, we switch to that.
  */
@@ -90,6 +91,58 @@ void myKroneckerProduct(const SparseMatrix &A, const SparseMatrix &B, SparseMatr
         }
     }
     AB.makeCompressed();
+}
+
+SparseVector kroneckerProductVectors(const std::vector<SparseVector> &vectors)
+{
+    // Create two temp matrices
+    SparseMatrix temp1(1,1);
+    temp1.insert(0,0) = 1;
+    SparseMatrix temp2 = temp1;
+
+    // Multiply from left
+    int counter = 0;
+    for (const auto &vec : vectors)
+    {
+        // Avoid copy
+        if (counter % 2 == 0)
+            temp1 = kroneckerProduct(temp2, vec);
+        else
+            temp2 = kroneckerProduct(temp1, vec);
+
+        ++counter;
+    }
+
+    // Return correct product
+    if (counter % 2 == 0)
+        return temp2;
+    return temp1;
+}
+
+SparseMatrix kroneckerProductMatrices(const std::vector<SparseMatrix> &matrices)
+{
+    // Create two temp matrices
+    SparseMatrix temp1(1,1);
+    temp1.insert(0,0) = 1;
+    SparseMatrix temp2 = temp1;
+
+    // Multiply from left
+    int counter = 0;
+    for (const auto &mat : matrices)
+    {
+        // Avoid copy
+        if (counter % 2 == 0)
+            temp1 = kroneckerProduct(temp2, mat);
+        else
+            temp2 = kroneckerProduct(temp1, mat);
+
+        ++counter;
+    }
+
+    // Return correct product
+    if (counter % 2 == 0)
+        return temp2;
+    return temp1;
 }
 
 } // namespace SPLINTER

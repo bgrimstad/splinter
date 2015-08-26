@@ -17,6 +17,10 @@ namespace SPLINTER
 
 void myKroneckerProduct(const SparseMatrix &A, const SparseMatrix &B, SparseMatrix &AB);
 
+// Apply Kronecker product on several vectors or matrices
+SparseVector kroneckerProductVectors(const std::vector<SparseVector> &vectors);
+SparseMatrix kroneckerProductMatrices(const std::vector<SparseMatrix> &matrices);
+
 } // namespace SPLINTER
 
 #endif // SPLINTER_MYKRONECKERPRODUCT_H
