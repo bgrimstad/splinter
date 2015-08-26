@@ -72,7 +72,7 @@ DenseMatrix PolynomialRegression::evalJacobian(DenseVector x) const
     {
         DenseVector diffMonomials = evalDifferentiatedMonomials(x, i);
         DenseVector jaci = coefficients*diffMonomials;
-        jac(i) = jaci(0);
+        jac(0,i) = jaci(0);
     }
     return jac;
 }
