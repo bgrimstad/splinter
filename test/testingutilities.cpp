@@ -340,9 +340,12 @@ void compareJacobianValue(TestFunction *exact,
         double maxTwoNormError = 0.0;
         double maxInfNormError = 0.0;
 
-        DenseVector maxOneNormErrorPoint;
-        DenseVector maxTwoNormErrorPoint;
-        DenseVector maxInfNormErrorPoint;
+        DenseVector maxOneNormErrorPoint(dim);
+        maxOneNormErrorPoint.fill(0.0);
+        DenseVector maxTwoNormErrorPoint(dim);
+        maxTwoNormErrorPoint.fill(0.0);
+        DenseVector maxInfNormErrorPoint(dim);
+        maxInfNormErrorPoint.fill(0.0);
 
         int i = 0;
         for (auto &point : evalPoints)
