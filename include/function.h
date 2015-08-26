@@ -25,24 +25,49 @@ public:
     virtual ~Function() {}
 
     /**
-     * Returns the spline value at x
+     * Returns the function value at x
      */
-    virtual double eval(DenseVector x) const = 0;
+    virtual double eval(DenseVector x) const;
+
+    /**
+     * Returns the function value at x
+     */
+    virtual double eval(const std::vector<double> &x) const;
 
     /**
      * Returns the (1 x numVariables) Jacobian evaluated at x
      */
-    virtual DenseMatrix evalJacobian(DenseVector x) const = 0;
+    virtual DenseMatrix evalJacobian(DenseVector x) const;
+
+    /**
+     * Returns the (1 x numVariables) Jacobian evaluated at x
+     */
+    virtual std::vector<double> evalJacobian(const std::vector<double> &x) const;
 
     /**
      * Returns the (numVariables x numVariables) Hessian evaluated at x
      */
-    virtual DenseMatrix evalHessian(DenseVector x) const = 0;
+    virtual DenseMatrix evalHessian(DenseVector x) const;
+
+    /**
+     * Returns the (numVariables x numVariables) Hessian evaluated at x
+     */
+    virtual std::vector<std::vector<double>> evalHessian(const std::vector<double> &x) const;
 
     /**
      * Get the dimension
      */
     virtual unsigned int getNumVariables() const = 0;
+
+    /**
+     * Returns the central difference at x
+     * Vector of numVariables length
+     */
+    std::vector<double> centralDifference(const std::vector<double> &x) const;
+    DenseMatrix centralDifference(DenseVector x) const;
+
+    std::vector<std::vector<double>> secondOrderCentralDifference(const std::vector<double> &x) const;
+    DenseMatrix secondOrderCentralDifference(DenseVector x) const;
 };
 
 } // namespace SPLINTER
