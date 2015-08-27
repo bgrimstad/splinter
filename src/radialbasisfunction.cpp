@@ -175,54 +175,54 @@ double RadialBasisFunction::eval(std::vector<double> x) const
 /*
  * TODO: test for errors
  */
-//DenseMatrix RadialBasisFunction::evalJacobian(DenseVector x) const
-//{
-//    std::vector<double> x_vec;
-//    for (unsigned int i = 0; i<x.size(); i++)
-//        x_vec.push_back(x(i));
+DenseMatrix RadialBasisFunction::evalJacobian(DenseVector x) const
+{
+    std::vector<double> x_vec;
+    for (unsigned int i = 0; i<x.size(); i++)
+        x_vec.push_back(x(i));
 
-//    DenseMatrix jac;
-//    jac.setZero(1,dim);
+    DenseMatrix jac;
+    jac.setZero(1,numVariables);
 
-//    for (unsigned int i = 0; i < dim; i++)
-//    {
-//        double sumw = 0;
-//        double sumw_d = 0;
-//        double sum = 0;
-//        double sum_d = 0;
+    for (unsigned int i = 0; i < numVariables; i++)
+    {
+        double sumw = 0;
+        double sumw_d = 0;
+        double sum = 0;
+        double sum_d = 0;
 
-//        int j = 0;
-//        for (auto it = samples.cbegin(); it != samples.cend(); ++it, ++j)
-//        {
-//            // Sample
-//            auto s_vec = it->getX();
+        int j = 0;
+        for (auto it = samples.cbegin(); it != samples.cend(); ++it, ++j)
+        {
+            // Sample
+            auto s_vec = it->getX();
 
-//            // Distance from sample
-//            double r = dist(x_vec, s_vec);
-//            double ri = x_vec.at(i) - s_vec.at(i);
+            // Distance from sample
+            double r = dist(x_vec, s_vec);
+            double ri = x_vec.at(i) - s_vec.at(i);
 
-//            // Evaluate RBF and its derivative at r
-//            double f = fn->eval(r);
-//            double dfdr = fn->evalDerivative(r);
+            // Evaluate RBF and its derivative at r
+            double f = fn->eval(r);
+            double dfdr = fn->evalDerivative(r);
 
-//            sum += f;
-//            sumw += weights(j)*f;
+            sum += f;
+            sumw += weights(j)*f;
 
-//            // TODO: check if this assumption is correct
-//            if (r != 0)
-//            {
-//                sum_d += dfdr*ri/r;
-//                sumw_d += weights(j)*dfdr*ri/r;
-//            }
-//        }
+            // TODO: check if this assumption is correct
+            if (r != 0)
+            {
+                sum_d += dfdr*ri/r;
+                sumw_d += weights(j)*dfdr*ri/r;
+            }
+        }
 
-//        if (normalized)
-//            jac(i) = (sum*sumw_d - sum_d*sumw)/(sum*sum);
-//        else
-//            jac(i) = sumw_d;
-//    }
-//    return jac;
-//}
+        if (normalized)
+            jac(i) = (sum*sumw_d - sum_d*sumw)/(sum*sum);
+        else
+            jac(i) = sumw_d;
+    }
+    return jac;
+}
 
 /*
  * Calculate precondition matrix
