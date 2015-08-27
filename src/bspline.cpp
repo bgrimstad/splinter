@@ -210,6 +210,15 @@ DenseMatrix BSpline::evalHessian(DenseVector x) const
     caug = kroneckerProduct(identity, coefficients);
     DenseMatrix DB = basis.evalBasisHessian(x);
     H = caug*DB;
+
+    // Fill in upper triangular of Hessian
+    for (size_t i = 0; i < numVariables; ++i)
+    {
+        for (size_t j = i; j < numVariables; ++j)
+        {
+            H(i,j) = H(j,i);
+        }
+    }
     return H;
 }
 
