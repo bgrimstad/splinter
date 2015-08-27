@@ -21,7 +21,7 @@ TEST_CASE("Linear BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::line
 {
     for(auto testFunc : getPolynomialFunctions())
     {
-        double one_eps = 0.1;
+        double one_eps = 0.26;
         double two_eps = 0.1;
         double inf_eps = 0.1;
 
@@ -39,8 +39,9 @@ TEST_CASE("Linear BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::line
                              [](const DataTable &table)
                              {
                                  return (Approximant *) new BSpline(table, BSplineType::LINEAR);
-                             },
-                             300,  // Number of points to sample at
+                             }
+                ,
+                             500,  // Number of points to sample at
                              1337, // Number of points to test against
                              one_eps, two_eps, inf_eps);
     }

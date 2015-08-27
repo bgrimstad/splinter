@@ -24,7 +24,7 @@ using namespace SPLINTER;
  */
 TEST_CASE("Gaussian RadialBasisFunction function" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::gaussian][function-value]")
 {
-    double one_eps = 0.1;
+    double one_eps = 0.2;
     double two_eps = 0.1;
     double inf_eps = 0.1;
 
@@ -81,7 +81,7 @@ TEST_CASE("Gaussian RadialBasisFunction jacobian" COMMON_TEXT, COMMON_TAGS "[rad
  */
 TEST_CASE("Inverse Multiquadric RadialBasisFunction function" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::inverse-multiquadric][function-value]")
 {
-    double one_eps = 0.1;
+    double one_eps = 0.2;
     double two_eps = 0.1;
     double inf_eps = 0.1;
 
@@ -138,7 +138,7 @@ TEST_CASE("Inverse Multiquadric RadialBasisFunction jacobian" COMMON_TEXT, COMMO
  */
 TEST_CASE("Inverse Quadric RadialBasisFunction function" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::inverse-quadric][function-value]")
 {
-    double one_eps = 0.1;
+    double one_eps = 0.2;
     double two_eps = 0.1;
     double inf_eps = 0.1;
 
@@ -195,7 +195,7 @@ TEST_CASE("Inverse Quadric RadialBasisFunction jacobian" COMMON_TEXT, COMMON_TAG
  */
 TEST_CASE("Multiquadric RadialBasisFunction function" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::multiquadric][function-value]")
 {
-    double one_eps = 0.1;
+    double one_eps = 0.2;
     double two_eps = 0.1;
     double inf_eps = 0.1;
 
@@ -252,7 +252,7 @@ TEST_CASE("Multiquadric RadialBasisFunction jacobian" COMMON_TEXT, COMMON_TAGS "
  */
 TEST_CASE("Thin plate spline RadialBasisFunction function" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::thin-plate-spline][function-value]")
 {
-    double one_eps = 0.1;
+    double one_eps = 0.2;
     double two_eps = 0.1;
     double inf_eps = 0.1;
 
