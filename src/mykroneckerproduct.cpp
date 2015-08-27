@@ -20,9 +20,9 @@ namespace SPLINTER
  * See: https://forum.kde.org/viewtopic.php?f=74&t=106955&p=309990&hilit=kronecker#p309990
  * When Eigen update their implementation, and officially support it, we switch to that.
  */
-void myKroneckerProduct(const SparseMatrix &A, const SparseMatrix &B, SparseMatrix &AB)
+SparseMatrix myKroneckerProduct(const SparseMatrix &A, const SparseMatrix &B)
 {
-    AB.resize(A.rows()*B.rows(), A.cols()*B.cols());
+    SparseMatrix AB(A.rows()*B.rows(), A.cols()*B.cols());
 
     // Reserve memory for AB
 
@@ -91,6 +91,7 @@ void myKroneckerProduct(const SparseMatrix &A, const SparseMatrix &B, SparseMatr
         }
     }
     AB.makeCompressed();
+    return AB;
 }
 
 SparseVector kroneckerProductVectors(const std::vector<SparseVector> &vectors)
