@@ -311,7 +311,6 @@ void compareFunctionValue(TestFunction *exact,
     delete approx;
 }
 
-
 /* Compares the jacobian of the approximant to the central difference of the approximant function value */
 void compareJacobianValue(TestFunction *exact,
                           std::function<Approximant *(const DataTable &table)> approx_gen_func,
@@ -443,7 +442,7 @@ void checkHessianSymmetry(TestFunction *exact,
     auto dim = exact->getNumVariables();
 
     auto samplePoints = linspace(dim, -5, 5, std::pow(numSamplePoints, 1.0/dim));
-    auto evalPoints = linspace(dim, -4.9999, 4.9999, std::pow(numEvalPoints, 1.0/dim));
+    auto evalPoints = linspace(dim, -4.95, 4.95, std::pow(numEvalPoints, 1.0/dim));
 
     DataTable table = sample(exact, samplePoints);
 
