@@ -23,19 +23,9 @@ TEST_CASE("PSpline function" COMMON_TEXT, COMMON_TAGS "[function-value][polynomi
 {
     for(auto testFunc : getPolynomialFunctions())
     {
-        double one_eps = 0.1;
+        double one_eps = 0.35;
         double two_eps = 0.1;
         double inf_eps = 0.1;
-
-        // If the degree of the exact function is less than or equal to the degree
-        // of the P-Spline we are using to approximate it, the P-Spline should approximate
-        // the function exactly.
-        if(testFunc->isConstDegree() && testFunc->getConstDegree() <= 3.0)
-        {
-            one_eps = 1e-5;
-            two_eps = 1e-5;
-            inf_eps = 1e-5;
-        }
 
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
@@ -52,19 +42,9 @@ TEST_CASE("PSpline jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian][polynomial]")
 {
     for(auto testFunc : getPolynomialFunctions())
     {
-        double one_eps = 0.1;
-        double two_eps = 0.1;
-        double inf_eps = 0.1;
-
-        // If the degree of the exact function is less than or equal to the degree
-        // of the P-Spline we are using to approximate it, the P-Spline should approximate
-        // the function exactly.
-        if(testFunc->isConstDegree() && testFunc->getConstDegree() <= 3.0)
-        {
-            one_eps = 1e-5;
-            two_eps = 1e-5;
-            inf_eps = 1e-5;
-        }
+        double one_eps = 5e-6;
+        double two_eps = 5e-6;
+        double inf_eps = 5e-6;
 
         compareJacobianValue(testFunc,
                              [](const DataTable &table)

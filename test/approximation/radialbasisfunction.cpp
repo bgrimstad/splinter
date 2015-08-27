@@ -24,7 +24,7 @@ using namespace SPLINTER;
  */
 TEST_CASE("Gaussian RadialBasisFunction function" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::gaussian][function-value]")
 {
-    double one_eps = 0.2;
+    double one_eps = 0.21;
     double two_eps = 0.1;
     double inf_eps = 0.1;
 
@@ -35,7 +35,7 @@ TEST_CASE("Gaussian RadialBasisFunction function" COMMON_TEXT, COMMON_TAGS "[rad
                              {
                                  return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::GAUSSIAN);
                              },
-                             200,  // Number of points to sample at
+                             400,  // Number of points to sample at
                              1337, // Number of points to test against
                              one_eps, two_eps, inf_eps);
     }
@@ -92,7 +92,7 @@ TEST_CASE("Inverse Multiquadric RadialBasisFunction function" COMMON_TEXT, COMMO
                              {
                                  return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::INVERSE_MULTIQUADRIC);
                              },
-                             200,  // Number of points to sample at
+                             300,  // Number of points to sample at
                              1337, // Number of points to test against
                              one_eps, two_eps, inf_eps);
     }
@@ -138,7 +138,7 @@ TEST_CASE("Inverse Multiquadric RadialBasisFunction jacobian" COMMON_TEXT, COMMO
  */
 TEST_CASE("Inverse Quadric RadialBasisFunction function" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::inverse-quadric][function-value]")
 {
-    double one_eps = 0.2;
+    double one_eps = 0.22;
     double two_eps = 0.1;
     double inf_eps = 0.1;
 
@@ -149,7 +149,7 @@ TEST_CASE("Inverse Quadric RadialBasisFunction function" COMMON_TEXT, COMMON_TAG
                              {
                                  return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::INVERSE_QUADRIC);
                              },
-                             200,  // Number of points to sample at
+                             350,  // Number of points to sample at
                              1337, // Number of points to test against
                              one_eps, two_eps, inf_eps);
     }
@@ -195,7 +195,7 @@ TEST_CASE("Inverse Quadric RadialBasisFunction jacobian" COMMON_TEXT, COMMON_TAG
  */
 TEST_CASE("Multiquadric RadialBasisFunction function" COMMON_TEXT, COMMON_TAGS "[radialbasisfunctiontype::multiquadric][function-value]")
 {
-    double one_eps = 0.2;
+    double one_eps = 0.22;
     double two_eps = 0.1;
     double inf_eps = 0.1;
 
@@ -206,7 +206,7 @@ TEST_CASE("Multiquadric RadialBasisFunction function" COMMON_TEXT, COMMON_TAGS "
                              {
                                  return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::MULTIQUADRIC);
                              },
-                             200,  // Number of points to sample at
+                             300,  // Number of points to sample at
                              1337, // Number of points to test against
                              one_eps, two_eps, inf_eps);
     }
@@ -263,7 +263,7 @@ TEST_CASE("Thin plate spline RadialBasisFunction function" COMMON_TEXT, COMMON_T
                              {
                                  return (Approximant *) new RadialBasisFunction(table, RadialBasisFunctionType::THIN_PLATE_SPLINE);
                              },
-                             200,  // Number of points to sample at
+                             300,  // Number of points to sample at
                              1337, // Number of points to test against
                              one_eps, two_eps, inf_eps);
     }
