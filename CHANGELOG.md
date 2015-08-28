@@ -8,11 +8,12 @@
 - Added loading of serialized objects in MatLab interface: b = BSpline('save_bspline.bspline')
 - Added loading and saving of DataTable to MatLab interface
 - Refactored MatLab interface backend (no end user visible changes)
-- Integrated the Catch testing framework
-- Added functionality for symbolic differentiation of functions
+- Integrated the Catch testing framework and added extensive testing of approximation, serialization and datatable set operation features
 - Added set operations (union and complement) to DataTable (as operator+ and operator-)
 - Added script (scripts/build_release) for easier compilation (especially on Windows with MSVC)
 - Improved compilation documentation
+- Renamed API macro to SPLINTER_API to avoid name collisions with users namespace
+- Fixed BSpline hessian not being symmetric
 
 #### Version 1.3
 - Library renamed SPLINTER (from Splinter)
