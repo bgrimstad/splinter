@@ -15,6 +15,7 @@
 - Renamed API macro to SPLINTER_API to avoid name collisions with users namespace
 - Fixed BSpline hessian not being symmetric
 - Added evalJacobian implementations for PolynomialRegression and RadialBasisFunctions
+- Added standard C++11 types to Approximant interface
 
 #### Version 1.3
 - Library renamed SPLINTER (from Splinter)
