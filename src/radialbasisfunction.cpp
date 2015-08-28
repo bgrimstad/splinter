@@ -172,9 +172,6 @@ double RadialBasisFunction::eval(std::vector<double> x) const
     return normalized ? sumw/sum : sumw;
 }
 
-/*
- * TODO: test for errors
- */
 DenseMatrix RadialBasisFunction::evalJacobian(DenseVector x) const
 {
     std::vector<double> x_vec;
