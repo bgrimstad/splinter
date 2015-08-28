@@ -14,6 +14,7 @@
 - Improved compilation documentation
 - Renamed API macro to SPLINTER_API to avoid name collisions with users namespace
 - Fixed BSpline hessian not being symmetric
+- Added evalJacobian implementations for PolynomialRegression and RadialBasisFunctions
 
 #### Version 1.3
 - Library renamed SPLINTER (from Splinter)
