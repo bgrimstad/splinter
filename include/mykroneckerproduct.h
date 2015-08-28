@@ -10,7 +10,7 @@
 #ifndef SPLINTER_MYKRONECKERPRODUCT_H
 #define SPLINTER_MYKRONECKERPRODUCT_H
 
-#include "generaldefinitions.h"
+#include "definitions.h"
 
 namespace SPLINTER
 {

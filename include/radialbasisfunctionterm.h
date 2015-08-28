@@ -12,7 +12,7 @@
 
 #include "datatable.h"
 #include "approximant.h"
-#include <generaldefinitions.h>
+#include "definitions.h"
 #include "memory"
 
 namespace SPLINTER

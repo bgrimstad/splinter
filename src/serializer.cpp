@@ -9,7 +9,7 @@
 
 #include "serializer.h"
 #include <fstream>
-#include <generaldefinitions.h>
+#include "definitions.h"
 #include <datasample.h>
 #include <datatable.h>
 #include <bspline.h>

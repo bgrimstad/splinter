@@ -10,7 +10,7 @@
 #ifndef SPLINTER_FUNCTION_H
 #define SPLINTER_FUNCTION_H
 
-#include "generaldefinitions.h"
+#include "definitions.h"
 
 namespace SPLINTER
 {

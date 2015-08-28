@@ -10,7 +10,7 @@
 #ifndef SPLINTER_RADIALBASISFUNCTION_H
 #define SPLINTER_RADIALBASISFUNCTION_H
 
-#include <generaldefinitions.h>
+#include "definitions.h"
 #include "datatable.h"
 #include "approximant.h"
 #include "radialbasisfunctionterm.h"

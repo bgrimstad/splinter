@@ -13,7 +13,7 @@
 #include <pspline.h>
 #include <radialbasisfunction.h>
 #include <polynomialregression.h>
-#include <generaldefinitions.h>
+#include "definitions.h"
 #include <set>
 
 using namespace SPLINTER;

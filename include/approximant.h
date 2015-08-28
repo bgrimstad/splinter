@@ -10,7 +10,7 @@
 #ifndef SPLINTER_APPROXIMANT_H
 #define SPLINTER_APPROXIMANT_H
 
-#include "generaldefinitions.h"
+#include "definitions.h"
 #include "function.h"
 
 namespace SPLINTER

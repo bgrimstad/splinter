@@ -141,7 +141,7 @@ set(SRC_LIST
     include/datasample.h
     include/datatable.h
     include/function.h
-    include/generaldefinitions.h
+    include/definitions.h
     include/linearsolvers.h
     include/mykroneckerproduct.h
     include/polynomialregression.h
@@ -149,6 +149,7 @@ set(SRC_LIST
     include/radialbasisfunction.h
     include/radialbasisfunctionterm.h
     include/serializer.h
+    include/utilities.h
     src/bspline.cpp
     src/bsplinebasis.cpp
     src/bsplinebasis1d.cpp
@@ -160,6 +161,7 @@ set(SRC_LIST
     src/pspline.cpp
     src/radialbasisfunction.cpp
     src/serializer.cpp
+    src/utilities.cpp
 )
 set(MATLAB_SRC_LIST ${SRC_LIST} include/matlab.h src/matlab.cpp)
 set(TEST_SRC_LIST
@@ -170,6 +172,7 @@ set(TEST_SRC_LIST
     test/approximation/radialbasisfunction.cpp
     test/approximation/polynomialregression.cpp
     test/general/datatable.cpp
+    test/general/utilities.cpp
     test/serialization/datatable.cpp
     test/serialization/bspline.cpp
     test/serialization/pspline.cpp

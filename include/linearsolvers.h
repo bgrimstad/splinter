@@ -10,7 +10,7 @@
 #ifndef SPLINTER_LINEARSOLVER_H
 #define SPLINTER_LINEARSOLVER_H
 
-#include "generaldefinitions.h"
+#include "definitions.h"
 #include "Eigen/IterativeLinearSolvers"
 #include "Eigen/SparseQR"
 

@@ -69,44 +69,60 @@ bool operator==(const PolynomialRegression &lhs, const PolynomialRegression &rhs
             lhs.getNumVariables() == rhs.getNumVariables();
 }
 
-template <class T>
-bool operator==(const std::vector<T> &lhs, const std::vector<T> &rhs)
+bool operator==(const DenseVector &denseVec, const std::vector<double> &vec)
 {
-    auto lit = lhs.cbegin(), rit = rhs.cbegin();
-    for (; lit != lhs.cend() && rit != rhs.cend(); ++lit, ++rit)
+    return vec == denseVec;
+}
+
+bool operator==(const DenseMatrix &denseMat, const std::vector<std::vector<double>> &vecVec)
+{
+    return vecVec == denseMat;
+}
+
+bool operator==(const std::vector<double> &vec, const DenseVector &denseVec)
+{
+    if(vec.size() != denseVec.size())
     {
-        if(*lit != *rit) {
+        return false;
+    }
+
+    for (size_t i = 0; i < vec.size(); ++i)
+    {
+        if(vec.at(i) != denseVec(i))
+        {
             return false;
         }
     }
+
+    return true;
+}
+bool operator==(const std::vector<std::vector<double>> &vecVec, const DenseMatrix &denseMat)
+{
+    size_t matCols = denseMat.cols();
+    if(vecVec.size() != denseMat.rows())
+    {
+        return false;
+    }
+
+    for (size_t i = 0; i < vecVec.size(); ++i)
+    {
+        if (vecVec.at(i).size() != matCols)
+        {
+            return false;
+        }
+
+        for (size_t j = 0; j < matCols; ++j)
+        {
+            if(vecVec.at(i).at(j) != denseMat(i, j))
+            {
+                return false;
+            }
+        }
+    }
+
     return true;
 }
 
-template <class T>
-bool operator==(const std::set<T> &lhs, const std::set<T> &rhs)
-{
-    auto lit = lhs.cbegin(), rit = rhs.cbegin();
-    for (; lit != lhs.cend() && rit != rhs.cend(); ++lit, ++rit)
-    {
-        if(*lit != *rit) {
-            return false;
-        }
-    }
-    return true;
-}
-
-template <class T>
-bool operator==(const std::multiset<T> &lhs, const std::multiset<T> &rhs)
-{
-    auto lit = lhs.cbegin(), rit = rhs.cbegin();
-    for (; lit != lhs.cend() && rit != rhs.cend(); ++lit, ++rit)
-    {
-        if(*lit != *rit) {
-            return false;
-        }
-    }
-    return true;
-}
 
 bool operator!=(const DataSample &lhs, const DataSample &rhs)
 {

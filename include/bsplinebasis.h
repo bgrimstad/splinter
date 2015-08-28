@@ -10,7 +10,7 @@
 #ifndef SPLINTER_BSPLINEBASIS_H
 #define SPLINTER_BSPLINEBASIS_H
 
-#include "generaldefinitions.h"
+#include "definitions.h"
 #include "bsplinebasis1d.h"
 
 namespace SPLINTER

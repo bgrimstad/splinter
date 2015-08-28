@@ -10,7 +10,7 @@
 #ifndef SPLINTER_DATASAMPLE_H
 #define SPLINTER_DATASAMPLE_H
 
-#include "generaldefinitions.h"
+#include "definitions.h"
 
 namespace SPLINTER
 {

@@ -12,7 +12,7 @@
 
 #include <datatable.h>
 #include <function.h>
-#include <generaldefinitions.h>
+#include "definitions.h"
 #include <bspline.h>
 #include <operator_overloads.h>
 #include <testfunction.h>

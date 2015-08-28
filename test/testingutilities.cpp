@@ -263,6 +263,8 @@ void compareFunctionValue(TestFunction *exact,
 
         double exactValue = exact->eval(x);
         double approxValue = approx->eval(x);
+        CHECK(exactValue == exact->eval(point));
+        CHECK(approxValue == approx->eval(point));
         double error = getError(exactValue, approxValue);
 
         if(error > maxError)

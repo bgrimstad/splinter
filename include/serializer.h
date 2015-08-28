@@ -13,7 +13,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include <generaldefinitions.h>
+#include "definitions.h"
 #include <set>
 #include <stdint.h>
 

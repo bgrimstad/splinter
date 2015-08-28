@@ -31,12 +31,50 @@ bool operator==(const BSpline &lhs, const BSpline &rhs);
 bool operator==(const PSpline &lhs, const PSpline &rhs);
 bool operator==(const RadialBasisFunction &lhs, const RadialBasisFunction &rhs);
 bool operator==(const PolynomialRegression &lhs, const PolynomialRegression &rhs);
+bool operator==(const std::vector<double> &vec, const DenseVector &denseVec);
+bool operator==(const std::vector<std::vector<double>> &vecVec, const DenseMatrix &denseMat);
+bool operator==(const DenseVector &denseVec, const std::vector<double> &vec);
+bool operator==(const DenseMatrix &denseMat, const std::vector<std::vector<double>> &vecVec);
+
 template <class T>
-bool operator==(const std::vector<T> &lhs, const std::vector<T> &rhs);
+bool operator==(const std::vector<T> &lhs, const std::vector<T> &rhs)
+{
+    auto lit = lhs.cbegin(), rit = rhs.cbegin();
+    for (; lit != lhs.cend() && rit != rhs.cend(); ++lit, ++rit)
+    {
+        if(*lit != *rit) {
+            return false;
+        }
+    }
+    return true;
+}
+
 template <class T>
-bool operator==(const std::set<T> &lhs, const std::set<T> &rhs);
+bool operator==(const std::set<T> &lhs, const std::set<T> &rhs)
+{
+    auto lit = lhs.cbegin(), rit = rhs.cbegin();
+    for (; lit != lhs.cend() && rit != rhs.cend(); ++lit, ++rit)
+    {
+        if(*lit != *rit) {
+            return false;
+        }
+    }
+    return true;
+}
+
 template <class T>
-bool operator==(const std::multiset<T> &lhs, const std::multiset<T> &rhs);
+bool operator==(const std::multiset<T> &lhs, const std::multiset<T> &rhs)
+{
+    auto lit = lhs.cbegin(), rit = rhs.cbegin();
+    for (; lit != lhs.cend() && rit != rhs.cend(); ++lit, ++rit)
+    {
+        if(*lit != *rit) {
+            return false;
+        }
+    }
+    return true;
+}
+
 
 bool operator!=(const DataSample &lhs, const DataSample &rhs);
 

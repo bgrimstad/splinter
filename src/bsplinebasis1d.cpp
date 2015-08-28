@@ -8,8 +8,8 @@
 */
 
 #include "bsplinebasis1d.h"
-#include <iostream>
 #include <algorithm>
+#include <utilities.h>
 
 namespace SPLINTER
 {
