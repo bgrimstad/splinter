@@ -214,7 +214,7 @@ DenseMatrix BSpline::evalHessian(DenseVector x) const
     // Fill in upper triangular of Hessian
     for (size_t i = 0; i < numVariables; ++i)
     {
-        for (size_t j = i; j < numVariables; ++j)
+        for (size_t j = i+1; j < numVariables; ++j)
         {
             H(i,j) = H(j,i);
         }
