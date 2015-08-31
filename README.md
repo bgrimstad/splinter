@@ -30,7 +30,8 @@ By making SPLINTER publicly available we hope to help anyone looking for a multi
 ###Contributing
 Everyone is welcome to use and contribute to SPLINTER. We believe that collective effort over time is the only way to create a great library: one that appears to be simple and dull, but that is packing some serious horsepower under the hood.
 
-The current goals with the library are: 
+The current goals with the library are:
+
 1. To improve the current code via testing;
 2. To make the library more accessible (we have added a MatLab interface and we are planning to add one for Python);
 3. To implement new function approximation methods such as Kriging;
