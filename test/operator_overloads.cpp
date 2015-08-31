@@ -69,17 +69,17 @@ bool operator==(const PolynomialRegression &lhs, const PolynomialRegression &rhs
             lhs.getNumVariables() == rhs.getNumVariables();
 }
 
-bool operator==(const DenseVector &denseVec, const std::vector<double> &vec)
+bool compareVecDenseVec(const DenseVector &denseVec, const std::vector<double> &vec)
 {
-    return vec == denseVec;
+    return compareVecDenseVec(vec, denseVec);
 }
 
-bool operator==(const DenseMatrix &denseMat, const std::vector<std::vector<double>> &vecVec)
+bool compareVecVecDenseMatrix(const DenseMatrix &denseMat, const std::vector<std::vector<double>> &vecVec)
 {
-    return vecVec == denseMat;
+    return compareVecVecDenseMatrix(vecVec, denseMat);
 }
 
-bool operator==(const std::vector<double> &vec, const DenseVector &denseVec)
+bool compareVecDenseVec(const std::vector<double> &vec, const DenseVector &denseVec)
 {
     if(vec.size() != denseVec.size())
     {
@@ -96,7 +96,8 @@ bool operator==(const std::vector<double> &vec, const DenseVector &denseVec)
 
     return true;
 }
-bool operator==(const std::vector<std::vector<double>> &vecVec, const DenseMatrix &denseMat)
+
+bool compareVecVecDenseMatrix(const std::vector<std::vector<double>> &vecVec, const DenseMatrix &denseMat)
 {
     size_t matCols = denseMat.cols();
     if(vecVec.size() != denseMat.rows())

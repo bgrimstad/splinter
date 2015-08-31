@@ -10,6 +10,7 @@
 #ifndef SPLINTER_OPERATOR_OVERLOADS_H
 #define SPLINTER_OPERATOR_OVERLOADS_H
 
+#include <definitions.h>
 #include <vector>
 #include <set>
 #include <datasample.h>
@@ -31,10 +32,12 @@ bool operator==(const BSpline &lhs, const BSpline &rhs);
 bool operator==(const PSpline &lhs, const PSpline &rhs);
 bool operator==(const RadialBasisFunction &lhs, const RadialBasisFunction &rhs);
 bool operator==(const PolynomialRegression &lhs, const PolynomialRegression &rhs);
-bool operator==(const std::vector<double> &vec, const DenseVector &denseVec);
-bool operator==(const std::vector<std::vector<double>> &vecVec, const DenseMatrix &denseMat);
-bool operator==(const DenseVector &denseVec, const std::vector<double> &vec);
-bool operator==(const DenseMatrix &denseMat, const std::vector<std::vector<double>> &vecVec);
+// Note: overloading operator== for std::vector and DenseVector/DenseMatrix makes Clang unable to find the overload
+// Therefore using separate functions for those types
+bool compareVecDenseVec(const std::vector<double> &vec, const DenseVector &denseVec);
+bool compareVecVecDenseMatrix(const std::vector<std::vector<double>> &vecVec, const DenseMatrix &denseMat);
+bool compareVecDenseVec(const DenseVector &denseVec, const std::vector<double> &vec);
+bool compareVecVecDenseMatrix(const DenseMatrix &denseMat, const std::vector<std::vector<double>> &vecVec);
 
 template <class T>
 bool operator==(const std::vector<T> &lhs, const std::vector<T> &rhs)
@@ -90,6 +93,6 @@ std::ostream &operator<<(std::ostream &out, const std::set<T> &obj);
 template <class T>
 std::ostream &operator<<(std::ostream &out, const std::multiset<T> &obj);
 
-}
+} // namespace SPLINTER
 
 #endif // SPLINTER_OPERATOR_OVERLOADS_H
