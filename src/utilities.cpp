@@ -42,8 +42,6 @@ std::vector<std::vector<double>> denseMatrixToVectorVector(const DenseMatrix &ma
 
     for(size_t i = 0; i < mat.rows(); ++i)
     {
-        vec.push_back(std::vector<double>());
-
         for(size_t j = 0; j < mat.cols(); ++j)
         {
             vec.at(i).push_back(mat(i, j));
