@@ -88,6 +88,7 @@ DenseMatrix BSplineBasis::evalBasisJacobianOld(DenseVector &x) const
     return J;
 }
 
+// NOTE: does not pass tests
 SparseMatrix BSplineBasis::evalBasisJacobian(DenseVector &x) const
 {
     // Jacobian basis matrix
@@ -98,26 +99,23 @@ SparseMatrix BSplineBasis::evalBasisJacobian(DenseVector &x) const
     for (unsigned int i = 0; i < numVariables; ++i)
     {
         // One column in basis jacobian
-        SparseMatrix Ji(1,1);
-        Ji.insert(0,0) = 1;
+        std::vector<SparseVector> values(numVariables);
+
         for (unsigned int j = 0; j < numVariables; ++j)
         {
-            SparseMatrix temp = Ji;
-            SparseMatrix xi;
             if (j == i)
             {
                 // Differentiated basis
-                xi = bases.at(j).evaluateDerivative(x(j),1);
+                values.at(j) = bases.at(j).evaluateDerivative(x(j),1);
             }
             else
             {
                 // Normal basis
-                xi = bases.at(j).evaluate(x(j));
+                values.at(j) = bases.at(j).evaluate(x(j));
             }
-            Ji = kroneckerProduct(temp, xi);
-            //myKroneckerProduct(temp,xi,Ji);
-            //Ji = kroneckerProduct(Ji, xi).eval();
         }
+
+        SparseVector Ji = kroneckerProductVectors(values);
 
         // Fill out column
         for (int k = 0; k < Ji.outerSize(); ++k)
@@ -152,14 +150,14 @@ SparseMatrix BSplineBasis::evalBasisJacobian2(DenseVector &x) const
     // Calculate partial derivatives
     for (unsigned int i = 0; i < numVariables; i++)
     {
-        std::vector<SparseVector> values;
+        std::vector<SparseVector> values(numVariables);
 
         for (unsigned int j = 0; j < numVariables; j++)
         {
             if (j == i)
-                values.push_back(gradValues.at(j)); // Differentiated basis
+                values.at(j) = gradValues.at(j); // Differentiated basis
             else
-                values.push_back(funcValues.at(j)); // Normal basis
+                values.at(j) = funcValues.at(j); // Normal basis
         }
 
         SparseVector Ji = kroneckerProductVectors(values);
