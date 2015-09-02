@@ -22,8 +22,6 @@ public:
     BSplineBasis();
     BSplineBasis(std::vector<std::vector<double>> &knotVectors, std::vector<unsigned int> basisDegrees);
 
-    void setUnivariateBases(std::vector<std::vector<double>> &knotVectors, std::vector<unsigned int> &basisDegrees);
-
     // Evaluation
     SparseVector eval(const DenseVector &x) const;
     DenseMatrix evalBasisJacobianOld(DenseVector &x) const; // Depricated
