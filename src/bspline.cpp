@@ -418,8 +418,7 @@ void BSpline::computeControlPoints(const DataTable &samples)
      * b = sample x-values when calculating knot averages
      * c = control coefficients or knot averages.
      */
-    SparseMatrix A;
-    computeBasisFunctionMatrix(samples, A);
+    SparseMatrix A = computeBasisFunctionMatrix(samples);
 
     DenseMatrix Bx, By;
     controlPointEquationRHS(samples, Bx, By);
@@ -462,14 +461,14 @@ void BSpline::computeControlPoints(const DataTable &samples)
     knotaverages = Cx.transpose();
 }
 
-void BSpline::computeBasisFunctionMatrix(const DataTable &samples, SparseMatrix &A) const
+SparseMatrix BSpline::computeBasisFunctionMatrix(const DataTable &samples) const
 {
     unsigned int numVariables = samples.getNumVariables();
     unsigned int numSamples = samples.getNumSamples();
 
     int nnzPrCol = basis.supportedPrInterval();
 
-    A.resize(numSamples, basis.getNumBasisFunctions());
+    SparseMatrix A(numSamples, basis.getNumBasisFunctions());
     A.reserve(DenseVector::Constant(numSamples, nnzPrCol)); // TODO: should reserve nnz per row!
 
     int i = 0;
@@ -491,6 +490,8 @@ void BSpline::computeBasisFunctionMatrix(const DataTable &samples, SparseMatrix 
     }
 
     A.makeCompressed();
+
+    return A;
 }
 
 void BSpline::controlPointEquationRHS(const DataTable &samples, DenseMatrix &Bx, DenseMatrix &By) const

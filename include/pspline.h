@@ -42,7 +42,7 @@ protected:
 
     // P-spline control point calculation
     void computeControlPoints(const DataTable &samples) override;
-    void getSecondOrderFiniteDifferenceMatrix(SparseMatrix &D);
+    SparseMatrix getSecondOrderFiniteDifferenceMatrix();
 
 private:
     void load(const std::string fileName) override;

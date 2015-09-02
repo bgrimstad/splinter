@@ -70,7 +70,7 @@ void PSpline::computeControlPoints(const DataTable &samples)
      * y = sample x-values when calculating knot averages
      */
 
-    SparseMatrix L, B, D, W;
+    SparseMatrix L, W;
     DenseMatrix Rx, Ry, Bx, By;
 
     // Weight matrix
@@ -78,10 +78,10 @@ void PSpline::computeControlPoints(const DataTable &samples)
     W.setIdentity();
 
     // Basis function matrix
-    computeBasisFunctionMatrix(samples, B);
+    SparseMatrix B = computeBasisFunctionMatrix(samples);
 
     // Second order finite difference matrix
-    getSecondOrderFiniteDifferenceMatrix(D);
+    SparseMatrix D = getSecondOrderFiniteDifferenceMatrix();
 
     // Left-hand side matrix
     L = B.transpose()*W*B + lambda*D.transpose()*D;
@@ -133,7 +133,7 @@ void PSpline::computeControlPoints(const DataTable &samples)
 
 // Function for generating second order finite-difference matrix, which is used for penalizing the
 // (approximate) second derivative in control point calculation for P-splines.
-void PSpline::getSecondOrderFiniteDifferenceMatrix(SparseMatrix &D)
+SparseMatrix PSpline::getSecondOrderFiniteDifferenceMatrix()
 {
 
     // Number of (total) basis functions - defines the number of columns in D
@@ -170,7 +170,7 @@ void PSpline::getSecondOrderFiniteDifferenceMatrix(SparseMatrix &D)
     }
 
     // Resize and initialize D
-    D.resize(numRows, numCols);                         // Resize (transpose because of reservation fn)
+    SparseMatrix D(numRows, numCols);
     D.reserve(DenseVector::Constant(numCols,2*numVariables));   // D has no more than two elems per col per dim
 
     int i = 0;                                          // Row index
@@ -309,6 +309,8 @@ void PSpline::getSecondOrderFiniteDifferenceMatrix(SparseMatrix &D)
 //    D = Dd.sparseView();
 
     D.makeCompressed();
+
+    return D;
 }
 
 void PSpline::save(const std::string fileName) const

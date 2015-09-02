@@ -103,7 +103,7 @@ protected:
     // Control point computations
     void computeKnotAverages();
     virtual void computeControlPoints(const DataTable &samples);
-    void computeBasisFunctionMatrix(const DataTable &samples, SparseMatrix &A) const;
+    SparseMatrix computeBasisFunctionMatrix(const DataTable &samples) const;
     void controlPointEquationRHS(const DataTable &samples, DenseMatrix &Bx, DenseMatrix &By) const;
 
 private:
