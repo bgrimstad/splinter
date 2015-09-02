@@ -20,26 +20,21 @@ BSplineBasis::BSplineBasis()
 {
 }
 
-BSplineBasis::BSplineBasis(std::vector< std::vector<double> > &X, std::vector<unsigned int> basisDegrees)
-    : BSplineBasis(X, basisDegrees, false)
+BSplineBasis::BSplineBasis(std::vector< std::vector<double> > &knotVectors, std::vector<unsigned int> basisDegrees)
 {
-}
-
-BSplineBasis::BSplineBasis(std::vector< std::vector<double> > &X, std::vector<unsigned int> basisDegrees, bool explicitKnots)
-{
-    if (X.size() != basisDegrees.size())
+    if (knotVectors.size() != basisDegrees.size())
         throw Exception("BSplineBasis::BSplineBasis: Incompatible sizes. Number of knot vectors is not equal to size of degree vector.");
 
-    setUnivariateBases(X, basisDegrees, explicitKnots);
+    setUnivariateBases(knotVectors, basisDegrees);
 }
 
-void BSplineBasis::setUnivariateBases(std::vector< std::vector<double> > &X, std::vector<unsigned int> &basisDegrees, bool explicitKnots)
+void BSplineBasis::setUnivariateBases(std::vector< std::vector<double> > &knotVectors, std::vector<unsigned int> &basisDegrees)
 {
     bases.clear();
-    numVariables = X.size();
+    numVariables = knotVectors.size();
     for (unsigned int i = 0; i < numVariables; i++)
     {
-        bases.push_back(BSplineBasis1D(X.at(i), basisDegrees.at(i), explicitKnots));
+        bases.push_back(BSplineBasis1D(knotVectors.at(i), basisDegrees.at(i)));
 
         // Adjust target number of basis functions used in e.g. refinement
         if (numVariables > 2)
@@ -47,7 +42,7 @@ void BSplineBasis::setUnivariateBases(std::vector< std::vector<double> > &X, std
             // One extra knot is allowed
             bases.at(i).setNumBasisFunctionsTarget((basisDegrees.at(i)+1)+1); // Minimum degree+1
         }
-    } 
+    }
 }
 
 SparseVector BSplineBasis::eval(const DenseVector &x) const

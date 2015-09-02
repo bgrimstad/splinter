@@ -39,13 +39,18 @@ PSpline::PSpline(const DataTable &samples, double lambda)
     // Check data
     assert(samples.isGridComplete());
 
-    std::vector< std::vector<double> > xdata = samples.getTableX();
-
     numVariables = samples.getNumVariables();
 
-    // Assuming a cubic spline
+    // Degrees: assuming cubic
     std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 3);
-    basis = BSplineBasis(xdata, basisDegrees, false);
+
+    // Compute knot vectors from samples
+    auto knotVectors = computeKnotVectorsFromSamples(samples, basisDegrees);
+
+    // Build basis
+    basis = BSplineBasis(knotVectors, basisDegrees);
+
+    // Solve for control points
     computeControlPoints(samples);
 
     init();

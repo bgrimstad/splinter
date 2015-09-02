@@ -106,6 +106,10 @@ protected:
     SparseMatrix computeBasisFunctionMatrix(const DataTable &samples) const;
     void controlPointEquationRHS(const DataTable &samples, DenseMatrix &Bx, DenseMatrix &By) const;
 
+    // Computing knots
+    std::vector<std::vector<double> > computeKnotVectorsFromSamples(const DataTable &samples, std::vector<unsigned int> degrees) const;
+    std::vector<double> knotVectorMovingAverage(std::vector<double> &vec, unsigned int degree) const;
+
 private:
     // Domain reduction
     void regularizeKnotVectors(std::vector<double> &lb, std::vector<double> &ub);
