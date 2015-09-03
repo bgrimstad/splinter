@@ -35,29 +35,17 @@ PSpline::PSpline(const DataTable &samples)
 }
 
 PSpline::PSpline(const DataTable &samples, double lambda)
-    : lambda(lambda)
+    : BSplineRegression(samples, std::vector<unsigned int>(samples.getNumVariables(), 3)),
+      lambda(lambda)
 {
     // Check data
     assert(samples.isGridComplete());
 
-    numVariables = samples.getNumVariables();
-
-    // Degrees: assuming cubic
-    std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 3);
-
-    // Compute knot vectors from samples
-    auto knotVectors = computeKnotVectorsFromSamples(samples, basisDegrees);
-
-    // Build basis
-    basis = BSplineBasis(knotVectors, basisDegrees);
-
-    // Solve for control points
-    computeControlPoints(samples);
-
-    checkControlPoints();
+    // Calculate control points
+    bspline.setCoefficients(computeControlPoints(samples));
 }
 
-void PSpline::computeControlPoints(const DataTable &samples)
+DenseMatrix PSpline::computeControlPoints(const DataTable &samples)
 {
     // Assuming regular grid
     unsigned int numSamples = samples.getNumSamples();
@@ -131,8 +119,8 @@ void PSpline::computeControlPoints(const DataTable &samples)
         }
     }
 
-    coefficients = Cy.transpose();
-    knotaverages = Cx.transpose();
+    return Cy.transpose();
+    //knotaverages = Cx.transpose();
 }
 
 // Function for generating second order finite-difference matrix, which is used for penalizing the
@@ -141,12 +129,13 @@ SparseMatrix PSpline::getSecondOrderFiniteDifferenceMatrix()
 {
 
     // Number of (total) basis functions - defines the number of columns in D
-    int numCols = basis.getNumBasisFunctions();
+    unsigned int numCols = bspline.getNumBasisFunctionsTotal();
+    std::vector<unsigned int> numBasisFunctions = bspline.getNumBasisFunctions();
 
     // Number of basis functions (and coefficients) in each variable
     std::vector<unsigned int> dims;
     for (unsigned int i = 0; i < numVariables; i++)
-        dims.push_back(basis.getNumBasisFunctions(i));
+        dims.push_back(numBasisFunctions.at(i));
 
     std::reverse(dims.begin(), dims.end());
 
@@ -332,7 +321,7 @@ void PSpline::load(const std::string fileName)
 
 const std::string PSpline::getDescription() const
 {
-    std::string bsplineDescription = BSpline::getDescription();
+    std::string bsplineDescription = BSplineRegression::getDescription();
     // Search for "BSpline ", not "BSpline" to avoid matching "BSplineType" etc.
     size_t bsplineOccurence = bsplineDescription.find("BSpline ");
     while(bsplineOccurence != std::string::npos) {

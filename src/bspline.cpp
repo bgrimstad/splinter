@@ -29,8 +29,19 @@ BSpline::BSpline(unsigned int numVariables)
 /*
  * Constructors for multivariate B-spline using explicit data
  */
+BSpline::BSpline(std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees)
+    : Approximant(knotVectors.size()),
+      basis(BSplineBasis(knotVectors, basisDegrees)),
+      coefficients(DenseMatrix::Ones(1, basis.getNumBasisFunctions()))
+{
+    computeKnotAverages();
+
+    checkControlPoints();
+}
+
 BSpline::BSpline(std::vector<double> coefficients, std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees)
     : Approximant(knotVectors.size()),
+      basis(BSplineBasis(knotVectors, basisDegrees)),
       coefficients(DenseMatrix::Zero(1, coefficients.size()))
 {
     for (unsigned int i = 0; i < coefficients.size(); ++i)
@@ -39,8 +50,6 @@ BSpline::BSpline(std::vector<double> coefficients, std::vector< std::vector<doub
     if (this->coefficients.rows() != 1)
         throw Exception("BSpline::BSpline: coefficient matrix can only have one row!");
 
-    basis = BSplineBasis(knotVectors, basisDegrees);
-
     computeKnotAverages();
 
     checkControlPoints();
@@ -48,13 +57,9 @@ BSpline::BSpline(std::vector<double> coefficients, std::vector< std::vector<doub
 
 BSpline::BSpline(DenseMatrix coefficients, std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees)
     : Approximant(knotVectors.size()),
+      basis(BSplineBasis(knotVectors, basisDegrees)),
       coefficients(coefficients)
 {
-    if (coefficients.rows() != 1)
-        throw Exception("BSpline::BSpline: coefficient matrix can only have one row!");
-
-    basis = BSplineBasis(knotVectors, basisDegrees);
-
     computeKnotAverages();
 
     checkControlPoints();
@@ -84,13 +89,6 @@ double BSpline::eval(DenseVector x) const
 	SparseVector tensorvalues = basis.eval(x);
 	DenseVector y = coefficients*tensorvalues;
 	return y(0);
-}
-
-double BSpline::eval(double x) const
-{
-	DenseVector x_vec(1);
-	x_vec(0) = x;
-	return this->eval(x_vec);
 }
 
 /*
@@ -182,7 +180,13 @@ DenseMatrix BSpline::getControlPoints() const
     return controlPoints;
 }
 
-void BSpline::setControlPoints(DenseMatrix &controlPoints)
+void BSpline::setCoefficients(const DenseMatrix &coefficients)
+{
+    this->coefficients = coefficients;
+    checkControlPoints();
+}
+
+void BSpline::setControlPoints(const DenseMatrix &controlPoints)
 {
     assert(controlPoints.rows() == numVariables + 1);
     int nc = controlPoints.cols();
@@ -285,7 +289,7 @@ void BSpline::computeKnotAverages()
     for (unsigned int i = 0; i < numVariables; i++)
     {
         std::vector<double> knots = basis.getKnotVector(i);
-        DenseVector mu; mu.setZero(basis.getNumBasisFunctions(i));
+        DenseVector mu = DenseVector::Zero(basis.getNumBasisFunctions(i));
 
         for (unsigned int j = 0; j < basis.getNumBasisFunctions(i); j++)
         {
@@ -302,15 +306,11 @@ void BSpline::computeKnotAverages()
     // Calculate vectors of ones (with same length as corresponding knot average vector)
     std::vector<DenseVector> knotOnes;
     for (unsigned int i = 0; i < numVariables; i++)
-    {
-        DenseVector ones;
-        ones.setOnes(knotAverages.at(i).rows());
-        knotOnes.push_back(ones);
-    }
+        knotOnes.push_back(DenseVector::Ones(knotAverages.at(i).rows()));
 
     // Fill knot average matrix one row at the time
     // NOTE: Must have same pattern as samples in DataTable
-    // TODO: Use DataTable to achieve the same pattern
+    // NOTE: Could use DataTable to achieve the same pattern
     knotaverages.resize(numVariables, basis.getNumBasisFunctions());
 
     for (unsigned int i = 0; i < numVariables; i++)

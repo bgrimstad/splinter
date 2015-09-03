@@ -112,7 +112,7 @@ size_t Serializer::get_size(const BSplineBasis1D &obj)
 
 size_t Serializer::get_size(const BSplineRegression &obj)
 {
-    return get_size(*(BSpline *) &obj);
+    return get_size(obj.bspline);
 }
 
 size_t Serializer::get_size(const PSpline &obj)
@@ -179,7 +179,7 @@ void Serializer::_serialize(const BSplineBasis1D &obj)
 
 void Serializer::_serialize(const BSplineRegression &obj)
 {
-    _serialize(*(BSpline *) &obj);
+    _serialize(obj.bspline);
 }
 
 void Serializer::_serialize(const PSpline &obj)
@@ -246,7 +246,7 @@ void Serializer::deserialize(BSplineBasis1D &obj)
 
 void Serializer::deserialize(BSplineRegression &obj)
 {
-    deserialize(*(BSpline *) &obj);
+    deserialize(obj.bspline);
 }
 
 void Serializer::deserialize(PSpline &obj)

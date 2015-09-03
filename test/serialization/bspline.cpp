@@ -29,7 +29,7 @@ TEST_CASE("BSpline can be saved and loaded", "[serialization][bspline]")
         BSplineRegression bspline(table, BSplineType::LINEAR);
 
         bspline.save(fileName);
-        BSpline loadedBSpline(fileName);
+        BSplineRegression loadedBSpline(fileName);
 
         REQUIRE(bspline == loadedBSpline);
     }
@@ -38,7 +38,7 @@ TEST_CASE("BSpline can be saved and loaded", "[serialization][bspline]")
         BSplineRegression bspline(table, BSplineType::QUADRATIC);
 
         bspline.save(fileName);
-        BSpline loadedBSpline(fileName);
+        BSplineRegression loadedBSpline(fileName);
 
         REQUIRE(bspline == loadedBSpline);
     }
@@ -47,7 +47,7 @@ TEST_CASE("BSpline can be saved and loaded", "[serialization][bspline]")
         BSplineRegression bspline(table, BSplineType::CUBIC);
 
         bspline.save(fileName);
-        BSpline loadedBSpline(fileName);
+        BSplineRegression loadedBSpline(fileName);
 
         REQUIRE(bspline == loadedBSpline);
     }
@@ -56,7 +56,7 @@ TEST_CASE("BSpline can be saved and loaded", "[serialization][bspline]")
         BSplineRegression bspline(table, BSplineType::QUARTIC);
 
         bspline.save(fileName);
-        BSpline loadedBSpline(fileName);
+        BSplineRegression loadedBSpline(fileName);
 
         REQUIRE(bspline == loadedBSpline);
     }

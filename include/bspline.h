@@ -23,9 +23,12 @@ namespace SPLINTER
 class SPLINTER_API BSpline : public Approximant
 {
 public:
+    BSpline(unsigned int numVariables);
+
     /**
      * Construct B-spline from knot vectors, control coefficients (assumed vectorized), and basis degrees
      */
+    BSpline(std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees); // All coefficients set to 1
     BSpline(std::vector<double> coefficients, std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees);
     BSpline(DenseMatrix coefficients, std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees);
 
@@ -39,20 +42,27 @@ public:
 
     // Evaluation of B-spline
     double eval(DenseVector x) const override;
-	double eval(double x) const;
     DenseMatrix evalJacobian(DenseVector x) const override;
     DenseMatrix evalHessian(DenseVector x) const override;
+
+    // Evaluation of B-spline basis functions
+    SparseVector evalBasisFunctions(DenseVector x) const { return basis.eval(x); }
 
     // Getters
     unsigned int getNumControlPoints() const { return coefficients.cols(); }
     std::vector<unsigned int> getNumBasisFunctions() const;
+    unsigned int getNumBasisFunctionsTotal() const
+    {
+        return basis.getNumBasisFunctions();
+    }
     std::vector< std::vector<double> > getKnotVectors() const;
     std::vector<unsigned int> getBasisDegrees() const;
     std::vector<double> getDomainUpperBound() const;
     std::vector<double> getDomainLowerBound() const;
 
     // Control point related
-    void setControlPoints(DenseMatrix &controlPoints);
+    void setCoefficients(const DenseMatrix &coefficients);
+    void setControlPoints(const DenseMatrix &controlPoints);
     DenseMatrix getControlPoints() const;
     void checkControlPoints() const;
 
@@ -78,7 +88,6 @@ public:
 
 protected:
     BSpline();
-    BSpline(unsigned int numVariables);
 
     BSplineBasis basis;
     DenseMatrix knotaverages; // One row per input

@@ -28,7 +28,7 @@ public:
     PSpline(const DataTable &samples);
     PSpline(const DataTable &samples, double lambda);
 
-    inline double getLambda() { return lambda; }
+    double getLambda() { return lambda; }
 
     void save(const std::string fileName) const override;
 
@@ -41,13 +41,14 @@ protected:
     double lambda;
 
     // P-spline control point calculation
-    void computeControlPoints(const DataTable &samples) override;
+    DenseMatrix computeControlPoints(const DataTable &samples) override;
     SparseMatrix getSecondOrderFiniteDifferenceMatrix();
 
 private:
     void load(const std::string fileName) override;
 
     friend class Serializer;
+    friend bool operator==(const PSpline &lhs, const PSpline &rhs);
 };
 
 } // namespace SPLINTER

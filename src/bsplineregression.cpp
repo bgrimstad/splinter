@@ -17,13 +17,15 @@
 namespace SPLINTER
 {
 
-BSplineRegression::BSplineRegression()
-    : BSpline(1)
+BSplineRegression::BSplineRegression(unsigned int numVariables)
+    : Approximant(numVariables),
+      bspline(BSpline(numVariables))
 {
 }
 
-BSplineRegression::BSplineRegression(unsigned int numVariables)
-    : BSpline(numVariables)
+BSplineRegression::BSplineRegression()
+    : Approximant(1),
+      bspline(BSpline(1))
 {
 }
 
@@ -33,34 +35,26 @@ BSplineRegression::BSplineRegression(const char *fileName)
 }
 
 BSplineRegression::BSplineRegression(const std::string fileName)
+    : Approximant(1),
+      bspline(BSpline(1))
 {
     load(fileName);
 }
 
-BSplineRegression::BSplineRegression(const DataTable &samples, unsigned int degree)
-    : BSpline(samples.getNumVariables())
+BSplineRegression::BSplineRegression(const DataTable &samples, std::vector<unsigned int> basisDegrees)
+    : Approximant(samples.getNumVariables()),
+      bspline(BSpline(computeKnotVectorsFromSamples(samples, basisDegrees), basisDegrees))
 {
     // Check data
     if (!samples.isGridComplete())
         throw Exception("BSpline::BSpline: Cannot create B-spline from irregular (incomplete) grid.");
 
-    // Assuming that all basis function are of the same degree
-    std::vector<unsigned int> basisDegrees(samples.getNumVariables(), degree);
-
-    // Compute knot vectors from samples
-    auto knotVectors = computeKnotVectorsFromSamples(samples, basisDegrees);
-
-    // Set multivariate basis
-    basis = BSplineBasis(knotVectors, basisDegrees);
-
-    // Calculate control points
-    computeControlPoints(samples);
-
-    checkControlPoints();
+    bspline.setCoefficients(computeControlPoints(samples));
 }
 
 BSplineRegression::BSplineRegression(const DataTable &samples, BSplineType type = BSplineType::CUBIC)
-    : BSpline(samples.getNumVariables())
+    : Approximant(samples.getNumVariables()),
+      bspline(BSpline(samples.getNumVariables()))
 {
     // Check data
     if (!samples.isGridComplete())
@@ -82,16 +76,29 @@ BSplineRegression::BSplineRegression(const DataTable &samples, BSplineType type 
     // Compute knot vectors from samples
     auto knotVectors = computeKnotVectorsFromSamples(samples, basisDegrees);
 
-    // Set multivariate basis
-    basis = BSplineBasis(knotVectors, basisDegrees);
+    // Create B-spline
+    bspline = BSpline(knotVectors, basisDegrees);
 
-    // Calculate control points
-    computeControlPoints(samples);
-
-    checkControlPoints();
+    // Compute control points
+    bspline.setCoefficients(computeControlPoints(samples));
 }
 
-void BSplineRegression::computeControlPoints(const DataTable &samples)
+double BSplineRegression::eval(DenseVector x) const
+{
+    return bspline.eval(x);
+}
+
+DenseMatrix BSplineRegression::evalJacobian(DenseVector x) const
+{
+    return bspline.evalJacobian(x);
+}
+
+DenseMatrix BSplineRegression::evalHessian(DenseVector x) const
+{
+    return bspline.evalHessian(x);
+}
+
+DenseMatrix BSplineRegression::computeControlPoints(const DataTable &samples)
 {
     /* Setup and solve equations Ac = b,
      * A = basis functions at sample x-values,
@@ -138,8 +145,8 @@ void BSplineRegression::computeControlPoints(const DataTable &samples)
         }
     }
 
-    coefficients = Cy.transpose();
-    knotaverages = Cx.transpose();
+    return Cy.transpose();
+    //knotaverages = Cx.transpose();
 }
 
 SparseMatrix BSplineRegression::computeBasisFunctionMatrix(const DataTable &samples) const
@@ -147,10 +154,11 @@ SparseMatrix BSplineRegression::computeBasisFunctionMatrix(const DataTable &samp
     unsigned int numVariables = samples.getNumVariables();
     unsigned int numSamples = samples.getNumSamples();
 
-    int nnzPrCol = basis.supportedPrInterval();
+    // TODO: Reserve nnz per row (degree+1)
+    //int nnzPrCol = bspline.basis.supportedPrInterval();
 
-    SparseMatrix A(numSamples, basis.getNumBasisFunctions());
-    A.reserve(DenseVector::Constant(numSamples, nnzPrCol)); // TODO: should reserve nnz per row!
+    SparseMatrix A(numSamples, bspline.getNumBasisFunctionsTotal());
+    //A.reserve(DenseVector::Constant(numSamples, nnzPrCol)); // TODO: should reserve nnz per row!
 
     int i = 0;
     for (auto it = samples.cbegin(); it != samples.cend(); ++it, ++i)
@@ -162,7 +170,7 @@ SparseMatrix BSplineRegression::computeBasisFunctionMatrix(const DataTable &samp
             xi(j) = xv.at(j);
         }
 
-        SparseVector basisValues = basis.eval(xi);
+        SparseVector basisValues = bspline.evalBasisFunctions(xi);
 
         for (SparseVector::InnerIterator it2(basisValues); it2; ++it2)
         {
@@ -303,6 +311,11 @@ void BSplineRegression::load(const std::string fileName)
 {
     Serializer s(fileName);
     s.deserialize(*this);
+}
+
+const std::string BSplineRegression::getDescription() const
+{
+    return bspline.getDescription();
 }
 
 } // namespace SPLINTER

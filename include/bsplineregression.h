@@ -28,14 +28,16 @@ enum class BSplineType
 /**
  * Class that implements the multivariate tensor product B-spline
  */
-class SPLINTER_API BSplineRegression : public BSpline
+class SPLINTER_API BSplineRegression : public Approximant
 {
 public:
+
+    BSplineRegression(unsigned int numVaribles);
 
     /**
      * Construct B-spline that interpolates the samples in DataTable
      */
-    BSplineRegression(const DataTable &samples, unsigned int degree);
+    BSplineRegression(const DataTable &samples, std::vector<unsigned int> basisDegrees);
     BSplineRegression(const DataTable &samples, BSplineType type);
 
     /**
@@ -46,19 +48,28 @@ public:
 
     virtual BSplineRegression* clone() const { return new BSplineRegression(*this); }
 
+    // Evaluation
+    double eval(DenseVector x) const override;
+    DenseMatrix evalJacobian(DenseVector x) const override;
+    DenseMatrix evalHessian(DenseVector x) const override;
+
     void save(const std::string fileName) const override;
 
-    //const std::string getDescription() const override;
+    // Getters
+    BSpline getBSpline() const
+    {
+        return bspline;
+    }
+
+    const std::string getDescription() const override;
 
 protected:
     BSplineRegression();
-    BSplineRegression(unsigned int numVariables);
 
-    // TODO: consider changing from an 'is-a' to a 'has-a' idiom
-    //BSpline bspline;
+    BSpline bspline;
 
     // Control point computations
-    virtual void computeControlPoints(const DataTable &samples); // TODO: change return type to matrix
+    virtual DenseMatrix computeControlPoints(const DataTable &samples);
     SparseMatrix computeBasisFunctionMatrix(const DataTable &samples) const;
     void controlPointEquationRHS(const DataTable &samples, DenseMatrix &Bx, DenseMatrix &By) const;
 
@@ -69,6 +80,7 @@ protected:
     void load(const std::string fileName) override;
 
     friend class Serializer;
+    friend bool operator==(const BSplineRegression &lhs, const BSplineRegression &rhs);
 };
 
 } // namespace SPLINTER
