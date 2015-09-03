@@ -17,15 +17,6 @@
 namespace SPLINTER
 {
 
-// Enum for different B-spline types
-enum class BSplineType
-{
-    LINEAR,     // Linear basis functions in each variable
-    QUADRATIC,  // Quadratic basis functions in each variable
-    CUBIC,      // Cubic basis functions in each variable
-    QUARTIC     // Quartic basis functions in each variable
-};
-
 /**
  * Class that implements the multivariate tensor product B-spline
  */
@@ -39,20 +30,12 @@ public:
     BSpline(DenseMatrix coefficients, std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees);
 
     /**
-     * Construct B-spline that interpolates the samples in DataTable
-     */
-    BSpline(const DataTable &samples, unsigned int degree);
-    BSpline(const DataTable &samples, BSplineType type);
-
-    /**
      * Construct B-spline from file
      */
     BSpline(const char *fileName);
     BSpline(const std::string fileName);
 
     virtual BSpline* clone() const { return new BSpline(*this); }
-
-    void init();
 
     // Evaluation of B-spline
     double eval(DenseVector x) const override;
@@ -95,6 +78,7 @@ public:
 
 protected:
     BSpline();
+    BSpline(unsigned int numVariables);
 
     BSplineBasis basis;
     DenseMatrix knotaverages; // One row per input
@@ -102,13 +86,6 @@ protected:
 
     // Control point computations
     void computeKnotAverages();
-    virtual void computeControlPoints(const DataTable &samples);
-    SparseMatrix computeBasisFunctionMatrix(const DataTable &samples) const;
-    void controlPointEquationRHS(const DataTable &samples, DenseMatrix &Bx, DenseMatrix &By) const;
-
-    // Computing knots
-    std::vector<std::vector<double> > computeKnotVectorsFromSamples(const DataTable &samples, std::vector<unsigned int> degrees) const;
-    std::vector<double> knotVectorMovingAverage(std::vector<double> &vec, unsigned int degree) const;
 
 private:
     // Domain reduction

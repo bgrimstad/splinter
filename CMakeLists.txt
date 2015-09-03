@@ -135,6 +135,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/Catch)
 # These are the sources we need for compilation of the library
 set(SRC_LIST
     include/approximant.h
+    include/bsplineregression.h
     include/bspline.h
     include/bsplinebasis.h
     include/bsplinebasis1d.h
@@ -150,6 +151,7 @@ set(SRC_LIST
     include/radialbasisfunctionterm.h
     include/serializer.h
     include/utilities.h
+    src/bsplineregression.cpp
     src/bspline.cpp
     src/bsplinebasis.cpp
     src/bsplinebasis1d.cpp

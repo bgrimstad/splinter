@@ -15,6 +15,7 @@ namespace SPLINTER
 {
 
 PSpline::PSpline()
+    : BSplineRegression(1)
 {
 }
 
@@ -52,8 +53,6 @@ PSpline::PSpline(const DataTable &samples, double lambda)
 
     // Solve for control points
     computeControlPoints(samples);
-
-    init();
 
     checkControlPoints();
 }

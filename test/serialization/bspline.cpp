@@ -26,7 +26,7 @@ TEST_CASE("BSpline can be saved and loaded", "[serialization][bspline]")
     const char *fileName = "test.bspline";
 
     SECTION("Linear BSpline") {
-        BSpline bspline(table, BSplineType::LINEAR);
+        BSplineRegression bspline(table, BSplineType::LINEAR);
 
         bspline.save(fileName);
         BSpline loadedBSpline(fileName);
@@ -35,7 +35,7 @@ TEST_CASE("BSpline can be saved and loaded", "[serialization][bspline]")
     }
 
     SECTION("Quadratic BSpline") {
-        BSpline bspline(table, BSplineType::QUADRATIC);
+        BSplineRegression bspline(table, BSplineType::QUADRATIC);
 
         bspline.save(fileName);
         BSpline loadedBSpline(fileName);
@@ -44,7 +44,7 @@ TEST_CASE("BSpline can be saved and loaded", "[serialization][bspline]")
     }
 
     SECTION("Cubic BSpline") {
-        BSpline bspline(table, BSplineType::CUBIC);
+        BSplineRegression bspline(table, BSplineType::CUBIC);
 
         bspline.save(fileName);
         BSpline loadedBSpline(fileName);
@@ -53,7 +53,7 @@ TEST_CASE("BSpline can be saved and loaded", "[serialization][bspline]")
     }
 
     SECTION("Quartic BSpline") {
-        BSpline bspline(table, BSplineType::QUARTIC);
+        BSplineRegression bspline(table, BSplineType::QUARTIC);
 
         bspline.save(fileName);
         BSpline loadedBSpline(fileName);
