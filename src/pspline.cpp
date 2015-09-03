@@ -15,7 +15,6 @@ namespace SPLINTER
 {
 
 PSpline::PSpline()
-    : BSplineRegression(1)
 {
 }
 

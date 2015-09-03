@@ -32,8 +32,6 @@ class SPLINTER_API BSplineRegression : public Approximant
 {
 public:
 
-    BSplineRegression(unsigned int numVaribles);
-
     /**
      * Construct B-spline that interpolates the samples in DataTable
      */

@@ -17,12 +17,6 @@
 namespace SPLINTER
 {
 
-BSplineRegression::BSplineRegression(unsigned int numVariables)
-    : Approximant(numVariables),
-      bspline(BSpline(numVariables))
-{
-}
-
 BSplineRegression::BSplineRegression()
     : Approximant(1),
       bspline(BSpline(1))
