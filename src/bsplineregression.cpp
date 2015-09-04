@@ -17,43 +17,26 @@
 namespace SPLINTER
 {
 
-BSplineRegression::BSplineRegression()
-    : Approximant(1),
-      bspline(BSpline(1))
-{
-}
 
-BSplineRegression::BSplineRegression(const char *fileName)
-    : BSplineRegression(std::string(fileName))
-{
-}
-
-BSplineRegression::BSplineRegression(const std::string fileName)
-    : Approximant(1),
-      bspline(BSpline(1))
-{
-    load(fileName);
-}
-
-BSplineRegression::BSplineRegression(const DataTable &samples, std::vector<unsigned int> basisDegrees)
-    : Approximant(samples.getNumVariables()),
-      bspline(BSpline(computeKnotVectorsFromSamples(samples, basisDegrees), basisDegrees))
+BSpline doBSplineRegression(const DataTable &samples, std::vector<unsigned int> basisDegrees)
 {
     // Check data
     if (!samples.isGridComplete())
         throw Exception("BSpline::BSpline: Cannot create B-spline from irregular (incomplete) grid.");
 
-    bspline.setCoefficients(computeControlPoints(samples));
+    auto knotVectors = computeKnotVectorsFromSamples(samples, basisDegrees);
+
+    BSpline bspline(knotVectors, basisDegrees);
+
+    auto coefficients = computeControlPoints(samples, bspline);
+
+    bspline.setCoefficients(coefficients);
+
+    return bspline;
 }
 
-BSplineRegression::BSplineRegression(const DataTable &samples, BSplineType type = BSplineType::CUBIC)
-    : Approximant(samples.getNumVariables()),
-      bspline(BSpline(samples.getNumVariables()))
+BSpline doBSplineRegression(const DataTable &samples, BSplineType type = BSplineType::CUBIC)
 {
-    // Check data
-    if (!samples.isGridComplete())
-        throw Exception("BSpline::BSpline: Cannot create B-spline from irregular (incomplete) grid.");
-
     // Default is CUBIC
     std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 3);
 
@@ -67,32 +50,10 @@ BSplineRegression::BSplineRegression(const DataTable &samples, BSplineType type 
     else if (type == BSplineType::QUARTIC)
         basisDegrees = std::vector<unsigned int>(samples.getNumVariables(), 4);
 
-    // Compute knot vectors from samples
-    auto knotVectors = computeKnotVectorsFromSamples(samples, basisDegrees);
-
-    // Create B-spline
-    bspline = BSpline(knotVectors, basisDegrees);
-
-    // Compute control points
-    bspline.setCoefficients(computeControlPoints(samples));
+    return doBSplineRegression(samples, basisDegrees);
 }
 
-double BSplineRegression::eval(DenseVector x) const
-{
-    return bspline.eval(x);
-}
-
-DenseMatrix BSplineRegression::evalJacobian(DenseVector x) const
-{
-    return bspline.evalJacobian(x);
-}
-
-DenseMatrix BSplineRegression::evalHessian(DenseVector x) const
-{
-    return bspline.evalHessian(x);
-}
-
-DenseMatrix BSplineRegression::computeControlPoints(const DataTable &samples)
+DenseMatrix computeControlPoints(const DataTable &samples, const BSpline &bspline)
 {
     /* Setup and solve equations Ac = b,
      * A = basis functions at sample x-values,
@@ -100,7 +61,7 @@ DenseMatrix BSplineRegression::computeControlPoints(const DataTable &samples)
      * b = sample x-values when calculating knot averages
      * c = control coefficients or knot averages.
      */
-    SparseMatrix A = computeBasisFunctionMatrix(samples);
+    SparseMatrix A = computeBasisFunctionMatrix(samples, bspline);
 
     DenseMatrix Bx, By;
     controlPointEquationRHS(samples, Bx, By);
@@ -112,6 +73,7 @@ DenseMatrix BSplineRegression::computeControlPoints(const DataTable &samples)
 
     bool solveAsDense = (numEquations < maxNumEquations);
 
+    // TODO: compute only coefficients (knot averages not needed)
     if (!solveAsDense)
     {
 #ifndef NDEBUG
@@ -143,7 +105,7 @@ DenseMatrix BSplineRegression::computeControlPoints(const DataTable &samples)
     //knotaverages = Cx.transpose();
 }
 
-SparseMatrix BSplineRegression::computeBasisFunctionMatrix(const DataTable &samples) const
+SparseMatrix computeBasisFunctionMatrix(const DataTable &samples, const BSpline &bspline)
 {
     unsigned int numVariables = samples.getNumVariables();
     unsigned int numSamples = samples.getNumSamples();
@@ -177,7 +139,7 @@ SparseMatrix BSplineRegression::computeBasisFunctionMatrix(const DataTable &samp
     return A;
 }
 
-void BSplineRegression::controlPointEquationRHS(const DataTable &samples, DenseMatrix &Bx, DenseMatrix &By) const
+void controlPointEquationRHS(const DataTable &samples, DenseMatrix &Bx, DenseMatrix &By)
 {
     unsigned int numVariables = samples.getNumVariables();
     unsigned int numSamples = samples.getNumSamples();
@@ -199,7 +161,7 @@ void BSplineRegression::controlPointEquationRHS(const DataTable &samples, DenseM
     }
 }
 
-std::vector<std::vector<double> > BSplineRegression::computeKnotVectorsFromSamples(const DataTable &samples, std::vector<unsigned int> degrees) const
+std::vector<std::vector<double> > computeKnotVectorsFromSamples(const DataTable &samples, std::vector<unsigned int> degrees)
 {
     if (samples.getNumVariables() != degrees.size())
         throw Exception("BSpline::computeKnotVectorsFromSamples: Inconsistent sizes on input vectors.");
@@ -245,7 +207,7 @@ std::vector<std::vector<double> > BSplineRegression::computeKnotVectorsFromSampl
  * For p = 1, (a,b,c,d,e,f) becomes (a,a,b,c,d,e,f,f).
  *
  */
-std::vector<double> BSplineRegression::knotVectorMovingAverage(std::vector<double> &vec, unsigned int degree) const
+std::vector<double> knotVectorMovingAverage(std::vector<double> &vec, unsigned int degree)
 {
     // Sort and remove duplicates
     std::vector<double> uniqueX(vec);
@@ -292,24 +254,6 @@ std::vector<double> BSplineRegression::knotVectorMovingAverage(std::vector<doubl
     assert(knots.size() == uniqueX.size() + degree + 1);
 
     return knots;
-}
-
-void BSplineRegression::save(const std::string fileName) const
-{
-    Serializer s;
-    s.serialize(*this);
-    s.saveToFile(fileName);
-}
-
-void BSplineRegression::load(const std::string fileName)
-{
-    Serializer s(fileName);
-    s.deserialize(*this);
-}
-
-const std::string BSplineRegression::getDescription() const
-{
-    return bspline.getDescription();
 }
 
 } // namespace SPLINTER

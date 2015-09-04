@@ -9,7 +9,7 @@
 
 #include <Catch.h>
 #include <datatable.h>
-#include <bspline.h>
+#include <bsplineregression.h>
 #include "testingutilities.h"
 
 using namespace SPLINTER;
@@ -26,37 +26,37 @@ TEST_CASE("BSpline can be saved and loaded", "[serialization][bspline]")
     const char *fileName = "test.bspline";
 
     SECTION("Linear BSpline") {
-        BSplineRegression bspline(table, BSplineType::LINEAR);
+        BSpline bspline = doBSplineRegression(table, BSplineType::LINEAR);
 
         bspline.save(fileName);
-        BSplineRegression loadedBSpline(fileName);
+        BSpline loadedBSpline(fileName);
 
         REQUIRE(bspline == loadedBSpline);
     }
 
     SECTION("Quadratic BSpline") {
-        BSplineRegression bspline(table, BSplineType::QUADRATIC);
+        BSpline bspline = doBSplineRegression(table, BSplineType::QUADRATIC);
 
         bspline.save(fileName);
-        BSplineRegression loadedBSpline(fileName);
+        BSpline loadedBSpline(fileName);
 
         REQUIRE(bspline == loadedBSpline);
     }
 
     SECTION("Cubic BSpline") {
-        BSplineRegression bspline(table, BSplineType::CUBIC);
+        BSpline bspline = doBSplineRegression(table, BSplineType::CUBIC);
 
         bspline.save(fileName);
-        BSplineRegression loadedBSpline(fileName);
+        BSpline loadedBSpline(fileName);
 
         REQUIRE(bspline == loadedBSpline);
     }
 
     SECTION("Quartic BSpline") {
-        BSplineRegression bspline(table, BSplineType::QUARTIC);
+        BSpline bspline = doBSplineRegression(table, BSplineType::QUARTIC);
 
         bspline.save(fileName);
-        BSplineRegression loadedBSpline(fileName);
+        BSpline loadedBSpline(fileName);
 
         REQUIRE(bspline == loadedBSpline);
     }

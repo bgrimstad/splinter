@@ -14,37 +14,31 @@
 namespace SPLINTER
 {
 
-PSpline::PSpline()
-{
-}
-
-PSpline::PSpline(const char *fileName)
-    : PSpline(std::string(fileName))
-{
-}
-
-PSpline::PSpline(const std::string fileName)
-{
-    load(fileName);
-}
-
-PSpline::PSpline(const DataTable &samples)
-    : PSpline(samples,0.03)
-{
-}
-
-PSpline::PSpline(const DataTable &samples, double lambda)
-    : BSplineRegression(samples, std::vector<unsigned int>(samples.getNumVariables(), 3)),
-      lambda(lambda)
+BSpline computePSpline(const DataTable &samples, double lambda)
 {
     // Check data
-    assert(samples.isGridComplete());
+    if (!samples.isGridComplete())
+        throw Exception("computePSpline: Cannot create B-spline from irregular (incomplete) grid.");
 
-    // Calculate control points
-    bspline.setCoefficients(computeControlPoints(samples));
+    // Check lambda
+    if (lambda <= 0)
+        throw Exception("computePSpline: Lambda must be strictly positive.");
+
+    // Assuming cubic spline
+    std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 3);
+
+    auto knotVectors = computeKnotVectorsFromSamples(samples, basisDegrees);
+
+    BSpline bspline(knotVectors, basisDegrees);
+
+    auto coefficients = computeControlPointsPSpline(samples, bspline, lambda);
+
+    bspline.setCoefficients(coefficients);
+
+    return bspline;
 }
 
-DenseMatrix PSpline::computeControlPoints(const DataTable &samples)
+DenseMatrix computeControlPointsPSpline(const DataTable &samples, const BSpline &bspline, double lambda)
 {
     // Assuming regular grid
     unsigned int numSamples = samples.getNumSamples();
@@ -69,10 +63,10 @@ DenseMatrix PSpline::computeControlPoints(const DataTable &samples)
     W.setIdentity();
 
     // Basis function matrix
-    SparseMatrix B = computeBasisFunctionMatrix(samples);
+    SparseMatrix B = computeBasisFunctionMatrix(samples, bspline);
 
     // Second order finite difference matrix
-    SparseMatrix D = getSecondOrderFiniteDifferenceMatrix();
+    SparseMatrix D = getSecondOrderFiniteDifferenceMatrix(bspline);
 
     // Left-hand side matrix
     L = B.transpose()*W*B + lambda*D.transpose()*D;
@@ -90,6 +84,7 @@ DenseMatrix PSpline::computeControlPoints(const DataTable &samples)
 
     bool solveAsDense = (numEquations < maxNumEquations);
 
+    // TODO: solve for coefficients only
     if (!solveAsDense)
     {
 #ifndef NDEBUG
@@ -124,8 +119,9 @@ DenseMatrix PSpline::computeControlPoints(const DataTable &samples)
 
 // Function for generating second order finite-difference matrix, which is used for penalizing the
 // (approximate) second derivative in control point calculation for P-splines.
-SparseMatrix PSpline::getSecondOrderFiniteDifferenceMatrix()
+SparseMatrix getSecondOrderFiniteDifferenceMatrix(const BSpline &bspline)
 {
+    unsigned int numVariables = bspline.getNumVariables();
 
     // Number of (total) basis functions - defines the number of columns in D
     unsigned int numCols = bspline.getNumBasisFunctionsTotal();
@@ -303,35 +299,6 @@ SparseMatrix PSpline::getSecondOrderFiniteDifferenceMatrix()
     D.makeCompressed();
 
     return D;
-}
-
-void PSpline::save(const std::string fileName) const
-{
-    Serializer s;
-    s.serialize(*this);
-    s.saveToFile(fileName);
-}
-
-void PSpline::load(const std::string fileName)
-{
-    Serializer s(fileName);
-    s.deserialize(*this);
-}
-
-const std::string PSpline::getDescription() const
-{
-    std::string bsplineDescription = BSplineRegression::getDescription();
-    // Search for "BSpline ", not "BSpline" to avoid matching "BSplineType" etc.
-    size_t bsplineOccurence = bsplineDescription.find("BSpline ");
-    while(bsplineOccurence != std::string::npos) {
-        bsplineDescription.replace(bsplineOccurence, 1, "P");
-        bsplineOccurence = bsplineDescription.find("BSpline ");
-    }
-
-    bsplineDescription.append(" with lambda ");
-    bsplineDescription.append(std::to_string(lambda));
-
-    return bsplineDescription;
 }
 
 } // namespace SPLINTER

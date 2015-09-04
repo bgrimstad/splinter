@@ -20,36 +20,11 @@ namespace SPLINTER
  * It minimizes objective which penalizes both deviation (for interpolation) and second derivative (for smoothing).
  * It inherits all properties of the B-spline - the only difference lies in the calculation of the control points.
  */
-class SPLINTER_API PSpline : public BSplineRegression
-{
-public:
-    PSpline(const char *fileName);
-    PSpline(const std::string fileName);
-    PSpline(const DataTable &samples);
-    PSpline(const DataTable &samples, double lambda);
+BSpline computePSpline(const DataTable &samples, double lambda = 0.03);
 
-    double getLambda() { return lambda; }
-
-    void save(const std::string fileName) const override;
-
-    const std::string getDescription() const override;
-
-protected:
-    PSpline();
-
-    // Smoothing parameter (usually set to a small number; default 0.03)
-    double lambda;
-
-    // P-spline control point calculation
-    DenseMatrix computeControlPoints(const DataTable &samples) override;
-    SparseMatrix getSecondOrderFiniteDifferenceMatrix();
-
-private:
-    void load(const std::string fileName) override;
-
-    friend class Serializer;
-    friend bool operator==(const PSpline &lhs, const PSpline &rhs);
-};
+// P-spline control point calculation
+DenseMatrix computeControlPointsPSpline(const DataTable &samples, const BSpline &bspline, double lambda);
+SparseMatrix getSecondOrderFiniteDifferenceMatrix(const BSpline &bspline);
 
 } // namespace SPLINTER
 

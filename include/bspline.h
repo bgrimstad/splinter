@@ -107,6 +107,7 @@ private:
     void load(const std::string fileName) override;
 
     friend class Serializer;
+    friend bool operator==(const BSpline &lhs, const BSpline &rhs);
 };
 
 } // namespace SPLINTER

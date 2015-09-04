@@ -25,61 +25,17 @@ enum class BSplineType
     QUARTIC     // Quartic basis functions in each variable
 };
 
-/**
- * Class that implements the multivariate tensor product B-spline
- */
-class SPLINTER_API BSplineRegression : public Approximant
-{
-public:
+BSpline doBSplineRegression(const DataTable &samples, std::vector<unsigned int> basisDegrees);
+BSpline doBSplineRegression(const DataTable &samples, BSplineType type);
 
-    /**
-     * Construct B-spline that interpolates the samples in DataTable
-     */
-    BSplineRegression(const DataTable &samples, std::vector<unsigned int> basisDegrees);
-    BSplineRegression(const DataTable &samples, BSplineType type);
+// Control point computations
+DenseMatrix computeControlPoints(const DataTable &samples, const BSpline &bspline);
+SparseMatrix computeBasisFunctionMatrix(const DataTable &samples, const BSpline &bspline);
+void controlPointEquationRHS(const DataTable &samples, DenseMatrix &Bx, DenseMatrix &By);
 
-    /**
-     * Construct B-spline from file
-     */
-    BSplineRegression(const char *fileName);
-    BSplineRegression(const std::string fileName);
-
-    virtual BSplineRegression* clone() const { return new BSplineRegression(*this); }
-
-    // Evaluation
-    double eval(DenseVector x) const override;
-    DenseMatrix evalJacobian(DenseVector x) const override;
-    DenseMatrix evalHessian(DenseVector x) const override;
-
-    void save(const std::string fileName) const override;
-
-    // Getters
-    BSpline getBSpline() const
-    {
-        return bspline;
-    }
-
-    const std::string getDescription() const override;
-
-protected:
-    BSplineRegression();
-
-    BSpline bspline;
-
-    // Control point computations
-    virtual DenseMatrix computeControlPoints(const DataTable &samples);
-    SparseMatrix computeBasisFunctionMatrix(const DataTable &samples) const;
-    void controlPointEquationRHS(const DataTable &samples, DenseMatrix &Bx, DenseMatrix &By) const;
-
-    // Computing knots
-    std::vector<std::vector<double> > computeKnotVectorsFromSamples(const DataTable &samples, std::vector<unsigned int> degrees) const;
-    std::vector<double> knotVectorMovingAverage(std::vector<double> &vec, unsigned int degree) const;
-
-    void load(const std::string fileName) override;
-
-    friend class Serializer;
-    friend bool operator==(const BSplineRegression &lhs, const BSplineRegression &rhs);
-};
+// Computing knots
+std::vector<std::vector<double> > computeKnotVectorsFromSamples(const DataTable &samples, std::vector<unsigned int> degrees);
+std::vector<double> knotVectorMovingAverage(std::vector<double> &vec, unsigned int degree);
 
 } // namespace SPLINTER
 
