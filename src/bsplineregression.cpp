@@ -66,7 +66,14 @@ DenseMatrix computeControlPoints(const DataTable &samples, const BSpline &bsplin
     DenseMatrix Bx, By;
     controlPointEquationRHS(samples, Bx, By);
 
-    DenseMatrix Cx, Cy;
+    // Multiply with transpose to obtain a symmetric matrix
+    SparseMatrix At = A.transpose();
+    SparseMatrix A2 = At*A;
+    DenseMatrix By2 = At*By;
+    By = By2;
+    A = A2;
+
+    DenseMatrix w;
 
     int numEquations = A.rows();
     int maxNumEquations = pow(2,10);
@@ -81,9 +88,9 @@ DenseMatrix computeControlPoints(const DataTable &samples, const BSpline &bsplin
 #endif // NDEBUG
 
         SparseLU s;
-        bool successfulSolve = (s.solve(A,Bx,Cx) && s.solve(A,By,Cy));
+        //bool successfulSolve = (s.solve(A,Bx,Cx) && s.solve(A,By,Cy));
 
-        solveAsDense = !successfulSolve;
+        solveAsDense = !s.solve(A,By,w);
     }
 
     if (solveAsDense)
@@ -94,14 +101,14 @@ DenseMatrix computeControlPoints(const DataTable &samples, const BSpline &bsplin
 
         DenseMatrix Ad = A.toDense();
         DenseQR s;
-        bool successfulSolve = (s.solve(Ad,Bx,Cx) && s.solve(Ad,By,Cy));
-        if (!successfulSolve)
+        //bool successfulSolve = (s.solve(Ad,Bx,Cx) && s.solve(Ad,By,Cy));
+        if (!s.solve(Ad,By,w))
         {
             throw Exception("BSpline::computeControlPoints: Failed to solve for B-spline coefficients.");
         }
     }
 
-    return Cy.transpose();
+    return w.transpose();
     //knotaverages = Cx.transpose();
 }
 
@@ -216,7 +223,8 @@ std::vector<double> knotVectorMovingAverage(std::vector<double> &vec, unsigned i
     uniqueX.resize(distance(uniqueX.begin(),it));
 
     // Compute sizes
-    unsigned int n = uniqueX.size();
+    //unsigned int n = uniqueX.size();
+    unsigned int n = (unsigned int)std::min((int)uniqueX.size(), 10); // TODO: testing with max 10 segments (MUST CHECK HOW THE RESULTING KNOT VECTOR LOOKS!)
     unsigned int k = degree-1; // knots to remove
     unsigned int w = k + 3; // Window size
 
@@ -224,7 +232,7 @@ std::vector<double> knotVectorMovingAverage(std::vector<double> &vec, unsigned i
     if (n < degree+1)
     {
         std::ostringstream e;
-        e << "BSpline::knotVectorMovingAverage: Only " << n
+        e << "knotVectorMovingAverage: Only " << n
           << " unique interpolation points are given. A minimum of degree+1 = " << degree+1
           << " unique points are required to build a B-spline basis of degree " << degree << ".";
         throw Exception(e.str());
@@ -251,7 +259,7 @@ std::vector<double> knotVectorMovingAverage(std::vector<double> &vec, unsigned i
         knots.insert(knots.end(), uniqueX.back());
 
     // Number of knots in a (p+1)-regular knot vector
-    assert(knots.size() == uniqueX.size() + degree + 1);
+    //assert(knots.size() == uniqueX.size() + degree + 1);
 
     return knots;
 }

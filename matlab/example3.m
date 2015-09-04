@@ -14,7 +14,7 @@ myfunc = @(x) sin(x) + normrnd(0, 0.5);
 % Coarse grid for with sample points
 N = 1000;
 xstart = 0;
-xend = 2*pi;
+xend = 4*pi;
 x = linspace(xstart,xend,N);
 y = zeros(1,N);
 for i = 1:N
@@ -36,9 +36,7 @@ for i = 1:N
 end
 
 % Build approximations
-approx1 = PolynomialRegression(d, 1);
-approx2 = PolynomialRegression(d, 2);
-approx3 = PolynomialRegression(d, 3);
+approx1 = BSpline(d, BSplineType.Cubic);
 
 % Evaluate approximations
 yad1 = zeros(Nd,1);
@@ -48,8 +46,8 @@ yad3 = zeros(Nd,1);
 
 for i = 1:Nd
     yad1(i) = approx1.eval(xd(i));
-    yad2(i) = approx2.eval(xd(i));
-    yad3(i) = approx3.eval(xd(i));
+    %yad2(i) = approx2.eval(xd(i));
+    %yad3(i) = approx3.eval(xd(i));
 end
 
 % Plot sample points and approximations
