@@ -109,7 +109,8 @@ obj_ptr datatable_load_init(const char *filename)
 void datatable_add_samples(obj_ptr datatable_ptr, double *x, int n_samples, int x_dim, int size)
 {
     DataTable *dataTable = get_datatable(datatable_ptr);
-    if (dataTable != nullptr) {
+    if (dataTable != nullptr)
+    {
         DenseVector vec(x_dim);
         for (int i = 0; i < n_samples; ++i)
         {
@@ -125,7 +126,8 @@ void datatable_add_samples(obj_ptr datatable_ptr, double *x, int n_samples, int 
 unsigned int datatable_get_num_variables(obj_ptr datatable_ptr)
 {
     DataTable *dataTable = get_datatable(datatable_ptr);
-    if (dataTable != nullptr) {
+    if (dataTable != nullptr)
+    {
         return dataTable->getNumVariables();
     }
 
@@ -135,7 +137,8 @@ unsigned int datatable_get_num_variables(obj_ptr datatable_ptr)
 unsigned int datatable_get_num_samples(obj_ptr datatable_ptr)
 {
     DataTable *dataTable = get_datatable(datatable_ptr);
-    if (dataTable != nullptr) {
+    if (dataTable != nullptr)
+    {
         return dataTable->getNumSamples();
     }
 
@@ -145,7 +148,8 @@ unsigned int datatable_get_num_samples(obj_ptr datatable_ptr)
 void datatable_save(obj_ptr datatable_ptr, const char *filename)
 {
     DataTable *dataTable = get_datatable(datatable_ptr);
-    if (dataTable != nullptr) {
+    if (dataTable != nullptr)
+    {
         dataTable->save(filename);
     }
 }
@@ -166,18 +170,21 @@ obj_ptr datatable_load(obj_ptr datatable_ptr, const char *filename)
 void datatable_delete(obj_ptr datatable_ptr)
 {
     DataTable *dataTable = get_datatable(datatable_ptr);
-    if (dataTable != nullptr) {
+    if (dataTable != nullptr)
+    {
         objects.erase(datatable_ptr);
         delete dataTable;
     }
 }
 
 /* BSpline constructor */
-obj_ptr bspline_init(obj_ptr datatable_ptr, int degree) {
+obj_ptr bspline_init(obj_ptr datatable_ptr, int degree)
+{
     obj_ptr bspline = nullptr;
 
     auto table = get_datatable(datatable_ptr);
-    if (table != nullptr) {
+    if (table != nullptr)
+    {
         BSplineType bsplineType;
         switch (degree) {
             case 1: {
@@ -224,7 +231,8 @@ obj_ptr pspline_init(obj_ptr datatable_ptr, double lambda)
     obj_ptr pspline = nullptr;
 
     auto table = get_datatable(datatable_ptr);
-    if (table != nullptr) {
+    if (table != nullptr)
+    {
         pspline = (obj_ptr) new BSpline(computePSpline(*table, lambda));
         objects.insert(pspline);
     }
@@ -247,9 +255,11 @@ obj_ptr rbf_init(obj_ptr datatable_ptr, int type_index, int normalized)
     obj_ptr rbf = nullptr;
 
     auto table = get_datatable(datatable_ptr);
-    if (table != nullptr) {
+    if (table != nullptr)
+    {
         RadialBasisFunctionType type;
-        switch (type_index) {
+        switch (type_index)
+        {
             case 1:
                 type = RadialBasisFunctionType::THIN_PLATE_SPLINE;
                 break;
@@ -279,7 +289,8 @@ obj_ptr rbf_init(obj_ptr datatable_ptr, int type_index, int normalized)
     return rbf;
 }
 
-obj_ptr rbf_load_init(const char *filename) {
+obj_ptr rbf_load_init(const char *filename)
+{
     obj_ptr rbf = (obj_ptr) new RadialBasisFunction(filename);
 
     objects.insert(rbf);
@@ -288,13 +299,16 @@ obj_ptr rbf_load_init(const char *filename) {
 }
 
 /* PolynomialRegression constructor */
-obj_ptr polynomial_regression_init(obj_ptr datatable_ptr, int *degrees, int degrees_dim) {
+obj_ptr polynomial_regression_init(obj_ptr datatable_ptr, int *degrees, int degrees_dim)
+{
     obj_ptr polyfit = nullptr;
 
     auto table = get_datatable(datatable_ptr);
-    if (table != nullptr) {
+    if (table != nullptr)
+    {
         auto degreeVec = std::vector<unsigned int>(degrees_dim);
-        for (int i = 0; i < degrees_dim; ++i) {
+        for (int i = 0; i < degrees_dim; ++i)
+        {
             degreeVec.at(i) = (unsigned int) degrees[i];
         }
 
@@ -305,7 +319,8 @@ obj_ptr polynomial_regression_init(obj_ptr datatable_ptr, int *degrees, int degr
     return polyfit;
 }
 
-obj_ptr polynomial_regression_load_init(const char *filename) {
+obj_ptr polynomial_regression_load_init(const char *filename)
+{
     obj_ptr polyfit = (obj_ptr) new PolynomialRegression(filename);
 
     objects.insert(polyfit);
@@ -314,11 +329,13 @@ obj_ptr polynomial_regression_load_init(const char *filename) {
 }
 
 
-double eval(obj_ptr approximant, double *x, int x_dim) {
+double eval(obj_ptr approximant, double *x, int x_dim)
+{
     double retVal = 0.0;
 
     auto approx = get_approximant(approximant);
-    if (approx != nullptr) {
+    if (approx != nullptr)
+    {
         auto xvec = get_densevector(x, x_dim);
         retVal = approx->eval(xvec);
     }
@@ -326,11 +343,13 @@ double eval(obj_ptr approximant, double *x, int x_dim) {
     return retVal;
 }
 
-double *eval_jacobian(obj_ptr approximant, double *x, int x_dim) {
+double *eval_jacobian(obj_ptr approximant, double *x, int x_dim)
+{
     double *retVal = nullptr;
 
     auto approx = get_approximant(approximant);
-    if (approx != nullptr) {
+    if (approx != nullptr)
+    {
         auto xvec = get_densevector(x, x_dim);
         DenseMatrix jacobian = approx->evalJacobian(xvec);
 
@@ -343,11 +362,13 @@ double *eval_jacobian(obj_ptr approximant, double *x, int x_dim) {
     return retVal;
 }
 
-double *eval_hessian(obj_ptr approximant, double *x, int x_dim) {
+double *eval_hessian(obj_ptr approximant, double *x, int x_dim)
+{
     double *retVal = nullptr;
 
     auto approx = get_approximant(approximant);
-    if (approx != nullptr) {
+    if (approx != nullptr)
+    {
         auto xvec = get_densevector(x, x_dim);
         DenseMatrix hessian = approx->evalHessian(xvec);
 
@@ -360,35 +381,41 @@ double *eval_hessian(obj_ptr approximant, double *x, int x_dim) {
     return retVal;
 }
 
-int get_num_variables(obj_ptr approximant) {
+int get_num_variables(obj_ptr approximant)
+{
     int retVal = 0;
 
     auto approx = get_approximant(approximant);
-    if (approx != nullptr) {
+    if (approx != nullptr)
+    {
         retVal = approx->getNumVariables();
     }
 
     return retVal;
 }
 
-void save(obj_ptr approximant, const char *filename) {
+void save(obj_ptr approximant, const char *filename)
+{
     auto approx = get_approximant(approximant);
     if (approx != nullptr) {
         approx->save(filename);
     }
 }
 
-void load(obj_ptr approximant, const char *filename) {
+void load(obj_ptr approximant, const char *filename)
+{
     auto approx = get_approximant(approximant);
     if (approx != nullptr) {
         approx->load(filename);
     }
 }
 
-void delete_approximant(obj_ptr approximant) {
+void delete_approximant(obj_ptr approximant)
+{
     auto approx = get_approximant(approximant);
 
-    if (approx != nullptr) {
+    if (approx != nullptr)
+    {
         objects.erase(approximant);
         delete approx;
     }
