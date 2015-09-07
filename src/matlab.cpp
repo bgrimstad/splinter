@@ -209,7 +209,7 @@ obj_ptr bspline_init(obj_ptr datatable_ptr, int degree)
             }
         }
 
-        bspline = (obj_ptr) new BSpline(doBSplineRegression(*table, bsplineType));
+        bspline = (obj_ptr) new BSpline(buildBSpline(*table, bsplineType));
         objects.insert(bspline);
     }
 
@@ -233,7 +233,7 @@ obj_ptr pspline_init(obj_ptr datatable_ptr, double lambda)
     auto table = get_datatable(datatable_ptr);
     if (table != nullptr)
     {
-        pspline = (obj_ptr) new BSpline(computePSpline(*table, lambda));
+        pspline = (obj_ptr) new BSpline(buildPSpline(*table, lambda));
         objects.insert(pspline);
     }
 

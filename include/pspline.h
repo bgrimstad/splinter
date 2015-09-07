@@ -20,7 +20,7 @@ namespace SPLINTER
  * It minimizes objective which penalizes both deviation (for interpolation) and second derivative (for smoothing).
  * It inherits all properties of the B-spline - the only difference lies in the calculation of the control points.
  */
-BSpline computePSpline(const DataTable &samples, double lambda = 0.03);
+BSpline buildPSpline(const DataTable &samples, double lambda = 0.03);
 
 // P-spline control point calculation
 DenseMatrix computeControlPointsPSpline(const DataTable &samples, const BSpline &bspline, double lambda);

@@ -25,17 +25,18 @@ enum class BSplineType
     QUARTIC     // Quartic basis functions in each variable
 };
 
-BSpline doBSplineRegression(const DataTable &samples, std::vector<unsigned int> basisDegrees);
-BSpline doBSplineRegression(const DataTable &samples, BSplineType type);
+BSpline buildBSpline(const DataTable &samples, std::vector<unsigned int> basisDegrees);
+BSpline buildBSpline(const DataTable &samples, BSplineType type);
 
 // Control point computations
 DenseMatrix computeControlPoints(const DataTable &samples, const BSpline &bspline);
 SparseMatrix computeBasisFunctionMatrix(const DataTable &samples, const BSpline &bspline);
-void controlPointEquationRHS(const DataTable &samples, DenseMatrix &Bx, DenseMatrix &By);
+DenseMatrix controlPointEquationRHS(const DataTable &samples);
 
 // Computing knots
 std::vector<std::vector<double> > computeKnotVectorsFromSamples(const DataTable &samples, std::vector<unsigned int> degrees);
 std::vector<double> knotVectorMovingAverage(std::vector<double> &vec, unsigned int degree);
+std::vector<double> knotVectorBuckets(std::vector<double> &vec, unsigned int degree);
 
 } // namespace SPLINTER
 

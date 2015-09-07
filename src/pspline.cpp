@@ -14,15 +14,15 @@
 namespace SPLINTER
 {
 
-BSpline computePSpline(const DataTable &samples, double lambda)
+BSpline buildPSpline(const DataTable &samples, double lambda)
 {
     // Check data
     if (!samples.isGridComplete())
-        throw Exception("computePSpline: Cannot create B-spline from irregular (incomplete) grid.");
+        throw Exception("buildPSpline: Cannot create B-spline from irregular (incomplete) grid.");
 
     // Check lambda
     if (lambda <= 0)
-        throw Exception("computePSpline: Lambda must be strictly positive.");
+        throw Exception("buildPSpline: Lambda must be strictly positive.");
 
     // Assuming cubic spline
     std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 3);
@@ -56,7 +56,6 @@ DenseMatrix computeControlPointsPSpline(const DataTable &samples, const BSpline 
      */
 
     SparseMatrix L, W;
-    DenseMatrix Rx, Ry, Bx, By;
 
     // Weight matrix
     W.resize(numSamples, numSamples);
@@ -72,9 +71,9 @@ DenseMatrix computeControlPointsPSpline(const DataTable &samples, const BSpline 
     L = B.transpose()*W*B + lambda*D.transpose()*D;
 
     // Compute right-hand side matrices
-    controlPointEquationRHS(samples, Bx, By);
-    Rx = B.transpose()*W*Bx;
-    Ry = B.transpose()*W*By;
+    DenseMatrix By = controlPointEquationRHS(samples);
+    //Rx = B.transpose()*W*Bx;
+    DenseMatrix Ry = B.transpose()*W*By;
 
     // Matrices to store the resulting coefficients
     DenseMatrix Cx, Cy;
@@ -84,7 +83,6 @@ DenseMatrix computeControlPointsPSpline(const DataTable &samples, const BSpline 
 
     bool solveAsDense = (numEquations < maxNumEquations);
 
-    // TODO: solve for coefficients only
     if (!solveAsDense)
     {
 #ifndef NDEBUG
@@ -92,7 +90,7 @@ DenseMatrix computeControlPointsPSpline(const DataTable &samples, const BSpline 
 #endif // NDEBUG
 
         SparseLU s;
-        bool successfulSolve = (s.solve(L,Rx,Cx) && s.solve(L,Ry,Cy));
+        bool successfulSolve = s.solve(L,Ry,Cy);
 
         solveAsDense = !successfulSolve;
     }
@@ -105,7 +103,7 @@ DenseMatrix computeControlPointsPSpline(const DataTable &samples, const BSpline 
 
         DenseMatrix Ld = L.toDense();
         DenseQR s;
-        bool successfulSolve = s.solve(Ld, Rx, Cx) && s.solve(Ld, Ry, Cy);
+        bool successfulSolve = s.solve(Ld, Ry, Cy);
 
         if (!successfulSolve)
         {
@@ -114,11 +112,12 @@ DenseMatrix computeControlPointsPSpline(const DataTable &samples, const BSpline 
     }
 
     return Cy.transpose();
-    //knotaverages = Cx.transpose();
 }
 
-// Function for generating second order finite-difference matrix, which is used for penalizing the
-// (approximate) second derivative in control point calculation for P-splines.
+/*
+ * Function for generating second order finite-difference matrix, which is used for penalizing the
+ * (approximate) second derivative in control point calculation for P-splines.
+ */
 SparseMatrix getSecondOrderFiniteDifferenceMatrix(const BSpline &bspline)
 {
     unsigned int numVariables = bspline.getNumVariables();

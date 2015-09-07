@@ -26,7 +26,7 @@ TEST_CASE("PSplines can be saved and loaded", "[serialization][pspline]")
     const char *fileName = "test.pspline";
 
     SECTION("PSpline with default lambda") {
-        BSpline pspline = computePSpline(table);
+        BSpline pspline = buildPSpline(table);
 
         pspline.save(fileName);
         BSpline loadedPSpline(fileName);
@@ -35,7 +35,7 @@ TEST_CASE("PSplines can be saved and loaded", "[serialization][pspline]")
     }
 
     SECTION("PSpline with non-default lambda") {
-        BSpline pspline = computePSpline(table, 0.02);
+        BSpline pspline = buildPSpline(table, 0.02);
 
         pspline.save(fileName);
         BSpline loadedPSpline(fileName);

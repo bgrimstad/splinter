@@ -18,7 +18,7 @@ namespace SPLINTER
 {
 
 
-BSpline doBSplineRegression(const DataTable &samples, std::vector<unsigned int> basisDegrees)
+BSpline buildBSpline(const DataTable &samples, std::vector<unsigned int> basisDegrees)
 {
     // Check data
     if (!samples.isGridComplete())
@@ -35,7 +35,7 @@ BSpline doBSplineRegression(const DataTable &samples, std::vector<unsigned int> 
     return bspline;
 }
 
-BSpline doBSplineRegression(const DataTable &samples, BSplineType type = BSplineType::CUBIC)
+BSpline buildBSpline(const DataTable &samples, BSplineType type = BSplineType::CUBIC)
 {
     // Default is CUBIC
     std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 3);
@@ -50,7 +50,7 @@ BSpline doBSplineRegression(const DataTable &samples, BSplineType type = BSpline
     else if (type == BSplineType::QUARTIC)
         basisDegrees = std::vector<unsigned int>(samples.getNumVariables(), 4);
 
-    return doBSplineRegression(samples, basisDegrees);
+    return buildBSpline(samples, basisDegrees);
 }
 
 DenseMatrix computeControlPoints(const DataTable &samples, const BSpline &bspline)
@@ -61,17 +61,12 @@ DenseMatrix computeControlPoints(const DataTable &samples, const BSpline &bsplin
      * b = sample x-values when calculating knot averages
      * c = control coefficients or knot averages.
      */
-    SparseMatrix A = computeBasisFunctionMatrix(samples, bspline);
+    SparseMatrix A2 = computeBasisFunctionMatrix(samples, bspline);
+    DenseMatrix b2 = controlPointEquationRHS(samples);
 
-    DenseMatrix Bx, By;
-    controlPointEquationRHS(samples, Bx, By);
-
-    // Multiply with transpose to obtain a symmetric matrix
-    SparseMatrix At = A.transpose();
-    SparseMatrix A2 = At*A;
-    DenseMatrix By2 = At*By;
-    By = By2;
-    A = A2;
+    SparseMatrix At = A2.transpose();
+    SparseMatrix A = At*A2; // Multiply with transpose to obtain a symmetric matrix
+    DenseMatrix b = At*b2;
 
     DenseMatrix w;
 
@@ -90,7 +85,7 @@ DenseMatrix computeControlPoints(const DataTable &samples, const BSpline &bsplin
         SparseLU s;
         //bool successfulSolve = (s.solve(A,Bx,Cx) && s.solve(A,By,Cy));
 
-        solveAsDense = !s.solve(A,By,w);
+        solveAsDense = !s.solve(A,b,w);
     }
 
     if (solveAsDense)
@@ -102,14 +97,13 @@ DenseMatrix computeControlPoints(const DataTable &samples, const BSpline &bsplin
         DenseMatrix Ad = A.toDense();
         DenseQR s;
         //bool successfulSolve = (s.solve(Ad,Bx,Cx) && s.solve(Ad,By,Cy));
-        if (!s.solve(Ad,By,w))
+        if (!s.solve(Ad,b,w))
         {
             throw Exception("BSpline::computeControlPoints: Failed to solve for B-spline coefficients.");
         }
     }
 
     return w.transpose();
-    //knotaverages = Cx.transpose();
 }
 
 SparseMatrix computeBasisFunctionMatrix(const DataTable &samples, const BSpline &bspline)
@@ -146,26 +140,15 @@ SparseMatrix computeBasisFunctionMatrix(const DataTable &samples, const BSpline 
     return A;
 }
 
-void controlPointEquationRHS(const DataTable &samples, DenseMatrix &Bx, DenseMatrix &By)
+DenseMatrix controlPointEquationRHS(const DataTable &samples)
 {
-    unsigned int numVariables = samples.getNumVariables();
-    unsigned int numSamples = samples.getNumSamples();
-
-    Bx.resize(numSamples, numVariables);
-    By.resize(numSamples, 1);
+    DenseMatrix B = DenseMatrix::Zero(samples.getNumSamples(), 1);
 
     int i = 0;
     for (auto it = samples.cbegin(); it != samples.cend(); ++it, ++i)
-    {
-        std::vector<double> x = it->getX();
+        B(i,0) = it->getY();
 
-        for (unsigned int j = 0; j < x.size(); ++j)
-        {
-            Bx(i,j) = x.at(j);
-        }
-
-        By(i,0) = it->getY();
-    }
+    return B;
 }
 
 std::vector<std::vector<double> > computeKnotVectorsFromSamples(const DataTable &samples, std::vector<unsigned int> degrees)
@@ -213,6 +196,9 @@ std::vector<std::vector<double> > computeKnotVectorsFromSamples(const DataTable 
  * That is, samples (a,b,c,d,e,f) produces the knot vector (a,a,a,a,c,d,f,f,f,f) for p = 3.
  * For p = 1, (a,b,c,d,e,f) becomes (a,a,b,c,d,e,f,f).
  *
+ * TODO: does not work well when number of knots is << number of samples! For such cases
+ * almost all knots will lie close to the left samples. Try a bucket approach, where the
+ * samples are added to buckets and the knots computed as the average of these.
  */
 std::vector<double> knotVectorMovingAverage(std::vector<double> &vec, unsigned int degree)
 {
@@ -223,8 +209,8 @@ std::vector<double> knotVectorMovingAverage(std::vector<double> &vec, unsigned i
     uniqueX.resize(distance(uniqueX.begin(),it));
 
     // Compute sizes
-    //unsigned int n = uniqueX.size();
-    unsigned int n = (unsigned int)std::min((int)uniqueX.size(), 10); // TODO: testing with max 10 segments (MUST CHECK HOW THE RESULTING KNOT VECTOR LOOKS!)
+    unsigned int n = uniqueX.size();
+    //unsigned int n = (unsigned int)std::min((int)uniqueX.size(), 10); // TODO: testing with max 10 segments
     unsigned int k = degree-1; // knots to remove
     unsigned int w = k + 3; // Window size
 
@@ -262,6 +248,12 @@ std::vector<double> knotVectorMovingAverage(std::vector<double> &vec, unsigned i
     //assert(knots.size() == uniqueX.size() + degree + 1);
 
     return knots;
+}
+
+// TODO: implement
+std::vector<double> knotVectorBuckets(std::vector<double> &vec, unsigned int degree)
+{
+    return knotVectorMovingAverage(vec, degree);
 }
 
 } // namespace SPLINTER

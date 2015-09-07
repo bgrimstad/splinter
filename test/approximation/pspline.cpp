@@ -30,7 +30,7 @@ TEST_CASE("PSpline function" COMMON_TEXT, COMMON_TAGS "[function-value][polynomi
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Approximant*) new BSpline(computePSpline(table));
+                                 return (Approximant*) new BSpline(buildPSpline(table));
                                  //return (Approximant *) new PSpline(table);
                              },
                              300,  // Number of points to sample at
@@ -50,7 +50,7 @@ TEST_CASE("PSpline jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian][polynomial]")
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Approximant*) new BSpline(computePSpline(table));
+                                 return (Approximant*) new BSpline(buildPSpline(table));
                                  //return (Approximant *) new PSpline(table);
                              },
                              300,  // Number of points to sample at
@@ -66,7 +66,7 @@ TEST_CASE("PSpline hessian" COMMON_TEXT, COMMON_TAGS "[hessian][polynomial]")
         checkHessianSymmetry(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Approximant*) new BSpline(computePSpline(table));
+                                 return (Approximant*) new BSpline(buildPSpline(table));
                                  //return (Approximant *) new PSpline(table);
                              },
                              300,   // Number of points to sample at
