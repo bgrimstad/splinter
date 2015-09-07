@@ -110,12 +110,6 @@ size_t Serializer::get_size(const BSplineBasis1D &obj)
            + get_size(obj.targetNumBasisfunctions);
 }
 
-size_t Serializer::get_size(const PSpline &obj)
-{
-    return get_size(*(BSpline *) &obj)
-           + get_size(obj.lambda);
-}
-
 size_t Serializer::get_size(const RadialBasisFunction &obj)
 {
     return get_size(obj.samples)
@@ -172,12 +166,6 @@ void Serializer::_serialize(const BSplineBasis1D &obj)
     _serialize(obj.targetNumBasisfunctions);
 }
 
-void Serializer::_serialize(const PSpline &obj)
-{
-    _serialize(*(BSpline *) &obj);
-    _serialize(obj.lambda);
-}
-
 void Serializer::_serialize(const RadialBasisFunction &obj)
 {
     _serialize(obj.samples);
@@ -232,12 +220,6 @@ void Serializer::deserialize(BSplineBasis1D &obj)
     deserialize(obj.degree);
     deserialize(obj.knots);
     deserialize(obj.targetNumBasisfunctions);
-}
-
-void Serializer::deserialize(PSpline &obj)
-{
-    deserialize(*(BSpline *) &obj);
-    deserialize(obj.lambda);
 }
 
 void Serializer::deserialize(RadialBasisFunction &obj)

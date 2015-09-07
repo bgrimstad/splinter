@@ -42,19 +42,15 @@ bool operator==(const DataSample &lhs, const DataSample &rhs) {
 bool operator==(const BSpline &lhs, const BSpline &rhs)
 {
     return
-            lhs.getNumVariables() == rhs.getNumVariables()
-            && lhs.getNumControlPoints() == rhs.getNumControlPoints()
+            lhs.numVariables == rhs.numVariables
+            && lhs.coefficients == rhs.coefficients
+            && lhs.knotaverages == rhs.knotaverages
+            //&& lhs.basis == rhs.basis // TODO: implement comparison for basis
             && lhs.getNumBasisFunctions() == rhs.getNumBasisFunctions()
             && lhs.getKnotVectors() == rhs.getKnotVectors()
             && lhs.getBasisDegrees() == rhs.getBasisDegrees()
             && lhs.getDomainLowerBound() == rhs.getDomainLowerBound()
             && lhs.getDomainUpperBound() == rhs.getDomainUpperBound();
-}
-
-bool operator==(const PSpline &lhs, const PSpline &rhs)
-{
-    return
-            lhs.getNumVariables() == rhs.getNumVariables();
 }
 
 bool operator==(const RadialBasisFunction &lhs, const RadialBasisFunction &rhs)

@@ -19,8 +19,7 @@ class BSplineBasis1D
 {
 public:
     BSplineBasis1D();
-    BSplineBasis1D(std::vector<double> &x, unsigned int degree);
-    BSplineBasis1D(std::vector<double> &x, unsigned int degree, bool explicitKnots);
+    BSplineBasis1D(std::vector<double> &knots, unsigned int degree);
 
     // Evaluation of basis functions
     SparseVector evaluate(double x) const;
@@ -77,7 +76,6 @@ private:
     bool isKnotVectorRegular() const;
     bool isKnotVectorRegular(const std::vector<double> &vec) const;
     bool isRefinement(const std::vector<double> &refinedKnots) const;
-    std::vector<double> knotVectorMovingAverage(std::vector<double> &vec) const;
 
     // Member variables
     unsigned int degree;

@@ -25,7 +25,6 @@ class DataTable;
 class BSpline;
 class BSplineBasis;
 class BSplineBasis1D;
-class PSpline;
 class RadialBasisFunction;
 class PolynomialRegression;
 
@@ -58,7 +57,6 @@ public:
     void deserialize(BSpline &obj);
     void deserialize(BSplineBasis &obj);
     void deserialize(BSplineBasis1D &obj);
-    void deserialize(PSpline &obj);
     void deserialize(RadialBasisFunction &obj);
     void deserialize(PolynomialRegression &obj);
 
@@ -68,7 +66,7 @@ public:
     // Load fileName into the internal stream
     void loadFromFile(std::string fileName);
 
-    virtual ~Serializer() {};
+    virtual ~Serializer() {}
 
 protected:
     template <class T>
@@ -91,7 +89,6 @@ protected:
     size_t get_size(const BSpline &obj);
     size_t get_size(const BSplineBasis &obj);
     size_t get_size(const BSplineBasis1D &obj);
-    size_t get_size(const PSpline &obj);
     size_t get_size(const RadialBasisFunction &obj);
     size_t get_size(const PolynomialRegression &obj);
 
@@ -115,7 +112,6 @@ protected:
     void _serialize(const BSpline &obj);
     void _serialize(const BSplineBasis &obj);
     void _serialize(const BSplineBasis1D &obj);
-    void _serialize(const PSpline &obj);
     void _serialize(const RadialBasisFunction &obj);
     void _serialize(const PolynomialRegression &obj);
 

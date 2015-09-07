@@ -1,9 +1,11 @@
 ##SPLINTER
-SPLINTER (SPLine INTERpolation) is a library of various multivariate function approximation methods implemented in C++. With SPLINTER you can approximate any function in any number of variables using the following implementations:
+SPLINTER (SPLine INTERpolation) is a library for linear regression implemented in C++. The library can be used for multivariate function approximation, quantitative supervised learning, data smoothing, and much more. Currently, the library contains the following implementations:
 
-1. a speedy implementation of the tensor product [B-spline](http://en.wikipedia.org/wiki/B-spline), 
-2. a simple implementation of [radial basis functions](http://en.wikipedia.org/wiki/Radial_basis_function), including the [thin plate spline](http://en.wikipedia.org/wiki/Thin_plate_spline), and
-3. a simple implementation of [ordinary least squares](http://en.wikipedia.org/wiki/Ordinary_least_squares) for polynomial fitting.
+1. [tensor product B-splines](http://en.wikipedia.org/wiki/B-spline), 
+2. [radial basis functions](http://en.wikipedia.org/wiki/Radial_basis_function), including the [thin plate spline](http://en.wikipedia.org/wiki/Thin_plate_spline), and
+3. [polynomial regression](http://en.wikipedia.org/wiki/Polynomial_regression).
+
+The coefficients in these models are computed using ordinary least squares (OLS). The name of the library, SPLINTER, originates from the tensor product B-spline implementation, which was the first of the methods to be implemented.
 
 The B-spline may approximate any multivariate function sampled on a grid. The user may construct a linear (degree 1), quadratic (degree 2), cubic (degree 3) or higher degree B-spline that interpolates the data. The B-spline is constructed from the samples by solving a linear system. On a modern desktop computer the practical limit on the number of samples is about 100 000 when constructing a B-spline. However, evaluation time is independent of the number of samples due to the local support property of B-splines. That is, only samples neighbouring the evaluation point affect the B-spline value. Evaluation do however scale with the degree and number of variables of the B-spline.
 

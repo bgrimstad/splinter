@@ -41,7 +41,7 @@ TEST_CASE("PolynomialRegression function" COMMON_TEXT, COMMON_TAGS "[function-va
         CHECK_NOTHROW(compareFunctionValue(testFunc,
                                            [degree](const DataTable &table)
                                            {
-                                               return (Approximant *) new PolynomialRegression(table, degree);
+                                                return (Approximant *) new PolynomialRegression(table, degree);
                                            },
                                            300,  // Number of points to sample at
                                            1337, // Number of points to test against
@@ -70,7 +70,7 @@ TEST_CASE("PolynomialRegression jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian]")
         CHECK_NOTHROW(compareJacobianValue(testFunc,
                                            [degree](const DataTable &table)
                                            {
-                                               return (Approximant *) new PolynomialRegression(table, degree);
+                                                return (Approximant *) new PolynomialRegression(table, degree);
                                            },
                                            300,  // Number of points to sample at
                                            1337, // Number of points to test against

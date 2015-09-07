@@ -16,9 +16,8 @@
 #include <datasample.h>
 #include <datatable.h>
 #include <bspline.h>
-#include <radialbasisfunction.h>
 #include <polynomialregression.h>
-#include <pspline.h>
+#include <radialbasisfunction.h>
 
 namespace SPLINTER
 {
@@ -29,9 +28,8 @@ namespace SPLINTER
 bool operator==(const DataTable &lhs, const DataTable &rhs);
 bool operator==(const DataSample &lhs, const DataSample &rhs);
 bool operator==(const BSpline &lhs, const BSpline &rhs);
-bool operator==(const PSpline &lhs, const PSpline &rhs);
-bool operator==(const RadialBasisFunction &lhs, const RadialBasisFunction &rhs);
 bool operator==(const PolynomialRegression &lhs, const PolynomialRegression &rhs);
+bool operator==(const RadialBasisFunction &lhs, const RadialBasisFunction &rhs);
 // Note: overloading operator== for std::vector and DenseVector/DenseMatrix makes Clang unable to find the overload
 // Therefore using separate functions for those types
 bool compareVecDenseVec(const std::vector<double> &vec, const DenseVector &denseVec);
