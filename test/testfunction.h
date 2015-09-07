@@ -22,7 +22,7 @@ public:
     TestFunction(std::function<double (const std::vector<double> &)> f, size_t numVariables,
                  std::string functionString);
     TestFunction(std::function<double (const std::vector<double> &)> f, size_t numVariables,
-                 std::string functionString, double constDegreeVal);
+                 std::string functionString, std::vector<double> &degrees);
 
     virtual ~TestFunction();
 
@@ -37,13 +37,16 @@ public:
     inline std::string getFunctionStr() const { return functionString; }
 
     inline bool isConstDegree() const { return constDegree; }
-    inline double getConstDegree() const { return constDegreeVal; }
+    inline std::vector<double> getConstDegree() const { return constDegreeVal; }
+    std::vector<unsigned int> getConstDegreeInt() const;
+
+    double getMaxDegree() const;
 
 private:
     std::string functionString;
 
     bool constDegree;
-    double constDegreeVal;
+    std::vector<double> constDegreeVal;
 
     std::function<double (const std::vector<double> &)> f;
 };

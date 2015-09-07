@@ -12,6 +12,7 @@
 #include <polynomialregression.h>
 #include <testfunctions.h>
 #include <testfunction.h>
+#include <cmath>
 
 using namespace SPLINTER;
 
@@ -26,7 +27,6 @@ TEST_CASE("PolynomialRegression function" COMMON_TEXT, COMMON_TAGS "[function-va
     double two_eps = 5e-7;
     double inf_eps = 5e-7;
 
-    int degree = 1;
     for (auto testFunc : getPolynomialFunctions())
     {
         if (!testFunc->isConstDegree())
@@ -34,9 +34,9 @@ TEST_CASE("PolynomialRegression function" COMMON_TEXT, COMMON_TAGS "[function-va
             continue;
         }
 
-        degree = (int) testFunc->getConstDegree();
+        auto degree = testFunc->getConstDegreeInt();
 
-        INFO("Degree: " << degree);
+        //INFO("Degree: " << degree);
         INFO(testFunc->getFunctionStr());
         CHECK_NOTHROW(compareFunctionValue(testFunc,
                                            [degree](const DataTable &table)
@@ -56,7 +56,6 @@ TEST_CASE("PolynomialRegression jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian]")
     double two_eps = 5e-6;
     double inf_eps = 5e-6;
 
-    int degree = 1;
     for (auto testFunc : getPolynomialFunctions())
     {
         if (!testFunc->isConstDegree())
@@ -64,9 +63,9 @@ TEST_CASE("PolynomialRegression jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian]")
             continue;
         }
 
-        degree = (int) testFunc->getConstDegree();
+        auto degree = testFunc->getConstDegreeInt();
 
-        INFO("Degree: " << degree);
+        //INFO("Degree: " << degree);
         INFO(testFunc->getFunctionStr());
         CHECK_NOTHROW(compareJacobianValue(testFunc,
                                            [degree](const DataTable &table)
