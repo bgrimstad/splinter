@@ -23,9 +23,9 @@ using namespace SPLINTER;
 
 TEST_CASE("PolynomialRegression function" COMMON_TEXT, COMMON_TAGS "[function-value]")
 {
-    double one_eps = 5e-7;
-    double two_eps = 5e-7;
-    double inf_eps = 5e-7;
+    double one_eps = 6e-7;
+    double two_eps = 6e-7;
+    double inf_eps = 6e-7;
 
     for (auto testFunc : getPolynomialFunctions())
     {
