@@ -16,6 +16,7 @@
 - Fixed BSpline hessian not being symmetric
 - Added evalJacobian implementations for PolynomialRegression and RadialBasisFunctions
 - Added standard C++11 types to Approximant interface
+- Refactored B-spline code. Added build methods for building B-splines and P-splines.
 
 #### Version 1.3
 - Library renamed SPLINTER (from Splinter)

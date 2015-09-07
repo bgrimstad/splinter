@@ -66,6 +66,8 @@ Note that most of the [options](#options-both-platforms) to CMake are the same f
 ####Troubleshooting
 `make: *** [install] Error 1`: You probably need elevated rights to install the library because you are trying to write to a directory you don't have permission to write to. Either change the install paths via the options, or run step #8 again like this: `sudo make install`.
 
+`fatal error: bits/c++config.h: No such file or directory`: If your OS is 64 bits and you try to compile the library as a 32 bits executable with GCC you may get this error. To resolve this you need to install g++-multilib (`sudo apt-get install g++-multilib on Ubuntu`).
+
 ---
 
 ###Compile on Windows (MinGW)
