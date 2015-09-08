@@ -9,8 +9,9 @@ function setup()
     % Change this to the directory where the MatLab interface of SPLINTER
     % is installed.
     %splinter_path = '/home/bjarne/Code/C++/splinter2/splinter/build/splinter-matlab';
-    currentDirectory = pwd;
-    [upperPath, deepestFolder, ~] = fileparts(currentDirectory) ;
+    p = mfilename('fullpath');
+    [upperPath, deepestFolder, ~] = fileparts(p);
+    [upperPath, deepestFolder, ~] = fileparts(upperPath);
     splinter_path = upperPath;
     
     % Read version file. Name of library file depends on the version.
