@@ -7,13 +7,13 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#ifndef SPLINTER_RADIALBASISFUNCTION_H
-#define SPLINTER_RADIALBASISFUNCTION_H
+#ifndef SPLINTER_RBFAPPROXIMANT_H
+#define SPLINTER_RBFAPPROXIMANT_H
 
 #include "definitions.h"
 #include "datatable.h"
 #include "approximant.h"
-#include "radialbasisfunctionterm.h"
+#include "rbfterm.h"
 #include "memory"
 
 namespace SPLINTER
@@ -25,15 +25,15 @@ namespace SPLINTER
  * the solution of a fairly ill-conditioned linear system. This drawback may be
  * alleviated by applying a pre-conditioner to the linear system.
  */
-class SPLINTER_API RadialBasisFunction : public Approximant
+class SPLINTER_API RBFApproximant : public Approximant
 {
 public:
-    RadialBasisFunction(const char *filename);
-    RadialBasisFunction(const std::string filename);
-    RadialBasisFunction(const DataTable &samples, RadialBasisFunctionType type);
-    RadialBasisFunction(const DataTable &samples, RadialBasisFunctionType type, bool normalized);
+    RBFApproximant(const char *filename);
+    RBFApproximant(const std::string filename);
+    RBFApproximant(const DataTable &samples, RBFType type);
+    RBFApproximant(const DataTable &samples, RBFType type, bool normalized);
 
-    virtual RadialBasisFunction* clone() const { return new RadialBasisFunction(*this); }
+    virtual RBFApproximant* clone() const { return new RBFApproximant(*this); }
 
     double eval(DenseVector x) const;
     double eval(std::vector<double> x) const;
@@ -47,15 +47,15 @@ public:
     const std::string getDescription() const override;
 
 private:
-    RadialBasisFunction();
+    RBFApproximant();
 
     DataTable samples;
     bool normalized, precondition;
     unsigned int numSamples;
 
     // Store the type so we can reconstruct the object when deserializing
-    RadialBasisFunctionType type;
-    std::shared_ptr<RadialBasisFunctionTerm> fn;
+    RBFType type;
+    std::shared_ptr<RBFTerm> fn;
 
     DenseMatrix weights;
 
@@ -68,6 +68,7 @@ private:
     void load(const std::string fileName) override;
 
     friend class Serializer;
+    friend bool operator==(const RBFApproximant &lhs, const RBFApproximant &rhs);
 };
 
 /*
@@ -160,4 +161,4 @@ private:
 
 } // namespace SPLINTER
 
-#endif // SPLINTER_RADIALBASISFUNCTION_H
+#endif // SPLINTER_RBFAPPROXIMANT_H

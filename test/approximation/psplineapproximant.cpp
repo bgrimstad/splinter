@@ -9,7 +9,7 @@
 
 #include <Catch.h>
 #include <testingutilities.h>
-#include <pspline.h>
+#include <psplineapproximant.h>
 #include <testfunction.h>
 
 using namespace SPLINTER;
@@ -30,8 +30,7 @@ TEST_CASE("PSpline function" COMMON_TEXT, COMMON_TAGS "[function-value][polynomi
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Approximant*) new BSpline(buildPSpline(table));
-                                 //return (Approximant *) new PSpline(table);
+                                 return (Approximant*) new PSplineApproximant(table);
                              },
                              300,  // Number of points to sample at
                              1337, // Number of points to test against
@@ -45,13 +44,12 @@ TEST_CASE("PSpline jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian][polynomial]")
     {
         double one_eps = 5e-6;
         double two_eps = 5e-6;
-        double inf_eps = 5e-6;
+        double inf_eps = 5e-5;
 
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Approximant*) new BSpline(buildPSpline(table));
-                                 //return (Approximant *) new PSpline(table);
+                                 return (Approximant*) new PSplineApproximant(table);
                              },
                              300,  // Number of points to sample at
                              1337, // Number of points to test against
@@ -66,8 +64,7 @@ TEST_CASE("PSpline hessian" COMMON_TEXT, COMMON_TAGS "[hessian][polynomial]")
         checkHessianSymmetry(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Approximant*) new BSpline(buildPSpline(table));
-                                 //return (Approximant *) new PSpline(table);
+                                 return (Approximant*) new PSplineApproximant(table);
                              },
                              300,   // Number of points to sample at
                              1337); // Number of points to test against

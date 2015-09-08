@@ -7,7 +7,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include <operator_overloads.h>
+#include <operatoroverloads.h>
 #include <testingutilities.h>
 
 namespace SPLINTER
@@ -45,7 +45,7 @@ bool operator==(const BSpline &lhs, const BSpline &rhs)
             lhs.numVariables == rhs.numVariables
             && lhs.coefficients == rhs.coefficients
             && lhs.knotaverages == rhs.knotaverages
-            //&& lhs.basis == rhs.basis // TODO: implement comparison for basis
+            && lhs.basis == rhs.basis
             && lhs.getNumBasisFunctions() == rhs.getNumBasisFunctions()
             && lhs.getKnotVectors() == rhs.getKnotVectors()
             && lhs.getBasisDegrees() == rhs.getBasisDegrees()
@@ -53,13 +53,48 @@ bool operator==(const BSpline &lhs, const BSpline &rhs)
             && lhs.getDomainUpperBound() == rhs.getDomainUpperBound();
 }
 
-bool operator==(const RadialBasisFunction &lhs, const RadialBasisFunction &rhs)
+bool operator==(const BSplineBasis &lhs, const BSplineBasis &rhs)
+{
+    return
+            lhs.numVariables == rhs.numVariables
+            && lhs.bases == rhs.bases;
+}
+
+bool operator==(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs)
+{
+    return
+            lhs.degree == rhs.degree
+            && lhs.knots == rhs.knots
+            && lhs.targetNumBasisfunctions == rhs.targetNumBasisfunctions;
+}
+
+bool operator!=(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs)
+{
+    return !(lhs == rhs);
+}
+
+bool operator==(const BSplineApproximant &lhs, const BSplineApproximant &rhs)
+{
+    return
+            lhs.getNumVariables() == rhs.getNumVariables()
+            && lhs.bspline == rhs.bspline;
+}
+
+bool operator==(const PSplineApproximant &lhs, const PSplineApproximant &rhs)
+{
+    return
+            lhs.getNumVariables() == rhs.getNumVariables()
+            && lhs.bspline == rhs.bspline
+            && lhs.lambda == rhs.lambda;
+}
+
+bool operator==(const RBFApproximant &lhs, const RBFApproximant &rhs)
 {
     return
             lhs.getNumVariables() == rhs.getNumVariables();
 }
 
-bool operator==(const PolynomialRegression &lhs, const PolynomialRegression &rhs)
+bool operator==(const PolynomialApproximant &lhs, const PolynomialApproximant &rhs)
 {
     return
             lhs.getNumVariables() == rhs.getNumVariables();

@@ -9,7 +9,7 @@
 
 #include <Catch.h>
 #include <datatable.h>
-#include <radialbasisfunction.h>
+#include <rbfapproximant.h>
 #include "testingutilities.h"
 
 using namespace SPLINTER;
@@ -26,46 +26,46 @@ TEST_CASE("RadialBasisFunction can be saved and loaded", "[serialization][rbf][r
     const char *fileName = "test.rbf";
 
     SECTION("Gaussian") {
-        RadialBasisFunction rbf(table, RadialBasisFunctionType::GAUSSIAN);
+        RBFApproximant rbf(table, RBFType::GAUSSIAN);
 
         rbf.save(fileName);
-        RadialBasisFunction loadedRBF(fileName);
+        RBFApproximant loadedRBF(fileName);
 
         REQUIRE(rbf == loadedRBF);
     }
 
     SECTION("Inverse multiquadric") {
-        RadialBasisFunction rbf(table, RadialBasisFunctionType::INVERSE_MULTIQUADRIC);
+        RBFApproximant rbf(table, RBFType::INVERSE_MULTIQUADRIC);
 
         rbf.save(fileName);
-        RadialBasisFunction loadedRBF(fileName);
+        RBFApproximant loadedRBF(fileName);
 
         REQUIRE(rbf == loadedRBF);
     }
 
     SECTION("Inverse quadric") {
-        RadialBasisFunction rbf(table, RadialBasisFunctionType::INVERSE_QUADRIC);
+        RBFApproximant rbf(table, RBFType::INVERSE_QUADRIC);
 
         rbf.save(fileName);
-        RadialBasisFunction loadedRBF(fileName);
+        RBFApproximant loadedRBF(fileName);
 
         REQUIRE(rbf == loadedRBF);
     }
 
     SECTION("Multiquadric") {
-        RadialBasisFunction rbf(table, RadialBasisFunctionType::MULTIQUADRIC);
+        RBFApproximant rbf(table, RBFType::MULTIQUADRIC);
 
         rbf.save(fileName);
-        RadialBasisFunction loadedRBF(fileName);
+        RBFApproximant loadedRBF(fileName);
 
         REQUIRE(rbf == loadedRBF);
     }
 
     SECTION("Thin plate spline") {
-        RadialBasisFunction rbf(table, RadialBasisFunctionType::THIN_PLATE_SPLINE);
+        RBFApproximant rbf(table, RBFType::THIN_PLATE_SPLINE);
 
         rbf.save(fileName);
-        RadialBasisFunction loadedRBF(fileName);
+        RBFApproximant loadedRBF(fileName);
 
         REQUIRE(rbf == loadedRBF);
     }

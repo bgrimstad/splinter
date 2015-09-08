@@ -7,7 +7,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include "bsplineregression.h"
+#include "bsplineapproximant.h"
 #include "mykroneckerproduct.h"
 #include "unsupported/Eigen/KroneckerProduct"
 #include "linearsolvers.h"
@@ -17,43 +17,72 @@
 namespace SPLINTER
 {
 
+BSplineApproximant::BSplineApproximant(unsigned int numVariables)
+    : Approximant(numVariables),
+      bspline(numVariables)
+{
+}
 
-BSpline buildBSpline(const DataTable &samples, std::vector<unsigned int> basisDegrees)
+BSplineApproximant::BSplineApproximant(const DataTable &samples, std::vector<unsigned int> basisDegrees)
+    : Approximant(samples.getNumVariables()),
+      bspline(buildBSpline(samples, basisDegrees))
+{
+    // Compute coefficients
+    auto coefficients = computeCoefficients(samples);
+    bspline.setCoefficients(coefficients);
+}
+
+// TODO: this may build the B-spline twice!
+BSplineApproximant::BSplineApproximant(const DataTable &samples, BSplineType type = BSplineType::CUBIC)
+    : BSplineApproximant(samples, getBSplineDegrees(samples.getNumVariables(), type))
+{
+}
+
+/*
+ * Construct from saved data
+ */
+BSplineApproximant::BSplineApproximant(const char *fileName)
+    : BSplineApproximant(std::string(fileName))
+{
+}
+
+BSplineApproximant::BSplineApproximant(const std::string fileName)
+    : Approximant(1),
+      bspline(1)
+{
+    load(fileName);
+}
+
+/*
+ * Build B-spline
+ */
+BSpline BSplineApproximant::buildBSpline(const DataTable &samples, std::vector<unsigned int> basisDegrees) const
 {
     // Check data
     if (!samples.isGridComplete())
-        throw Exception("BSpline::BSpline: Cannot create B-spline from irregular (incomplete) grid.");
+        throw Exception("BSplineApproximant::buildBSpline: Cannot create B-spline from irregular (incomplete) grid.");
 
     auto knotVectors = computeKnotVectorsFromSamples(samples, basisDegrees);
 
-    BSpline bspline(knotVectors, basisDegrees);
-
-    auto coefficients = computeControlPoints(samples, bspline);
-
-    bspline.setCoefficients(coefficients);
-
-    return bspline;
+    return BSpline(knotVectors, basisDegrees);
 }
 
-BSpline buildBSpline(const DataTable &samples, BSplineType type = BSplineType::CUBIC)
+double BSplineApproximant::eval(DenseVector x) const
 {
-    // Default is CUBIC
-    std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 3);
-
-    // Set multivariate basis
-    if (type == BSplineType::LINEAR)
-        basisDegrees = std::vector<unsigned int>(samples.getNumVariables(), 1);
-    else if (type == BSplineType::QUADRATIC)
-        basisDegrees = std::vector<unsigned int>(samples.getNumVariables(), 2);
-    else if (type == BSplineType::CUBIC)
-        basisDegrees = std::vector<unsigned int>(samples.getNumVariables(), 3);
-    else if (type == BSplineType::QUARTIC)
-        basisDegrees = std::vector<unsigned int>(samples.getNumVariables(), 4);
-
-    return buildBSpline(samples, basisDegrees);
+    return bspline.eval(x);
 }
 
-DenseMatrix computeControlPoints(const DataTable &samples, const BSpline &bspline)
+DenseMatrix BSplineApproximant::evalJacobian(DenseVector x) const
+{
+    return bspline.evalJacobian(x);
+}
+
+DenseMatrix BSplineApproximant::evalHessian(DenseVector x) const
+{
+    return bspline.evalHessian(x);
+}
+
+DenseMatrix BSplineApproximant::computeCoefficients(const DataTable &samples) const
 {
     /* Setup and solve equations Ac = b,
      * A = basis functions at sample x-values,
@@ -61,7 +90,7 @@ DenseMatrix computeControlPoints(const DataTable &samples, const BSpline &bsplin
      * b = sample x-values when calculating knot averages
      * c = control coefficients or knot averages.
      */
-    SparseMatrix A2 = computeBasisFunctionMatrix(samples, bspline);
+    SparseMatrix A2 = computeBasisFunctionMatrix(samples);
     DenseMatrix b2 = controlPointEquationRHS(samples);
 
     SparseMatrix At = A2.transpose();
@@ -106,7 +135,7 @@ DenseMatrix computeControlPoints(const DataTable &samples, const BSpline &bsplin
     return w.transpose();
 }
 
-SparseMatrix computeBasisFunctionMatrix(const DataTable &samples, const BSpline &bspline)
+SparseMatrix BSplineApproximant::computeBasisFunctionMatrix(const DataTable &samples) const
 {
     unsigned int numVariables = samples.getNumVariables();
     unsigned int numSamples = samples.getNumSamples();
@@ -140,7 +169,7 @@ SparseMatrix computeBasisFunctionMatrix(const DataTable &samples, const BSpline 
     return A;
 }
 
-DenseMatrix controlPointEquationRHS(const DataTable &samples)
+DenseMatrix BSplineApproximant::controlPointEquationRHS(const DataTable &samples) const
 {
     DenseMatrix B = DenseMatrix::Zero(samples.getNumSamples(), 1);
 
@@ -151,7 +180,7 @@ DenseMatrix controlPointEquationRHS(const DataTable &samples)
     return B;
 }
 
-std::vector<std::vector<double> > computeKnotVectorsFromSamples(const DataTable &samples, std::vector<unsigned int> degrees)
+std::vector<std::vector<double> > BSplineApproximant::computeKnotVectorsFromSamples(const DataTable &samples, std::vector<unsigned int> degrees) const
 {
     if (samples.getNumVariables() != degrees.size())
         throw Exception("BSpline::computeKnotVectorsFromSamples: Inconsistent sizes on input vectors.");
@@ -163,12 +192,17 @@ std::vector<std::vector<double> > computeKnotVectorsFromSamples(const DataTable 
     for (unsigned int i = 0; i < samples.getNumVariables(); ++i)
     {
         // Using moving average filter to compute knot vectors
-        auto knotVec = knotVectorMovingAverage(grid.at(i), degrees.at(i));
+        auto knotVec = computeKnotVector(grid.at(i), degrees.at(i));
 
         knotVectors.push_back(knotVec);
     }
 
     return knotVectors;
+}
+
+std::vector<double> BSplineApproximant::computeKnotVector(const std::vector<double> &values, unsigned int degree) const
+{
+    return knotVectorMovingAverage(values, degree);
 }
 
 /*
@@ -200,17 +234,16 @@ std::vector<std::vector<double> > computeKnotVectorsFromSamples(const DataTable 
  * almost all knots will lie close to the left samples. Try a bucket approach, where the
  * samples are added to buckets and the knots computed as the average of these.
  */
-std::vector<double> knotVectorMovingAverage(std::vector<double> &vec, unsigned int degree)
+std::vector<double> BSplineApproximant::knotVectorMovingAverage(const std::vector<double> &values, unsigned int degree) const
 {
     // Sort and remove duplicates
-    std::vector<double> uniqueX(vec);
+    std::vector<double> uniqueX(values);
     std::sort(uniqueX.begin(), uniqueX.end());
     std::vector<double>::iterator it = unique_copy(uniqueX.begin(), uniqueX.end(), uniqueX.begin());
     uniqueX.resize(distance(uniqueX.begin(),it));
 
     // Compute sizes
     unsigned int n = uniqueX.size();
-    //unsigned int n = (unsigned int)std::min((int)uniqueX.size(), 10); // TODO: testing with max 10 segments
     unsigned int k = degree-1; // knots to remove
     unsigned int w = k + 3; // Window size
 
@@ -251,9 +284,86 @@ std::vector<double> knotVectorMovingAverage(std::vector<double> &vec, unsigned i
 }
 
 // TODO: implement
-std::vector<double> knotVectorBuckets(std::vector<double> &vec, unsigned int degree)
+std::vector<double> BSplineApproximant::knotVectorBuckets(const std::vector<double> &values, unsigned int degree) const
 {
-    return knotVectorMovingAverage(vec, degree);
+    // Sort and remove duplicates
+    std::vector<double> uniqueX(values);
+    std::sort(uniqueX.begin(), uniqueX.end());
+    std::vector<double>::iterator it = unique_copy(uniqueX.begin(), uniqueX.end(), uniqueX.begin());
+    uniqueX.resize(distance(uniqueX.begin(),it));
+
+    // Compute sizes
+    unsigned int n = uniqueX.size();
+    unsigned int k = degree-1; // knots to remove
+    unsigned int nk = n-k-2; // Interior knots
+    unsigned int w = k + 3; // Window size
+
+    // Limit number of knots
+    if (nk > 10)
+    {
+        nk = 10;
+
+        unsigned int w2 = std::floor(n/nk);
+
+        w = std::max(w, w2);
+    }
+
+    // The minimum number of samples from which a free knot vector can be created
+    if (n < degree+1)
+    {
+        std::ostringstream e;
+        e << "knotVectorMovingAverage: Only " << n
+          << " unique interpolation points are given. A minimum of degree+1 = " << degree+1
+          << " unique points are required to build a B-spline basis of degree " << degree << ".";
+        throw Exception(e.str());
+    }
+
+    std::vector<double> knots(nk, 0);
+
+    // Compute (n-k-2) interior knots using moving average
+    for (unsigned int i = 0; i < nk; ++i)
+    {
+        double ma = 0;
+        for (unsigned int j = 0; j < w; ++j)
+            ma += uniqueX.at(i*w+j);
+
+        knots.at(i) = ma/w;
+    }
+
+    // Repeat first knot p + 1 times (for interpolation of start point)
+    for (unsigned int i = 0; i < degree + 1; ++i)
+        knots.insert(knots.begin(), uniqueX.front());
+
+    // Repeat last knot p + 1 times (for interpolation of end point)
+    for (unsigned int i = 0; i < degree + 1; ++i)
+        knots.insert(knots.end(), uniqueX.back());
+
+    // Number of knots in a (p+1)-regular knot vector
+    //assert(knots.size() == uniqueX.size() + degree + 1);
+
+    return knots;
+}
+
+void BSplineApproximant::save(const std::string fileName) const
+{
+    Serializer s;
+    s.serialize(*this);
+    s.saveToFile(fileName);
+}
+
+void BSplineApproximant::load(const std::string fileName)
+{
+    Serializer s(fileName);
+    s.deserialize(*this);
+}
+
+const std::string BSplineApproximant::getDescription() const
+{
+    std::string description("BSplineApproximant");
+
+    description.append(bspline.getDescription());
+
+    return description;
 }
 
 } // namespace SPLINTER

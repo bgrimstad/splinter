@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#ifndef SPLINTER_POLYNOMIALREGRESSION_H
-#define SPLINTER_POLYNOMIALREGRESSION_H
+#ifndef SPLINTER_POLYNOMIALAPPROXIMANT_H
+#define SPLINTER_POLYNOMIALAPPROXIMANT_H
 
 #include "approximant.h"
 #include "datatable.h"
@@ -16,15 +16,15 @@
 namespace SPLINTER
 {
 
-class SPLINTER_API PolynomialRegression : public Approximant
+class SPLINTER_API PolynomialApproximant : public Approximant
 {
 public:
-    PolynomialRegression(const char *fileName);
-    PolynomialRegression(const std::string fileName);
-    PolynomialRegression(const DataTable &samples, unsigned int degree);
-    PolynomialRegression(const DataTable &samples, std::vector<unsigned int> degrees);
+    PolynomialApproximant(const char *fileName);
+    PolynomialApproximant(const std::string fileName);
+    PolynomialApproximant(const DataTable &samples, unsigned int degree);
+    PolynomialApproximant(const DataTable &samples, std::vector<unsigned int> degrees);
 
-    virtual PolynomialRegression * clone() const { return new PolynomialRegression(*this); }
+    virtual PolynomialApproximant * clone() const { return new PolynomialApproximant(*this); }
 
     // Evaluation
     double eval(DenseVector x) const override;
@@ -39,7 +39,7 @@ public:
     const std::string getDescription() const override;
 
 private:
-    PolynomialRegression();
+    PolynomialApproximant();
 
     unsigned int numCoefficients;
     std::vector<unsigned int> degrees;
@@ -58,4 +58,4 @@ private:
 
 } // namespace SPLINTER
 
-#endif // SPLINTER_POLYNOMIALREGRESSION_H
+#endif // SPLINTER_POLYNOMIALAPPROXIMANT_H

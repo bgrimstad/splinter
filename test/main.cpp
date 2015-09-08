@@ -36,10 +36,10 @@ int main(int argc, char *argv[]) {
 //#include <cstdio>
 //
 //#include "bspline.h"
-//#include "pspline.h"
-//#include "radialbasisfunction.h"
+//#include "psplineapproximant.h"
+//#include "rbfapproximant.h"
 //#include "testingutilities.h"
-//#include "polynomialregression.h"
+//#include "polynomialapproximant.h"
 //
 //using std::cout;
 //using std::endl;
@@ -104,7 +104,7 @@ int main(int argc, char *argv[]) {
 //    PSpline pspline(samples, 0.03);
 //
 //    // Build radial basis function spline that interpolate the samples
-//    RadialBasisFunction rbfspline(samples, RadialBasisFunctionType::THIN_PLATE_SPLINE);
+//    RadialBasisFunction rbfspline(samples, RBFType::THIN_PLATE_SPLINE);
 //
 //    // Evaluate the splines at x = (0,0)
 //    x(0) = 0; x(1) = 0;
@@ -286,8 +286,8 @@ int main(int argc, char *argv[]) {
 ////    BSpline spline(samples, BSplineType::LINEAR);
 ////    BSpline spline(samples, BSplineType::QUADRATIC);
 //    BSpline spline(samples, BSplineType::CUBIC);
-////    RBFSpline spline(samples, RadialBasisFunctionType::THIN_PLATE_SPLINE);
-////    RBFSpline spline(samples, RadialBasisFunctionType::MULTIQUADRIC);
+////    RBFSpline spline(samples, RBFType::THIN_PLATE_SPLINE);
+////    RBFSpline spline(samples, RBFType::MULTIQUADRIC);
 //
 //    auto x0_vec_2 = linspace(x0_lb, x0_ub, 200);
 //    auto x1_vec_2 = linspace(x1_lb, x1_ub, 200);
@@ -522,7 +522,7 @@ int main(int argc, char *argv[]) {
 //    for (auto xi : x)
 //        samples.addSample(xi,std::sin(xi));
 //
-//    PolynomialRegression polyfit(samples, 3);
+//    PolynomialApproximant polyfit(samples, 3);
 //    std::cout << polyfit.getCoefficients() << std::endl;
 //
 //    /*

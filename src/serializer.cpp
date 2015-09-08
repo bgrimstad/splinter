@@ -15,9 +15,10 @@
 #include <bspline.h>
 #include <bsplinebasis.h>
 #include <bsplinebasis1d.h>
-#include <pspline.h>
-#include <radialbasisfunction.h>
-#include <polynomialregression.h>
+#include <bsplineapproximant.h>
+#include <psplineapproximant.h>
+#include <rbfapproximant.h>
+#include <polynomialapproximant.h>
 
 namespace SPLINTER {
 
@@ -110,7 +111,20 @@ size_t Serializer::get_size(const BSplineBasis1D &obj)
            + get_size(obj.targetNumBasisfunctions);
 }
 
-size_t Serializer::get_size(const RadialBasisFunction &obj)
+size_t Serializer::get_size(const BSplineApproximant &obj)
+{
+    return get_size(obj.numVariables)
+           + get_size(obj.bspline);
+}
+
+size_t Serializer::get_size(const PSplineApproximant &obj)
+{
+    return get_size(obj.numVariables)
+           + get_size(obj.bspline)
+           + get_size(obj.lambda);
+}
+
+size_t Serializer::get_size(const RBFApproximant &obj)
 {
     return get_size(obj.samples)
            + get_size(obj.normalized)
@@ -121,7 +135,7 @@ size_t Serializer::get_size(const RadialBasisFunction &obj)
            + get_size(obj.weights);
 }
 
-size_t Serializer::get_size(const PolynomialRegression &obj)
+size_t Serializer::get_size(const PolynomialApproximant &obj)
 {
     return get_size(obj.numVariables)
            + get_size(obj.numCoefficients)
@@ -166,7 +180,20 @@ void Serializer::_serialize(const BSplineBasis1D &obj)
     _serialize(obj.targetNumBasisfunctions);
 }
 
-void Serializer::_serialize(const RadialBasisFunction &obj)
+void Serializer::_serialize(const BSplineApproximant &obj)
+{
+    _serialize(obj.numVariables);
+    _serialize(obj.bspline);
+}
+
+void Serializer::_serialize(const PSplineApproximant &obj)
+{
+    _serialize(obj.numVariables);
+    _serialize(obj.bspline);
+    _serialize(obj.lambda);
+}
+
+void Serializer::_serialize(const RBFApproximant &obj)
 {
     _serialize(obj.samples);
     _serialize(obj.normalized);
@@ -177,7 +204,7 @@ void Serializer::_serialize(const RadialBasisFunction &obj)
     _serialize(obj.weights);
 }
 
-void Serializer::_serialize(const PolynomialRegression &obj)
+void Serializer::_serialize(const PolynomialApproximant &obj)
 {
     _serialize(obj.numVariables);
     _serialize(obj.numCoefficients);
@@ -222,7 +249,20 @@ void Serializer::deserialize(BSplineBasis1D &obj)
     deserialize(obj.targetNumBasisfunctions);
 }
 
-void Serializer::deserialize(RadialBasisFunction &obj)
+void Serializer::deserialize(BSplineApproximant &obj)
+{
+    deserialize(obj.numVariables);
+    deserialize(obj.bspline);
+}
+
+void Serializer::deserialize(PSplineApproximant &obj)
+{
+    deserialize(obj.numVariables);
+    deserialize(obj.bspline);
+    deserialize(obj.lambda);
+}
+
+void Serializer::deserialize(RBFApproximant &obj)
 {
     deserialize(obj.samples);
     deserialize(obj.normalized);
@@ -230,34 +270,34 @@ void Serializer::deserialize(RadialBasisFunction &obj)
     deserialize(obj.numVariables);
     deserialize(obj.numSamples);
     deserialize(obj.type);
-    if (obj.type == RadialBasisFunctionType::THIN_PLATE_SPLINE)
+    if (obj.type == RBFType::THIN_PLATE_SPLINE)
     {
-        obj.fn = std::shared_ptr<RadialBasisFunctionTerm>(new ThinPlateSpline());
+        obj.fn = std::shared_ptr<RBFTerm>(new ThinPlateSpline());
     }
-    else if (obj.type == RadialBasisFunctionType::MULTIQUADRIC)
+    else if (obj.type == RBFType::MULTIQUADRIC)
     {
-        obj.fn = std::shared_ptr<RadialBasisFunctionTerm>(new Multiquadric());
+        obj.fn = std::shared_ptr<RBFTerm>(new Multiquadric());
     }
-    else if (obj.type == RadialBasisFunctionType::INVERSE_QUADRIC)
+    else if (obj.type == RBFType::INVERSE_QUADRIC)
     {
-        obj.fn = std::shared_ptr<RadialBasisFunctionTerm>(new InverseQuadric());
+        obj.fn = std::shared_ptr<RBFTerm>(new InverseQuadric());
     }
-    else if (obj.type == RadialBasisFunctionType::INVERSE_MULTIQUADRIC)
+    else if (obj.type == RBFType::INVERSE_MULTIQUADRIC)
     {
-        obj.fn = std::shared_ptr<RadialBasisFunctionTerm>(new InverseMultiquadric());
+        obj.fn = std::shared_ptr<RBFTerm>(new InverseMultiquadric());
     }
-    else if (obj.type == RadialBasisFunctionType::GAUSSIAN)
+    else if (obj.type == RBFType::GAUSSIAN)
     {
-        obj.fn = std::shared_ptr<RadialBasisFunctionTerm>(new Gaussian());
+        obj.fn = std::shared_ptr<RBFTerm>(new Gaussian());
     }
     else
     {
-        obj.fn = std::shared_ptr<RadialBasisFunctionTerm>(new ThinPlateSpline());
+        obj.fn = std::shared_ptr<RBFTerm>(new ThinPlateSpline());
     }
     deserialize(obj.weights);
 }
 
-void Serializer::deserialize(PolynomialRegression &obj)
+void Serializer::deserialize(PolynomialApproximant &obj)
 {
     deserialize(obj.numVariables);
     deserialize(obj.numCoefficients);

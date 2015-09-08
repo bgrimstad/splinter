@@ -10,10 +10,10 @@
 #include "matlab.h"
 #include <datatable.h>
 #include <bspline.h>
-#include <bsplineregression.h>
-#include <pspline.h>
-#include <radialbasisfunction.h>
-#include <polynomialregression.h>
+#include <bsplineapproximant.h>
+#include <psplineapproximant.h>
+#include <rbfapproximant.h>
+#include <polynomialapproximant.h>
 #include "definitions.h"
 #include <set>
 
@@ -209,7 +209,7 @@ obj_ptr bspline_init(obj_ptr datatable_ptr, int degree)
             }
         }
 
-        bspline = (obj_ptr) new BSpline(buildBSpline(*table, bsplineType));
+        bspline = (obj_ptr) new BSplineApproximant(*table, bsplineType);
         objects.insert(bspline);
     }
 
@@ -233,7 +233,7 @@ obj_ptr pspline_init(obj_ptr datatable_ptr, double lambda)
     auto table = get_datatable(datatable_ptr);
     if (table != nullptr)
     {
-        pspline = (obj_ptr) new BSpline(buildPSpline(*table, lambda));
+        pspline = (obj_ptr) new PSplineApproximant(*table, lambda);
         objects.insert(pspline);
     }
 
@@ -257,32 +257,32 @@ obj_ptr rbf_init(obj_ptr datatable_ptr, int type_index, int normalized)
     auto table = get_datatable(datatable_ptr);
     if (table != nullptr)
     {
-        RadialBasisFunctionType type;
+        RBFType type;
         switch (type_index)
         {
             case 1:
-                type = RadialBasisFunctionType::THIN_PLATE_SPLINE;
+                type = RBFType::THIN_PLATE_SPLINE;
                 break;
             case 2:
-                type = RadialBasisFunctionType::MULTIQUADRIC;
+                type = RBFType::MULTIQUADRIC;
                 break;
             case 3:
-                type = RadialBasisFunctionType::INVERSE_QUADRIC;
+                type = RBFType::INVERSE_QUADRIC;
                 break;
             case 4:
-                type = RadialBasisFunctionType::INVERSE_MULTIQUADRIC;
+                type = RBFType::INVERSE_MULTIQUADRIC;
                 break;
             case 5:
-                type = RadialBasisFunctionType::GAUSSIAN;
+                type = RBFType::GAUSSIAN;
                 break;
             default:
-                type = RadialBasisFunctionType::THIN_PLATE_SPLINE;
+                type = RBFType::THIN_PLATE_SPLINE;
                 break;
         }
 
         bool norm = normalized != 0;
 
-        rbf = (obj_ptr) new RadialBasisFunction(*table, type, norm);
+        rbf = (obj_ptr) new RBFApproximant(*table, type, norm);
         objects.insert(rbf);
     }
 
@@ -291,14 +291,14 @@ obj_ptr rbf_init(obj_ptr datatable_ptr, int type_index, int normalized)
 
 obj_ptr rbf_load_init(const char *filename)
 {
-    obj_ptr rbf = (obj_ptr) new RadialBasisFunction(filename);
+    obj_ptr rbf = (obj_ptr) new RBFApproximant(filename);
 
     objects.insert(rbf);
 
     return rbf;
 }
 
-/* PolynomialRegression constructor */
+/* PolynomialApproximant constructor */
 obj_ptr polynomial_regression_init(obj_ptr datatable_ptr, int *degrees, int degrees_dim)
 {
     obj_ptr polyfit = nullptr;
@@ -312,7 +312,7 @@ obj_ptr polynomial_regression_init(obj_ptr datatable_ptr, int *degrees, int degr
             degreeVec.at(i) = (unsigned int) degrees[i];
         }
 
-        polyfit = (obj_ptr) new PolynomialRegression(*table, degreeVec);
+        polyfit = (obj_ptr) new PolynomialApproximant(*table, degreeVec);
         objects.insert(polyfit);
     }
 
@@ -321,7 +321,7 @@ obj_ptr polynomial_regression_init(obj_ptr datatable_ptr, int *degrees, int degr
 
 obj_ptr polynomial_regression_load_init(const char *filename)
 {
-    obj_ptr polyfit = (obj_ptr) new PolynomialRegression(filename);
+    obj_ptr polyfit = (obj_ptr) new PolynomialApproximant(filename);
 
     objects.insert(polyfit);
 

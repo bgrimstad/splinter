@@ -48,8 +48,9 @@ void setupTestFunctions() {
     two_degrees = {4,1};
     auto f_2_4 = MAKE_CONSTDEGREE_TESTFUNCTION(4.5*x.at(0)*x.at(0)*x.at(0)*x.at(0) - x.at(0)*x.at(0)*x.at(0) + 3*x.at(0)*x.at(0)*x.at(1), 2, "4.5*x^4 - x^3 + 3*x^2*y", two_degrees);
     two_degrees = {3,2};
-    auto f_2_5 = MAKE_CONSTDEGREE_TESTFUNCTION(-57*x.at(1)*x.at(1)*x.at(0)*x.at(0)*x.at(0) - 0.1*x.at(0)*x.at(0)*x.at(0)*x.at(1)*x.at(1) + 1.1*x.at(1)*x.at(0)*x.at(0) + x.at(1) - 1e6, 2, "-57*x^3*y^2 - 0.1*x^3*y^2 + 1.1*x^2*y + y - 1e6", two_degrees);
+    auto f_2_5 = MAKE_CONSTDEGREE_TESTFUNCTION(-57*x.at(1)*x.at(1)*x.at(0)*x.at(0)*x.at(0) - 0.1*x.at(0)*x.at(0)*x.at(0)*x.at(1)*x.at(1) + 1.1*x.at(1)*x.at(0)*x.at(0) + x.at(1) - 1e5, 2, "-57*x^3*y^2 - 0.1*x^3*y^2 + 1.1*x^2*y + y - 1e5", two_degrees);
     two_degrees = {6,4};
+
     // Six-hump camel back function
     auto f_2_6 = MAKE_CONSTDEGREE_TESTFUNCTION((4 - 2.1*x.at(0)*x.at(0) + (1/3.)*x.at(0)*x.at(0)*x.at(0)*x.at(0))*x.at(0)*x.at(0) + x.at(0)*x.at(1) + (-4 + 4*x.at(1)*x.at(1))*x.at(1)*x.at(1), 2, "(4 - 2.1*x^2 + 1/3*x^4) * x^2 + x*y + (-4 + 4*y^2)*y^2", two_degrees);
 
@@ -61,7 +62,7 @@ void setupTestFunctions() {
     three_degrees = {1,1,1};
     auto f_3_1 = MAKE_CONSTDEGREE_TESTFUNCTION(x.at(0)+x.at(1)-x.at(2)-1, 3, "x + y - z - 1", three_degrees);
 
-    /* The next two functions causes a lot of trouble for some of the Approximants, especially RBF and PolynomialRegression
+    /* The next two functions causes a lot of trouble for some of the Approximants, especially RBF and PolynomialApproximant
      Main problem is probably that it is a three-dimensional function, so the number of grid points per dimension
      becomes small.
      */

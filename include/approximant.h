@@ -23,11 +23,14 @@ namespace SPLINTER
  */
 class SPLINTER_API Approximant : public Function
 {
-public:
+protected:
     Approximant(unsigned int numVariables)
         : Function(numVariables) {}
 
+public:
     virtual ~Approximant() {}
+
+    //virtual DenseVector computeCoefficients(DataTable data);
 
     /**
      * Serialize and save approximant to fileName
@@ -58,6 +61,9 @@ public:
      * Will typically include name of the class and degree
      */
     virtual const std::string getDescription() const = 0;
+
+private:
+    Approximant();
 };
 
 } // namespace SPLINTER

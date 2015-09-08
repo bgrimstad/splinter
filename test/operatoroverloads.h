@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#ifndef SPLINTER_OPERATOR_OVERLOADS_H
-#define SPLINTER_OPERATOR_OVERLOADS_H
+#ifndef SPLINTER_OPERATOROVERLOADS_H
+#define SPLINTER_OPERATOROVERLOADS_H
 
 #include <definitions.h>
 #include <vector>
@@ -16,8 +16,10 @@
 #include <datasample.h>
 #include <datatable.h>
 #include <bspline.h>
-#include <polynomialregression.h>
-#include <radialbasisfunction.h>
+#include <bsplineapproximant.h>
+#include <psplineapproximant.h>
+#include <polynomialapproximant.h>
+#include <rbfapproximant.h>
 
 namespace SPLINTER
 {
@@ -28,8 +30,14 @@ namespace SPLINTER
 bool operator==(const DataTable &lhs, const DataTable &rhs);
 bool operator==(const DataSample &lhs, const DataSample &rhs);
 bool operator==(const BSpline &lhs, const BSpline &rhs);
-bool operator==(const PolynomialRegression &lhs, const PolynomialRegression &rhs);
-bool operator==(const RadialBasisFunction &lhs, const RadialBasisFunction &rhs);
+bool operator==(const BSplineBasis &lhs, const BSplineBasis &rhs);
+bool operator==(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs);
+bool operator!=(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs);
+bool operator==(const BSplineApproximant &lhs, const BSplineApproximant &rhs);
+bool operator==(const PSplineApproximant &lhs, const PSplineApproximant &rhs);
+bool operator==(const PolynomialApproximant &lhs, const PolynomialApproximant &rhs);
+bool operator==(const RBFApproximant &lhs, const RBFApproximant &rhs);
+
 // Note: overloading operator== for std::vector and DenseVector/DenseMatrix makes Clang unable to find the overload
 // Therefore using separate functions for those types
 bool compareVecDenseVec(const std::vector<double> &vec, const DenseVector &denseVec);
@@ -93,4 +101,4 @@ std::ostream &operator<<(std::ostream &out, const std::multiset<T> &obj);
 
 } // namespace SPLINTER
 
-#endif // SPLINTER_OPERATOR_OVERLOADS_H
+#endif // SPLINTER_OPERATOROVERLOADS_H

@@ -83,6 +83,8 @@ private:
     unsigned int targetNumBasisfunctions;
 
     friend class Serializer;
+    friend bool operator==(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs);
+    friend bool operator!=(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs);
 };
 
 } // namespace SPLINTER

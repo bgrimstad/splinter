@@ -135,7 +135,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/Catch)
 # These are the sources we need for compilation of the library
 set(SRC_LIST
     include/approximant.h
-    include/bsplineregression.h
+    include/bsplineapproximant.h
     include/bspline.h
     include/bsplinebasis.h
     include/bsplinebasis1d.h
@@ -145,13 +145,13 @@ set(SRC_LIST
     include/definitions.h
     include/linearsolvers.h
     include/mykroneckerproduct.h
-    include/polynomialregression.h
-    include/pspline.h
-    include/radialbasisfunction.h
-    include/radialbasisfunctionterm.h
+    include/polynomialapproximant.h
+    include/psplineapproximant.h
+    include/rbfapproximant.h
+    include/rbfterm.h
     include/serializer.h
     include/utilities.h
-    src/bsplineregression.cpp
+    src/bsplineapproximant.cpp
     src/bspline.cpp
     src/bsplinebasis.cpp
     src/bsplinebasis1d.cpp
@@ -159,9 +159,9 @@ set(SRC_LIST
     src/datatable.cpp
     src/function.cpp
     src/mykroneckerproduct.cpp
-    src/polynomialregression.cpp
-    src/pspline.cpp
-    src/radialbasisfunction.cpp
+    src/polynomialapproximant.cpp
+    src/psplineapproximant.cpp
+    src/rbfapproximant.cpp
     src/serializer.cpp
     src/utilities.cpp
 )
@@ -169,20 +169,20 @@ set(MATLAB_SRC_LIST ${SRC_LIST} include/matlab.h src/matlab.cpp)
 set(TEST_SRC_LIST
     ${SRC_LIST}
     test/main.cpp
-    test/approximation/bspline.cpp
-    test/approximation/pspline.cpp
-    test/approximation/radialbasisfunction.cpp
-    test/approximation/polynomialregression.cpp
+    test/approximation/bsplineapproximant.cpp
+    test/approximation/psplineapproximant.cpp
+    test/approximation/rbfapproximant.cpp
+    test/approximation/polynomialapproximant.cpp
     test/general/datatable.cpp
     test/general/utilities.cpp
     test/serialization/datatable.cpp
-    test/serialization/bspline.cpp
-    test/serialization/pspline.cpp
-    test/serialization/radialbasisfunction.cpp
-    test/serialization/polynomialregression.cpp
+    test/serialization/bsplineapproximant.cpp
+    test/serialization/psplineapproximant.cpp
+    test/serialization/rbfapproximant.cpp
+    test/serialization/polynomialapproximant.cpp
 
-    test/operator_overloads.h
-    test/operator_overloads.cpp
+    test/operatoroverloads.h
+    test/operatoroverloads.cpp
     test/testfunction.h
     test/testfunction.cpp
     test/testfunctions.h
