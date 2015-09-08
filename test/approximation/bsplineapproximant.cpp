@@ -50,22 +50,12 @@ TEST_CASE("Linear BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::line
 
 TEST_CASE("Linear BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::linear][jacobian]")
 {
+    double one_eps = 5e-5;
+    double two_eps = 5e-5;
+    double inf_eps = 5e-5;
+
     for(auto testFunc : getPolynomialFunctions())
     {
-        double one_eps = 0.1;
-        double two_eps = 0.1;
-        double inf_eps = 0.1;
-
-        // If the degree of the exact function is less than or equal to the degree
-        // of the B-Spline we are using to approximate it, the B-Spline should approximate
-        // the function exactly.
-        if(testFunc->isConstDegree() && testFunc->getMaxDegree() <= 1.0)
-        {
-            one_eps = 5e-5;
-            two_eps = 5e-5;
-            inf_eps = 5e-5;
-        }
-
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
@@ -124,22 +114,12 @@ TEST_CASE("Quadratic BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::q
 
 TEST_CASE("Quadratic BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::quadratic][jacobian]")
 {
+    double one_eps = 5e-5;
+    double two_eps = 5e-5;
+    double inf_eps = 5e-5;
+
     for(auto testFunc : getPolynomialFunctions())
     {
-        double one_eps = 0.1;
-        double two_eps = 0.1;
-        double inf_eps = 0.1;
-
-        // If the degree of the exact function is less than or equal to the degree
-        // of the B-Spline we are using to approximate it, the B-Spline should approximate
-        // the function exactly.
-        if(testFunc->isConstDegree() && testFunc->getMaxDegree() <= 2.0)
-        {
-            one_eps = 1e-5;
-            two_eps = 1e-5;
-            inf_eps = 1e-5;
-        }
-
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
@@ -198,22 +178,12 @@ TEST_CASE("Cubic BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::cubic
 
 TEST_CASE("Cubic BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::cubic][jacobian]")
 {
+    double one_eps = 6e-5;
+    double two_eps = 6e-5;
+    double inf_eps = 6e-5;
+
     for(auto testFunc : getPolynomialFunctions())
     {
-        double one_eps = 0.1;
-        double two_eps = 0.1;
-        double inf_eps = 0.1;
-
-        // If the degree of the exact function is less than or equal to the degree
-        // of the B-Spline we are using to approximate it, the B-Spline should approximate
-        // the function exactly.
-        if(testFunc->isConstDegree() && testFunc->getMaxDegree() <= 3.0)
-        {
-            one_eps = 1e-5;
-            two_eps = 1e-5;
-            inf_eps = 1e-5;
-        }
-
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
@@ -272,23 +242,12 @@ TEST_CASE("Quartic BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::qua
 
 TEST_CASE("Quartic BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::quartic][jacobian]")
 {
+    double one_eps = 6e-5;
+    double two_eps = 6e-5;
+    double inf_eps = 6e-5;
 
     for(auto testFunc : getPolynomialFunctions())
     {
-        double one_eps = 0.1;
-        double two_eps = 0.1;
-        double inf_eps = 0.1;
-
-        // If the degree of the exact function is less than or equal to the degree
-        // of the B-Spline we are using to approximate it, the B-Spline should approximate
-        // the function exactly.
-        if(testFunc->isConstDegree() && testFunc->getMaxDegree() <= 4.0)
-        {
-            one_eps = 1e-5;
-            two_eps = 1e-5;
-            inf_eps = 1e-5;
-        }
-
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
