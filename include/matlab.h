@@ -36,6 +36,10 @@ SPLINTER_API obj_ptr datatable_init();
 
 SPLINTER_API obj_ptr datatable_load_init(const char *filename);
 
+SPLINTER_API void datatable_add_samples_row_major(obj_ptr datatable_ptr, double *x, int n_samples, int x_dim);
+
+SPLINTER_API void datatable_add_samples_col_major(obj_ptr datatable_ptr, double *x, int n_samples, int x_dim, int size);
+
 SPLINTER_API void datatable_add_samples(obj_ptr datatable_ptr, double *x, int n_samples, int x_dim, int size);
 
 SPLINTER_API unsigned int datatable_get_num_variables(obj_ptr datatable_ptr);

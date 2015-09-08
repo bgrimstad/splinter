@@ -16,6 +16,7 @@
 #include <polynomialregression.h>
 #include "definitions.h"
 #include <set>
+#include <iostream>
 
 using namespace SPLINTER;
 
@@ -106,7 +107,36 @@ obj_ptr datatable_load_init(const char *filename)
     return dataTable;
 }
 
-void datatable_add_samples(obj_ptr datatable_ptr, double *x, int n_samples, int x_dim, int size)
+void datatable_add_samples_row_major(obj_ptr datatable_ptr, double *x, int n_samples, int x_dim)
+{
+    DataTable *dataTable = get_datatable(datatable_ptr);
+    if (dataTable != nullptr)
+    {
+        DenseVector vec(x_dim);
+        for (int i = 0; i < n_samples; ++i)
+        {
+            int sample_start = i*(x_dim+1);
+            for (int offset = 0; offset < x_dim; ++offset)
+            {
+                vec(offset) = x[sample_start + offset];
+            }
+
+//            std::cout << "Adding sample: (";
+//            for(int l = 0; l < vec.size(); l++)
+//            {
+//                if(l != 0)
+//                    std::cout << ",";
+//                std::cout << vec(l);
+//            }
+//            std::cout << ") = ";
+//            std::cout << x[sample_start + x_dim] << std::endl;
+
+            dataTable->addSample(vec, x[sample_start + x_dim]);
+        }
+    }
+}
+
+void datatable_add_samples_col_major(obj_ptr datatable_ptr, double *x, int n_samples, int x_dim, int size)
 {
     DataTable *dataTable = get_datatable(datatable_ptr);
     if (dataTable != nullptr)
@@ -118,9 +148,25 @@ void datatable_add_samples(obj_ptr datatable_ptr, double *x, int n_samples, int 
             {
                 vec(j) = x[i + j * size];
             }
+
+//            std::cout << "Adding sample: (";
+//            for(int l = 0; l < vec.size(); l++)
+//            {
+//                if(l != 0)
+//                    std::cout << ",";
+//                std::cout << vec(l);
+//            }
+//            std::cout << ") = ";
+//            std::cout << x[i + x_dim * size] << std::endl;
+
             dataTable->addSample(vec, x[i + x_dim * size]);
         }
     }
+}
+
+void datatable_add_samples(obj_ptr datatable_ptr, double *x, int n_samples, int x_dim, int size)
+{
+    datatable_add_samples_col_major(datatable_ptr, x, n_samples, x_dim, size);
 }
 
 unsigned int datatable_get_num_variables(obj_ptr datatable_ptr)
@@ -161,10 +207,18 @@ obj_ptr datatable_load(obj_ptr datatable_ptr, const char *filename)
     datatable_delete(datatable_ptr);
     lastFuncCallError = 0;
 
-    obj_ptr dataTable = (obj_ptr) new DataTable(filename);
+    try
+    {
+        obj_ptr dataTable = (obj_ptr) new DataTable(filename);
+        objects.insert(dataTable);
+        return dataTable;
+    }
+    catch(const Exception &e)
+    {
+        set_error_string(e.what());
+    }
 
-    objects.insert(dataTable);
-    return dataTable;
+    return nullptr;
 }
 
 void datatable_delete(obj_ptr datatable_ptr)
