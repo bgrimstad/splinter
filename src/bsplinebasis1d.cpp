@@ -10,6 +10,7 @@
 #include "bsplinebasis1d.h"
 #include <algorithm>
 #include <utilities.h>
+#include <iostream>
 
 namespace SPLINTER
 {
@@ -18,7 +19,7 @@ BSplineBasis1D::BSplineBasis1D()
 {
 }
 
-BSplineBasis1D::BSplineBasis1D(std::vector<double> &knots, unsigned int degree)
+BSplineBasis1D::BSplineBasis1D(const std::vector<double> &knots, unsigned int degree)
     : knots(knots),
       degree(degree),
       targetNumBasisfunctions((degree+1)+2*degree+1) // Minimum p+1

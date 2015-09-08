@@ -36,7 +36,9 @@ for i = 1:N
 end
 
 % Build approximations
-approx1 = BSpline(d, BSplineType.Cubic);
+approx1 = BSpline(d, BSplineType.Linear);
+approx2 = BSpline(d, BSplineType.Quadratic);
+approx3 = BSpline(d, BSplineType.Cubic);
 
 % Evaluate approximations
 yad1 = zeros(Nd,1);
@@ -46,8 +48,8 @@ yad3 = zeros(Nd,1);
 
 for i = 1:Nd
     yad1(i) = approx1.eval(xd(i));
-    %yad2(i) = approx2.eval(xd(i));
-    %yad3(i) = approx3.eval(xd(i));
+    yad2(i) = approx2.eval(xd(i));
+    yad3(i) = approx3.eval(xd(i));
 end
 
 % Plot sample points and approximations
@@ -59,3 +61,4 @@ plot(xd,yad2,'-k')
 plot(xd,yad3,'-k')
 hold off
 legend('Linear', 'Quadratic', 'Cubic');
+

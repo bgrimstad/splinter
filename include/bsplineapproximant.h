@@ -84,7 +84,10 @@ protected:
     std::vector<std::vector<double> > computeKnotVectorsFromSamples(const DataTable &samples, std::vector<unsigned int> degrees) const;
     virtual std::vector<double> computeKnotVector(const std::vector<double> &values, unsigned int degree) const;
     std::vector<double> knotVectorMovingAverage(const std::vector<double> &values, unsigned int degree) const;
-    std::vector<double> knotVectorBuckets(const std::vector<double> &values, unsigned int degree) const;
+    std::vector<double> knotVectorBuckets(const std::vector<double> &values, unsigned int degree, unsigned int maxSegments = 10) const;
+
+    // Auxiliary
+    std::vector<double> extractUniqueSorted(const std::vector<double> &values) const;
 
     void load(const std::string fileName) override;
 

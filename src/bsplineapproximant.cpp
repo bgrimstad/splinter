@@ -13,6 +13,7 @@
 #include "linearsolvers.h"
 #include <serializer.h>
 #include <iostream>
+#include <testingutilities.h>
 
 namespace SPLINTER
 {
@@ -203,6 +204,7 @@ std::vector<std::vector<double> > BSplineApproximant::computeKnotVectorsFromSamp
 std::vector<double> BSplineApproximant::computeKnotVector(const std::vector<double> &values, unsigned int degree) const
 {
     return knotVectorMovingAverage(values, degree);
+    //return knotVectorBuckets(values, degree);
 }
 
 /*
@@ -237,13 +239,10 @@ std::vector<double> BSplineApproximant::computeKnotVector(const std::vector<doub
 std::vector<double> BSplineApproximant::knotVectorMovingAverage(const std::vector<double> &values, unsigned int degree) const
 {
     // Sort and remove duplicates
-    std::vector<double> uniqueX(values);
-    std::sort(uniqueX.begin(), uniqueX.end());
-    std::vector<double>::iterator it = unique_copy(uniqueX.begin(), uniqueX.end(), uniqueX.begin());
-    uniqueX.resize(distance(uniqueX.begin(),it));
+    std::vector<double> unique = extractUniqueSorted(values);
 
     // Compute sizes
-    unsigned int n = uniqueX.size();
+    unsigned int n = unique.size();
     unsigned int k = degree-1; // knots to remove
     unsigned int w = k + 3; // Window size
 
@@ -264,18 +263,18 @@ std::vector<double> BSplineApproximant::knotVectorMovingAverage(const std::vecto
     {
         double ma = 0;
         for (unsigned int j = 0; j < w; ++j)
-            ma += uniqueX.at(i+j);
+            ma += unique.at(i+j);
 
         knots.at(i) = ma/w;
     }
 
     // Repeat first knot p + 1 times (for interpolation of start point)
     for (unsigned int i = 0; i < degree + 1; ++i)
-        knots.insert(knots.begin(), uniqueX.front());
+        knots.insert(knots.begin(), unique.front());
 
     // Repeat last knot p + 1 times (for interpolation of end point)
     for (unsigned int i = 0; i < degree + 1; ++i)
-        knots.insert(knots.end(), uniqueX.back());
+        knots.insert(knots.end(), unique.back());
 
     // Number of knots in a (p+1)-regular knot vector
     //assert(knots.size() == uniqueX.size() + degree + 1);
@@ -283,65 +282,90 @@ std::vector<double> BSplineApproximant::knotVectorMovingAverage(const std::vecto
     return knots;
 }
 
-// TODO: implement
-std::vector<double> BSplineApproximant::knotVectorBuckets(const std::vector<double> &values, unsigned int degree) const
+std::vector<double> BSplineApproximant::knotVectorBuckets(const std::vector<double> &values, unsigned int degree, unsigned int maxSegments) const
 {
     // Sort and remove duplicates
-    std::vector<double> uniqueX(values);
-    std::sort(uniqueX.begin(), uniqueX.end());
-    std::vector<double>::iterator it = unique_copy(uniqueX.begin(), uniqueX.end(), uniqueX.begin());
-    uniqueX.resize(distance(uniqueX.begin(),it));
-
-    // Compute sizes
-    unsigned int n = uniqueX.size();
-    unsigned int k = degree-1; // knots to remove
-    unsigned int nk = n-k-2; // Interior knots
-    unsigned int w = k + 3; // Window size
-
-    // Limit number of knots
-    if (nk > 10)
-    {
-        nk = 10;
-
-        unsigned int w2 = std::floor(n/nk);
-
-        w = std::max(w, w2);
-    }
+    std::vector<double> unique = extractUniqueSorted(values);
 
     // The minimum number of samples from which a free knot vector can be created
-    if (n < degree+1)
+    if (unique.size() < degree+1)
     {
         std::ostringstream e;
-        e << "knotVectorMovingAverage: Only " << n
-          << " unique interpolation points are given. A minimum of degree+1 = " << degree+1
+        e << "BSplineApproximant::knotVectorBuckets: Only " << unique.size()
+          << " unique sample points are given. A minimum of degree+1 = " << degree+1
           << " unique points are required to build a B-spline basis of degree " << degree << ".";
         throw Exception(e.str());
     }
 
-    std::vector<double> knots(nk, 0);
+    // Num internal knots (0 <= ni <= unique.size() - degree - 1)
+    unsigned int ni = unique.size() - degree - 1;
+
+    // Num segments
+    unsigned int ns = ni + degree + 1;
+
+    // Limit number of segments
+    if (ns > maxSegments && maxSegments >= degree + 1)
+    {
+        ns = maxSegments;
+        ni = ns - degree - 1;
+    }
+
+    // Num knots
+    unsigned int nk = ns + degree + 1;
+
+    // Check numbers
+    if (ni < 0 || ni > unique.size() - degree - 1)
+        throw Exception("BSplineApproximant::knotVectorBuckets: Invalid number of internal knots!");
+
+    // Compute window sizes
+    unsigned int w = 0;
+    if (ni > 0)
+        w = std::floor(unique.size()/ni);
+
+    // Residual
+    unsigned int res = unique.size() - w*ni;
+
+    // Create array with window sizes
+    std::vector<unsigned int> windows(ni, w);
+
+    // Add residual
+    for (unsigned int i = 0; i < res; ++i)
+        windows.at(i) += 1;
+
+    // Compute internal knots
+    std::vector<double> knots(ni, 0);
 
     // Compute (n-k-2) interior knots using moving average
-    for (unsigned int i = 0; i < nk; ++i)
+    unsigned int index = 0;
+    for (unsigned int i = 0; i < ni; ++i)
     {
-        double ma = 0;
-        for (unsigned int j = 0; j < w; ++j)
-            ma += uniqueX.at(i*w+j);
-
-        knots.at(i) = ma/w;
+        for (unsigned int j = 0; j < windows.at(i); ++j)
+        {
+            knots.at(i) += unique.at(index+j);
+        }
+        knots.at(i) /= windows.at(i);
+        index += windows.at(i);
     }
 
     // Repeat first knot p + 1 times (for interpolation of start point)
     for (unsigned int i = 0; i < degree + 1; ++i)
-        knots.insert(knots.begin(), uniqueX.front());
+        knots.insert(knots.begin(), unique.front());
 
     // Repeat last knot p + 1 times (for interpolation of end point)
     for (unsigned int i = 0; i < degree + 1; ++i)
-        knots.insert(knots.end(), uniqueX.back());
-
-    // Number of knots in a (p+1)-regular knot vector
-    //assert(knots.size() == uniqueX.size() + degree + 1);
+        knots.insert(knots.end(), unique.back());
 
     return knots;
+}
+
+std::vector<double> BSplineApproximant::extractUniqueSorted(const std::vector<double> &values) const
+{
+    // Sort and remove duplicates
+    std::vector<double> unique(values);
+    std::sort(unique.begin(), unique.end());
+    std::vector<double>::iterator it = unique_copy(unique.begin(), unique.end(), unique.begin());
+    unique.resize(distance(unique.begin(),it));
+    return unique;
 }
 
 void BSplineApproximant::save(const std::string fileName) const
