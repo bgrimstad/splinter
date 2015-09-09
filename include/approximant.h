@@ -23,10 +23,6 @@ namespace SPLINTER
  */
 class SPLINTER_API Approximant : public Function
 {
-protected:
-    Approximant(unsigned int numVariables)
-        : Function(numVariables) {}
-
 public:
     virtual ~Approximant() {}
 
@@ -37,12 +33,6 @@ public:
      * Throws if file could not be opened
      */
     virtual void save(const std::string fileName) const = 0;
-
-    /**
-     * Deserialize and load approximant from fileName
-     * Throws if file could not be opened or if the file format is wrong
-     */
-    virtual void load(const std::string fileName) = 0;
 
     /*
      * Functions for appraising absolute approximation error
@@ -61,6 +51,16 @@ public:
      * Will typically include name of the class and degree
      */
     virtual const std::string getDescription() const = 0;
+
+protected:
+    Approximant(unsigned int numVariables)
+            : Function(numVariables) {}
+
+    /**
+     * Deserialize and load approximant from fileName
+     * Throws if file could not be opened or if the file format is wrong
+     */
+    virtual void load(const std::string fileName) = 0;
 
 private:
     Approximant();
