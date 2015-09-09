@@ -26,7 +26,6 @@ PSplineApproximant::PSplineApproximant(const DataTable &samples, std::vector<uns
     // TODO: coefficients are computed twice since BSplineApproximant constructor calls BSplineApproximant::computesCoefficients
     auto coefficients = computeCoefficients(samples);
     bspline.setCoefficients(coefficients);
-    //Inf-norm: 4.36171e-05 <= 5e-06
 }
 
 PSplineApproximant::PSplineApproximant(const DataTable &samples, BSplineType type, double lambda)
