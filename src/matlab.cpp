@@ -25,14 +25,14 @@ int lastFuncCallError = 0;
 
 const char *error_string = "No error.";
 
+// Keep a list of objects so we avoid performing operations on objects that don't exist
+std::set<obj_ptr> objects = std::set<obj_ptr>();
+
 static void set_error_string(const char *new_error_string)
 {
     error_string = new_error_string;
     lastFuncCallError = 1;
 }
-
-// Keep a list of objects so we avoid performing operations on objects that don't exist
-std::set<obj_ptr> objects = std::set<obj_ptr>();
 
 /* Cast the obj_ptr to a DataTable * */
 static DataTable *get_datatable(obj_ptr datatable_ptr)
@@ -169,7 +169,7 @@ void datatable_add_samples(obj_ptr datatable_ptr, double *x, int n_samples, int 
     datatable_add_samples_col_major(datatable_ptr, x, n_samples, x_dim, size);
 }
 
-unsigned int datatable_get_num_variables(obj_ptr datatable_ptr)
+int datatable_get_num_variables(obj_ptr datatable_ptr)
 {
     DataTable *dataTable = get_datatable(datatable_ptr);
     if (dataTable != nullptr)
@@ -180,7 +180,8 @@ unsigned int datatable_get_num_variables(obj_ptr datatable_ptr)
     return 0;
 }
 
-unsigned int datatable_get_num_samples(obj_ptr datatable_ptr)
+
+int datatable_get_num_samples(obj_ptr datatable_ptr)
 {
     DataTable *dataTable = get_datatable(datatable_ptr);
     if (dataTable != nullptr)
@@ -198,27 +199,6 @@ void datatable_save(obj_ptr datatable_ptr, const char *filename)
     {
         dataTable->save(filename);
     }
-}
-
-// Deletes the previous handle and loads a new
-obj_ptr datatable_load(obj_ptr datatable_ptr, const char *filename)
-{
-    // Delete and reset error, as it will get set if the DataTable didn't exist.
-    datatable_delete(datatable_ptr);
-    lastFuncCallError = 0;
-
-    try
-    {
-        obj_ptr dataTable = (obj_ptr) new DataTable(filename);
-        objects.insert(dataTable);
-        return dataTable;
-    }
-    catch(const Exception &e)
-    {
-        set_error_string(e.what());
-    }
-
-    return nullptr;
 }
 
 void datatable_delete(obj_ptr datatable_ptr)
@@ -272,7 +252,7 @@ obj_ptr bspline_init(obj_ptr datatable_ptr, int degree)
 
 obj_ptr bspline_load_init(const char *filename)
 {
-    obj_ptr bspline = (obj_ptr) new BSpline(filename);
+    obj_ptr bspline = (obj_ptr) new BSplineApproximant(filename);
 
     objects.insert(bspline);
 
@@ -296,7 +276,7 @@ obj_ptr pspline_init(obj_ptr datatable_ptr, double lambda)
 
 obj_ptr pspline_load_init(const char *filename)
 {
-    obj_ptr pspline = (obj_ptr) new BSpline(filename);
+    obj_ptr pspline = (obj_ptr) new PSplineApproximant(filename);
 
     objects.insert(pspline);
 
@@ -383,53 +363,73 @@ obj_ptr polynomial_regression_load_init(const char *filename)
 }
 
 
-double eval(obj_ptr approximant, double *x, int x_dim)
-{
-    double retVal = 0.0;
-
-    auto approx = get_approximant(approximant);
-    if (approx != nullptr)
-    {
-        auto xvec = get_densevector(x, x_dim);
-        retVal = approx->eval(xvec);
-    }
-
-    return retVal;
-}
-
-double *eval_jacobian(obj_ptr approximant, double *x, int x_dim)
+double *eval(obj_ptr approximant, double *x, int x_len)
 {
     double *retVal = nullptr;
 
     auto approx = get_approximant(approximant);
     if (approx != nullptr)
     {
-        auto xvec = get_densevector(x, x_dim);
-        DenseMatrix jacobian = approx->evalJacobian(xvec);
+        int num_variables = approx->getNumVariables();
+        int num_points = x_len / num_variables;
 
-        /* Copy jacobian from stack to heap */
-        int numCoefficients = jacobian.cols() * jacobian.rows();
-        retVal = (double *) malloc(sizeof(double) * numCoefficients);
-        memcpy(retVal, jacobian.data(), sizeof(double) * numCoefficients);
+        retVal = (double *) malloc(sizeof(double) * num_points);
+        for (size_t i = 0; i < num_points; ++i)
+        {
+            auto xvec = get_densevector(x, num_variables);
+            retVal[i] = approx->eval(xvec);
+            x += num_variables;
+        }
     }
 
     return retVal;
 }
 
-double *eval_hessian(obj_ptr approximant, double *x, int x_dim)
+double *eval_jacobian(obj_ptr approximant, double *x, int x_len)
 {
     double *retVal = nullptr;
 
     auto approx = get_approximant(approximant);
     if (approx != nullptr)
     {
-        auto xvec = get_densevector(x, x_dim);
-        DenseMatrix hessian = approx->evalHessian(xvec);
+        int num_variables = approx->getNumVariables();
+        int num_points = x_len / num_variables;
 
-        /* Copy jacobian from stack to heap */
-        int numCoefficients = hessian.cols() * hessian.rows();
-        retVal = (double *) malloc(sizeof(double) * numCoefficients);
-        memcpy(retVal, hessian.data(), sizeof(double) * numCoefficients);
+        retVal = (double *) malloc(sizeof(double) * num_variables * num_points);
+        for (size_t i = 0; i < num_points; ++i)
+        {
+            auto xvec = get_densevector(x, num_variables);
+            DenseMatrix jacobian = approx->evalJacobian(xvec);
+
+            /* Copy jacobian from stack to heap */
+            memcpy(retVal + i*num_variables, jacobian.data(), sizeof(double) * num_variables);
+            x += num_variables;
+        }
+    }
+
+    return retVal;
+}
+
+double *eval_hessian(obj_ptr approximant, double *x, int x_len)
+{
+    double *retVal = nullptr;
+
+    auto approx = get_approximant(approximant);
+    if (approx != nullptr)
+    {
+        int num_variables = approx->getNumVariables();
+        int num_points = x_len / num_variables;
+
+        retVal = (double *) malloc(sizeof(double) * num_variables * num_variables * num_points);
+        for (size_t i = 0; i < num_points; ++i)
+        {
+            auto xvec = get_densevector(x, num_variables);
+            DenseMatrix hessian = approx->evalHessian(xvec);
+
+            /* Copy hessian from stack to heap */
+            memcpy(retVal + i*num_variables*num_variables, hessian.data(), sizeof(double) * num_variables * num_variables);
+            x += num_variables;
+        }
     }
 
     return retVal;
@@ -453,14 +453,6 @@ void save(obj_ptr approximant, const char *filename)
     auto approx = get_approximant(approximant);
     if (approx != nullptr) {
         approx->save(filename);
-    }
-}
-
-void load(obj_ptr approximant, const char *filename)
-{
-    auto approx = get_approximant(approximant);
-    if (approx != nullptr) {
-        approx->load(filename);
     }
 }
 

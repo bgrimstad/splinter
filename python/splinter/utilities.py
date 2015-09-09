@@ -10,6 +10,11 @@ import sys # Python version
 from ctypes import *
 
 
+def out(text, newLine=True):
+	sys.stdout.write(text)
+	if newLine:
+		print("")
+
 def isPython3():
 	return sys.version_info[0] == 3
 
@@ -36,4 +41,8 @@ def listToCArrayOfInts(pyList):
 	return (c_int * len(intList))(*intList)
 
 def CArrayToList(CArray, size):
-	return [CArray[i] for i in xrange(size)]
+	return [CArray[i] for i in range(size)]
+
+# http://stackoverflow.com/questions/952914/making-a-flat-list-out-of-list-of-lists-in-python
+def flattenList(l):
+	return [item for sublist in l for item in sublist]
