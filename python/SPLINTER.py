@@ -26,6 +26,7 @@ def init():
 	global __handle
 	global c_double_p
 	
+	c_int_p = POINTER(c_int)
 	c_double_p = POINTER(c_double)
 	
 	__handle.get_error_string.restype = c_char_p
@@ -45,6 +46,18 @@ def init():
 	
 	__handle.eval_hessian.restype = c_double_p
 	__handle.eval_hessian.argtypes = [c_void_p, c_double_p, c_int]
+	
+	__handle.polynomial_regression_init.restype = c_void_p
+	__handle.polynomial_regression_init.argtypes = [c_void_p, c_int_p, c_int]
+	
+	__handle.pspline_load_init.restype = c_void_p
+	__handle.pspline_load_init.argtypes = [c_char_p]
+	
+	__handle.pspline_init.restype = c_void_p
+	__handle.pspline_init.argtypes = [c_void_p, c_double]
+	
+	__handle.get_num_variables.restype = c_int
+	__handle.get_num_variables.argtypes = [c_void_p]
 
 # Try to load the library libFile
 def load(libFile):

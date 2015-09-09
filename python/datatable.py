@@ -58,6 +58,9 @@ class DataTable:
 			self.finish()
 		
 		return self.__handle
+	
+	def getNumVariables(self):
+		return self.xDim
 
 
 if __name__ == "__main__":

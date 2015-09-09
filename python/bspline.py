@@ -52,3 +52,4 @@ if __name__ == "__main__":
 	
 	print(b.eval([2,3]))
 	print(b2.eval([2,3]))
+	print(b.getNumVariables())

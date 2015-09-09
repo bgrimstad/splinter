@@ -34,6 +34,9 @@ class Approximant:
 		
 		return hesList
 	
+	def getNumVariables(self):
+		return SPLINTER.call(SPLINTER.getHandle().get_num_variables, self._handle)
+	
 	def save(self, fileName):
 		SPLINTER.call(SPLINTER.getHandle().save, self._handle, getCString(fileName))
 		

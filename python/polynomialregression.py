@@ -6,3 +6,51 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
+import sys
+from approximant import Approximant
+from utilities import *
+
+
+class PolynomialRegression(Approximant):
+	def __init__(self, dataTableOrFileName, degree=None):
+		# If string we load the PolynomialRegression from the file
+		if isString(dataTableOrFileName):
+			fileName = getCString(dataTableOrFileName)
+			self._handle = SPLINTER.call(SPLINTER.getHandle().polynomial_regression_load_init, fileName)
+		
+		# Else, construct PolynomialRegression from DataTable
+		else:
+			if not isinstance(degree, list):
+				degree = [degree]*dataTableOrFileName.getNumVariables()
+			dataTable = dataTableOrFileName
+			self._handle = SPLINTER.call(SPLINTER.getHandle().polynomial_regression_init, dataTable.getHandle(), listToCArrayOfInts(degree), len(degree))
+		
+		
+if __name__ == "__main__":
+	import SPLINTER
+	SPLINTER.load("/home/anders/SPLINTER/build/release/libsplinter-matlab-1-4.so")
+	
+	
+	from datatable import DataTable
+	
+	def f(x):
+		return x[0]*x[1]
+	
+	d = DataTable()
+	for i in range(10):
+		for j in range(10):
+			d.addSample([i,j], f([i,j]))
+	
+	b = PolynomialRegression(d, [1,1])
+	for i in range(10):
+		for j in range(10):
+			print(str(b.eval([0.9*i,0.9*j])) + " == " + str(0.81*i*j))
+	
+	print(b.evalJacobian([3,3]))
+	print(b.evalHessian([3,3]))
+	
+	b.save("test.poly")
+	b2 = PolynomialRegression("test.poly")
+	
+	print(b.eval([2,3]))
+	print(b2.eval([2,3]))

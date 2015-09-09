@@ -27,3 +27,13 @@ def isString(pyString):
 		return isinstance(pyString, str)
 	else:
 		return isinstance(pyString, basestring)
+
+def listToCArrayOfDoubles(pyList):
+	return (c_double * len(pyList))(*pyList)
+
+def listToCArrayOfInts(pyList):
+	intList = [int(x) for x in pyList]
+	return (c_int * len(intList))(*intList)
+
+def CArrayToList(CArray, size):
+	return [CArray[i] for i in xrange(size)]
