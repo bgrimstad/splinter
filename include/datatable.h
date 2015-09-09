@@ -110,6 +110,7 @@ private:
     void load(const std::string fileName);
 
     friend class Serializer;
+    friend bool operator==(const DataTable &lhs, const DataTable &rhs);
 };
 
 DataTable operator+(const DataTable &lhs, const DataTable &rhs);
