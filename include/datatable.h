@@ -52,39 +52,7 @@ public:
     std::vector<std::set<double>> getGrid() const { return grid; }
     std::vector< std::vector<double> > getTableX() const;
     std::vector<double> getVectorY() const;
-
-    /*
-     * Debug
-     */
-    template <typename _Char>
-    void printSamples(std::basic_ostream<_Char>& out) const
-    {
-        for (auto &sample : samples)
-        {
-            out << sample << std::endl;
-        }
-    }
-
-    template <typename _Char>
-    void printGrid(std::basic_ostream<_Char>& out) const
-    {
-        out << "===== Printing grid =====" << std::endl;
-
-        unsigned int i = 0;
-        for (auto &variable : grid)
-        {
-            out << 'x' << i++ << '(' << variable.size() << "): ";
-            for (double value : variable)
-            {
-                out << value << ' ';
-            }
-            out << std::endl;
-        }
-
-        out << "Unique samples added: " << samples.size() << std::endl;
-        out << "Samples required: " << getNumSamplesRequired() << std::endl;
-    }
-
+    
     bool isGridComplete() const;
 
     void save(const std::string fileName) const;
