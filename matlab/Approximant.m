@@ -41,10 +41,6 @@ classdef (Abstract = true) Approximant < handle
         function save(obj, fileName)
             Splinter.getInstance().call('save', obj.Handle, fileName);
         end
-        
-        function load(obj, fileName)
-            Splinter.getInstance().call('load', obj.Handle, fileName);
-        end
 
         % Destructor. Deletes the internal Approximant object.
         function delete(obj)

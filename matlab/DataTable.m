@@ -26,7 +26,7 @@ classdef DataTable < handle
             obj.X_dim = 0;
             
             if(exist('filename', 'var') && ischar(filename))
-                obj.Handle = Splinter.getInstance().call('datatable_load', 0, filename);
+                obj.Handle = Splinter.getInstance().call('datatable_load_init', filename);
                 obj.X_dim = obj.get_num_variables();
             else
                 obj.Handle = Splinter.getInstance().call('datatable_init');
@@ -99,10 +99,6 @@ classdef DataTable < handle
         
         function save(obj, filename)
            Splinter.getInstance().call('datatable_save', obj.Handle, filename)
-        end
-        
-        function load(obj, filename)
-           obj.Handle = Splinter.getInstance().call('datatable_load', obj.Handle, filename);
         end
         
         % Internal use only
