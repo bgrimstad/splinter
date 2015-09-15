@@ -10,3 +10,10 @@ build/
 *.layout
 *.depends
 *.pyc
+
+# Saved approximants (and datatable)
+*.bspline
+*.rbf
+*.pspline
+*.poly
+*.datatable

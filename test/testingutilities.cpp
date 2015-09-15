@@ -427,7 +427,8 @@ void compareJacobianValue(TestFunction *exact,
     INFO(std::setw(16) << std::left << "Approx value:"      << std::setw(32) << std::right << getDenseAsStrOneLine(approx->evalJacobian(maxInfNormErrorPoint)));
     INFO(std::setw(16) << std::left << "Central difference:"     << std::setw(32) << std::right << getDenseAsStrOneLine(approx->centralDifference(maxInfNormErrorPoint)));
 
-    CHECK(norms(0) / evalPoints.size() <= one_eps);
+    CHECK(norms(2) <= inf_eps);
+    //CHECK(norms(0) / evalPoints.size() <= one_eps);
     /*if(norms(0) / evalPoints.size() > one_eps || norms(1) > two_eps || norms(2) > inf_eps) {
         CHECK(false);
     }*/

@@ -12,26 +12,31 @@ classdef (Abstract = true) Approximant < handle
 
     methods
         % Evaluate the spline at x
-        % x should be a real number (not array) within the domain of the spline
+        % Supports batch evaluation:
+        % x = [0 0; 1 1] will evaluate the approximant in both [0 0] and
+        % [1 1], and return a nx1 matrix with the values, where n is the
+        % number of rows in x (or points you evaluated it in).
         function r = eval(obj, x)
-            r = Splinter.getInstance().call('eval', obj.Handle, x, length(x));
-            %r = calllib(Splinter.getInstance.get_alias(), obj.Eval_function, obj.Handle, x, length(x));
+            libP = Utilities.matrixToCArray(x);
+            numPoints = numel(x) / obj.getNumVariables();
+            temp = Splinter.getInstance().call('eval_col_major', obj.Handle, libP, numel(libP.value));
+            r = Utilities.cArrayToMatrix(temp, numPoints, 1);
         end
         
         % Evaluate the Jacobian at x
-        % x should be a real number (not array) within the domain of the spline
         function r = evalJacobian(obj, x)
-            temp = Splinter.getInstance().call('eval_jacobian', obj.Handle, x, length(x));
-            reshape(temp, 1, length(x))
-            r = temp.value;
+            libP = Utilities.matrixToCArray(x);
+            numPoints = numel(x) / obj.getNumVariables();
+            temp = Splinter.getInstance().call('eval_jacobian_col_major', obj.Handle, libP, numel(libP.value));
+            r = Utilities.cArrayToMatrix(temp, numPoints, obj.getNumVariables());
         end
         
         % Evaluate the Hessian at x
-        % x should be a real number (not array) within the domain of the spline
         function r = evalHessian(obj, x)
-            temp = Splinter.getInstance().call('eval_hessian', obj.Handle, x, length(x));
-            reshape(temp, length(x), length(x))
-            r = temp.value;
+            libP = Utilities.matrixToCArray(x);
+            numPoints = numel(x) / obj.getNumVariables();
+            temp = Splinter.getInstance().call('eval_hessian_col_major', obj.Handle, libP, numel(libP.value));
+            r = Utilities.cArrayTo3dMatrix(temp, obj.getNumVariables(), obj.getNumVariables(), numPoints);
         end
 
         function r = getNumVariables(obj)
@@ -40,10 +45,6 @@ classdef (Abstract = true) Approximant < handle
         
         function save(obj, fileName)
             Splinter.getInstance().call('save', obj.Handle, fileName);
-        end
-        
-        function load(obj, fileName)
-            Splinter.getInstance().call('load', obj.Handle, fileName);
         end
 
         % Destructor. Deletes the internal Approximant object.

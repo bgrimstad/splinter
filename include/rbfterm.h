@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#ifndef SPLINTER_RADIALBASISFUNCTIONTERM_H
-#define SPLINTER_RADIALBASISFUNCTIONTERM_H
+#ifndef SPLINTER_RBFTERM_H
+#define SPLINTER_RBFTERM_H
 
 #include "datatable.h"
 #include "approximant.h"
@@ -18,7 +18,7 @@
 namespace SPLINTER
 {
 
-enum class RadialBasisFunctionType
+enum class RBFType
 {
     MULTIQUADRIC,
     INVERSE_QUADRIC,
@@ -30,20 +30,20 @@ enum class RadialBasisFunctionType
 /*
  * Base class for radial basis functions.
  */
-class RadialBasisFunctionTerm
+class RBFTerm
 {
 public:
-    RadialBasisFunctionTerm() : e(1.0) {}
-    RadialBasisFunctionTerm(double e) : e(e) {}
+    RBFTerm() : e(1.0) {}
+    RBFTerm(double e) : e(e) {}
     virtual double eval(double r) const = 0;
     virtual double evalDerivative(double r) const = 0;
-    virtual ~RadialBasisFunctionTerm() {}
+    virtual ~RBFTerm() {}
 
 protected:
     double e;
 };
 
-class ThinPlateSpline : public RadialBasisFunctionTerm
+class ThinPlateSpline : public RBFTerm
 {
 public:
     double eval(double r) const
@@ -56,7 +56,7 @@ public:
     }
 };
 
-class Multiquadric : public RadialBasisFunctionTerm
+class Multiquadric : public RBFTerm
 {
 public:
     double eval(double r) const
@@ -69,7 +69,7 @@ public:
     }
 };
 
-class InverseMultiquadric : public RadialBasisFunctionTerm
+class InverseMultiquadric : public RBFTerm
 {
 public:
     double eval(double r) const
@@ -82,7 +82,7 @@ public:
     }
 };
 
-class InverseQuadric : public RadialBasisFunctionTerm
+class InverseQuadric : public RBFTerm
 {
 public:
     double eval(double r) const
@@ -95,7 +95,7 @@ public:
     }
 };
 
-class Gaussian : public RadialBasisFunctionTerm
+class Gaussian : public RBFTerm
 {
 public:
     double eval(double r) const
@@ -110,4 +110,4 @@ public:
 
 } // namespace SPLINTER
 
-#endif // SPLINTER_RADIALBASISFUNCTIONTERM_H
+#endif // SPLINTER_RBFTERM_H

@@ -9,13 +9,13 @@
 
 #include <Catch.h>
 #include <datatable.h>
-#include "polynomialregression.h"
+#include "polynomialapproximant.h"
 #include "testingutilities.h"
 
 using namespace SPLINTER;
 
 
-TEST_CASE("PolynomialRegression can be saved and loaded", "[serialization][polynomialregression]")
+TEST_CASE("PolynomialApproximant can be saved and loaded", "[serialization][polynomialregression]")
 {
     unsigned int dim = 2;
     auto func = getTestFunction(dim, 1);
@@ -25,34 +25,34 @@ TEST_CASE("PolynomialRegression can be saved and loaded", "[serialization][polyn
 
     const char *fileName = "test.polyfit";
 
-    SECTION("PolynomialRegression of degree 1") {
-        PolynomialRegression polyfit(table, 1);
+    SECTION("PolynomialApproximant of degree 1") {
+        PolynomialApproximant polyfit(table, 1);
 
         polyfit.save(fileName);
-        PolynomialRegression loadedPolyfit(fileName);
+        PolynomialApproximant loadedPolyfit(fileName);
 
         REQUIRE(polyfit == loadedPolyfit);
     }
 
-    SECTION("PolynomialRegression of degree 5") {
-        PolynomialRegression polyfit(table, 4);
+    SECTION("PolynomialApproximant of degree 5") {
+        PolynomialApproximant polyfit(table, 4);
 
         polyfit.save(fileName);
-        PolynomialRegression loadedPolyfit(fileName);
+        PolynomialApproximant loadedPolyfit(fileName);
 
         REQUIRE(polyfit == loadedPolyfit);
     }
 
     if(dim > 1) {
-        SECTION("PolynomialRegression of differing degrees in each dimension") {
+        SECTION("PolynomialApproximant of differing degrees in each dimension") {
             auto degrees = std::vector<unsigned int>(dim);
             for(unsigned int i = 0; i < dim; i++) {
                 degrees.at(i) = i + 1;
             }
-            PolynomialRegression polyfit(table, degrees);
+            PolynomialApproximant polyfit(table, degrees);
 
             polyfit.save(fileName);
-            PolynomialRegression loadedPolyfit(fileName);
+            PolynomialApproximant loadedPolyfit(fileName);
 
             REQUIRE(polyfit == loadedPolyfit);
         }

@@ -19,7 +19,7 @@ class BSplineBasis1D
 {
 public:
     BSplineBasis1D();
-    BSplineBasis1D(std::vector<double> &knots, unsigned int degree);
+    BSplineBasis1D(const std::vector<double> &knots, unsigned int degree);
 
     // Evaluation of basis functions
     SparseVector evaluate(double x) const;
@@ -83,6 +83,8 @@ private:
     unsigned int targetNumBasisfunctions;
 
     friend class Serializer;
+    friend bool operator==(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs);
+    friend bool operator!=(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs);
 };
 
 } // namespace SPLINTER

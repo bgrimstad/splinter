@@ -8,35 +8,35 @@
 */
 
 #include <serializer.h>
-#include "radialbasisfunction.h"
+#include "rbfapproximant.h"
 #include "linearsolvers.h"
 #include "Eigen/SVD"
 
 namespace SPLINTER
 {
 
-RadialBasisFunction::RadialBasisFunction()
+RBFApproximant::RBFApproximant()
     : Approximant(1)
 {
 }
 
-RadialBasisFunction::RadialBasisFunction(const char *fileName)
-    : RadialBasisFunction(std::string(fileName))
+RBFApproximant::RBFApproximant(const char *fileName)
+    : RBFApproximant(std::string(fileName))
 {
 }
 
-RadialBasisFunction::RadialBasisFunction(const std::string fileName)
+RBFApproximant::RBFApproximant(const std::string fileName)
     : Approximant(1)
 {
     load(fileName);
 }
 
-RadialBasisFunction::RadialBasisFunction(const DataTable &samples, RadialBasisFunctionType type)
-    : RadialBasisFunction(samples, type, false)
+RBFApproximant::RBFApproximant(const DataTable &samples, RBFType type)
+    : RBFApproximant(samples, type, false)
 {
 }
 
-RadialBasisFunction::RadialBasisFunction(const DataTable &samples, RadialBasisFunctionType type, bool normalized)
+RBFApproximant::RBFApproximant(const DataTable &samples, RBFType type, bool normalized)
     : Approximant(samples.getNumVariables()),
       samples(samples),
       type(type),
@@ -44,29 +44,29 @@ RadialBasisFunction::RadialBasisFunction(const DataTable &samples, RadialBasisFu
       precondition(false),
       numSamples(samples.getNumSamples())
 {
-    if (type == RadialBasisFunctionType::THIN_PLATE_SPLINE)
+    if (type == RBFType::THIN_PLATE_SPLINE)
     {
-        fn = std::shared_ptr<RadialBasisFunctionTerm>(new ThinPlateSpline());
+        fn = std::shared_ptr<RBFTerm>(new ThinPlateSpline());
     }
-    else if (type == RadialBasisFunctionType::MULTIQUADRIC)
+    else if (type == RBFType::MULTIQUADRIC)
     {
-        fn = std::shared_ptr<RadialBasisFunctionTerm>(new Multiquadric());
+        fn = std::shared_ptr<RBFTerm>(new Multiquadric());
     }
-    else if (type == RadialBasisFunctionType::INVERSE_QUADRIC)
+    else if (type == RBFType::INVERSE_QUADRIC)
     {
-        fn = std::shared_ptr<RadialBasisFunctionTerm>(new InverseQuadric());
+        fn = std::shared_ptr<RBFTerm>(new InverseQuadric());
     }
-    else if (type == RadialBasisFunctionType::INVERSE_MULTIQUADRIC)
+    else if (type == RBFType::INVERSE_MULTIQUADRIC)
     {
-        fn = std::shared_ptr<RadialBasisFunctionTerm>(new InverseMultiquadric());
+        fn = std::shared_ptr<RBFTerm>(new InverseMultiquadric());
     }
-    else if (type == RadialBasisFunctionType::GAUSSIAN)
+    else if (type == RBFType::GAUSSIAN)
     {
-        fn = std::shared_ptr<RadialBasisFunctionTerm>(new Gaussian());
+        fn = std::shared_ptr<RBFTerm>(new Gaussian());
     }
     else
     {
-        fn = std::shared_ptr<RadialBasisFunctionTerm>(new ThinPlateSpline());
+        fn = std::shared_ptr<RBFTerm>(new ThinPlateSpline());
     }
 
     /* Want to solve the linear system A*w = b,
@@ -150,7 +150,7 @@ RadialBasisFunction::RadialBasisFunction(const DataTable &samples, RadialBasisFu
     // NOTE: Tried using experimental GMRES solver in Eigen, but it did not work very well.
 }
 
-double RadialBasisFunction::eval(DenseVector x) const
+double RBFApproximant::eval(DenseVector x) const
 {
     std::vector<double> y;
     for (int i=0; i<x.rows(); i++)
@@ -158,7 +158,7 @@ double RadialBasisFunction::eval(DenseVector x) const
     return eval(y);
 }
 
-double RadialBasisFunction::eval(std::vector<double> x) const
+double RBFApproximant::eval(std::vector<double> x) const
 {
     assert(x.size() == numVariables);
     double fval, sum = 0, sumw = 0;
@@ -172,7 +172,7 @@ double RadialBasisFunction::eval(std::vector<double> x) const
     return normalized ? sumw/sum : sumw;
 }
 
-DenseMatrix RadialBasisFunction::evalJacobian(DenseVector x) const
+DenseMatrix RBFApproximant::evalJacobian(DenseVector x) const
 {
     std::vector<double> x_vec;
     for (unsigned int i = 0; i<x.size(); i++)
@@ -224,7 +224,7 @@ DenseMatrix RadialBasisFunction::evalJacobian(DenseVector x) const
 /*
  * Calculate precondition matrix
  */
-DenseMatrix RadialBasisFunction::computePreconditionMatrix() const
+DenseMatrix RBFApproximant::computePreconditionMatrix() const
 {
     DenseMatrix P;
     P.setZero(numSamples,numSamples);
@@ -319,7 +319,7 @@ DenseMatrix RadialBasisFunction::computePreconditionMatrix() const
 /*
  * Computes Euclidean distance ||x-y||
  */
-double RadialBasisFunction::dist(std::vector<double> x, std::vector<double> y) const
+double RBFApproximant::dist(std::vector<double> x, std::vector<double> y) const
 {
     assert(x.size() == y.size());
     double sum = 0.0;
@@ -331,12 +331,12 @@ double RadialBasisFunction::dist(std::vector<double> x, std::vector<double> y) c
 /*
  * Computes Euclidean distance ||x-y||
  */
-double RadialBasisFunction::dist(DataSample x, DataSample y) const
+double RBFApproximant::dist(DataSample x, DataSample y) const
 {
     return dist(x.getX(), y.getX());
 }
 
-bool RadialBasisFunction::dist_sort(DataSample x, DataSample y) const
+bool RBFApproximant::dist_sort(DataSample x, DataSample y) const
 {
     std::vector<double> zeros(x.getDimX(), 0);
     DataSample origin(zeros, 0.0);
@@ -345,35 +345,35 @@ bool RadialBasisFunction::dist_sort(DataSample x, DataSample y) const
     return (x_dist<y_dist);
 }
 
-void RadialBasisFunction::save(const std::string fileName) const
+void RBFApproximant::save(const std::string fileName) const
 {
     Serializer s;
     s.serialize(*this);
     s.saveToFile(fileName);
 }
 
-void RadialBasisFunction::load(const std::string fileName)
+void RBFApproximant::load(const std::string fileName)
 {
     Serializer s(fileName);
     s.deserialize(*this);
 }
 
-const std::string RadialBasisFunction::getDescription() const {
+const std::string RBFApproximant::getDescription() const {
     std::string description("RadialBasisFunction of type ");
     switch(type) {
-    case RadialBasisFunctionType::GAUSSIAN:
+    case RBFType::GAUSSIAN:
         description.append("Gaussian");
         break;
-    case RadialBasisFunctionType::INVERSE_MULTIQUADRIC:
+    case RBFType::INVERSE_MULTIQUADRIC:
         description.append("Inverse multiquadric");
         break;
-    case RadialBasisFunctionType::INVERSE_QUADRIC:
+    case RBFType::INVERSE_QUADRIC:
         description.append("Inverse quadric");
         break;
-    case RadialBasisFunctionType::MULTIQUADRIC:
+    case RBFType::MULTIQUADRIC:
         description.append("Multiquadric");
         break;
-    case RadialBasisFunctionType::THIN_PLATE_SPLINE:
+    case RBFType::THIN_PLATE_SPLINE:
         description.append("Thin plate spline");
         break;
 

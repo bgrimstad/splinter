@@ -8,37 +8,52 @@
 */
 
 #include <serializer.h>
-#include "pspline.h"
+#include "psplineapproximant.h"
 #include "linearsolvers.h"
 
 namespace SPLINTER
 {
 
-BSpline buildPSpline(const DataTable &samples, double lambda)
+PSplineApproximant::PSplineApproximant(const DataTable &samples, std::vector<unsigned int> basisDegrees, double lambda)
+    : BSplineApproximant(samples, basisDegrees),
+      lambda(lambda)
 {
-    // Check data
-    if (!samples.isGridComplete())
-        throw Exception("buildPSpline: Cannot create B-spline from irregular (incomplete) grid.");
-
     // Check lambda
     if (lambda <= 0)
         throw Exception("buildPSpline: Lambda must be strictly positive.");
 
-    // Assuming cubic spline
-    std::vector<unsigned int> basisDegrees(samples.getNumVariables(), 3);
-
-    auto knotVectors = computeKnotVectorsFromSamples(samples, basisDegrees);
-
-    BSpline bspline(knotVectors, basisDegrees);
-
-    auto coefficients = computeControlPointsPSpline(samples, bspline, lambda);
-
+    // Compute coefficients
+    // TODO: coefficients are computed twice since BSplineApproximant constructor calls BSplineApproximant::computesCoefficients
+    auto coefficients = computeCoefficients(samples);
     bspline.setCoefficients(coefficients);
-
-    return bspline;
 }
 
-DenseMatrix computeControlPointsPSpline(const DataTable &samples, const BSpline &bspline, double lambda)
+PSplineApproximant::PSplineApproximant(const DataTable &samples, BSplineType type, double lambda)
+    : PSplineApproximant(samples, getBSplineDegrees(samples.getNumVariables(), type), lambda)
+{
+}
+
+PSplineApproximant::PSplineApproximant(const DataTable &samples, double lambda)
+    : PSplineApproximant(samples, std::vector<unsigned int>(samples.getNumVariables(), 3), lambda)
+{
+}
+
+/*
+ * Construct from saved data
+ */
+PSplineApproximant::PSplineApproximant(const char *fileName)
+    : PSplineApproximant(std::string(fileName))
+{
+}
+
+PSplineApproximant::PSplineApproximant(const std::string fileName)
+    : BSplineApproximant(1),
+      lambda(0.03)
+{
+    load(fileName);
+}
+
+DenseMatrix PSplineApproximant::computeCoefficients(const DataTable &samples) const
 {
     // Assuming regular grid
     unsigned int numSamples = samples.getNumSamples();
@@ -62,10 +77,10 @@ DenseMatrix computeControlPointsPSpline(const DataTable &samples, const BSpline 
     W.setIdentity();
 
     // Basis function matrix
-    SparseMatrix B = computeBasisFunctionMatrix(samples, bspline);
+    SparseMatrix B = computeBasisFunctionMatrix(samples);
 
     // Second order finite difference matrix
-    SparseMatrix D = getSecondOrderFiniteDifferenceMatrix(bspline);
+    SparseMatrix D = getSecondOrderFiniteDifferenceMatrix();
 
     // Left-hand side matrix
     L = B.transpose()*W*B + lambda*D.transpose()*D;
@@ -76,7 +91,7 @@ DenseMatrix computeControlPointsPSpline(const DataTable &samples, const BSpline 
     DenseMatrix Ry = B.transpose()*W*By;
 
     // Matrices to store the resulting coefficients
-    DenseMatrix Cx, Cy;
+    DenseMatrix Cy;
 
     int numEquations = L.rows();
     int maxNumEquations = pow(2,10);
@@ -118,7 +133,7 @@ DenseMatrix computeControlPointsPSpline(const DataTable &samples, const BSpline 
  * Function for generating second order finite-difference matrix, which is used for penalizing the
  * (approximate) second derivative in control point calculation for P-splines.
  */
-SparseMatrix getSecondOrderFiniteDifferenceMatrix(const BSpline &bspline)
+SparseMatrix PSplineApproximant::getSecondOrderFiniteDifferenceMatrix() const
 {
     unsigned int numVariables = bspline.getNumVariables();
 
@@ -298,6 +313,29 @@ SparseMatrix getSecondOrderFiniteDifferenceMatrix(const BSpline &bspline)
     D.makeCompressed();
 
     return D;
+}
+
+void PSplineApproximant::save(const std::string fileName) const
+{
+    Serializer s;
+    s.serialize(*this);
+    s.saveToFile(fileName);
+}
+
+void PSplineApproximant::load(const std::string fileName)
+{
+    Serializer s(fileName);
+    s.deserialize(*this);
+}
+
+const std::string PSplineApproximant::getDescription() const
+{
+    std::string description("PSplineApproximant with lambda: ");
+    description.append(std::to_string(lambda));
+    description.append("\n");
+    description.append(bspline.getDescription());
+
+    return description;
 }
 
 } // namespace SPLINTER

@@ -25,8 +25,10 @@ class DataTable;
 class BSpline;
 class BSplineBasis;
 class BSplineBasis1D;
-class RadialBasisFunction;
-class PolynomialRegression;
+class BSplineApproximant;
+class PSplineApproximant;
+class RBFApproximant;
+class PolynomialApproximant;
 
 class Serializer {
 public:
@@ -57,8 +59,10 @@ public:
     void deserialize(BSpline &obj);
     void deserialize(BSplineBasis &obj);
     void deserialize(BSplineBasis1D &obj);
-    void deserialize(RadialBasisFunction &obj);
-    void deserialize(PolynomialRegression &obj);
+    void deserialize(BSplineApproximant &obj);
+    void deserialize(PSplineApproximant &obj);
+    void deserialize(RBFApproximant &obj);
+    void deserialize(PolynomialApproximant &obj);
 
     // Save the serialized stream to fileName
     void saveToFile(std::string fileName);
@@ -89,8 +93,10 @@ protected:
     size_t get_size(const BSpline &obj);
     size_t get_size(const BSplineBasis &obj);
     size_t get_size(const BSplineBasis1D &obj);
-    size_t get_size(const RadialBasisFunction &obj);
-    size_t get_size(const PolynomialRegression &obj);
+    size_t get_size(const BSplineApproximant &obj);
+    size_t get_size(const PSplineApproximant &obj);
+    size_t get_size(const RBFApproximant &obj);
+    size_t get_size(const PolynomialApproximant &obj);
 
     template <class T>
     void _serialize(const T &obj);
@@ -112,8 +118,10 @@ protected:
     void _serialize(const BSpline &obj);
     void _serialize(const BSplineBasis &obj);
     void _serialize(const BSplineBasis1D &obj);
-    void _serialize(const RadialBasisFunction &obj);
-    void _serialize(const PolynomialRegression &obj);
+    void _serialize(const BSplineApproximant &obj);
+    void _serialize(const PSplineApproximant &obj);
+    void _serialize(const RBFApproximant &obj);
+    void _serialize(const PolynomialApproximant &obj);
 
 private:
     typedef std::vector<uint8_t> StreamType;
@@ -220,7 +228,6 @@ size_t Serializer::get_size(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynami
     return size;
 }
 
-
 /*
  * _serialize specializations
  */
@@ -254,7 +261,6 @@ void Serializer::_serialize(const std::multiset<T> &obj)
     }
 }
 
-
 template <class T>
 void Serializer::_serialize(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &obj)
 {
@@ -268,7 +274,6 @@ void Serializer::_serialize(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynami
         }
     }
 }
-
 
 /*
  * deserialize specializations

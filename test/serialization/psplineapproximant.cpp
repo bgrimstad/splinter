@@ -9,7 +9,7 @@
 
 #include <Catch.h>
 #include <datatable.h>
-#include <pspline.h>
+#include <psplineapproximant.h>
 #include "testingutilities.h"
 
 using namespace SPLINTER;
@@ -26,19 +26,19 @@ TEST_CASE("PSplines can be saved and loaded", "[serialization][pspline]")
     const char *fileName = "test.pspline";
 
     SECTION("PSpline with default lambda") {
-        BSpline pspline = buildPSpline(table);
+        PSplineApproximant pspline(table);
 
         pspline.save(fileName);
-        BSpline loadedPSpline(fileName);
+        PSplineApproximant loadedPSpline(fileName);
 
         REQUIRE(pspline == loadedPSpline);
     }
 
     SECTION("PSpline with non-default lambda") {
-        BSpline pspline = buildPSpline(table, 0.02);
+        PSplineApproximant pspline(table, 0.02);
 
         pspline.save(fileName);
-        BSpline loadedPSpline(fileName);
+        PSplineApproximant loadedPSpline(fileName);
 
         REQUIRE(pspline == loadedPSpline);
     }

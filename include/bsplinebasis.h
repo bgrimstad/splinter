@@ -64,6 +64,7 @@ private:
     unsigned int numVariables;
 
     friend class Serializer;
+    friend bool operator==(const BSplineBasis &lhs, const BSplineBasis &rhs);
 };
 
 } // namespace SPLINTER

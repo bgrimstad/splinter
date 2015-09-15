@@ -11,9 +11,10 @@
 #include "bsplinebasis.h"
 #include "mykroneckerproduct.h"
 #include "unsupported/Eigen/KroneckerProduct"
-#include "linearsolvers.h"
+#include <linearsolvers.h>
 #include <serializer.h>
 #include <iostream>
+#include <utilities.h>
 
 namespace SPLINTER
 {
@@ -40,19 +41,8 @@ BSpline::BSpline(std::vector< std::vector<double> > knotVectors, std::vector<uns
 }
 
 BSpline::BSpline(std::vector<double> coefficients, std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees)
-    : Approximant(knotVectors.size()),
-      basis(BSplineBasis(knotVectors, basisDegrees)),
-      coefficients(DenseMatrix::Zero(1, coefficients.size()))
+    : BSpline(vectorToDenseVector(coefficients), knotVectors, basisDegrees)
 {
-    for (unsigned int i = 0; i < coefficients.size(); ++i)
-        this->coefficients(0,i) = coefficients[i];
-
-    if (this->coefficients.rows() != 1)
-        throw Exception("BSpline::BSpline: coefficient matrix can only have one row!");
-
-    computeKnotAverages();
-
-    checkControlPoints();
 }
 
 BSpline::BSpline(DenseMatrix coefficients, std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees)

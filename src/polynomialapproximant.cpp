@@ -8,41 +8,41 @@
 */
 
 #include <serializer.h>
-#include "polynomialregression.h"
+#include "polynomialapproximant.h"
 #include "linearsolvers.h"
 #include "mykroneckerproduct.h"
 
 namespace SPLINTER
 {
 
-PolynomialRegression::PolynomialRegression()
+PolynomialApproximant::PolynomialApproximant()
     : Approximant(1)
 {
 }
 
-PolynomialRegression::PolynomialRegression(const char *fileName)
-    : PolynomialRegression(std::string(fileName))
+PolynomialApproximant::PolynomialApproximant(const char *fileName)
+    : PolynomialApproximant(std::string(fileName))
 {
 }
 
-PolynomialRegression::PolynomialRegression(const std::string fileName)
+PolynomialApproximant::PolynomialApproximant(const std::string fileName)
     : Approximant(1)
 {
     load(fileName);
 }
 
-PolynomialRegression::PolynomialRegression(const DataTable &samples, unsigned int degree)
-    : PolynomialRegression(samples, std::vector<unsigned int>(samples.getNumVariables(), degree))
+PolynomialApproximant::PolynomialApproximant(const DataTable &samples, unsigned int degree)
+    : PolynomialApproximant(samples, std::vector<unsigned int>(samples.getNumVariables(), degree))
 {
 }
 
-PolynomialRegression::PolynomialRegression(const DataTable &samples, std::vector<unsigned int> degrees)
+PolynomialApproximant::PolynomialApproximant(const DataTable &samples, std::vector<unsigned int> degrees)
     : Approximant(samples.getNumVariables()),
       degrees(degrees),
       numCoefficients(0)
 {
     if (degrees.size() != numVariables)
-        throw Exception("PolynomialRegression::PolynomialRegression: Inconsistent input data!");
+        throw Exception("PolynomialApproximant::PolynomialApproximant: Inconsistent input data!");
 
     // Check that a minimum number of samples is provided
     numCoefficients = 1;
@@ -50,20 +50,20 @@ PolynomialRegression::PolynomialRegression(const DataTable &samples, std::vector
         numCoefficients *= (deg+1);
 
     if (numCoefficients > samples.getNumSamples())
-        throw Exception("PolynomialRegression::PolynomialRegression: Insufficient number of samples!");
+        throw Exception("PolynomialApproximant::PolynomialApproximant: Insufficient number of samples!");
 
     // Compute coefficients
     computeCoefficients(samples);
 }
 
-double PolynomialRegression::eval(DenseVector x) const
+double PolynomialApproximant::eval(DenseVector x) const
 {
     DenseMatrix monomials = evalMonomials(x);
     DenseMatrix res = coefficients*monomials;
     return res(0,0);
 }
 
-DenseMatrix PolynomialRegression::evalJacobian(DenseVector x) const
+DenseMatrix PolynomialApproximant::evalJacobian(DenseVector x) const
 {
     DenseMatrix jac(1, numVariables);
     jac.fill(0.0);
@@ -77,7 +77,7 @@ DenseMatrix PolynomialRegression::evalJacobian(DenseVector x) const
     return jac;
 }
 
-void PolynomialRegression::computeCoefficients(const DataTable &samples)
+void PolynomialApproximant::computeCoefficients(const DataTable &samples)
 {
     // Left hand side
     DenseMatrix X = computeDesignMatrix(samples);
@@ -94,7 +94,7 @@ void PolynomialRegression::computeCoefficients(const DataTable &samples)
     // Solve for coefficients
     DenseQR s;
     if (!s.solve(XtX, Xty, coefficients))
-        throw Exception("PolynomialRegression::computeCoefficients: Failed to solve for coefficients.");
+        throw Exception("PolynomialApproximant::computeCoefficients: Failed to solve for coefficients.");
 
     // Transpose coefficients matrix
     coefficients.transposeInPlace();
@@ -104,7 +104,7 @@ void PolynomialRegression::computeCoefficients(const DataTable &samples)
  * Computes Vandermonde matrix
  * TODO: centering and scaling can improve the numerical properties
  */
-DenseMatrix PolynomialRegression::computeDesignMatrix(const DataTable &samples) const
+DenseMatrix PolynomialApproximant::computeDesignMatrix(const DataTable &samples) const
 {
     DenseMatrix X = DenseMatrix::Zero(samples.getNumSamples(), numCoefficients);
 
@@ -122,7 +122,7 @@ DenseMatrix PolynomialRegression::computeDesignMatrix(const DataTable &samples) 
 
         if (Xi.rows() != numCoefficients)
         {
-            throw Exception("PolynomialRegression::computeDesignMatrix: Xi.rows() != numCoefficients.");
+            throw Exception("PolynomialApproximant::computeDesignMatrix: Xi.rows() != numCoefficients.");
         }
 
         // Add row to design matrix X
@@ -132,7 +132,7 @@ DenseMatrix PolynomialRegression::computeDesignMatrix(const DataTable &samples) 
     return X;
 }
 
-DenseVector PolynomialRegression::evalMonomials(DenseVector x) const
+DenseVector PolynomialApproximant::evalMonomials(DenseVector x) const
 {
     std::vector<DenseVector> powers;
 
@@ -150,16 +150,16 @@ DenseVector PolynomialRegression::evalMonomials(DenseVector x) const
 
     if (monomials.rows() != numCoefficients)
     {
-        throw Exception("PolynomialRegression::evalMonomials: monomials.rows() != numCoefficients.");
+        throw Exception("PolynomialApproximant::evalMonomials: monomials.rows() != numCoefficients.");
     }
 
     return monomials;
 }
 
-DenseVector PolynomialRegression::evalDifferentiatedMonomials(DenseVector x, unsigned int var) const
+DenseVector PolynomialApproximant::evalDifferentiatedMonomials(DenseVector x, unsigned int var) const
 {
     if (var < 0 || var >= numVariables)
-        throw Exception("PolynomialRegression::evalDifferentiatedMonomials: invalid variable.");
+        throw Exception("PolynomialApproximant::evalDifferentiatedMonomials: invalid variable.");
 
     std::vector<DenseVector> powers;
 
@@ -187,27 +187,27 @@ DenseVector PolynomialRegression::evalDifferentiatedMonomials(DenseVector x, uns
     DenseVector monomials = kroneckerProductVectors(powers);
 
     if (monomials.rows() != numCoefficients)
-        throw Exception("PolynomialRegression::evalMonomials: monomials.rows() != numCoefficients.");
+        throw Exception("PolynomialApproximant::evalMonomials: monomials.rows() != numCoefficients.");
 
     return monomials;
 }
 
-void PolynomialRegression::save(const std::string fileName) const
+void PolynomialApproximant::save(const std::string fileName) const
 {
     Serializer s;
     s.serialize(*this);
     s.saveToFile(fileName);
 }
 
-void PolynomialRegression::load(const std::string fileName)
+void PolynomialApproximant::load(const std::string fileName)
 {
     Serializer s(fileName);
     s.deserialize(*this);
 }
 
-const std::string PolynomialRegression::getDescription() const
+const std::string PolynomialApproximant::getDescription() const
 {
-    std::string description("PolynomialRegression of degree");
+    std::string description("PolynomialApproximant of degree");
 
     // See if all degrees are the same.
     bool equal = true;

@@ -9,7 +9,7 @@
 
 #include <Catch.h>
 #include <testingutilities.h>
-#include <polynomialregression.h>
+#include <polynomialapproximant.h>
 #include <testfunctions.h>
 #include <testfunction.h>
 #include <cmath>
@@ -21,7 +21,7 @@ using namespace SPLINTER;
 #define COMMON_TEXT " value approximation test with polynomials"
 
 
-TEST_CASE("PolynomialRegression function" COMMON_TEXT, COMMON_TAGS "[function-value]")
+TEST_CASE("PolynomialApproximant function" COMMON_TEXT, COMMON_TAGS "[function-value]")
 {
     double one_eps = 6e-7;
     double two_eps = 6e-7;
@@ -41,7 +41,7 @@ TEST_CASE("PolynomialRegression function" COMMON_TEXT, COMMON_TAGS "[function-va
         CHECK_NOTHROW(compareFunctionValue(testFunc,
                                            [degree](const DataTable &table)
                                            {
-                                                return (Approximant *) new PolynomialRegression(table, degree);
+                                                return (Approximant *) new PolynomialApproximant(table, degree);
                                            },
                                            300,  // Number of points to sample at
                                            1337, // Number of points to test against
@@ -50,11 +50,11 @@ TEST_CASE("PolynomialRegression function" COMMON_TEXT, COMMON_TAGS "[function-va
 }
 
 
-TEST_CASE("PolynomialRegression jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian]")
+TEST_CASE("PolynomialApproximant jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian]")
 {
     double one_eps = 5e-6;
     double two_eps = 5e-6;
-    double inf_eps = 5e-6;
+    double inf_eps = 5e-5;
 
     for (auto testFunc : getPolynomialFunctions())
     {
@@ -70,7 +70,7 @@ TEST_CASE("PolynomialRegression jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian]")
         CHECK_NOTHROW(compareJacobianValue(testFunc,
                                            [degree](const DataTable &table)
                                            {
-                                                return (Approximant *) new PolynomialRegression(table, degree);
+                                                return (Approximant *) new PolynomialApproximant(table, degree);
                                            },
                                            300,  // Number of points to sample at
                                            1337, // Number of points to test against
@@ -78,7 +78,7 @@ TEST_CASE("PolynomialRegression jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian]")
     }
 }
 
-//TEST_CASE("PolynomialRegression hessian" COMMON_TEXT, COMMON_TAGS "[hessian]")
+//TEST_CASE("PolynomialApproximant hessian" COMMON_TEXT, COMMON_TAGS "[hessian]")
 //{
 //    for(int degree = 1; degree <= MAX_DEGREE; ++degree)
 //    {
@@ -87,7 +87,7 @@ TEST_CASE("PolynomialRegression jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian]")
 //            checkHessianSymmetry(testFunc,
 //                                 [degree](const DataTable &table)
 //                                 {
-//                                     return (Approximant *) new PolynomialRegression(table, degree);
+//                                     return (Approximant *) new PolynomialApproximant(table, degree);
 //                                 },
 //                                 300,   // Number of points to sample at
 //                                 1337); // Number of points to test against
