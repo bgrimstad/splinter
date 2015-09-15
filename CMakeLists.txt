@@ -208,10 +208,17 @@ add_executable(${TEST} ${TEST_SRC_LIST})
 target_link_libraries(${TEST} ${STATIC_LIBRARY})
 
 # Make the directory structure expected by the MatLab interface
+# License file
+install(
+        FILES ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-matlab/
+)
+# Matlab files (.m)
 install(
         DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/matlab
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-matlab
 )
+# Version file (used for deducing the name of the binary when loading it)
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/splinter-matlab/version ${VERSION})
 install(
         FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/cinterface.h
@@ -224,11 +231,17 @@ install(
 
 # Make the directory structure expected by the Python interface
 install(
+        FILES ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-python/
+)
+# Python files (.py)
+install(
         DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/python
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-python
         PATTERN "*.pyc" EXCLUDE
         PATTERN "__pycache__*" EXCLUDE
 )
+# Version file (used for deducing the name of the binary when loading it)
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/splinter-python/version ${VERSION})
 install(
         FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/cinterface.h

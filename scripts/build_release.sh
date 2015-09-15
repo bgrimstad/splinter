@@ -154,10 +154,12 @@ function build_linux {
 		# MatLab for Linux only exists as 64bit, so we don't need this
 #		"$MAKE_CMD" install
 #		cp -r splinter-matlab $BUILD_ROOT
-		cp -r splinter-python $BUILD_ROOT
+#		cp -r splinter-python $BUILD_ROOT
 		
 		build_gcc_clang x86-64 $COMPILER
 		cp libsplinter-$SPLINTER_VERSION.so libsplinter-static-$SPLINTER_VERSION.a "$BUILD_ROOT/$OS/$COMPILER/$ARCH"
+		
+		# Have CMake create the interface directory structures, then copy them to the build root
 		"$MAKE_CMD" install
 		cp -r splinter-matlab $BUILD_ROOT
 		cp -r splinter-python $BUILD_ROOT
@@ -180,6 +182,11 @@ function build_linux {
 		
 		build_gcc_clang x86-64 $COMPILER
 		cp libsplinter-$SPLINTER_VERSION.so libsplinter-static-$SPLINTER_VERSION.a "$BUILD_ROOT/$OS/$COMPILER/$ARCH"
+		
+		# Have CMake create the interface directory structures, then copy them to the build root
+		"$MAKE_CMD" install
+		cp -r splinter-matlab $BUILD_ROOT
+		cp -r splinter-python $BUILD_ROOT
 		
 		copy_header_files
 		
@@ -258,6 +265,11 @@ function build_windows {
 			export PATH="$MINGW_64_BIT:$PATH"
 			build_gcc_clang x86-64 $COMPILER
 		fi
+		
+		# Have CMake create the interface directory structures, then copy them to the build root
+		"$MAKE_CMD" install
+		cp -r splinter-matlab $BUILD_ROOT
+		cp -r splinter-python $BUILD_ROOT
 		
 		COMPILER_VERSION=$($CXX -dumpversion)
 		

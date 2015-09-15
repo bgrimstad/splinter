@@ -24,4 +24,4 @@ class BSpline(Approximant):
 			dataTable = dataTableOrFileName
 			self._handle = splinter._call(splinter._getHandle().bspline_init, dataTable._getHandle(), degree)
 			
-		self._numVariables = splinter._call(splinter._getHandle().get_num_variables, self._handle)
+		self._numVariables = splinter._call(splinter._getHandle().approximant_get_num_variables, self._handle)

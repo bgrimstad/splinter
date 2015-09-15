@@ -37,7 +37,6 @@ static void set_error_string(const char *new_error_string)
 /* Cast the obj_ptr to a DataTable * */
 static DataTable *get_datatable(obj_ptr datatable_ptr)
 {
-    lastFuncCallError = 0;
     if (objects.count(datatable_ptr) > 0)
     {
         return (DataTable *) datatable_ptr;
@@ -51,7 +50,6 @@ static DataTable *get_datatable(obj_ptr datatable_ptr)
 /* Cast the obj_ptr to an Approximant * */
 static Approximant *get_approximant(obj_ptr approximant_ptr)
 {
-    lastFuncCallError = 0;
     if (objects.count(approximant_ptr) > 0)
     {
         return (Approximant *) approximant_ptr;
@@ -104,9 +102,14 @@ extern "C"
 /* 1 if the last call to the library resulted in an error,
     *  0 otherwise. This is used to avoid throwing exceptions across library boundaries,
     *  and we expect the caller to manually check the value of this flag.
+    *  We always reset it when it is checked, then we won't have to reset it in the beginning of every
+    *  end user visible function.
     */
-int get_error() {
-    return lastFuncCallError;
+int get_error()
+{
+    int temp = lastFuncCallError;
+    lastFuncCallError = 0;
+    return temp;
 }
 
 const char *get_error_string()
@@ -126,9 +129,17 @@ obj_ptr datatable_init()
 
 obj_ptr datatable_load_init(const char *filename)
 {
-    obj_ptr dataTable = (obj_ptr) new DataTable(filename);
+    obj_ptr dataTable = nullptr;
 
-    objects.insert(dataTable);
+    try
+    {
+        dataTable = (obj_ptr) new DataTable(filename);
+        objects.insert(dataTable);
+    }
+    catch(const Exception &e)
+    {
+        set_error_string(e.what());
+    }
 
     return dataTable;
 }
@@ -138,14 +149,16 @@ void datatable_add_samples_row_major(obj_ptr datatable_ptr, double *x, int n_sam
     DataTable *dataTable = get_datatable(datatable_ptr);
     if (dataTable != nullptr)
     {
-        DenseVector vec(x_dim);
-        for (int i = 0; i < n_samples; ++i)
+        try
         {
-            int sample_start = i*(x_dim+1);
-            for (int offset = 0; offset < x_dim; ++offset)
+            DenseVector vec(x_dim);
+            for (int i = 0; i < n_samples; ++i)
             {
-                vec(offset) = x[sample_start + offset];
-            }
+                int sample_start = i*(x_dim+1);
+                for (int offset = 0; offset < x_dim; ++offset)
+                {
+                    vec(offset) = x[sample_start + offset];
+                }
 
 //            std::cout << "Adding sample: (";
 //            for(int l = 0; l < vec.size(); l++)
@@ -157,7 +170,12 @@ void datatable_add_samples_row_major(obj_ptr datatable_ptr, double *x, int n_sam
 //            std::cout << ") = ";
 //            std::cout << x[sample_start + x_dim] << std::endl;
 
-            dataTable->addSample(vec, x[sample_start + x_dim]);
+                dataTable->addSample(vec, x[sample_start + x_dim]);
+            }
+        }
+        catch(const Exception &e)
+        {
+            set_error_string(e.what());
         }
     }
 }
@@ -167,13 +185,15 @@ void datatable_add_samples_col_major(obj_ptr datatable_ptr, double *x, int n_sam
     DataTable *dataTable = get_datatable(datatable_ptr);
     if (dataTable != nullptr)
     {
-        DenseVector vec(x_dim);
-        for (int i = 0; i < n_samples; ++i)
+        try
         {
-            for (int j = 0; j < x_dim; ++j)
+            DenseVector vec(x_dim);
+            for (int i = 0; i < n_samples; ++i)
             {
-                vec(j) = x[i + j * size];
-            }
+                for (int j = 0; j < x_dim; ++j)
+                {
+                    vec(j) = x[i + j * size];
+                }
 
 //            std::cout << "Adding sample: (";
 //            for(int l = 0; l < vec.size(); l++)
@@ -185,14 +205,14 @@ void datatable_add_samples_col_major(obj_ptr datatable_ptr, double *x, int n_sam
 //            std::cout << ") = ";
 //            std::cout << x[i + x_dim * size] << std::endl;
 
-            dataTable->addSample(vec, x[i + x_dim * size]);
+                dataTable->addSample(vec, x[i + x_dim * size]);
+            }
+        }
+        catch(const Exception &e)
+        {
+            set_error_string(e.what());
         }
     }
-}
-
-void datatable_add_samples(obj_ptr datatable_ptr, double *x, int n_samples, int x_dim, int size)
-{
-    datatable_add_samples_col_major(datatable_ptr, x, n_samples, x_dim, size);
 }
 
 int datatable_get_num_variables(obj_ptr datatable_ptr)
@@ -223,7 +243,14 @@ void datatable_save(obj_ptr datatable_ptr, const char *filename)
     DataTable *dataTable = get_datatable(datatable_ptr);
     if (dataTable != nullptr)
     {
-        dataTable->save(filename);
+        try
+        {
+            dataTable->save(filename);
+        }
+        catch(const Exception &e)
+        {
+            set_error_string(e.what());
+        }
     }
 }
 
@@ -269,8 +296,15 @@ obj_ptr bspline_init(obj_ptr datatable_ptr, int degree)
             }
         }
 
-        bspline = (obj_ptr) new BSplineApproximant(*table, bsplineType);
-        objects.insert(bspline);
+        try
+        {
+            bspline = (obj_ptr) new BSplineApproximant(*table, bsplineType);
+            objects.insert(bspline);
+        }
+        catch(const Exception &e)
+        {
+            set_error_string(e.what());
+        }
     }
 
     return bspline;
@@ -278,9 +312,17 @@ obj_ptr bspline_init(obj_ptr datatable_ptr, int degree)
 
 obj_ptr bspline_load_init(const char *filename)
 {
-    obj_ptr bspline = (obj_ptr) new BSplineApproximant(filename);
+    obj_ptr bspline = nullptr;
 
-    objects.insert(bspline);
+    try
+    {
+        bspline = (obj_ptr) new BSplineApproximant(filename);
+        objects.insert(bspline);
+    }
+    catch(const Exception &e)
+    {
+        set_error_string(e.what());
+    }
 
     return bspline;
 }
@@ -293,8 +335,15 @@ obj_ptr pspline_init(obj_ptr datatable_ptr, double lambda)
     auto table = get_datatable(datatable_ptr);
     if (table != nullptr)
     {
-        pspline = (obj_ptr) new PSplineApproximant(*table, lambda);
-        objects.insert(pspline);
+        try
+        {
+            pspline = (obj_ptr) new PSplineApproximant(*table, lambda);
+            objects.insert(pspline);
+        }
+        catch(const Exception &e)
+        {
+            set_error_string(e.what());
+        }
     }
 
     return pspline;
@@ -302,9 +351,17 @@ obj_ptr pspline_init(obj_ptr datatable_ptr, double lambda)
 
 obj_ptr pspline_load_init(const char *filename)
 {
-    obj_ptr pspline = (obj_ptr) new PSplineApproximant(filename);
+    obj_ptr pspline = nullptr;
 
-    objects.insert(pspline);
+    try
+    {
+        pspline = (obj_ptr) new PSplineApproximant(filename);
+        objects.insert(pspline);
+    }
+    catch(const Exception &e)
+    {
+        set_error_string(e.what());
+    }
 
     return pspline;
 }
@@ -342,8 +399,15 @@ obj_ptr rbf_init(obj_ptr datatable_ptr, int type_index, int normalized)
 
         bool norm = normalized != 0;
 
-        rbf = (obj_ptr) new RBFApproximant(*table, type, norm);
-        objects.insert(rbf);
+        try
+        {
+            rbf = (obj_ptr) new RBFApproximant(*table, type, norm);
+            objects.insert(rbf);
+        }
+        catch(const Exception &e)
+        {
+            set_error_string(e.what());
+        }
     }
 
     return rbf;
@@ -351,9 +415,17 @@ obj_ptr rbf_init(obj_ptr datatable_ptr, int type_index, int normalized)
 
 obj_ptr rbf_load_init(const char *filename)
 {
-    obj_ptr rbf = (obj_ptr) new RBFApproximant(filename);
+    obj_ptr rbf = nullptr;
 
-    objects.insert(rbf);
+    try
+    {
+        rbf = (obj_ptr) new RBFApproximant(filename);
+        objects.insert(rbf);
+    }
+    catch(const Exception &e)
+    {
+        set_error_string(e.what());
+    }
 
     return rbf;
 }
@@ -372,8 +444,15 @@ obj_ptr polynomial_regression_init(obj_ptr datatable_ptr, int *degrees, int degr
             degreeVec.at(i) = (unsigned int) degrees[i];
         }
 
-        polyfit = (obj_ptr) new PolynomialApproximant(*table, degreeVec);
-        objects.insert(polyfit);
+        try
+        {
+            polyfit = (obj_ptr) new PolynomialApproximant(*table, degreeVec);
+            objects.insert(polyfit);
+        }
+        catch(const Exception &e)
+        {
+            set_error_string(e.what());
+        }
     }
 
     return polyfit;
@@ -381,80 +460,109 @@ obj_ptr polynomial_regression_init(obj_ptr datatable_ptr, int *degrees, int degr
 
 obj_ptr polynomial_regression_load_init(const char *filename)
 {
-    obj_ptr polyfit = (obj_ptr) new PolynomialApproximant(filename);
+    obj_ptr polyfit = nullptr;
 
-    objects.insert(polyfit);
+    try
+    {
+        polyfit = (obj_ptr) new PolynomialApproximant(filename);
+        objects.insert(polyfit);
+    }
+    catch(const Exception &e)
+    {
+        set_error_string(e.what());
+    }
 
     return polyfit;
 }
 
 
-double *eval(obj_ptr approximant, double *x, int x_len)
+double *eval_row_major(obj_ptr approximant, double *x, int x_len)
 {
     double *retVal = nullptr;
 
     auto approx = get_approximant(approximant);
     if (approx != nullptr)
     {
-        int num_variables = approx->getNumVariables();
-        int num_points = x_len / num_variables;
-
-        retVal = (double *) malloc(sizeof(double) * num_points);
-        for (size_t i = 0; i < num_points; ++i)
+        try
         {
-            auto xvec = get_densevector(x, num_variables);
-            retVal[i] = approx->eval(xvec);
-            x += num_variables;
+            int num_variables = approx->getNumVariables();
+            int num_points = x_len / num_variables;
+
+            retVal = (double *) malloc(sizeof(double) * num_points);
+            for (size_t i = 0; i < num_points; ++i)
+            {
+                auto xvec = get_densevector(x, num_variables);
+                retVal[i] = approx->eval(xvec);
+                x += num_variables;
+            }
+        }
+        catch(const Exception &e)
+        {
+            set_error_string(e.what());
         }
     }
 
     return retVal;
 }
 
-double *eval_jacobian(obj_ptr approximant, double *x, int x_len)
+double *eval_jacobian_row_major(obj_ptr approximant, double *x, int x_len)
 {
     double *retVal = nullptr;
 
     auto approx = get_approximant(approximant);
     if (approx != nullptr)
     {
-        int num_variables = approx->getNumVariables();
-        int num_points = x_len / num_variables;
-
-        retVal = (double *) malloc(sizeof(double) * num_variables * num_points);
-        for (size_t i = 0; i < num_points; ++i)
+        try
         {
-            auto xvec = get_densevector(x, num_variables);
-            DenseMatrix jacobian = approx->evalJacobian(xvec);
+            int num_variables = approx->getNumVariables();
+            int num_points = x_len / num_variables;
 
-            /* Copy jacobian from stack to heap */
-            memcpy(retVal + i*num_variables, jacobian.data(), sizeof(double) * num_variables);
-            x += num_variables;
+            retVal = (double *) malloc(sizeof(double) * num_variables * num_points);
+            for (size_t i = 0; i < num_points; ++i)
+            {
+                auto xvec = get_densevector(x, num_variables);
+                DenseMatrix jacobian = approx->evalJacobian(xvec);
+
+                /* Copy jacobian from stack to heap */
+                memcpy(retVal + i*num_variables, jacobian.data(), sizeof(double) * num_variables);
+                x += num_variables;
+            }
+        }
+        catch(const Exception &e)
+        {
+            set_error_string(e.what());
         }
     }
 
     return retVal;
 }
 
-double *eval_hessian(obj_ptr approximant, double *x, int x_len)
+double *eval_hessian_row_major(obj_ptr approximant, double *x, int x_len)
 {
     double *retVal = nullptr;
 
     auto approx = get_approximant(approximant);
     if (approx != nullptr)
     {
-        int num_variables = approx->getNumVariables();
-        int num_points = x_len / num_variables;
-
-        retVal = (double *) malloc(sizeof(double) * num_variables * num_variables * num_points);
-        for (size_t i = 0; i < num_points; ++i)
+        try
         {
-            auto xvec = get_densevector(x, num_variables);
-            DenseMatrix hessian = approx->evalHessian(xvec);
+            int num_variables = approx->getNumVariables();
+            int num_points = x_len / num_variables;
 
-            /* Copy hessian from stack to heap */
-            memcpy(retVal + i*num_variables*num_variables, hessian.data(), sizeof(double) * num_variables * num_variables);
-            x += num_variables;
+            retVal = (double *) malloc(sizeof(double) * num_variables * num_variables * num_points);
+            for (size_t i = 0; i < num_points; ++i)
+            {
+                auto xvec = get_densevector(x, num_variables);
+                DenseMatrix hessian = approx->evalHessian(xvec);
+
+                /* Copy hessian from stack to heap */
+                memcpy(retVal + i*num_variables*num_variables, hessian.data(), sizeof(double) * num_variables * num_variables);
+                x += num_variables;
+            }
+        }
+        catch(const Exception &e)
+        {
+            set_error_string(e.what());
         }
     }
 
@@ -468,14 +576,21 @@ double *eval_col_major(obj_ptr approximant, double *x, int x_len)
     auto approx = get_approximant(approximant);
     if (approx != nullptr)
     {
-        double *row_major = get_row_major(x, approx->getNumVariables(), x_len);
-        if (row_major == nullptr)
+        double *row_major = nullptr;
+        try
         {
-            return nullptr; // Pass on the error message set by get_row_major
+            row_major = get_row_major(x, approx->getNumVariables(), x_len);
+            if (row_major == nullptr)
+            {
+                return nullptr; // Pass on the error message set by get_row_major
+            }
+
+            retVal = eval_row_major(approx, row_major, x_len);
         }
-
-        retVal = eval(approx, row_major, x_len);
-
+        catch(const Exception &e)
+        {
+            set_error_string(e.what());
+        }
         free(row_major);
     }
 
@@ -489,14 +604,21 @@ double *eval_jacobian_col_major(obj_ptr approximant, double *x, int x_len)
     auto approx = get_approximant(approximant);
     if (approx != nullptr)
     {
-        double *row_major = get_row_major(x, approx->getNumVariables(), x_len);
-        if (row_major == nullptr)
+        double *row_major = nullptr;
+        try
         {
-            return nullptr; // Pass on the error message set by get_row_major
+            row_major = get_row_major(x, approx->getNumVariables(), x_len);
+            if (row_major == nullptr)
+            {
+                return nullptr; // Pass on the error message set by get_row_major
+            }
+
+            retVal = eval_jacobian_row_major(approx, row_major, x_len);
         }
-
-        retVal = eval_jacobian(approx, row_major, x_len);
-
+        catch(const Exception &e)
+        {
+            set_error_string(e.what());
+        }
         free(row_major);
     }
 
@@ -509,21 +631,27 @@ double *eval_hessian_col_major(obj_ptr approximant, double *x, int x_len)
 
     auto approx = get_approximant(approximant);
     if (approx != nullptr)
-    {
-        double *row_major = get_row_major(x, approx->getNumVariables(), x_len);
-        if (row_major == nullptr)
+    {double *row_major = nullptr;
+        try
         {
-            return nullptr; // Pass on the error message set by get_row_major
+            row_major = get_row_major(x, approx->getNumVariables(), x_len);
+            if (row_major == nullptr)
+            {
+                return nullptr; // Pass on the error message set by get_row_major
+            }
+
+            retVal = eval_hessian_row_major(approx, row_major, x_len);
         }
-
-        retVal = eval_hessian(approx, row_major, x_len);
-
+        catch(const Exception &e)
+        {
+            set_error_string(e.what());
+        }
         free(row_major);
     }
     return retVal;
 }
 
-int get_num_variables(obj_ptr approximant)
+int approximant_get_num_variables(obj_ptr approximant)
 {
     int retVal = 0;
 
@@ -536,15 +664,23 @@ int get_num_variables(obj_ptr approximant)
     return retVal;
 }
 
-void save(obj_ptr approximant, const char *filename)
+void approximant_save(obj_ptr approximant, const char *filename)
 {
     auto approx = get_approximant(approximant);
-    if (approx != nullptr) {
-        approx->save(filename);
+    if (approx != nullptr)
+    {
+        try
+        {
+            approx->save(filename);
+        }
+        catch(const Exception &e)
+        {
+            set_error_string(e.what());
+        }
     }
 }
 
-void delete_approximant(obj_ptr approximant)
+void approximant_delete(obj_ptr approximant)
 {
     auto approx = get_approximant(approximant);
 

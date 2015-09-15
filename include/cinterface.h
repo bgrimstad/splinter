@@ -41,8 +41,6 @@ SPLINTER_API void datatable_add_samples_row_major(obj_ptr datatable_ptr, double 
 
 SPLINTER_API void datatable_add_samples_col_major(obj_ptr datatable_ptr, double *x, int n_samples, int x_dim, int size);
 
-SPLINTER_API void datatable_add_samples(obj_ptr datatable_ptr, double *x, int n_samples, int x_dim, int size);
-
 SPLINTER_API int datatable_get_num_variables(obj_ptr datatable_ptr);
 
 SPLINTER_API int datatable_get_num_samples(obj_ptr datatable_ptr);
@@ -69,11 +67,11 @@ SPLINTER_API obj_ptr polynomial_regression_init(obj_ptr datatable_ptr, int *degr
 SPLINTER_API obj_ptr polynomial_regression_load_init(const char *filename);
 
 
-SPLINTER_API double *eval(obj_ptr approximant, double *x, int x_len);
+SPLINTER_API double *eval_row_major(obj_ptr approximant, double *x, int x_len);
 
-SPLINTER_API double *eval_jacobian(obj_ptr approximant, double *x, int x_len);
+SPLINTER_API double *eval_jacobian_row_major(obj_ptr approximant, double *x, int x_len);
 
-SPLINTER_API double *eval_hessian(obj_ptr approximant, double *x, int x_len);
+SPLINTER_API double *eval_hessian_row_major(obj_ptr approximant, double *x, int x_len);
 
 SPLINTER_API double *eval_col_major(obj_ptr approximant, double *x, int x_len);
 
@@ -81,11 +79,11 @@ SPLINTER_API double *eval_jacobian_col_major(obj_ptr approximant, double *x, int
 
 SPLINTER_API double *eval_hessian_col_major(obj_ptr approximant, double *x, int x_len);
 
-SPLINTER_API int get_num_variables(obj_ptr approximant);
+SPLINTER_API int approximant_get_num_variables(obj_ptr approximant);
 
-SPLINTER_API void save(obj_ptr approximant, const char *filename);
+SPLINTER_API void approximant_save(obj_ptr approximant, const char *filename);
 
-SPLINTER_API void delete_approximant(obj_ptr approximant);
+SPLINTER_API void approximant_delete(obj_ptr approximant);
 
 #ifdef __cplusplus
 	}

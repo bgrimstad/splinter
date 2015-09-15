@@ -26,4 +26,4 @@ class PolynomialRegression(Approximant):
 			dataTable = dataTableOrFileName
 			self._handle = splinter._call(splinter._getHandle().polynomial_regression_init, dataTable._getHandle(), listToCArrayOfInts(degree), len(degree))
 			
-		self._numVariables = splinter._call(splinter._getHandle().get_num_variables, self._handle)
+		self._numVariables = splinter._call(splinter._getHandle().approximant_get_num_variables, self._handle)

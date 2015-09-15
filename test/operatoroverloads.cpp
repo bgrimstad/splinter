@@ -14,27 +14,33 @@ namespace SPLINTER
 {
 
 /*
- * Comparison operators
+ * Comparison operators (==)
  */
-bool operator==(const DataTable &lhs, const DataTable &rhs) {
+bool operator==(const DataTable &lhs, const DataTable &rhs)
+{
     return
-            lhs.getNumVariables() == rhs.getNumVariables()
+            lhs.allowDuplicates == rhs.allowDuplicates
+            && lhs.allowIncompleteGrid == rhs.allowIncompleteGrid
+            && lhs.numDuplicates == rhs.numDuplicates
+            && lhs.numVariables == rhs.numVariables
+            && lhs.samples == rhs.samples
+            && lhs.grid == rhs.grid
+            && lhs.getNumVariables() == rhs.getNumVariables()
             && lhs.getNumSamples() == rhs.getNumSamples()
             && lhs.getSamples() == rhs.getSamples()
             && lhs.getGrid() == rhs.getGrid();
 }
 
-bool operator==(const DataSample &lhs, const DataSample &rhs) {
-    for(unsigned int i = 0; i < lhs.getDimX(); i++)
+bool operator==(const DataSample &lhs, const DataSample &rhs)
+{
+    for (unsigned int i = 0; i < lhs.getDimX(); i++)
     {
-        if(!equalsWithinRange(lhs.getX().at(i), rhs.getX().at(i))) {
+        if (!equalsWithinRange(lhs.getX().at(i), rhs.getX().at(i)))
             return false;
-        }
     }
 
-    if(!equalsWithinRange(lhs.getY(), rhs.getY())) {
+    if (!equalsWithinRange(lhs.getY(), rhs.getY()))
         return false;
-    }
 
     return true;
 }
@@ -68,11 +74,6 @@ bool operator==(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs)
             && lhs.targetNumBasisfunctions == rhs.targetNumBasisfunctions;
 }
 
-bool operator!=(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs)
-{
-    return !(lhs == rhs);
-}
-
 bool operator==(const BSplineApproximant &lhs, const BSplineApproximant &rhs)
 {
     return
@@ -91,13 +92,20 @@ bool operator==(const PSplineApproximant &lhs, const PSplineApproximant &rhs)
 bool operator==(const RBFApproximant &lhs, const RBFApproximant &rhs)
 {
     return
-            lhs.getNumVariables() == rhs.getNumVariables();
+            lhs.samples == rhs.samples
+            && lhs.normalized == rhs.normalized
+            && lhs.precondition == rhs.precondition
+            && lhs.numSamples == rhs.numSamples
+            && lhs.getNumVariables() == rhs.getNumVariables();
 }
 
 bool operator==(const PolynomialApproximant &lhs, const PolynomialApproximant &rhs)
 {
     return
-            lhs.getNumVariables() == rhs.getNumVariables();
+            lhs.numCoefficients == rhs.numCoefficients
+            && lhs.degrees == rhs.degrees
+            && lhs.coefficients == rhs.coefficients
+            && lhs.getNumVariables() == rhs.getNumVariables();
 }
 
 bool compareVecDenseVec(const DenseVector &denseVec, const std::vector<double> &vec)
@@ -112,18 +120,12 @@ bool compareVecVecDenseMatrix(const DenseMatrix &denseMat, const std::vector<std
 
 bool compareVecDenseVec(const std::vector<double> &vec, const DenseVector &denseVec)
 {
-    if(vec.size() != denseVec.size())
-    {
+    if (vec.size() != denseVec.size())
         return false;
-    }
 
     for (size_t i = 0; i < vec.size(); ++i)
-    {
-        if(vec.at(i) != denseVec(i))
-        {
+        if (vec.at(i) != denseVec(i))
             return false;
-        }
-    }
 
     return true;
 }
@@ -139,28 +141,28 @@ bool compareVecVecDenseMatrix(const std::vector<std::vector<double>> &vecVec, co
     for (size_t i = 0; i < vecVec.size(); ++i)
     {
         if (vecVec.at(i).size() != matCols)
-        {
             return false;
-        }
 
         for (size_t j = 0; j < matCols; ++j)
-        {
-            if(vecVec.at(i).at(j) != denseMat(i, j))
-            {
+            if (vecVec.at(i).at(j) != denseMat(i, j))
                 return false;
-            }
-        }
     }
 
     return true;
 }
 
+/*
+ * Comparison operators (!=)
+ */
+bool operator!=(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs)
+{
+    return !(lhs == rhs);
+}
 
 bool operator!=(const DataSample &lhs, const DataSample &rhs)
 {
 	return !(lhs == rhs);
 }
-
 
 /*
  * Output stream operator
@@ -168,8 +170,8 @@ bool operator!=(const DataSample &lhs, const DataSample &rhs)
 std::ostream &operator<<(std::ostream &out, const DataSample &sample) {
     out << "(";
     bool firstLoop = true;
-    for(auto val : sample.getX()) {
-        if(!firstLoop) {
+    for (auto val : sample.getX()) {
+        if (!firstLoop) {
             out << ", ";
         }
         out << val;
@@ -180,16 +182,18 @@ std::ostream &operator<<(std::ostream &out, const DataSample &sample) {
     return out;
 }
 
-std::ostream &operator<<(std::ostream &out, const DataTable &table) {
+std::ostream &operator<<(std::ostream &out, const DataTable &table)
+{
     out << "numVariables: " << table.getNumVariables() << std::endl;
     out << "numSamples: " << table.getNumSamples() << std::endl;
     //out << "samples: " << table.getSamples() << std::endl;
     out << "grid dimensions: ";
     bool firstLoop = true;
-    for(const auto &dimension : table.getGrid()) {
-        if(!firstLoop) {
+    for (const auto &dimension : table.getGrid())
+    {
+        if (!firstLoop)
             out << ", ";
-        }
+
         out << dimension.size();
         firstLoop = false;
     }
@@ -198,28 +202,28 @@ std::ostream &operator<<(std::ostream &out, const DataTable &table) {
 }
 
 template <class T>
-std::ostream &operator<<(std::ostream &out, const std::vector<T> &obj) {
-    for(const T &elem : obj) {
+std::ostream &operator<<(std::ostream &out, const std::vector<T> &obj)
+{
+    for (const T &elem : obj)
         out << elem << std::endl;
-    }
 
     return out;
 }
 
 template <class T>
-std::ostream &operator<<(std::ostream &out, const std::set<T> &obj) {
-    for(const T &elem : obj) {
+std::ostream &operator<<(std::ostream &out, const std::set<T> &obj)
+{
+    for (const T &elem : obj)
         out << elem << std::endl;
-    }
 
     return out;
 }
 
 template <class T>
-std::ostream &operator<<(std::ostream &out, const std::multiset<T> &obj) {
-    for(const T &elem : obj) {
+std::ostream &operator<<(std::ostream &out, const std::multiset<T> &obj)
+{
+    for (const T &elem : obj)
         out << elem << std::endl;
-    }
 
     return out;
 }

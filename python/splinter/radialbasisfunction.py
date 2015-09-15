@@ -36,4 +36,4 @@ class RadialBasisFunction(Approximant):
 			dataTable = dataTableOrFileName
 			self._handle = splinter._call(splinter._getHandle().rbf_init, dataTable._getHandle(), rbfType)
 			
-		self._numVariables = splinter._call(splinter._getHandle().get_num_variables, self._handle)
+		self._numVariables = splinter._call(splinter._getHandle().approximant_get_num_variables, self._handle)

@@ -54,6 +54,7 @@ private:
     void load(const std::string fileName) override;
 
     friend class Serializer;
+    friend bool operator==(const PolynomialApproximant &lhs, const PolynomialApproximant &rhs);
 };
 
 } // namespace SPLINTER
