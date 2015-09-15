@@ -73,6 +73,32 @@ static DenseVector get_densevector(double *x, int x_dim)
     return xvec;
 }
 
+static double *get_row_major(double *col_major, size_t point_dim, size_t x_len)
+{
+    if (point_dim == 0)
+    {
+        set_error_string("Dimension of x should be larger than 0!");
+        return nullptr;
+    }
+
+    double *row_major = (double *) malloc(sizeof(double) * x_len);
+    if(row_major == nullptr)
+    {
+        set_error_string("Out of memory!");
+        return nullptr;
+    }
+
+    size_t num_points = x_len / point_dim;
+    for (size_t i = 0; i < x_len; ++i)
+    {
+        size_t sample_number = i / point_dim; // Intentional integer division
+        size_t dimension_number = i % point_dim;
+        row_major[i] = col_major[dimension_number * num_points + sample_number];
+    }
+
+    return row_major;
+}
+
 extern "C"
 {
 /* 1 if the last call to the library resulted in an error,
@@ -432,6 +458,68 @@ double *eval_hessian(obj_ptr approximant, double *x, int x_len)
         }
     }
 
+    return retVal;
+}
+
+double *eval_col_major(obj_ptr approximant, double *x, int x_len)
+{
+    double *retVal = nullptr;
+
+    auto approx = get_approximant(approximant);
+    if (approx != nullptr)
+    {
+        double *row_major = get_row_major(x, approx->getNumVariables(), x_len);
+        if (row_major == nullptr)
+        {
+            return nullptr; // Pass on the error message set by get_row_major
+        }
+
+        retVal = eval(approx, row_major, x_len);
+
+        free(row_major);
+    }
+
+    return retVal;
+}
+
+double *eval_jacobian_col_major(obj_ptr approximant, double *x, int x_len)
+{
+    double *retVal = nullptr;
+
+    auto approx = get_approximant(approximant);
+    if (approx != nullptr)
+    {
+        double *row_major = get_row_major(x, approx->getNumVariables(), x_len);
+        if (row_major == nullptr)
+        {
+            return nullptr; // Pass on the error message set by get_row_major
+        }
+
+        retVal = eval_jacobian(approx, row_major, x_len);
+
+        free(row_major);
+    }
+
+    return retVal;
+}
+
+double *eval_hessian_col_major(obj_ptr approximant, double *x, int x_len)
+{
+    double *retVal = nullptr;
+
+    auto approx = get_approximant(approximant);
+    if (approx != nullptr)
+    {
+        double *row_major = get_row_major(x, approx->getNumVariables(), x_len);
+        if (row_major == nullptr)
+        {
+            return nullptr; // Pass on the error message set by get_row_major
+        }
+
+        retVal = eval_hessian(approx, row_major, x_len);
+
+        free(row_major);
+    }
     return retVal;
 }
 

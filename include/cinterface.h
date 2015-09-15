@@ -75,6 +75,12 @@ SPLINTER_API double *eval_jacobian(obj_ptr approximant, double *x, int x_len);
 
 SPLINTER_API double *eval_hessian(obj_ptr approximant, double *x, int x_len);
 
+SPLINTER_API double *eval_col_major(obj_ptr approximant, double *x, int x_len);
+
+SPLINTER_API double *eval_jacobian_col_major(obj_ptr approximant, double *x, int x_len);
+
+SPLINTER_API double *eval_hessian_col_major(obj_ptr approximant, double *x, int x_len);
+
 SPLINTER_API int get_num_variables(obj_ptr approximant);
 
 SPLINTER_API void save(obj_ptr approximant, const char *filename);
