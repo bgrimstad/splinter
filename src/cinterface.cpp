@@ -190,11 +190,6 @@ void datatable_add_samples_col_major(obj_ptr datatable_ptr, double *x, int n_sam
     }
 }
 
-void datatable_add_samples(obj_ptr datatable_ptr, double *x, int n_samples, int x_dim, int size)
-{
-    datatable_add_samples_col_major(datatable_ptr, x, n_samples, x_dim, size);
-}
-
 int datatable_get_num_variables(obj_ptr datatable_ptr)
 {
     DataTable *dataTable = get_datatable(datatable_ptr);
@@ -389,7 +384,7 @@ obj_ptr polynomial_regression_load_init(const char *filename)
 }
 
 
-double *eval(obj_ptr approximant, double *x, int x_len)
+double *eval_row_major(obj_ptr approximant, double *x, int x_len)
 {
     double *retVal = nullptr;
 
@@ -411,7 +406,7 @@ double *eval(obj_ptr approximant, double *x, int x_len)
     return retVal;
 }
 
-double *eval_jacobian(obj_ptr approximant, double *x, int x_len)
+double *eval_jacobian_row_major(obj_ptr approximant, double *x, int x_len)
 {
     double *retVal = nullptr;
 
@@ -436,7 +431,7 @@ double *eval_jacobian(obj_ptr approximant, double *x, int x_len)
     return retVal;
 }
 
-double *eval_hessian(obj_ptr approximant, double *x, int x_len)
+double *eval_hessian_row_major(obj_ptr approximant, double *x, int x_len)
 {
     double *retVal = nullptr;
 
@@ -474,7 +469,7 @@ double *eval_col_major(obj_ptr approximant, double *x, int x_len)
             return nullptr; // Pass on the error message set by get_row_major
         }
 
-        retVal = eval(approx, row_major, x_len);
+        retVal = eval_row_major(approx, row_major, x_len);
 
         free(row_major);
     }
@@ -495,7 +490,7 @@ double *eval_jacobian_col_major(obj_ptr approximant, double *x, int x_len)
             return nullptr; // Pass on the error message set by get_row_major
         }
 
-        retVal = eval_jacobian(approx, row_major, x_len);
+        retVal = eval_jacobian_row_major(approx, row_major, x_len);
 
         free(row_major);
     }
@@ -516,14 +511,14 @@ double *eval_hessian_col_major(obj_ptr approximant, double *x, int x_len)
             return nullptr; // Pass on the error message set by get_row_major
         }
 
-        retVal = eval_hessian(approx, row_major, x_len);
+        retVal = eval_hessian_row_major(approx, row_major, x_len);
 
         free(row_major);
     }
     return retVal;
 }
 
-int get_num_variables(obj_ptr approximant)
+int approximant_get_num_variables(obj_ptr approximant)
 {
     int retVal = 0;
 
@@ -536,7 +531,7 @@ int get_num_variables(obj_ptr approximant)
     return retVal;
 }
 
-void save(obj_ptr approximant, const char *filename)
+void approximant_save(obj_ptr approximant, const char *filename)
 {
     auto approx = get_approximant(approximant);
     if (approx != nullptr) {
@@ -544,7 +539,7 @@ void save(obj_ptr approximant, const char *filename)
     }
 }
 
-void delete_approximant(obj_ptr approximant)
+void approximant_delete(obj_ptr approximant)
 {
     auto approx = get_approximant(approximant);
 

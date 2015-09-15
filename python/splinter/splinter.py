@@ -77,14 +77,14 @@ def __init():
 	_getHandle().datatable_add_samples_row_major.restype = c_void_p
 	_getHandle().datatable_add_samples_row_major.argtypes = [c_void_p, c_double_p, c_int, c_int]
 	
-	_getHandle().eval.restype = c_double_p
-	_getHandle().eval.argtypes = [c_void_p, c_double_p, c_int]
+	_getHandle().eval_row_major.restype = c_double_p
+	_getHandle().eval_row_major.argtypes = [c_void_p, c_double_p, c_int]
 	
-	_getHandle().eval_jacobian.restype = c_double_p
-	_getHandle().eval_jacobian.argtypes = [c_void_p, c_double_p, c_int]
+	_getHandle().eval_jacobian_row_major.restype = c_double_p
+	_getHandle().eval_jacobian_row_major.argtypes = [c_void_p, c_double_p, c_int]
 	
-	_getHandle().eval_hessian.restype = c_double_p
-	_getHandle().eval_hessian.argtypes = [c_void_p, c_double_p, c_int]
+	_getHandle().eval_hessian_row_major.restype = c_double_p
+	_getHandle().eval_hessian_row_major.argtypes = [c_void_p, c_double_p, c_int]
 	
 	_getHandle().polynomial_regression_init.restype = c_void_p
 	_getHandle().polynomial_regression_init.argtypes = [c_void_p, c_int_p, c_int]
@@ -95,11 +95,8 @@ def __init():
 	_getHandle().pspline_init.restype = c_void_p
 	_getHandle().pspline_init.argtypes = [c_void_p, c_double]
 	
-	_getHandle().get_num_variables.restype = c_int
-	_getHandle().get_num_variables.argtypes = [c_void_p]
-	
-	_getHandle().get_num_variables.restype = c_int
-	_getHandle().get_num_variables.argtypes = [c_void_p]
+	_getHandle().approximant_get_num_variables.restype = c_int
+	_getHandle().approximant_get_num_variables.argtypes = [c_void_p]
 	
 	_getHandle().datatable_get_num_variables.restype = c_int
 	_getHandle().datatable_get_num_variables.argtypes = [c_void_p]

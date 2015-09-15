@@ -87,7 +87,7 @@ classdef DataTable < handle
                 % of rows.
                 temp = size(obj.Samples);
                 numRows = temp(1);
-                Splinter.getInstance().call('datatable_add_samples', obj.Handle, samplePtr, obj.Num_samples, obj.X_dim, numRows)
+                Splinter.getInstance().call('datatable_add_samples_col_major', obj.Handle, samplePtr, obj.Num_samples, obj.X_dim, numRows)
                 
                 % This number is the number of samples we are storing
                 % temporarily in the MatLab front end, and that are

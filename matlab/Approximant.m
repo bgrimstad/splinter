@@ -40,17 +40,17 @@ classdef (Abstract = true) Approximant < handle
         end
 
         function r = getNumVariables(obj)
-            r = Splinter.getInstance().call('get_num_variables', obj.Handle);
+            r = Splinter.getInstance().call('approximant_get_num_variables', obj.Handle);
         end
         
         function save(obj, fileName)
-            Splinter.getInstance().call('save', obj.Handle, fileName);
+            Splinter.getInstance().call('approximant_save', obj.Handle, fileName);
         end
 
         % Destructor. Deletes the internal Approximant object.
         function delete(obj)
             if(obj.Handle ~= -1)
-                Splinter.getInstance().call('delete_approximant', obj.Handle);
+                Splinter.getInstance().call('approximant_delete', obj.Handle);
             end
         end
     end
