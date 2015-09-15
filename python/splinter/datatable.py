@@ -46,7 +46,8 @@ class DataTable:
 		self.__transfer()
 		return splinter._call(splinter._getHandle().datatable_get_num_samples, self.__handle)
 	
-	def save(self, fileName): 
+	def save(self, fileName):
+		self.__transfer()
 		splinter._call(splinter._getHandle().datatable_save, self.__handle, getCString(fileName))
 			 
 	# Methods below are internal use only
@@ -66,7 +67,5 @@ class DataTable:
 	# Getter for the datatable for use by Approximants
 	# Will make sure all samples are transferred to the back end before returning the handle to an Approximant
 	def _getHandle(self):
-		if self.__numSamples > 0:
-			self.__transfer()
-		
+		self.__transfer()
 		return self.__handle
