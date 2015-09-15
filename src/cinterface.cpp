@@ -7,7 +7,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include "matlab.h"
+#include "cinterface.h"
 #include <datatable.h>
 #include <bspline.h>
 #include <bsplineapproximant.h>
