@@ -20,6 +20,7 @@ NO_COLOR="\033[0m"
 NUM_MISSING=0
 NUM_OK=0
 TO_CHECK="$SPLINTER_DIR/CMakeLists.txt $SPLINTER_DIR/src $SPLINTER_DIR/include $SPLINTER_DIR/matlab $SPLINTER_DIR/test $SPLINTER_DIR/scripts $SPLINTER_DIR/python"
+IGNORE="--hide=*.pyc --hide=__pycache__"
 
 function print_red {
 	echo -e "$RED_COLOR$1$NO_COLOR"
@@ -66,7 +67,7 @@ function check_file {
 function check_directory {
 #	echo "Checking directory: $1"
 
-	for _ENTRY in $(ls $1)
+	for _ENTRY in $(ls $1 $IGNORE)
 	do
 		ENTRY=$1/$_ENTRY
 
