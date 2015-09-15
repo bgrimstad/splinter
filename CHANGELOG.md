@@ -10,13 +10,15 @@
 - Refactored MatLab interface backend (no end user visible changes)
 - Integrated the Catch testing framework and added extensive testing of approximation, serialization and datatable set operation features
 - Added set operations (union and complement) to DataTable (as operator+ and operator-)
-- Added script (scripts/build_release) for easier compilation (especially on Windows with MSVC)
+- Added script (scripts/build_release.sh) for easier compilation (especially on Windows with MSVC)
 - Improved compilation documentation
 - Renamed API macro to SPLINTER_API to avoid name collisions with users namespace
 - Fixed BSpline hessian not being symmetric
 - Added evalJacobian implementations for PolynomialRegression and RadialBasisFunctions
 - Added standard C++11 types to Approximant interface
 - Refactored B-spline code. Added build methods for building B-splines and P-splines.
+- Added Python interface to the library
+- Added batch evaluation to MatLab interface
 
 #### Version 1.3
 - Library renamed SPLINTER (from Splinter)
