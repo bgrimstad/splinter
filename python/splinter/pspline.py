@@ -26,4 +26,4 @@ class PSpline(Approximant):
 				smoothing = 0.03
 			self._handle = splinter._call(splinter._getHandle().pspline_init, dataTable._getHandle(), smoothing)
 			
-		self._numVariables = splinter._call(splinter._getHandle().get_num_variables, self._handle)
+		self._numVariables = splinter._call(splinter._getHandle().approximant_get_num_variables, self._handle)
