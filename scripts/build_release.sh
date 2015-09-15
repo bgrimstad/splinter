@@ -154,11 +154,13 @@ function build_linux {
 		# MatLab for Linux only exists as 64bit, so we don't need this
 #		"$MAKE_CMD" install
 #		cp -r splinter-matlab $BUILD_ROOT
+		cp -r splinter-python $BUILD_ROOT
 		
 		build_gcc_clang x86-64 $COMPILER
 		cp libsplinter-$SPLINTER_VERSION.so libsplinter-static-$SPLINTER_VERSION.a "$BUILD_ROOT/$OS/$COMPILER/$ARCH"
 		"$MAKE_CMD" install
 		cp -r splinter-matlab $BUILD_ROOT
+		cp -r splinter-python $BUILD_ROOT
 		
 		copy_header_files
 		
@@ -216,9 +218,11 @@ function build_msvc {
 	
 	# Install
 	mkdir -p "$BUILD_ROOT/splinter-matlab/lib/$OS/$ARCH/"
+	mkdir -p "$BUILD_ROOT/splinter-python/lib/$OS/$ARCH/"
 	mkdir -p "$BUILD_ROOT/$OS/$COMPILER/$ARCH"
 	
-	cp "Release/splinter-matlab-$SPLINTER_VERSION.dll" "$BUILD_ROOT/splinter-matlab/lib/$OS/$ARCH/"
+	cp "Release/splinter-$SPLINTER_VERSION.dll" "$BUILD_ROOT/splinter-matlab/lib/$OS/$ARCH/"
+	cp "Release/splinter-$SPLINTER_VERSION.dll" "$BUILD_ROOT/splinter-python/lib/$OS/$ARCH/"
 	cp "Release/splinter-$SPLINTER_VERSION.dll" "$BUILD_ROOT/$OS/$COMPILER/$ARCH"
 	cp "Release/splinter-static-$SPLINTER_VERSION.lib" "$BUILD_ROOT/$OS/$COMPILER/$ARCH"
 
@@ -373,11 +377,21 @@ do
 	done
 done
 
-# Make an archive of splinter-matlab
+# Make an archive of splinter-matlab and splinter-python
 cd $BUILD_ROOT
+
 filename="splinter-matlab"
 full_filename="$RELEASE_DIR/$filename"
 files="splinter-matlab"
+echo "Creating archive $filename.tar.gz"
+$TAR -czf $full_filename.tar.gz $files > /dev/null
+
+echo "Creating archive $filename.zip"
+$ZIP -r $full_filename $files > /dev/null
+
+filename="splinter-python"
+full_filename="$RELEASE_DIR/$filename"
+files="splinter-python"
 echo "Creating archive $filename.tar.gz"
 $TAR -czf $full_filename.tar.gz $files > /dev/null
 

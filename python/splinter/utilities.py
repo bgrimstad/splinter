@@ -46,3 +46,9 @@ def CArrayToList(CArray, size):
 # http://stackoverflow.com/questions/952914/making-a-flat-list-out-of-list-of-lists-in-python
 def flattenList(l):
 	return [item for sublist in l for item in sublist]
+
+def getArchitecture():
+	arch = "x86"
+	if sizeof(c_void_p) == 8:
+		arch = "x86-64"
+	return arch

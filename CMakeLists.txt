@@ -139,6 +139,7 @@ set(SRC_LIST
     include/bspline.h
     include/bsplinebasis.h
     include/bsplinebasis1d.h
+    include/cinterface.h
     include/datasample.h
     include/datatable.h
     include/function.h
@@ -155,6 +156,7 @@ set(SRC_LIST
     src/bspline.cpp
     src/bsplinebasis.cpp
     src/bsplinebasis1d.cpp
+    src/cinterface.cpp
     src/datasample.cpp
     src/datatable.cpp
     src/function.cpp
@@ -165,7 +167,6 @@ set(SRC_LIST
     src/serializer.cpp
     src/utilities.cpp
 )
-set(MATLAB_SRC_LIST ${SRC_LIST} include/matlab.h src/matlab.cpp)
 set(TEST_SRC_LIST
     ${SRC_LIST}
     test/main.cpp
@@ -193,17 +194,14 @@ set(TEST_SRC_LIST
 
 set(SHARED_LIBRARY ${PROJECT_NAME_LOWER}-${VERSION})
 set(STATIC_LIBRARY ${PROJECT_NAME_LOWER}-static-${VERSION})
-set(MATLAB_LIBRARY ${PROJECT_NAME_LOWER}-matlab-${VERSION})
 
 set(SHARED_LIBRARY_TEST "${PROJECT_NAME_LOWER}-shared-test")
 set(STATIC_LIBRARY_TEST "${PROJECT_NAME_LOWER}-static-test")
-set(SERIALIZE_TEST "${PROJECT_NAME_LOWER}-serialize-test")
 set(TEST "${PROJECT_NAME_LOWER}-test")
 
 # Add output library: add_library(libname [SHARED | STATIC] sourcelist)
 add_library(${SHARED_LIBRARY} SHARED ${SRC_LIST})
 add_library(${STATIC_LIBRARY} STATIC ${SRC_LIST})
-add_library(${MATLAB_LIBRARY} SHARED ${MATLAB_SRC_LIST})
 
 # Testing executable
 add_executable(${TEST} ${TEST_SRC_LIST})
@@ -211,17 +209,34 @@ target_link_libraries(${TEST} ${STATIC_LIBRARY})
 
 # Make the directory structure expected by the MatLab interface
 install(
-    DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/matlab
-    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-matlab
+        DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/matlab
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-matlab
 )
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/splinter-matlab/version ${VERSION})
 install(
-    FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/matlab.h
-    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-matlab/include
+        FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/cinterface.h
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-matlab/include
 )
 install(
-    TARGETS ${MATLAB_LIBRARY}
-    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-matlab/lib/${OS_STRING}/${ARCH}
+        TARGETS ${SHARED_LIBRARY}
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-matlab/lib/${OS_STRING}/${ARCH}
+)
+
+# Make the directory structure expected by the Python interface
+install(
+        DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/python
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-python
+        PATTERN "*.pyc" EXCLUDE
+        PATTERN "__pycache__*" EXCLUDE
+)
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/splinter-python/version ${VERSION})
+install(
+        FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/cinterface.h
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-python/include
+)
+install(
+        TARGETS ${SHARED_LIBRARY}
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-python/lib/${OS_STRING}/${ARCH}
 )
 
 # Install the header files (including Eigen) to the header directory

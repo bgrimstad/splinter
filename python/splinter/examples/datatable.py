@@ -15,7 +15,7 @@ sys.path.append(path.dirname(path.dirname(path.dirname(path.abspath(__file__))))
 import splinter
 
 # This must be done if splinter could not locate the shared library
-splinter.load("/home/anders/SPLINTER/build/release/libsplinter-matlab-1-4.so")
+splinter.load("/home/anders/SPLINTER/build/release/libsplinter-1-4.so")
 
 # Create a new, empty DataTable
 d = splinter.DataTable()

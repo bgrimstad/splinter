@@ -6,13 +6,11 @@
 % file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 function setup()
-    % Change this to the directory where the MatLab interface of SPLINTER
-    % is installed.
-    splinter_path = '/home/anders/SPLINTER/build/release/splinter-matlab';
-    %p = mfilename('fullpath');
-    %[upperPath, deepestFolder, ~] = fileparts(p);
-    %[upperPath, deepestFolder, ~] = fileparts(upperPath);
-    %splinter_path = upperPath;
+    %splinter_path = '/home/anders/SPLINTER/build/release/splinter-matlab';
+    p = mfilename('fullpath');
+    [upperPath, deepestFolder, ~] = fileparts(p);
+    [upperPath, deepestFolder, ~] = fileparts(upperPath);
+    splinter_path = upperPath;
     
     % Read version file. Name of library file depends on the version.
     versionFile = fullfile(splinter_path, 'version');

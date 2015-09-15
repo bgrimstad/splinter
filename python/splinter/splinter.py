@@ -10,6 +10,10 @@ from ctypes import * # Loading libraries
 from .utilities import *
 
 
+# Handle to the cdll instance
+__handle = None
+
+
 # Try to load the library libFile
 # If libFile is not specified, we try to locate and load SPLINTER
 def load(libFile = None):
@@ -26,7 +30,7 @@ def load(libFile = None):
 		try:
 			__handle = cdll.LoadLibrary(libFile)
 			__init()
-			out("Loaded SPLINTER!")
+			out("Loaded SPLINTER from " + str(libFile) + "!")
 
 		except Exception as e:
 			out("Error:")
@@ -46,9 +50,6 @@ def isLoaded():
 def unload():
 	global __handle
 	__handle = None
-
-
-__handle = None
 
 
 # Below are functions that should only be used internally
@@ -111,7 +112,9 @@ def __init():
 # - approximant.py
 # - *.py
 # - lib/
-#   - libsplinter-x-y.so / splinter-x-y.dll
+#   - linux or windows or osx
+#     - x86 or x86_64
+#       - libsplinter-x-y.so / splinter-x-y.dll
 def __locateSplinter():
 	import os
 	import platform # Detect OS
@@ -121,17 +124,18 @@ def __locateSplinter():
 	isMac = platform.system() == 'Darwin'
 	
 	fullPath = os.path.realpath(__file__) # Path to this file
-	splinterPythonMainDir = os.path.dirname(fullPath)
+	# Go two folders up (yes, two is correct, because the first dirname doesnt "go up").
+	splinterPythonMainDir = os.path.dirname(os.path.dirname(os.path.dirname(fullPath)))
 	
 	# Locate version.txt. If we cannot find it then we won't be able to find splinter either
-	versionFile = os.path.join(splinterPythonMainDir, "version.txt")
+	versionFile = os.path.join(splinterPythonMainDir, "version")
 	if not os.path.exists(versionFile):
 		return None
 	
 	f = open(versionFile)
 	splinterVersion = f.read().strip()
 	
-	splinterBaseName = "splinter-matlab-" + splinterVersion
+	splinterBaseName = "splinter-" + splinterVersion
 	if isWindows:
 		splinterName = splinterBaseName + ".dll"
 	elif isLinux or isMac:
@@ -139,13 +143,21 @@ def __locateSplinter():
 	else:
 		raise("Unknown platform: " + platform.system())
 	
-	libSplinter = os.path.join(splinterPythonMainDir, "lib", splinterName)
+	operatingSystem = "unknown"
+	if isLinux:
+		operatingSystem = "linux"
+	elif isWindows:
+		operatingSystem = "windows"
+	elif isMac:
+		operatingSystem = "osx"
+	
+	libSplinter = os.path.join(splinterPythonMainDir, "lib", operatingSystem, getArchitecture(), splinterName)
 	
 	if os.path.exists(libSplinter):
 		return libSplinter
 	
 	return None
-	
+
 def _call(function, *args):
 	res = function(*args)
 	
