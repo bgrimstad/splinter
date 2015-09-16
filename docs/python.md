@@ -36,7 +36,7 @@ and it should automatically load all classes along with the binary for you.
 ### Basic usage
 You can then start using the library by making a DataTable and populate it with samples using addSample().
 
-```
+```python
 import splinter
 
 def f(x, y):
