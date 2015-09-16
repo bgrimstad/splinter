@@ -34,10 +34,10 @@ Everyone is welcome to use and contribute to SPLINTER. We believe that collectiv
 
 The current goals with the library are:
 
-1. To improve the current code via testing;
-2. To make the library more accessible (we have added a MatLab interface and we are planning to add one for Python);
-3. To implement new function approximation methods such as Kriging;
-4. To add facilities for assessing approximation errors.
+1. To improve the current code via testing
+2. To make the library more accessible
+3. To implement new function approximation methods such as Kriging
+4. To add facilities for assessing approximation errors
 
 The simplest way to contribute to SPLINTER is to use it and give us feedback on the experience. If you would like to contribute by coding, you can get started by picking a suitable issue from the [list of issues](https://github.com/bgrimstad/splinter/issues). The issues are labeled with the type of work (`Bug`, `Docs`, `Enhancement`, `New feature`, `Refactoring`, `Tests`) and difficulty (`Beginner`, `Intermediate`, `Advanced`). Some issues are also labeled as `Critical`, which means that they deserve our attention and prioritization.
 
@@ -48,3 +48,5 @@ A standards compliant C++11 compiler.
 * [Basic usage](docs/basic_usage.md)
 * [Compilation](docs/compile.md)
 * [MatLab interface](docs/MATLAB.md)
+* [Python interface](docs/python.md)
+* [C interface](docs/C.md)
