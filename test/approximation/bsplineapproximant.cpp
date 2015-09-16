@@ -114,9 +114,9 @@ TEST_CASE("Quadratic BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::q
 
 TEST_CASE("Quadratic BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::quadratic][jacobian]")
 {
-    double one_eps = 5e-5;
-    double two_eps = 5e-5;
-    double inf_eps = 5e-5;
+    double one_eps = 6e-5;
+    double two_eps = 6e-5;
+    double inf_eps = 6e-5;
 
     for(auto testFunc : getPolynomialFunctions())
     {
@@ -242,9 +242,9 @@ TEST_CASE("Quartic BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::qua
 
 TEST_CASE("Quartic BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::quartic][jacobian]")
 {
-    double one_eps = 6e-5;
-    double two_eps = 6e-5;
-    double inf_eps = 6e-5;
+    double one_eps = 7e-5;
+    double two_eps = 7e-5;
+    double inf_eps = 7e-5;
 
     for(auto testFunc : getPolynomialFunctions())
     {

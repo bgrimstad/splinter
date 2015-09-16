@@ -43,9 +43,9 @@ TEST_CASE("Gaussian RadialBasisFunction function" COMMON_TEXT, COMMON_TAGS "[RBF
 
 TEST_CASE("Gaussian RadialBasisFunction jacobian" COMMON_TEXT, COMMON_TAGS "[RBFType::gaussian][jacobian]")
 {
-    double one_eps = 1e-1;
-    double two_eps = 1e-1;
-    double inf_eps = 1e-1;
+    double one_eps = 1.5e-1;
+    double two_eps = 1.5e-1;
+    double inf_eps = 1.5e-1;
 
     for(auto testFunc : getPolynomialFunctions())
     {
