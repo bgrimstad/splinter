@@ -7,19 +7,19 @@ The workflow to construct an approximation is simple: sample a function and cons
 Figure: A possible workflow for building approximations with SPLINTER.
 
 The header files and classes intended for the end user of this library are:
-[DataTable](../include/datatable.h), [BSpline](../include/bspline.h), [BSplineType](../include/bspline.h), [PSpline](../include/pspline.h), [RadialBasisFunction](../include/radialbasisfunction.h), [RadialBasisFunctionType](../include/radialbasisfunctionterm.h) and [PolynomialRegression](../include/polynomialregression.h).
+[DataTable](../include/datatable.h), [BSplineApproximant](../include/bsplineapproximant.h), [BSplineType](../include/bsplineapproximant.h), [PSplineApproximant](../include/psplineapproximant.h), [RBFApproximant](../include/rbfapproximant.h), [RBFType](../include/rbfterm.h) and [PolynomialApproximant](../include/polynomialapproximant.h).
 
 This is a simple example demonstrating the use of SPLINTER.
 
-Remember to compile with a c++11 compatible compiler! That means you probably have to add a flag when compiling.
+Remember to compile with a C++11 compatible compiler! That means you probably have to add a flag when compiling.
 
 ```c++
 #include <iostream>
 #include "datatable.h"
-#include "bspline.h"
-#include "pspline.h"
-#include "radialbasisfunction.h"
-#include "polynomialregression.h"
+#include "bsplineapproximant.h"
+#include "psplineapproximant.h"
+#include "rbfapproximant.h"
+#include "polynomialapproximant.h"
 
 using std::cout;
 using std::endl;
@@ -59,14 +59,14 @@ int main(int argc, char *argv[])
     }
 
     // Build B-splines that interpolate the samples
-    BSpline bspline1(samples, BSplineType::LINEAR);
-    BSpline bspline3(samples, BSplineType::CUBIC);
+    BSplineApproximant bspline1(samples, BSplineType::LINEAR);
+    BSplineApproximant bspline3(samples, BSplineType::CUBIC);
 
     // Build penalized B-spline (P-spline) that smooths the samples
-    PSpline pspline(samples, 0.03);
+    PSplineApproximant pspline(samples, 0.03);
 
     // Build radial basis function spline that interpolate the samples
-    RadialBasisFunction rbfspline(samples, RadialBasisFunctionType::THIN_PLATE_SPLINE);
+    RBFApproximant rbfspline(samples, RBFType::THIN_PLATE_SPLINE);
 
     /* The six-hump camelback is a function of degree 6 in x(0) and degree 4 in x(1),
      * therefore a polynomial of degree 6 in the first variable and 4 in the second
@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
     auto degrees = std::vector<unsigned int>(2);
     degrees.at(0) = 6;
     degrees.at(1) = 4;
-    PolynomialRegression polyfit(samples, degrees);
+    PolynomialApproximant polyfit(samples, degrees);
 
     /* Evaluate the approximants at x = (1,1)
      * Note that the error will be 0 at that point (except for the P-spline, which may introduce an error
