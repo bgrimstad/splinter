@@ -42,9 +42,9 @@ TEST_CASE("PSpline jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian][polynomial]")
 {
     for(auto testFunc : getPolynomialFunctions())
     {
-        double one_eps = 5e-6;
-        double two_eps = 5e-6;
-        double inf_eps = 5e-5;
+        double one_eps = 6e-6;
+        double two_eps = 6e-6;
+        double inf_eps = 6e-5;
 
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
