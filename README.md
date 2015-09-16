@@ -1,5 +1,5 @@
 ##SPLINTER
-SPLINTER (SPLine INTERpolation) is a library for linear regression implemented in C++. The library can be used for multivariate function approximation, quantitative supervised learning, data smoothing, and much more. Currently, the library contains the following implementations:
+SPLINTER (SPLine INTERpolation) is a library for multivariate function approximation implemented in C++. The library can be used for linear regression, quantitative supervised learning, data smoothing, and much more. Currently, the library contains the following implementations:
 
 1. [tensor product B-splines](http://en.wikipedia.org/wiki/B-spline), 
 2. [radial basis functions](http://en.wikipedia.org/wiki/Radial_basis_function), including the [thin plate spline](http://en.wikipedia.org/wiki/Thin_plate_spline), and
