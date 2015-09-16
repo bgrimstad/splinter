@@ -5,7 +5,7 @@
 - Added PolynomialRegression (including MatLab interface)
 - Added saving and loading of PSpline, RadialBasisFunction and PolynomialRegression
 - Reworked serialization (~5% faster serialization now)
-- Added loading of serialized objects in MatLab interface: b = BSpline('save_bspline.bspline')
+- Added loading of serialized objects in MatLab interface: b = BSpline('saved_bspline.bspline')
 - Added loading and saving of DataTable to MatLab interface
 - Refactored MatLab interface backend (no end user visible changes)
 - Integrated the Catch testing framework and added extensive testing of approximation, serialization and datatable set operation features
@@ -16,9 +16,10 @@
 - Fixed BSpline hessian not being symmetric
 - Added evalJacobian implementations for PolynomialRegression and RadialBasisFunctions
 - Added standard C++11 types to Approximant interface
-- Refactored B-spline code. Added build methods for building B-splines and P-splines.
+- Refactored B-spline code.
 - Added Python interface to the library
 - Added batch evaluation to MatLab interface
+- Renamed Approximant subclasses class names, example: BSpline -> BSplineApproximant
 
 #### Version 1.3
 - Library renamed SPLINTER (from Splinter)
