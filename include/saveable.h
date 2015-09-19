@@ -14,9 +14,7 @@ namespace SPLINTER
 {
 
 /**
- * Interface for approximants on the form:
- * f(x) = c(1)*b1(x) + c(2)*b2(x) + ... + c(n)*bn(x) = c^T * b(x),
- * where c are coefficients and b is a vector of basis functions.
+ * Interface for save and load functionality
  */
 class Saveable
 {
