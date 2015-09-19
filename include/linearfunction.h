@@ -45,6 +45,16 @@ public:
         return DenseMatrix::Zero(numVariables, numVariables);
     }
 
+    /**
+     * Evaluate basis functions at x
+     */
+    virtual SparseVector evalBasisFunctions(DenseVector x) const = 0;
+
+    /**
+     * Evaluate Jacobian of basis functions at x
+     */
+    virtual SparseMatrix evalBasisFunctionsJacobian(DenseVector x) const = 0;
+
     DenseVector getCoefficients()
     {
         return coefficients;
@@ -60,16 +70,6 @@ public:
 protected:
     LinearFunction(unsigned int numVariables)
             : Function(numVariables) {}
-
-    /**
-     * Evaluate basis functions at x
-     */
-    virtual SparseVector evalBasisFunctions(DenseVector x) const = 0;
-
-    /**
-     * Evaluate Jacobian of basis functions at x
-     */
-    virtual SparseMatrix evalBasisFunctionsJacobian(DenseVector x) const = 0;
 
     /**
      * Coefficients
