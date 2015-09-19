@@ -8,6 +8,7 @@
 */
 
 #include "testingutilities.h"
+#include <utilities.h>
 #include <testfunctions.h>
 #include <Catch.h>
 #include <iostream>
@@ -546,16 +547,7 @@ DataTable sample(const Function *func, std::vector<std::vector<double>> &points)
     return table;
 }
 
-std::vector<double> linspace(double start, double stop, unsigned int num)
-{
-    std::vector<double> ret;
-    double dx = 0;
-    if (num > 1)
-        dx = (stop - start)/(num-1);
-    for (unsigned int i = 0; i < num; ++i)
-        ret.push_back(start + i*dx);
-    return ret;
-}
+
 
 double sixHumpCamelBack(DenseVector x)
 {

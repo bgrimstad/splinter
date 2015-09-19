@@ -69,4 +69,15 @@ DenseMatrix vectorVectorToDenseMatrix(const std::vector<std::vector<double>> &ve
     return mat;
 }
 
+std::vector<double> linspace(double start, double stop, unsigned int num)
+{
+    std::vector<double> ret;
+    double dx = 0;
+    if (num > 1)
+        dx = (stop - start)/(num-1);
+    for (unsigned int i = 0; i < num; ++i)
+        ret.push_back(start + i*dx);
+    return ret;
+}
+
 } // namespace SPLINTER

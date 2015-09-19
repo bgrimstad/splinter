@@ -76,8 +76,6 @@ bool isSymmetricHessian(const Approximant &approx, const DenseVector &x);
 DataTable sample(const Function &func, std::vector<std::vector<double>> &points);
 DataTable sample(const Function *func, std::vector<std::vector<double>> &points);
 
-std::vector<double> linspace(double start, double stop, unsigned int points);
-
 // points is a vector where each element is the number of points for that dim
 std::vector<std::vector<double>> linspace(std::vector<double> start, std::vector<double> end, std::vector<unsigned int> points);
 
