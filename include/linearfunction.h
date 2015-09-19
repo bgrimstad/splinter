@@ -26,12 +26,54 @@ class SPLINTER_API LinearFunction : public Function
 public:
     virtual ~LinearFunction() {}
 
-    //virtual DenseVector computeCoefficients(DataTable data);
+    /**
+     * Returns the function value at x
+     */
+    double eval(DenseVector x) const override;
+
+    /**
+     * Returns the (1 x numVariables) Jacobian evaluated at x
+     */
+    DenseMatrix evalJacobian(DenseVector x) const override;
+
+    /**
+     * Returns the (numVariables x numVariables) Hessian evaluated at x
+     * TODO: implement
+     */
+    DenseMatrix evalHessian(DenseVector x) const override
+    {
+        return DenseMatrix::Zero(numVariables, numVariables);
+    }
+
+    DenseVector getCoefficients()
+    {
+        return coefficients;
+    }
+
+    void setCoefficients(DenseVector coefficients)
+    {
+        this->coefficients = coefficients;
+    }
+
     unsigned int getNumCoefficients() const { return coefficients.size(); }
+
 protected:
     LinearFunction(unsigned int numVariables)
             : Function(numVariables) {}
 
+    /**
+     * Evaluate basis functions at x
+     */
+    virtual SparseVector evalBasisFunctions(DenseVector x) const = 0;
+
+    /**
+     * Evaluate Jacobian of basis functions at x
+     */
+    virtual SparseMatrix evalBasisFunctionsJacobian(DenseVector x) const = 0;
+
+    /**
+     * Coefficients
+     */
     DenseVector coefficients;
 };
 

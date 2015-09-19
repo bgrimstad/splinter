@@ -46,7 +46,25 @@ public:
     DenseMatrix evalHessian(DenseVector x) const override;
 
     // Evaluation of B-spline basis functions
-    SparseVector evalBasisFunctions(DenseVector x) const { return basis.eval(x); }
+    SparseVector evalBasisFunctions(DenseVector x) const
+    {
+        return basis.eval(x);
+    }
+
+    SparseMatrix evalBasisFunctionsJacobian(DenseVector x) const
+    {
+        if (!pointInDomain(x))
+        {
+            throw Exception("BSpline::evalJacobian: Evaluation at point outside domain.");
+        }
+
+        //SparseMatrix Bi = basis.evalBasisJacobian(x);       // Sparse Jacobian implementation
+        //SparseMatrix Bi = basis.evalBasisJacobian2(x);  // Sparse Jacobian implementation
+        DenseMatrix Bi = basis.evalBasisJacobianOld(x);  // Old Jacobian implementation
+
+        return Bi.sparseView();
+    }
+
 
     // Getters
     unsigned int getNumControlPoints() const { return coefficients.cols(); }
