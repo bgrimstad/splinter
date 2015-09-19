@@ -12,6 +12,7 @@
 
 #include "definitions.h"
 #include "function.h"
+#include "saveable.h"
 
 namespace SPLINTER
 {
@@ -21,18 +22,12 @@ namespace SPLINTER
  * f(x) = c(1)*b1(x) + c(2)*b2(x) + ... + c(n)*bn(x) = c^T * b(x),
  * where c are coefficients and b is a vector of basis functions.
  */
-class SPLINTER_API Approximant : public Function
+class SPLINTER_API Approximant : public Function, public Saveable
 {
 public:
     virtual ~Approximant() {}
 
     //virtual DenseVector computeCoefficients(DataTable data);
-
-    /**
-     * Serialize and save approximant to fileName
-     * Throws if file could not be opened
-     */
-    virtual void save(const std::string fileName) const = 0;
 
     /*
      * Functions for appraising absolute approximation error
@@ -55,12 +50,6 @@ public:
 protected:
     Approximant(unsigned int numVariables)
             : Function(numVariables) {}
-
-    /**
-     * Deserialize and load approximant from fileName
-     * Throws if file could not be opened or if the file format is wrong
-     */
-    virtual void load(const std::string fileName) = 0;
 
 private:
     Approximant();
