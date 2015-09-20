@@ -35,7 +35,7 @@ std::vector<std::vector<double>> denseMatrixToVectorVector(const DenseMatrix &ma
 
 DenseMatrix vectorVectorToDenseMatrix(const std::vector<std::vector<double>> &vec);
 
-std::vector<double> linspace(double start, double stop, unsigned int points);
+std::vector<double> linspace(double start, double stop, unsigned int num);
 
 } // namespace SPLINTER
 

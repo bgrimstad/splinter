@@ -10,10 +10,10 @@
 #include "bsplineapproximant.h"
 #include "mykroneckerproduct.h"
 #include "unsupported/Eigen/KroneckerProduct"
-#include "linearsolvers.h"
+#include <linearsolvers.h>
 #include <serializer.h>
 #include <iostream>
-#include <testingutilities.h>
+#include <utilities.h>
 
 namespace SPLINTER
 {
@@ -205,6 +205,7 @@ std::vector<double> BSplineApproximant::computeKnotVector(const std::vector<doub
 {
     return knotVectorMovingAverage(values, degree);
     //return knotVectorBuckets(values, degree);
+    //return knotVectorEquidistant(values, degree);
 }
 
 /*
@@ -274,6 +275,44 @@ std::vector<double> BSplineApproximant::knotVectorMovingAverage(const std::vecto
 
     // Repeat last knot p + 1 times (for interpolation of end point)
     for (unsigned int i = 0; i < degree + 1; ++i)
+        knots.insert(knots.end(), unique.back());
+
+    // Number of knots in a (p+1)-regular knot vector
+    //assert(knots.size() == uniqueX.size() + degree + 1);
+
+    return knots;
+}
+
+std::vector<double> BSplineApproximant::knotVectorEquidistant(const std::vector<double> &values, unsigned int degree) const
+{
+    // Sort and remove duplicates
+    std::vector<double> unique = extractUniqueSorted(values);
+
+    // Compute sizes
+    unsigned int n = unique.size();
+    unsigned int k = degree-1; // knots to remove
+
+    // The minimum number of samples from which a free knot vector can be created
+    if (n < degree+1)
+    {
+        std::ostringstream e;
+        e << "knotVectorMovingAverage: Only " << n
+          << " unique interpolation points are given. A minimum of degree+1 = " << degree+1
+          << " unique points are required to build a B-spline basis of degree " << degree << ".";
+        throw Exception(e.str());
+    }
+
+    // Compute (n-k-2) equidistant interior knots
+    unsigned int numIntKnots = std::max(n-k-2, (unsigned int)0);
+    numIntKnots = std::min((unsigned int)10, numIntKnots);
+    std::vector<double> knots = linspace(unique.front(), unique.back(), numIntKnots);
+
+    // Repeat first knot p + 1 times (for interpolation of start point)
+    for (unsigned int i = 0; i < degree; ++i)
+        knots.insert(knots.begin(), unique.front());
+
+    // Repeat last knot p + 1 times (for interpolation of end point)
+    for (unsigned int i = 0; i < degree; ++i)
         knots.insert(knots.end(), unique.back());
 
     // Number of knots in a (p+1)-regular knot vector
