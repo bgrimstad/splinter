@@ -28,15 +28,15 @@ DenseMatrix computeCoefficients(const LinearFunction &func, const DataTable &sam
     DenseMatrix Xty = Xt*y;
 
     // Coefficients
-    DenseMatrix coefficients;
+    DenseMatrix c;
 
     // Solve for coefficients
     DenseQR s;
-    if (!s.solve(XtX, Xty, coefficients))
+    if (!s.solve(XtX, Xty, c))
         throw Exception("PolynomialApproximant::computeCoefficients: Failed to solve for coefficients.");
 
     // TODO: consider returning a vector instead of a matrix!
-    return coefficients;
+    return c;
 }
 
 DenseMatrix computeDesignMatrix(const LinearFunction &func, const DataTable &sample)

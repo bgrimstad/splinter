@@ -65,6 +65,11 @@ public:
     DenseMatrix evalJacobian(DenseVector x) const override;
     DenseMatrix evalHessian(DenseVector x) const override;
 
+    BSpline getBSpline() const
+    {
+        return bspline;
+    }
+
     void save(const std::string fileName) const override;
 
     const std::string getDescription() const override;
