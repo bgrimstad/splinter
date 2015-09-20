@@ -150,10 +150,7 @@ size_t Serializer::get_size(const Polynomial &obj)
 size_t Serializer::get_size(const PolynomialApproximant &obj)
 {
     return get_size(obj.numVariables)
-            + get_size(obj.numCoefficients)
-            + get_size(obj.degrees)
-            + get_size(obj.coefficients);
-            //+ get_size(obj.poly);
+            + get_size(obj.poly);
 }
 
 /*
@@ -231,10 +228,7 @@ void Serializer::_serialize(const Polynomial &obj)
 void Serializer::_serialize(const PolynomialApproximant &obj)
 {
     _serialize(obj.numVariables);
-    _serialize(obj.numCoefficients);
-    _serialize(obj.degrees);
-    _serialize(obj.coefficients);
-    //_serialize(obj.poly);
+    _serialize(obj.poly);
 }
 
 /*
@@ -336,10 +330,7 @@ void Serializer::deserialize(Polynomial &obj)
 void Serializer::deserialize(PolynomialApproximant &obj)
 {
     deserialize(obj.numVariables);
-    deserialize(obj.numCoefficients);
-    deserialize(obj.degrees);
-    deserialize(obj.coefficients);
-    //deserialize(obj.poly);
+    deserialize(obj.poly);
 }
 
 } // namespace SPLINTER

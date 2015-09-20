@@ -13,7 +13,7 @@
 namespace SPLINTER
 {
 
-DenseVector computeCoefficients(const LinearFunction &func, const DataTable &sample)
+DenseMatrix computeCoefficients(const LinearFunction &func, const DataTable &sample)
 {
     // Left hand side
     DenseMatrix X = computeDesignMatrix(func, sample);
@@ -35,10 +35,7 @@ DenseVector computeCoefficients(const LinearFunction &func, const DataTable &sam
     if (!s.solve(XtX, Xty, coefficients))
         throw Exception("PolynomialApproximant::computeCoefficients: Failed to solve for coefficients.");
 
-    // Transpose coefficients matrix
-    //coefficients.transposeInPlace();
-
-    // TODO: should return vector not matrix!
+    // TODO: consider returning a vector instead of a matrix!
     return coefficients;
 }
 

@@ -103,10 +103,7 @@ bool operator==(const PolynomialApproximant &lhs, const PolynomialApproximant &r
 {
     return
             lhs.numVariables == rhs.numVariables
-            && lhs.numCoefficients == rhs.numCoefficients
-            && lhs.degrees == rhs.degrees
-            && lhs.coefficients == rhs.coefficients;
-            //&& lhs.poly == rhs.poly;
+            && lhs.poly == rhs.poly;
 }
 
 bool operator==(const Polynomial &lhs, const Polynomial &rhs)

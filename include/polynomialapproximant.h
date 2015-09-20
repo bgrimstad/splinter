@@ -22,8 +22,8 @@ class SPLINTER_API PolynomialApproximant : public Approximant
 public:
     PolynomialApproximant(const char *fileName);
     PolynomialApproximant(const std::string fileName);
-    PolynomialApproximant(const DataTable &samples, unsigned int degree);
-    PolynomialApproximant(const DataTable &samples, std::vector<unsigned int> degrees);
+    PolynomialApproximant(const DataTable &sample, unsigned int degree);
+    PolynomialApproximant(const DataTable &sample, std::vector<unsigned int> degrees);
 
     virtual PolynomialApproximant * clone() const { return new PolynomialApproximant(*this); }
 
@@ -32,9 +32,6 @@ public:
     DenseMatrix evalJacobian(DenseVector x) const override;
     DenseMatrix evalHessian(DenseVector x) const override { DenseMatrix h(numVariables, numVariables); h.fill(0.0); return h; } // TODO: Implement
 
-    // Getters
-    DenseMatrix getCoefficients() const { return coefficients; }
-
     void save(const std::string fileName) const override;
 
     const std::string getDescription() const override;
@@ -42,17 +39,7 @@ public:
 private:
     PolynomialApproximant();
 
-    unsigned int numCoefficients;
-    std::vector<unsigned int> degrees;
-    DenseMatrix coefficients;
-
-    //Polynomial poly;
-
-    DenseMatrix computeCoefficients(const DataTable &samples) const;
-    DenseMatrix computeDesignMatrix(const DataTable &samples) const;
-
-    DenseVector evalMonomials(DenseVector x) const;
-    DenseVector evalDifferentiatedMonomials(DenseVector x, unsigned int var) const;
+    Polynomial poly;
 
     void load(const std::string fileName) override;
 

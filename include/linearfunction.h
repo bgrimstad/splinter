@@ -62,6 +62,8 @@ public:
 
     void setCoefficients(DenseMatrix coefficients)
     {
+        if (coefficients.cols() != 1)
+            throw Exception("LinearFunction::setCoefficients: coefficient matrix must have exactly one column.");
         this->coefficients = coefficients;
     }
 
