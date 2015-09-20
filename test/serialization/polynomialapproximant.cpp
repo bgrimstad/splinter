@@ -25,7 +25,8 @@ TEST_CASE("PolynomialApproximant can be saved and loaded", "[serialization][poly
 
     const char *fileName = "test.polyfit";
 
-    SECTION("PolynomialApproximant of degree 1") {
+    SECTION("PolynomialApproximant of degree 1")
+    {
         PolynomialApproximant polyfit(table, 1);
 
         polyfit.save(fileName);
@@ -44,11 +45,12 @@ TEST_CASE("PolynomialApproximant can be saved and loaded", "[serialization][poly
     }
 
     if(dim > 1) {
-        SECTION("PolynomialApproximant of differing degrees in each dimension") {
+        SECTION("PolynomialApproximant of differing degrees in each dimension")
+        {
             auto degrees = std::vector<unsigned int>(dim);
-            for(unsigned int i = 0; i < dim; i++) {
+            for (unsigned int i = 0; i < dim; i++)
                 degrees.at(i) = i + 1;
-            }
+
             PolynomialApproximant polyfit(table, degrees);
 
             polyfit.save(fileName);
@@ -56,6 +58,27 @@ TEST_CASE("PolynomialApproximant can be saved and loaded", "[serialization][poly
 
             REQUIRE(polyfit == loadedPolyfit);
         }
+    }
+
+    remove(fileName);
+}
+
+TEST_CASE("Polynomial can be saved and loaded", "[serialization][polynomial]")
+{
+    unsigned int dim = 3;
+    std::vector<unsigned int> degrees = {1,2,3};
+    DenseVector coeffs = DenseVector::Ones(24);
+    coeffs(5) = 6; coeffs(10) = 11; coeffs(15) = 16; coeffs(20) = 21;
+
+    const char *fileName = "test.polynomial";
+
+    SECTION("Polynomial of degrees (1,2,3)")
+    {
+        Polynomial poly(degrees, coeffs);
+        poly.save(fileName);
+        Polynomial loadedPoly(fileName);
+
+        REQUIRE(poly == loadedPoly);
     }
 
     remove(fileName);

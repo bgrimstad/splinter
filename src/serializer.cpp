@@ -18,10 +18,11 @@
 #include <bsplineapproximant.h>
 #include <psplineapproximant.h>
 #include <rbfapproximant.h>
+#include <polynomial.h>
 #include <polynomialapproximant.h>
 
-namespace SPLINTER {
-
+namespace SPLINTER
+{
 
 Serializer::Serializer()
 {
@@ -47,8 +48,8 @@ void Serializer::loadFromFile(std::string fileName)
     // Open the file in binary mode at the end
     std::ifstream ifs(fileName, std::ios::binary | std::ios::ate);
 
-    if(!ifs.is_open()) {
-        std::string error_message("Serializer::load_from_file: Unable to open file \"");
+    if (!ifs.is_open()) {
+        std::string error_message("Serializer::loadFromFile: Unable to open file \"");
         error_message.append(fileName);
         error_message.append("\" for deserializing.");
         throw Exception(error_message);
@@ -74,6 +75,10 @@ void Serializer::loadFromFile(std::string fileName)
 
     read = stream.cbegin();
 }
+
+/*
+ * get_size implementations
+ */
 
 size_t Serializer::get_size(const DataSample &obj)
 {
@@ -135,13 +140,25 @@ size_t Serializer::get_size(const RBFApproximant &obj)
            + get_size(obj.weights);
 }
 
+size_t Serializer::get_size(const Polynomial &obj)
+{
+    return get_size(obj.numVariables)
+            + get_size(obj.coefficients)
+            + get_size(obj.degrees);
+}
+
 size_t Serializer::get_size(const PolynomialApproximant &obj)
 {
     return get_size(obj.numVariables)
-           + get_size(obj.numCoefficients)
-           + get_size(obj.degrees)
-           + get_size(obj.coefficients);
+            + get_size(obj.numCoefficients)
+            + get_size(obj.degrees)
+            + get_size(obj.coefficients);
+            //+ get_size(obj.poly);
 }
+
+/*
+ * _serialize implementations
+ */
 
 void Serializer::_serialize(const DataSample &obj)
 {
@@ -204,13 +221,25 @@ void Serializer::_serialize(const RBFApproximant &obj)
     _serialize(obj.weights);
 }
 
+void Serializer::_serialize(const Polynomial &obj)
+{
+    _serialize(obj.numVariables);
+    _serialize(obj.coefficients);
+    _serialize(obj.degrees);
+}
+
 void Serializer::_serialize(const PolynomialApproximant &obj)
 {
     _serialize(obj.numVariables);
     _serialize(obj.numCoefficients);
     _serialize(obj.degrees);
     _serialize(obj.coefficients);
+    //_serialize(obj.poly);
 }
+
+/*
+ * deserialize implementations
+ */
 
 void Serializer::deserialize(DataSample &obj)
 {
@@ -297,12 +326,20 @@ void Serializer::deserialize(RBFApproximant &obj)
     deserialize(obj.weights);
 }
 
+void Serializer::deserialize(Polynomial &obj)
+{
+    deserialize(obj.numVariables);
+    deserialize(obj.coefficients);
+    deserialize(obj.degrees);
+}
+
 void Serializer::deserialize(PolynomialApproximant &obj)
 {
     deserialize(obj.numVariables);
     deserialize(obj.numCoefficients);
     deserialize(obj.degrees);
     deserialize(obj.coefficients);
+    //deserialize(obj.poly);
 }
 
-}
+} // namespace SPLINTER

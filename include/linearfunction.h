@@ -55,12 +55,12 @@ public:
      */
     virtual SparseMatrix evalBasisFunctionsJacobian(DenseVector x) const = 0;
 
-    DenseVector getCoefficients()
+    DenseMatrix getCoefficients()
     {
         return coefficients;
     }
 
-    void setCoefficients(DenseVector coefficients)
+    void setCoefficients(DenseMatrix coefficients)
     {
         this->coefficients = coefficients;
     }
@@ -68,13 +68,19 @@ public:
     unsigned int getNumCoefficients() const { return coefficients.size(); }
 
 protected:
-    LinearFunction(unsigned int numVariables)
-            : Function(numVariables) {}
+    LinearFunction(unsigned int numVariables, DenseMatrix coefficients)
+            : Function(numVariables),
+              coefficients(coefficients)
+    {}
 
     /**
      * Coefficients
+     * NOTE: serialization fails when using DenseVector
      */
-    DenseVector coefficients;
+    DenseMatrix coefficients;
+
+    friend class Serializer;
+    friend bool operator==(const LinearFunction &lhs, const LinearFunction &rhs);
 };
 
 } // namespace SPLINTER

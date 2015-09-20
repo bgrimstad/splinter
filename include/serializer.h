@@ -28,9 +28,15 @@ class BSplineBasis1D;
 class BSplineApproximant;
 class PSplineApproximant;
 class RBFApproximant;
+class Polynomial;
 class PolynomialApproximant;
 
-class Serializer {
+/**
+ * Class for serialization
+ * NOTE: member variables must be serialized and deserialized in the same order.
+ */
+class Serializer
+{
 public:
     Serializer();
     Serializer(std::string fileName);
@@ -62,6 +68,7 @@ public:
     void deserialize(BSplineApproximant &obj);
     void deserialize(PSplineApproximant &obj);
     void deserialize(RBFApproximant &obj);
+    void deserialize(Polynomial &obj);
     void deserialize(PolynomialApproximant &obj);
 
     // Save the serialized stream to fileName
@@ -96,6 +103,7 @@ protected:
     size_t get_size(const BSplineApproximant &obj);
     size_t get_size(const PSplineApproximant &obj);
     size_t get_size(const RBFApproximant &obj);
+    size_t get_size(const Polynomial &obj);
     size_t get_size(const PolynomialApproximant &obj);
 
     template <class T>
@@ -121,6 +129,7 @@ protected:
     void _serialize(const BSplineApproximant &obj);
     void _serialize(const PSplineApproximant &obj);
     void _serialize(const RBFApproximant &obj);
+    void _serialize(const Polynomial &obj);
     void _serialize(const PolynomialApproximant &obj);
 
 private:
@@ -165,7 +174,7 @@ void Serializer::_serialize(const T &obj)
 template <class T>
 void Serializer::deserialize(T &obj)
 {
-    if(read + sizeof(T) > stream.cend()) {
+    if (read + sizeof(T) > stream.cend()) {
         throw Exception("Serializer::deserialize: Stream is missing bytes!");
     }
 
@@ -284,7 +293,7 @@ void Serializer::deserialize(std::vector<T> &obj)
     size_t size; deserialize(size);
     obj.resize(size);
 
-    for(auto &elem : obj)
+    for (auto &elem : obj)
     {
         deserialize(elem);
     }
@@ -309,7 +318,7 @@ void Serializer::deserialize(std::multiset<T> &obj)
     size_t size; deserialize(size);
 
     T elem;
-    for(int i = 0; i < size; i++)
+    for (int i = 0; i < size; i++)
     {
         deserialize(elem);
         obj.insert(elem);

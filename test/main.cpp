@@ -12,8 +12,8 @@
 #include <testfunction.h>
 #include <testfunctions.h>
 
-
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     setupTestFunctions();
 
     int result = Catch::Session().run(argc, argv);

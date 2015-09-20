@@ -11,6 +11,7 @@
 #define SPLINTER_POLYNOMIALAPPROXIMANT_H
 
 #include "approximant.h"
+#include "polynomial.h"
 #include "datatable.h"
 
 namespace SPLINTER
@@ -45,7 +46,9 @@ private:
     std::vector<unsigned int> degrees;
     DenseMatrix coefficients;
 
-    void computeCoefficients(const DataTable &samples);
+    //Polynomial poly;
+
+    DenseMatrix computeCoefficients(const DataTable &samples) const;
     DenseMatrix computeDesignMatrix(const DataTable &samples) const;
 
     DenseVector evalMonomials(DenseVector x) const;

@@ -17,6 +17,7 @@ namespace SPLINTER
 
 PolynomialApproximant::PolynomialApproximant()
     : Approximant(1)
+      //poly(Polynomial(1, 1))
 {
 }
 
@@ -27,6 +28,7 @@ PolynomialApproximant::PolynomialApproximant(const char *fileName)
 
 PolynomialApproximant::PolynomialApproximant(const std::string fileName)
     : Approximant(1)
+      //poly(Polynomial(1, 1))
 {
     load(fileName);
 }
@@ -40,6 +42,7 @@ PolynomialApproximant::PolynomialApproximant(const DataTable &samples, std::vect
     : Approximant(samples.getNumVariables()),
       degrees(degrees),
       numCoefficients(0)
+      //poly(Polynomial(degrees))
 {
     if (degrees.size() != numVariables)
         throw Exception("PolynomialApproximant::PolynomialApproximant: Inconsistent input data!");
@@ -53,13 +56,18 @@ PolynomialApproximant::PolynomialApproximant(const DataTable &samples, std::vect
         throw Exception("PolynomialApproximant::PolynomialApproximant: Insufficient number of samples!");
 
     // Compute coefficients
-    computeCoefficients(samples);
+    coefficients = computeCoefficients(samples);
+    //poly.setCoefficients(coefficients);
 }
 
 double PolynomialApproximant::eval(DenseVector x) const
 {
     DenseMatrix monomials = evalMonomials(x);
     DenseMatrix res = coefficients*monomials;
+
+//    if (res(0,0) != poly.eval(x))
+//        throw Exception("PolynomialApproximant:: YOU FUCKED UP - HI, HI!!!");
+
     return res(0,0);
 }
 
@@ -77,7 +85,7 @@ DenseMatrix PolynomialApproximant::evalJacobian(DenseVector x) const
     return jac;
 }
 
-void PolynomialApproximant::computeCoefficients(const DataTable &samples)
+DenseMatrix PolynomialApproximant::computeCoefficients(const DataTable &samples) const
 {
     // Left hand side
     DenseMatrix X = computeDesignMatrix(samples);
@@ -91,13 +99,17 @@ void PolynomialApproximant::computeCoefficients(const DataTable &samples)
         y(i) = yvec.at(i);
     DenseMatrix Xty = Xt*y;
 
+    DenseMatrix c;
+
     // Solve for coefficients
     DenseQR s;
-    if (!s.solve(XtX, Xty, coefficients))
+    if (!s.solve(XtX, Xty, c))
         throw Exception("PolynomialApproximant::computeCoefficients: Failed to solve for coefficients.");
 
     // Transpose coefficients matrix
-    coefficients.transposeInPlace();
+    c.transposeInPlace();
+
+    return c;
 }
 
 /*
