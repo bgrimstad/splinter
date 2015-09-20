@@ -22,7 +22,7 @@ for i = 1:N
 end
 
 % Fine grid for plotting and evaluation of errors
-Nd = 20*N;
+Nd = N;
 xd = linspace(xstart,xend,Nd);
 yd = zeros(Nd,1);
 for i = 1:Nd
@@ -56,9 +56,8 @@ end
 figure
 plot(x,y,'.k')
 hold on
-plot(xd,yad1,'-k')
-plot(xd,yad2,'-k')
+plot(xd,yad1,'--k')
+plot(xd,yad2,'-.k')
 plot(xd,yad3,'-k')
 hold off
-legend('Linear', 'Quadratic', 'Cubic');
-
+legend('Sine', 'Linear', 'Quadratic', 'Cubic');
