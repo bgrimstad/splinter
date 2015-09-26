@@ -73,6 +73,7 @@ double BSpline::eval(DenseVector x) const
 {
 	if (!pointInDomain(x))
 	{
+        // Consider returning 0 instead of throwing error
 		throw Exception("BSpline::eval: Evaluation at point outside domain.");
 	}
 
