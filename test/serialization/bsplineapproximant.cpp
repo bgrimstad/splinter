@@ -8,7 +8,7 @@
 */
 
 #include <Catch.h>
-#include <datatable.h>
+#include <sample.h>
 #include <bsplineapproximant.h>
 #include "testingutilities.h"
 

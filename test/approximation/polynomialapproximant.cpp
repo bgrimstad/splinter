@@ -85,7 +85,7 @@ TEST_CASE("PolynomialApproximant jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian]"
 //        for(auto testFunc : getPolynomialFunctions())
 //        {
 //            checkHessianSymmetry(testFunc,
-//                                 [degree](const DataTable &table)
+//                                 [degree](const Sample &table)
 //                                 {
 //                                     return (Approximant *) new PolynomialApproximant(table, degree);
 //                                 },

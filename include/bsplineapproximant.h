@@ -10,7 +10,7 @@
 #ifndef SPLINTER_BSPLINEAPPROXIMANT_H
 #define SPLINTER_BSPLINEAPPROXIMANT_H
 
-#include "datatable.h"
+#include "sample.h"
 #include "bspline.h"
 
 namespace SPLINTER

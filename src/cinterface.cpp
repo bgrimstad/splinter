@@ -8,7 +8,7 @@
 */
 
 #include "cinterface.h"
-#include <datatable.h>
+#include <sample.h>
 #include <bspline.h>
 #include <bsplineapproximant.h>
 #include <psplineapproximant.h>

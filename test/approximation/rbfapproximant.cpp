@@ -66,7 +66,7 @@ TEST_CASE("Gaussian RadialBasisFunction jacobian" COMMON_TEXT, COMMON_TAGS "[RBF
 //    for(auto testFunc : getPolynomialFunctions())
 //    {
 //        checkHessianSymmetry(testFunc,
-//                             [](const DataTable &table)
+//                             [](const Sample &table)
 //                             {
 //                                 return (Approximant *) new RadialBasisFunction(table, RBFType::GAUSSIAN);
 //                             },
@@ -123,7 +123,7 @@ TEST_CASE("Inverse Multiquadric RadialBasisFunction jacobian" COMMON_TEXT, COMMO
 //    for(auto testFunc : getPolynomialFunctions())
 //    {
 //        checkHessianSymmetry(testFunc,
-//                             [](const DataTable &table)
+//                             [](const Sample &table)
 //                             {
 //                                 return (Approximant *) new RadialBasisFunction(table, RBFType::INVERSE_MULTIQUADRIC);
 //                             },
@@ -180,7 +180,7 @@ TEST_CASE("Inverse Quadric RadialBasisFunction jacobian" COMMON_TEXT, COMMON_TAG
 //    for(auto testFunc : getPolynomialFunctions())
 //    {
 //        checkHessianSymmetry(testFunc,
-//                             [](const DataTable &table)
+//                             [](const Sample &table)
 //                             {
 //                                 return (Approximant *) new RadialBasisFunction(table, RBFType::INVERSE_QUADRIC);
 //                             },
@@ -237,7 +237,7 @@ TEST_CASE("Multiquadric RadialBasisFunction jacobian" COMMON_TEXT, COMMON_TAGS "
 //    for(auto testFunc : getPolynomialFunctions())
 //    {
 //        checkHessianSymmetry(testFunc,
-//                             [](const DataTable &table)
+//                             [](const Sample &table)
 //                             {
 //                                 return (Approximant *) new RadialBasisFunction(table, RBFType::MULTIQUADRIC);
 //                             },
@@ -294,7 +294,7 @@ TEST_CASE("Thin plate spline RadialBasisFunction jacobian" COMMON_TEXT, COMMON_T
 //    for(auto testFunc : getPolynomialFunctions())
 //    {
 //        checkHessianSymmetry(testFunc,
-//                             [](const DataTable &table)
+//                             [](const Sample &table)
 //                             {
 //                                 return (Approximant *) new RadialBasisFunction(table, RBFType::THIN_PLATE_SPLINE);
 //                             },

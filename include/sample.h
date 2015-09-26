@@ -11,7 +11,7 @@
 #define SPLINTER_SAMPLE_H
 
 #include <set>
-#include "datasample.h"
+#include "samplepoint.h"
 
 #include <ostream>
 
@@ -19,7 +19,7 @@ namespace SPLINTER
 {
 
 /*
- * DataTable is a class for storing multidimensional data samples (x,y).
+ * Sample is a class for storing multidimensional observations (x,y).
  * The samples are stored in a continuously sorted table.
  */
 class SPLINTER_API Sample
@@ -29,7 +29,7 @@ public:
     Sample(bool allowDuplicates);
     Sample(bool allowDuplicates, bool allowIncompleteGrid);
     Sample(const char *fileName);
-    Sample(const std::string fileName); // Load DataTable from file
+    Sample(const std::string fileName); // Load Sample from file
 
     /*
      * Functions for adding a sample (x,y)

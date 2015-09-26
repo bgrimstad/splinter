@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 //    std::vector<double> lb = {-1,-1,-1,-1};
 //    std::vector<double> ub = {2,2,2,2};
 //
-//    DataTable table;
+//    Sample table;
 //    int n = 6;
 //    for (int i0 = 0; i0 < n; i0++)
 //    {

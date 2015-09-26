@@ -9,15 +9,15 @@
 
 #include <Catch.h>
 #include <testingutilities.h>
-#include <datatable.h>
+#include <sample.h>
 
 using namespace SPLINTER;
 
 
-#define COMMON_TAGS "[general][datatable]"
+#define COMMON_TAGS "[general][sample]"
 
 
-TEST_CASE("DataTable set operations", COMMON_TAGS) {
+TEST_CASE("Sample set operations", COMMON_TAGS) {
     int dim = 2;
     auto func = getTestFunction(dim, 2);
 

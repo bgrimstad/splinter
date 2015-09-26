@@ -12,7 +12,7 @@
 
 #include "approximant.h"
 #include "polynomial.h"
-#include "datatable.h"
+#include "sample.h"
 
 namespace SPLINTER
 {

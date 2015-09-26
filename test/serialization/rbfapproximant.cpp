@@ -8,7 +8,7 @@
 */
 
 #include <Catch.h>
-#include <datatable.h>
+#include <sample.h>
 #include <rbfapproximant.h>
 #include "testingutilities.h"
 

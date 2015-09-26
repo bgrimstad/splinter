@@ -1022,7 +1022,7 @@ bool domainReductionTest(BSpline &bs, const BSpline &bs_orig)
 
 bool runRecursiveDomainReductionTest()
 {
-    // Create new DataTable to manage samples
+    // Create new Sample to manage sample points
     Sample samples;
 
     // Sample function

@@ -10,8 +10,8 @@
 #include "serializer.h"
 #include <fstream>
 #include "definitions.h"
-#include <datasample.h>
-#include <datatable.h>
+#include <samplepoint.h>
+#include <sample.h>
 #include <bspline.h>
 #include <bsplinebasis.h>
 #include <bsplinebasis1d.h>

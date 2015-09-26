@@ -11,7 +11,7 @@
 #define SPLINTER_RBFAPPROXIMANT_H
 
 #include "definitions.h"
-#include "datatable.h"
+#include "sample.h"
 #include "approximant.h"
 #include "rbfterm.h"
 #include "memory"

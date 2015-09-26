@@ -13,8 +13,8 @@
 #include <definitions.h>
 #include <vector>
 #include <set>
-#include <datasample.h>
-#include <datatable.h>
+#include <samplepoint.h>
+#include <sample.h>
 #include <bspline.h>
 #include <bsplineapproximant.h>
 #include <psplineapproximant.h>

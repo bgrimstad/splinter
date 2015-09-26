@@ -27,19 +27,19 @@ class SPLINTER_API Approximant : public Function, public Saveable
 public:
     virtual ~Approximant() {}
 
-    //virtual DenseVector computeCoefficients(DataTable data);
+    //virtual DenseVector computeCoefficients(Sample data);
 
     /*
      * Functions for appraising absolute approximation error
      */
-    //double absDist2(DataTable realValues);
-    //double absDistInf(DataTable realValues);
+    //double absDist2(Sample realValues);
+    //double absDistInf(Sample realValues);
 
     /*
      * Functions for appraising relative approximation error
      */
-    //double relDist2(DataTable realValues);
-    //double relDistInf(DataTable realValues);
+    //double relDist2(Sample realValues);
+    //double relDistInf(Sample realValues);
 
     /**
      * Returns a name describing this Approximant.

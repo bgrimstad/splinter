@@ -10,7 +10,7 @@
 #ifndef SPLINTER_BSPLINE_H
 #define SPLINTER_BSPLINE_H
 
-#include "datatable.h"
+#include "sample.h"
 #include "approximant.h"
 #include "bsplinebasis.h"
 

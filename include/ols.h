@@ -12,7 +12,7 @@
 
 #include <definitions.h>
 #include <linearfunction.h>
-#include <datatable.h>
+#include <sample.h>
 
 namespace SPLINTER
 {
@@ -24,7 +24,7 @@ DenseMatrix computeCoefficients(const LinearFunction &func, const Sample &sample
 
 // TODO: implement OLS with regularization term (lambda/numSample)*coefficients^T*coefficients,
 // where lambda >= 0 and default is 0.1/N?
-//DenseVector computeCoefficientsRegularized(const LinearFunction &func, const DataTable &samples, double lambda = 0.1);
+//DenseVector computeCoefficientsRegularized(const LinearFunction &func, const Sample &sample, double lambda = 0.1);
 
 /**
  * Computes design matrix by evaluating basis functions

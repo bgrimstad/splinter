@@ -10,7 +10,7 @@
 #ifndef SPLINTER_RBFTERM_H
 #define SPLINTER_RBFTERM_H
 
-#include "datatable.h"
+#include "sample.h"
 #include "approximant.h"
 #include "definitions.h"
 #include "memory"

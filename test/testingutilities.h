@@ -10,7 +10,7 @@
 #ifndef SPLINTER_TESTINGUTILITIES_H
 #define SPLINTER_TESTINGUTILITIES_H
 
-#include <datatable.h>
+#include <sample.h>
 #include <function.h>
 #include "definitions.h"
 #include <bspline.h>

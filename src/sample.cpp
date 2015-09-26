@@ -7,7 +7,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include "datatable.h"
+#include "sample.h"
 #include <string>
 #include <fstream>
 #include <iomanip>
@@ -70,7 +70,7 @@ void Sample::addSample(const SamplePoint &sample)
     }
 
     if(sample.getDimX() != numVariables) {
-        throw Exception("Datatable::addSample: Dimension of new sample is inconsistent with previous samples!");
+        throw Exception("Sample::addSample: Dimension of new sample is inconsistent with previous samples!");
     }
 
     // Check if the sample has been added already
@@ -80,7 +80,7 @@ void Sample::addSample(const SamplePoint &sample)
         {
 #ifndef NDEBUG
             std::cout << "Discarding duplicate sample because allowDuplicates is false!" << std::endl;
-            std::cout << "Initialise with DataTable(true) to set it to true." << std::endl;
+            std::cout << "Initialise with Sample(true) to set it to true." << std::endl;
 #endif // NDEBUG
 
             return;
@@ -132,7 +132,7 @@ void Sample::gridCompleteGuard() const
 {
     if (!(isGridComplete() || allowIncompleteGrid))
     {
-        throw Exception("DataTable::gridCompleteGuard: The grid is not complete yet!");
+        throw Exception("Sample::gridCompleteGuard: The grid is not complete yet!");
     }
 }
 
@@ -208,7 +208,7 @@ std::vector<double> Sample::getVectorY() const
 Sample operator+(const Sample &lhs, const Sample &rhs)
 {
     if(lhs.getNumVariables() != rhs.getNumVariables()) {
-        throw Exception("operator+(DataTable, DataTable): trying to add two DataTable's of different dimensions!");
+        throw Exception("operator+(Sample, Sample): trying to add two Sample's of different dimensions!");
     }
 
     Sample result;
@@ -225,7 +225,7 @@ Sample operator+(const Sample &lhs, const Sample &rhs)
 Sample operator-(const Sample &lhs, const Sample &rhs)
 {
     if(lhs.getNumVariables() != rhs.getNumVariables()) {
-        throw Exception("operator-(DataTable, DataTable): trying to subtract two DataTable's of different dimensions!");
+        throw Exception("operator-(Sample, Sample): trying to subtract two Sample's of different dimensions!");
     }
 
     Sample result;

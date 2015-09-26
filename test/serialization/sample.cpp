@@ -8,25 +8,25 @@
 */
 
 #include <Catch.h>
-#include <datatable.h>
+#include <sample.h>
 #include "testingutilities.h"
 
 using namespace SPLINTER;
 
 
-TEST_CASE("DataTable can be saved and loaded", "[serialization][datatable]")
+TEST_CASE("Sample can be saved and loaded", "[serialization][sample]")
 {
     Sample table;
-    const char *fileName = "test.datatable";
+    const char *fileName = "test.sample";
 
-    SECTION("DataTable with 0 samples") {
+    SECTION("Sample with 0 observations") {
         table.save(fileName);
         Sample loadedTable(fileName);
 
         REQUIRE(table == loadedTable);
     }
 
-    SECTION("DataTable with samples from f_1_1")
+    SECTION("Sample with samples from f_1_1")
     {
         auto testFunc = getTestFunction(1, 1);
         auto dim = testFunc->getNumVariables();
@@ -39,7 +39,7 @@ TEST_CASE("DataTable can be saved and loaded", "[serialization][datatable]")
         REQUIRE(table == loadedTable);
     }
 
-    SECTION("DataTable with samples from f_2_1")
+    SECTION("Sample with samples from f_2_1")
     {
         auto testFunc = getTestFunction(2, 1);
         auto dim = testFunc->getNumVariables();

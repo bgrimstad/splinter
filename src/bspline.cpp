@@ -299,8 +299,8 @@ void BSpline::computeKnotAverages()
         knotOnes.push_back(DenseVector::Ones(knotAverages.at(i).rows()));
 
     // Fill knot average matrix one row at the time
-    // NOTE: Must have same pattern as samples in DataTable
-    // NOTE: Could use DataTable to achieve the same pattern
+    // NOTE: Must have same pattern as samples in Sample
+    // NOTE: Could use Sample to achieve the same pattern
     knotaverages.resize(numVariables, basis.getNumBasisFunctions());
 
     for (unsigned int i = 0; i < numVariables; i++)
