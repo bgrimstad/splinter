@@ -92,8 +92,8 @@ bool operator!=(const SamplePoint &lhs, const SamplePoint &rhs);
 /*
  * Output stream operator
  */
-std::ostream &operator<<(std::ostream &out, const SamplePoint &sample);
-std::ostream &operator<<(std::ostream &out, const Sample &table);
+std::ostream &operator<<(std::ostream &out, const SamplePoint &point);
+std::ostream &operator<<(std::ostream &out, const Sample &sample);
 template <class T>
 std::ostream &operator<<(std::ostream &out, const std::vector<T> &obj);
 template <class T>

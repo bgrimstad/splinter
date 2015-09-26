@@ -43,7 +43,7 @@ PolynomialApproximant::PolynomialApproximant(const Sample &sample, std::vector<u
     : Approximant(sample.getNumVariables()),
       poly(Polynomial(degrees))
 {
-    if (poly.getNumCoefficients() > sample.getNumSamples())
+    if (poly.getNumCoefficients() > sample.size())
         throw Exception("PolynomialApproximant::PolynomialApproximant: Insufficient number of samples!");
 
     DenseMatrix coefficients = computeCoefficients(poly, sample);

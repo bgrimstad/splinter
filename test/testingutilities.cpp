@@ -541,7 +541,7 @@ Sample sample(const Function *func, std::vector<std::vector<double>> &points)
 
     for(auto &point : points) {
         DenseVector x = vecToDense(point);
-        table.addSample(point, func->eval(x));
+        table.addSamplePoint(point, func->eval(x));
     }
 
     return table;
@@ -1041,7 +1041,7 @@ bool runRecursiveDomainReductionTest()
             y = sixHumpCamelBack(x);
 
             // Store sample
-            samples.addSample(x,y);
+            samples.addSamplePoint(x,y);
         }
     }
 

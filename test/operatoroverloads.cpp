@@ -26,8 +26,7 @@ bool operator==(const Sample &lhs, const Sample &rhs)
             && lhs.samples == rhs.samples
             && lhs.grid == rhs.grid
             && lhs.getNumVariables() == rhs.getNumVariables()
-            && lhs.getNumSamples() == rhs.getNumSamples()
-            && lhs.getSamples() == rhs.getSamples()
+            && lhs.size() == rhs.size()
             && lhs.getGrid() == rhs.getGrid();
 }
 
@@ -173,29 +172,29 @@ bool operator!=(const SamplePoint &lhs, const SamplePoint &rhs)
 /*
  * Output stream operator
  */
-std::ostream &operator<<(std::ostream &out, const SamplePoint &sample) {
+std::ostream &operator<<(std::ostream &out, const SamplePoint &point) {
     out << "(";
     bool firstLoop = true;
-    for (auto val : sample.getX()) {
+    for (auto val : point.getX()) {
         if (!firstLoop) {
             out << ", ";
         }
         out << val;
         firstLoop = false;
     }
-    out << ") = (" << sample.getY() << ")";
+    out << ") = (" << point.getY() << ")";
 
     return out;
 }
 
-std::ostream &operator<<(std::ostream &out, const Sample &table)
+std::ostream &operator<<(std::ostream &out, const Sample &sample)
 {
-    out << "numVariables: " << table.getNumVariables() << std::endl;
-    out << "numSamples: " << table.getNumSamples() << std::endl;
+    out << "numVariables: " << sample.getNumVariables() << std::endl;
+    out << "numSamples: " << sample.size() << std::endl;
     //out << "samples: " << table.getSamples() << std::endl;
     out << "grid dimensions: ";
     bool firstLoop = true;
-    for (const auto &dimension : table.getGrid())
+    for (const auto &dimension : sample.getGrid())
     {
         if (!firstLoop)
             out << ", ";

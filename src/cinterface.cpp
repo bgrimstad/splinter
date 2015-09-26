@@ -170,7 +170,7 @@ void datatable_add_samples_row_major(obj_ptr datatable_ptr, double *x, int n_sam
 //            std::cout << ") = ";
 //            std::cout << x[sample_start + x_dim] << std::endl;
 
-                dataTable->addSample(vec, x[sample_start + x_dim]);
+                dataTable->addSamplePoint(vec, x[sample_start + x_dim]);
             }
         }
         catch(const Exception &e)
@@ -205,7 +205,7 @@ void datatable_add_samples_col_major(obj_ptr datatable_ptr, double *x, int n_sam
 //            std::cout << ") = ";
 //            std::cout << x[i + x_dim * size] << std::endl;
 
-                dataTable->addSample(vec, x[i + x_dim * size]);
+                dataTable->addSamplePoint(vec, x[i + x_dim * size]);
             }
         }
         catch(const Exception &e)
@@ -232,7 +232,7 @@ int datatable_get_num_samples(obj_ptr datatable_ptr)
     Sample *dataTable = get_datatable(datatable_ptr);
     if (dataTable != nullptr)
     {
-        return dataTable->getNumSamples();
+        return dataTable->size();
     }
 
     return 0;

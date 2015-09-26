@@ -32,12 +32,12 @@ public:
     Sample(const std::string fileName); // Load Sample from file
 
     /*
-     * Functions for adding a sample (x,y)
+     * Functions for adding a sample point (x,y)
      */
-    void addSample(const SamplePoint &sample);
-    void addSample(double x, double y);
-    void addSample(std::vector<double> x, double y);
-    void addSample(DenseVector x, double y);
+    void addSamplePoint(const SamplePoint &sample);
+    void addSamplePoint(double x, double y);
+    void addSamplePoint(std::vector<double> x, double y);
+    void addSamplePoint(DenseVector x, double y);
 
     /*
      * Getters
@@ -46,7 +46,7 @@ public:
     std::multiset<SamplePoint>::const_iterator cend() const;
 
     unsigned int getNumVariables() const {return numVariables;}
-    unsigned int getNumSamples() const {return samples.size();}
+    unsigned int size() const {return samples.size();}
     const std::multiset<SamplePoint>& getSamples() const {return samples;}
 
     std::vector<std::set<double>> getGrid() const { return grid; }
@@ -67,7 +67,7 @@ private:
     std::vector< std::set<double> > grid;
 
     void initDataStructures(); // Initialise grid to be a std::vector of xDim std::sets
-    unsigned int getNumSamplesRequired() const;
+    unsigned int getNumGridPointsRequired() const;
 
     void recordGridPoint(const SamplePoint &sample);
 

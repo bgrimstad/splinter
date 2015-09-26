@@ -33,7 +33,7 @@ DenseMatrix computeCoefficients(const LinearFunction &func, const Sample &sample
     // Solve for coefficients
     DenseQR s;
     if (!s.solve(XtX, Xty, c))
-        throw Exception("PolynomialApproximant::computeCoefficients: Failed to solve for coefficients.");
+        throw Exception("computeCoefficients: Failed to solve for coefficients.");
 
     // TODO: consider returning a vector instead of a matrix!
     return c;
@@ -41,7 +41,7 @@ DenseMatrix computeCoefficients(const LinearFunction &func, const Sample &sample
 
 DenseMatrix computeDesignMatrix(const LinearFunction &func, const Sample &sample)
 {
-    DenseMatrix X = DenseMatrix::Zero(sample.getNumSamples(), func.getNumCoefficients());
+    DenseMatrix X = DenseMatrix::Zero(sample.size(), func.getNumCoefficients());
 
     unsigned int i = 0;
     for (auto it = sample.cbegin(); it != sample.cend(); ++it, ++i)
@@ -57,7 +57,7 @@ DenseMatrix computeDesignMatrix(const LinearFunction &func, const Sample &sample
 
         if (Xi.rows() != func.getNumCoefficients())
         {
-            throw Exception("PolynomialApproximant::computeDesignMatrix: Xi.rows() != numCoefficients.");
+            throw Exception("computeDesignMatrix: Xi.rows() != numCoefficients.");
         }
 
         // Add row to design matrix X
@@ -67,11 +67,10 @@ DenseMatrix computeDesignMatrix(const LinearFunction &func, const Sample &sample
     return X;
 }
 
-
 SparseMatrix computeDesignMatrixSparse(const LinearFunction &func, const Sample &sample)
 {
     unsigned int numVariables = sample.getNumVariables();
-    unsigned int numSamples = sample.getNumSamples();
+    unsigned int numSamples = sample.size();
     unsigned int numCoefficients = func.getNumCoefficients(); // Must equal number of basis functions
 
     // TODO: Reserve nnz per row (degree+1)

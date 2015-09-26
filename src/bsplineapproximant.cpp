@@ -139,7 +139,7 @@ DenseMatrix BSplineApproximant::computeCoefficients(const Sample &samples) const
 SparseMatrix BSplineApproximant::computeBasisFunctionMatrix(const Sample &samples) const
 {
     unsigned int numVariables = samples.getNumVariables();
-    unsigned int numSamples = samples.getNumSamples();
+    unsigned int numSamples = samples.size();
 
     // TODO: Reserve nnz per row (degree+1)
     //int nnzPrCol = bspline.basis.supportedPrInterval();
@@ -172,7 +172,7 @@ SparseMatrix BSplineApproximant::computeBasisFunctionMatrix(const Sample &sample
 
 DenseMatrix BSplineApproximant::controlPointEquationRHS(const Sample &samples) const
 {
-    DenseMatrix B = DenseMatrix::Zero(samples.getNumSamples(), 1);
+    DenseMatrix B = DenseMatrix::Zero(samples.size(), 1);
 
     int i = 0;
     for (auto it = samples.cbegin(); it != samples.cend(); ++it, ++i)

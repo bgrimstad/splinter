@@ -42,7 +42,7 @@ RBFApproximant::RBFApproximant(const Sample &samples, RBFType type, bool normali
       type(type),
       normalized(normalized),
       precondition(false),
-      numSamples(samples.getNumSamples())
+      numSamples(samples.size())
 {
     if (type == RBFType::THIN_PLATE_SPLINE)
     {

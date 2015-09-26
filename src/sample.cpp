@@ -46,24 +46,24 @@ Sample::Sample(const std::string fileName)
     load(fileName);
 }
 
-void Sample::addSample(double x, double y)
+void Sample::addSamplePoint(double x, double y)
 {
-    addSample(SamplePoint(x, y));
+    addSamplePoint(SamplePoint(x, y));
 }
 
-void Sample::addSample(std::vector<double> x, double y)
+void Sample::addSamplePoint(std::vector<double> x, double y)
 {
-    addSample(SamplePoint(x, y));
+    addSamplePoint(SamplePoint(x, y));
 }
 
-void Sample::addSample(DenseVector x, double y)
+void Sample::addSamplePoint(DenseVector x, double y)
 {
-    addSample(SamplePoint(x, y));
+    addSamplePoint(SamplePoint(x, y));
 }
 
-void Sample::addSample(const SamplePoint &sample)
+void Sample::addSamplePoint(const SamplePoint &sample)
 {
-    if (getNumSamples() == 0)
+    if (size() == 0)
     {
         numVariables = sample.getDimX();
         initDataStructures();
@@ -79,7 +79,7 @@ void Sample::addSample(const SamplePoint &sample)
         if (!allowDuplicates)
         {
 #ifndef NDEBUG
-            std::cout << "Discarding duplicate sample because allowDuplicates is false!" << std::endl;
+            std::cout << "Discarding duplicate sample points because allowDuplicates is false!" << std::endl;
             std::cout << "Initialise with Sample(true) to set it to true." << std::endl;
 #endif // NDEBUG
 
@@ -102,7 +102,7 @@ void Sample::recordGridPoint(const SamplePoint &sample)
     }
 }
 
-unsigned int Sample::getNumSamplesRequired() const
+unsigned int Sample::getNumGridPointsRequired() const
 {
     unsigned long samplesRequired = 1;
     unsigned int i = 0;
@@ -117,7 +117,7 @@ unsigned int Sample::getNumSamplesRequired() const
 
 bool Sample::isGridComplete() const
 {
-    return samples.size() > 0 && samples.size() - numDuplicates == getNumSamplesRequired();
+    return samples.size() > 0 && samples.size() - numDuplicates == getNumGridPointsRequired();
 }
 
 void Sample::initDataStructures()
@@ -174,7 +174,7 @@ std::vector< std::vector<double> > Sample::getTableX() const
     std::vector<std::vector<double>> table;
     for (unsigned int i = 0; i < numVariables; i++)
     {
-        std::vector<double> xi(getNumSamples(), 0.0);
+        std::vector<double> xi(size(), 0.0);
         table.push_back(xi);
     }
 
@@ -207,16 +207,19 @@ std::vector<double> Sample::getVectorY() const
 
 Sample operator+(const Sample &lhs, const Sample &rhs)
 {
-    if(lhs.getNumVariables() != rhs.getNumVariables()) {
+    if(lhs.getNumVariables() != rhs.getNumVariables())
+    {
         throw Exception("operator+(Sample, Sample): trying to add two Sample's of different dimensions!");
     }
 
     Sample result;
-    for(auto it = lhs.cbegin(); it != lhs.cend(); it++) {
-        result.addSample(*it);
+    for (auto it = lhs.cbegin(); it != lhs.cend(); it++)
+    {
+        result.addSamplePoint(*it);
     }
-    for(auto it = rhs.cbegin(); it != rhs.cend(); it++) {
-        result.addSample(*it);
+    for (auto it = rhs.cbegin(); it != rhs.cend(); it++)
+    {
+        result.addSamplePoint(*it);
     }
 
     return result;
@@ -224,16 +227,19 @@ Sample operator+(const Sample &lhs, const Sample &rhs)
 
 Sample operator-(const Sample &lhs, const Sample &rhs)
 {
-    if(lhs.getNumVariables() != rhs.getNumVariables()) {
+    if (lhs.getNumVariables() != rhs.getNumVariables())
+    {
         throw Exception("operator-(Sample, Sample): trying to subtract two Sample's of different dimensions!");
     }
 
     Sample result;
     auto rhsSamples = rhs.getSamples();
     // Add all samples from lhs that are not in rhs
-    for(auto it = lhs.cbegin(); it != lhs.cend(); it++) {
-        if(rhsSamples.count(*it) == 0) {
-            result.addSample(*it);
+    for (auto it = lhs.cbegin(); it != lhs.cend(); it++)
+    {
+        if (rhsSamples.count(*it) == 0)
+        {
+            result.addSamplePoint(*it);
         }
     }
 

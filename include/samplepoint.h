@@ -15,8 +15,8 @@
 namespace SPLINTER
 {
 
-/* Class representing a sample point (x,y), where y is the value
- * obtained by sampling at a point x.
+/* Class representing a sample point (x,y), where y is the
+ * observed value obtained by sampling at a point x.
 */
 class SamplePoint
 {

@@ -56,7 +56,7 @@ PSplineApproximant::PSplineApproximant(const std::string fileName)
 DenseMatrix PSplineApproximant::computeCoefficients(const Sample &samples) const
 {
     // Assuming regular grid
-    unsigned int numSamples = samples.getNumSamples();
+    unsigned int numSamples = samples.size();
 
     /* Setup and solve equations Lc = R,
      * L = B'*W*B + l*D'*D
