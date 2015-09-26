@@ -23,7 +23,7 @@ bool operator==(const Sample &lhs, const Sample &rhs)
             && lhs.allowIncompleteGrid == rhs.allowIncompleteGrid
             && lhs.numDuplicates == rhs.numDuplicates
             && lhs.numVariables == rhs.numVariables
-            && lhs.samples == rhs.samples
+            && lhs.sample == rhs.sample
             && lhs.grid == rhs.grid
             && lhs.getNumVariables() == rhs.getNumVariables()
             && lhs.size() == rhs.size()
@@ -91,10 +91,9 @@ bool operator==(const PSplineApproximant &lhs, const PSplineApproximant &rhs)
 bool operator==(const RBFApproximant &lhs, const RBFApproximant &rhs)
 {
     return
-            lhs.samples == rhs.samples
+            lhs.sample == rhs.sample
             && lhs.normalized == rhs.normalized
             && lhs.precondition == rhs.precondition
-            && lhs.numSamples == rhs.numSamples
             && lhs.getNumVariables() == rhs.getNumVariables();
 }
 

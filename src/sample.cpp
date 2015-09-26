@@ -61,20 +61,19 @@ void Sample::addSamplePoint(DenseVector x, double y)
     addSamplePoint(SamplePoint(x, y));
 }
 
-void Sample::addSamplePoint(const SamplePoint &sample)
+void Sample::addSamplePoint(const SamplePoint &point)
 {
     if (size() == 0)
     {
-        numVariables = sample.getDimX();
+        numVariables = point.getDimX();
         initDataStructures();
     }
 
-    if(sample.getDimX() != numVariables) {
+    if (point.getDimX() != numVariables)
         throw Exception("Sample::addSample: Dimension of new sample is inconsistent with previous samples!");
-    }
 
     // Check if the sample has been added already
-    if (samples.count(sample) > 0)
+    if (sample.count(point) > 0)
     {
         if (!allowDuplicates)
         {
@@ -89,16 +88,16 @@ void Sample::addSamplePoint(const SamplePoint &sample)
         numDuplicates++;
     }
 
-    samples.insert(sample);
+    sample.insert(point);
 
-    recordGridPoint(sample);
+    recordGridPoint(point);
 }
 
-void Sample::recordGridPoint(const SamplePoint &sample)
+void Sample::recordGridPoint(const SamplePoint &point)
 {
     for (unsigned int i = 0; i < getNumVariables(); i++)
     {
-        grid.at(i).insert(sample.getX().at(i));
+        grid.at(i).insert(point.getX().at(i));
     }
 }
 
@@ -117,7 +116,7 @@ unsigned int Sample::getNumGridPointsRequired() const
 
 bool Sample::isGridComplete() const
 {
-    return samples.size() > 0 && samples.size() - numDuplicates == getNumGridPointsRequired();
+    return sample.size() > 0 && sample.size() - numDuplicates == getNumGridPointsRequired();
 }
 
 void Sample::initDataStructures()
@@ -154,17 +153,17 @@ void Sample::load(const std::string fileName)
  */
 std::multiset<SamplePoint>::const_iterator Sample::cbegin() const
 {
-    return samples.cbegin();
+    return sample.cbegin();
 }
 
 std::multiset<SamplePoint>::const_iterator Sample::cend() const
 {
-    return samples.cend();
+    return sample.cend();
 }
 
 /*
  * Get table of samples x-values,
- * i.e. table[i][j] is the value of variable i at sample j
+ * i.e. table[i][j] is the value of variable i at sample point j
  */
 std::vector< std::vector<double> > Sample::getTableX() const
 {
@@ -180,9 +179,9 @@ std::vector< std::vector<double> > Sample::getTableX() const
 
     // Fill table with values
     int i = 0;
-    for (auto &sample : samples)
+    for (auto &point : sample)
     {
-        std::vector<double> x = sample.getX();
+        std::vector<double> x = point.getX();
 
         for (unsigned int j = 0; j < numVariables; j++)
         {
@@ -207,7 +206,7 @@ std::vector<double> Sample::getVectorY() const
 
 Sample operator+(const Sample &lhs, const Sample &rhs)
 {
-    if(lhs.getNumVariables() != rhs.getNumVariables())
+    if (lhs.getNumVariables() != rhs.getNumVariables())
     {
         throw Exception("operator+(Sample, Sample): trying to add two Sample's of different dimensions!");
     }
@@ -233,7 +232,7 @@ Sample operator-(const Sample &lhs, const Sample &rhs)
     }
 
     Sample result;
-    auto rhsSamples = rhs.getSamples();
+    auto rhsSamples = rhs.getSample();
     // Add all samples from lhs that are not in rhs
     for (auto it = lhs.cbegin(); it != lhs.cend(); it++)
     {

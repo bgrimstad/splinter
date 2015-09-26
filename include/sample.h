@@ -34,7 +34,7 @@ public:
     /*
      * Functions for adding a sample point (x,y)
      */
-    void addSamplePoint(const SamplePoint &sample);
+    void addSamplePoint(const SamplePoint &point);
     void addSamplePoint(double x, double y);
     void addSamplePoint(std::vector<double> x, double y);
     void addSamplePoint(DenseVector x, double y);
@@ -46,8 +46,8 @@ public:
     std::multiset<SamplePoint>::const_iterator cend() const;
 
     unsigned int getNumVariables() const {return numVariables;}
-    unsigned int size() const {return samples.size();}
-    const std::multiset<SamplePoint>& getSamples() const {return samples;}
+    unsigned int size() const {return sample.size();}
+    const std::multiset<SamplePoint>& getSample() const {return sample;}
 
     std::vector<std::set<double>> getGrid() const { return grid; }
     std::vector< std::vector<double> > getTableX() const;
@@ -63,13 +63,13 @@ private:
     unsigned int numDuplicates;
     unsigned int numVariables;
 
-    std::multiset<SamplePoint> samples;
+    std::multiset<SamplePoint> sample;
     std::vector< std::set<double> > grid;
 
     void initDataStructures(); // Initialise grid to be a std::vector of xDim std::sets
     unsigned int getNumGridPointsRequired() const;
 
-    void recordGridPoint(const SamplePoint &sample);
+    void recordGridPoint(const SamplePoint &point);
 
     // Used by functions that require the grid to be complete before they start their operation
     // This function prints a message and exits the program if the grid is not complete.

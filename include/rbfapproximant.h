@@ -30,8 +30,8 @@ class SPLINTER_API RBFApproximant : public Approximant
 public:
     RBFApproximant(const char *filename);
     RBFApproximant(const std::string filename);
-    RBFApproximant(const Sample &samples, RBFType type);
-    RBFApproximant(const Sample &samples, RBFType type, bool normalized);
+    RBFApproximant(const Sample &sample, RBFType type);
+    RBFApproximant(const Sample &sample, RBFType type, bool normalized);
 
     virtual RBFApproximant* clone() const { return new RBFApproximant(*this); }
 
@@ -49,9 +49,8 @@ public:
 private:
     RBFApproximant();
 
-    Sample samples;
+    Sample sample;
     bool normalized, precondition;
-    unsigned int numSamples;
 
     // Store the type so we can reconstruct the object when deserializing
     RBFType type;

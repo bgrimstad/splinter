@@ -31,18 +31,17 @@ RBFApproximant::RBFApproximant(const std::string fileName)
     load(fileName);
 }
 
-RBFApproximant::RBFApproximant(const Sample &samples, RBFType type)
-    : RBFApproximant(samples, type, false)
+RBFApproximant::RBFApproximant(const Sample &sample, RBFType type)
+    : RBFApproximant(sample, type, false)
 {
 }
 
-RBFApproximant::RBFApproximant(const Sample &samples, RBFType type, bool normalized)
-    : Approximant(samples.getNumVariables()),
-      samples(samples),
+RBFApproximant::RBFApproximant(const Sample &sample, RBFType type, bool normalized)
+    : Approximant(sample.getNumVariables()),
+      sample(sample),
       type(type),
       normalized(normalized),
-      precondition(false),
-      numSamples(samples.size())
+      precondition(false)
 {
     if (type == RBFType::THIN_PLATE_SPLINE)
     {
@@ -78,15 +77,15 @@ RBFApproximant::RBFApproximant(const Sample &samples, RBFType type, bool normali
      */
     //SparseMatrix A(numSamples,numSamples);
     //A.reserve(numSamples*numSamples);
-    DenseMatrix A; A.setZero(numSamples, numSamples);
-    DenseMatrix b; b.setZero(numSamples,1);
+    DenseMatrix A; A.setZero(sample.size(), sample.size());
+    DenseMatrix b; b.setZero(sample.size(), 1);
 
     int i=0;
-    for (auto it1 = samples.cbegin(); it1 != samples.cend(); ++it1, ++i)
+    for (auto it1 = sample.cbegin(); it1 != sample.cend(); ++it1, ++i)
     {
         double sum = 0;
         int j=0;
-        for (auto it2 = samples.cbegin(); it2 != samples.cend(); ++it2, ++j)
+        for (auto it2 = sample.cbegin(); it2 != sample.cend(); ++it2, ++j)
         {
             double val = fn->eval(dist(*it1, *it2));
             if (val != 0)
@@ -153,7 +152,7 @@ RBFApproximant::RBFApproximant(const Sample &samples, RBFType type, bool normali
 double RBFApproximant::eval(DenseVector x) const
 {
     std::vector<double> y;
-    for (int i=0; i<x.rows(); i++)
+    for (int i = 0; i < x.rows(); i++)
         y.push_back(x(i));
     return eval(y);
 }
@@ -163,7 +162,7 @@ double RBFApproximant::eval(std::vector<double> x) const
     assert(x.size() == numVariables);
     double fval, sum = 0, sumw = 0;
     int i = 0;
-    for (auto it = samples.cbegin(); it != samples.cend(); ++it, ++i)
+    for (auto it = sample.cbegin(); it != sample.cend(); ++it, ++i)
     {
         fval = fn->eval(dist(x,it->getX()));
         sumw += weights(i)*fval;
@@ -175,11 +174,11 @@ double RBFApproximant::eval(std::vector<double> x) const
 DenseMatrix RBFApproximant::evalJacobian(DenseVector x) const
 {
     std::vector<double> x_vec;
-    for (unsigned int i = 0; i<x.size(); i++)
+    for (unsigned int i = 0; i < x.size(); i++)
         x_vec.push_back(x(i));
 
     DenseMatrix jac;
-    jac.setZero(1,numVariables);
+    jac.setZero(1, numVariables);
 
     for (unsigned int i = 0; i < numVariables; i++)
     {
@@ -189,7 +188,7 @@ DenseMatrix RBFApproximant::evalJacobian(DenseVector x) const
         double sum_d = 0;
 
         int j = 0;
-        for (auto it = samples.cbegin(); it != samples.cend(); ++it, ++j)
+        for (auto it = sample.cbegin(); it != sample.cend(); ++it, ++j)
         {
             // Sample
             auto s_vec = it->getX();
@@ -227,21 +226,21 @@ DenseMatrix RBFApproximant::evalJacobian(DenseVector x) const
 DenseMatrix RBFApproximant::computePreconditionMatrix() const
 {
     DenseMatrix P;
-    P.setZero(numSamples,numSamples);
+    P.setZero(sample.size(), sample.size());
 
     // Calculate precondition matrix P based on
     // purely local approximate cardinal basis functions (ACBF)
-    int sigma = std::max(1.0, std::floor(0.1*numSamples)); // Local points to consider
+    int sigma = std::max(1.0, std::floor(0.1*sample.size())); // Local points to consider
 
     int i=0;
-    for (auto it1 = samples.cbegin(); it1 != samples.cend(); ++it1, ++i)
+    for (auto it1 = sample.cbegin(); it1 != sample.cend(); ++it1, ++i)
     {
         Point p1(it1->getX());
 
         // Shift data using p1 as origin
         std::vector<Point> shifted_points;
         int j=0;
-        for (auto it2 = samples.cbegin(); it2 != samples.cend(); ++it2, ++j)
+        for (auto it2 = sample.cbegin(); it2 != sample.cend(); ++it2, ++j)
         {
             Point p2(it2->getX());
             Point p3(p2-p1);
@@ -299,7 +298,7 @@ DenseMatrix RBFApproximant::computePreconditionMatrix() const
         w = svd.solve(e);
         //assert(svd.info() == Eigen::Success);
 
-        for (unsigned int j=0; j<numSamples; j++)
+        for (unsigned int j=0; j<sample.size(); j++)
         {
             auto it = find(indices.begin(),indices.end(),j);
             if (it!=indices.end())

@@ -91,7 +91,7 @@ size_t Serializer::get_size(const Sample &obj)
            + get_size(obj.allowIncompleteGrid)
            + get_size(obj.numDuplicates)
            + get_size(obj.numVariables)
-           + get_size(obj.samples)
+           + get_size(obj.sample)
            + get_size(obj.grid);
 }
 
@@ -131,11 +131,10 @@ size_t Serializer::get_size(const PSplineApproximant &obj)
 
 size_t Serializer::get_size(const RBFApproximant &obj)
 {
-    return get_size(obj.samples)
+    return get_size(obj.sample)
            + get_size(obj.normalized)
            + get_size(obj.precondition)
            + get_size(obj.numVariables)
-           + get_size(obj.numSamples)
            + get_size(obj.type)
            + get_size(obj.weights);
 }
@@ -169,7 +168,7 @@ void Serializer::_serialize(const Sample &obj)
     _serialize(obj.allowIncompleteGrid);
     _serialize(obj.numDuplicates);
     _serialize(obj.numVariables);
-    _serialize(obj.samples);
+    _serialize(obj.sample);
     _serialize(obj.grid);
 }
 
@@ -209,11 +208,10 @@ void Serializer::_serialize(const PSplineApproximant &obj)
 
 void Serializer::_serialize(const RBFApproximant &obj)
 {
-    _serialize(obj.samples);
+    _serialize(obj.sample);
     _serialize(obj.normalized);
     _serialize(obj.precondition);
     _serialize(obj.numVariables);
-    _serialize(obj.numSamples);
     _serialize(obj.type);
     _serialize(obj.weights);
 }
@@ -247,7 +245,7 @@ void Serializer::deserialize(Sample &obj)
     deserialize(obj.allowIncompleteGrid);
     deserialize(obj.numDuplicates);
     deserialize(obj.numVariables);
-    deserialize(obj.samples);
+    deserialize(obj.sample);
     deserialize(obj.grid);
 }
 
@@ -287,11 +285,10 @@ void Serializer::deserialize(PSplineApproximant &obj)
 
 void Serializer::deserialize(RBFApproximant &obj)
 {
-    deserialize(obj.samples);
+    deserialize(obj.sample);
     deserialize(obj.normalized);
     deserialize(obj.precondition);
     deserialize(obj.numVariables);
-    deserialize(obj.numSamples);
     deserialize(obj.type);
     if (obj.type == RBFType::THIN_PLATE_SPLINE)
     {
