@@ -80,12 +80,12 @@ void Serializer::loadFromFile(std::string fileName)
  * get_size implementations
  */
 
-size_t Serializer::get_size(const DataSample &obj)
+size_t Serializer::get_size(const SamplePoint &obj)
 {
     return get_size(obj.x) + get_size(obj.y);
 }
 
-size_t Serializer::get_size(const DataTable &obj)
+size_t Serializer::get_size(const Sample &obj)
 {
     return get_size(obj.allowDuplicates)
            + get_size(obj.allowIncompleteGrid)
@@ -157,13 +157,13 @@ size_t Serializer::get_size(const PolynomialApproximant &obj)
  * _serialize implementations
  */
 
-void Serializer::_serialize(const DataSample &obj)
+void Serializer::_serialize(const SamplePoint &obj)
 {
     _serialize(obj.x);
     _serialize(obj.y);
 }
 
-void Serializer::_serialize(const DataTable &obj)
+void Serializer::_serialize(const Sample &obj)
 {
     _serialize(obj.allowDuplicates);
     _serialize(obj.allowIncompleteGrid);
@@ -235,13 +235,13 @@ void Serializer::_serialize(const PolynomialApproximant &obj)
  * deserialize implementations
  */
 
-void Serializer::deserialize(DataSample &obj)
+void Serializer::deserialize(SamplePoint &obj)
 {
     deserialize(obj.x);
     deserialize(obj.y);
 }
 
-void Serializer::deserialize(DataTable &obj)
+void Serializer::deserialize(Sample &obj)
 {
     deserialize(obj.allowDuplicates);
     deserialize(obj.allowIncompleteGrid);

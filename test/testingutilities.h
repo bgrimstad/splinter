@@ -46,22 +46,22 @@ bool compareFunctions(const Function &exact, const Function &approx);
  * Also prints out the point with the largest error.
  */
 void compareFunctionValue(std::vector<TestFunction *> funcs,
-                          std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                          std::function<Approximant *(const Sample &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints,
                           double one_eps, double two_eps, double inf_eps);
 
 void compareFunctionValue(TestFunction *exact,
-                          std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                          std::function<Approximant *(const Sample &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints,
                           double one_eps, double two_eps, double inf_eps);
 
 void compareJacobianValue(TestFunction *exact,
-                          std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                          std::function<Approximant *(const Sample &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints,
                           double one_eps, double two_eps, double inf_eps);
 
 void checkHessianSymmetry(TestFunction *exact,
-                          std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                          std::function<Approximant *(const Sample &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints);
 
 bool compareBSplines(const BSpline &left, const BSpline &right);
@@ -73,8 +73,8 @@ DenseMatrix centralDifference(const Approximant &approx, const DenseVector &x);
 
 bool isSymmetricHessian(const Approximant &approx, const DenseVector &x);
 
-DataTable sample(const Function &func, std::vector<std::vector<double>> &points);
-DataTable sample(const Function *func, std::vector<std::vector<double>> &points);
+Sample sample(const Function &func, std::vector<std::vector<double>> &points);
+Sample sample(const Function *func, std::vector<std::vector<double>> &points);
 
 // points is a vector where each element is the number of points for that dim
 std::vector<std::vector<double>> linspace(std::vector<double> start, std::vector<double> end, std::vector<unsigned int> points);
@@ -126,7 +126,7 @@ void checkNorm(DenseMatrix normValues, TestType type, size_t numPoints, double o
 void _checkNorm(DenseMatrix normValues, int row, size_t numPoints, double one_eps, double two_eps, double inf_eps);
 
 void testApproximation(std::vector<TestFunction *> funcs,
-                       std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                       std::function<Approximant *(const Sample &table)> approx_gen_func,
                        TestType type, size_t numSamplePoints, size_t numEvalPoints,
                        double one_eps, double two_eps, double inf_eps);
 

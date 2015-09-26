@@ -34,12 +34,12 @@ PolynomialApproximant::PolynomialApproximant(const std::string fileName)
     load(fileName);
 }
 
-PolynomialApproximant::PolynomialApproximant(const DataTable &sample, unsigned int degree)
+PolynomialApproximant::PolynomialApproximant(const Sample &sample, unsigned int degree)
     : PolynomialApproximant(sample, std::vector<unsigned int>(sample.getNumVariables(), degree))
 {
 }
 
-PolynomialApproximant::PolynomialApproximant(const DataTable &sample, std::vector<unsigned int> degrees)
+PolynomialApproximant::PolynomialApproximant(const Sample &sample, std::vector<unsigned int> degrees)
     : Approximant(sample.getNumVariables()),
       poly(Polynomial(degrees))
 {

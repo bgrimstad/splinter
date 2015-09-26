@@ -20,8 +20,8 @@
 namespace SPLINTER
 {
 
-class DataSample;
-class DataTable;
+class SamplePoint;
+class Sample;
 class BSpline;
 class BSplineBasis;
 class BSplineBasis1D;
@@ -60,8 +60,8 @@ public:
     template <class T>
     void deserialize(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &obj);
 
-    void deserialize(DataSample &obj);
-    void deserialize(DataTable &obj);
+    void deserialize(SamplePoint &obj);
+    void deserialize(Sample &obj);
     void deserialize(BSpline &obj);
     void deserialize(BSplineBasis &obj);
     void deserialize(BSplineBasis1D &obj);
@@ -95,8 +95,8 @@ protected:
     template <class T>
     size_t get_size(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &obj);
 
-    size_t get_size(const DataSample &obj);
-    size_t get_size(const DataTable &obj);
+    size_t get_size(const SamplePoint &obj);
+    size_t get_size(const Sample &obj);
     size_t get_size(const BSpline &obj);
     size_t get_size(const BSplineBasis &obj);
     size_t get_size(const BSplineBasis1D &obj);
@@ -121,8 +121,8 @@ protected:
     template <class T>
     void _serialize(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &obj);
 
-    void _serialize(const DataSample &obj);
-    void _serialize(const DataTable &obj);
+    void _serialize(const SamplePoint &obj);
+    void _serialize(const Sample &obj);
     void _serialize(const BSpline &obj);
     void _serialize(const BSplineBasis &obj);
     void _serialize(const BSplineBasis1D &obj);

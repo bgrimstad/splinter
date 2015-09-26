@@ -12,21 +12,21 @@
 namespace SPLINTER
 {
 
-DataSample::DataSample()
+SamplePoint::SamplePoint()
 {
 }
 
-DataSample::DataSample(double x, double y)
+SamplePoint::SamplePoint(double x, double y)
 {
     setData(std::vector<double>(1, x), y);
 }
 
-DataSample::DataSample(std::vector<double> x, double y)
+SamplePoint::SamplePoint(std::vector<double> x, double y)
 {
     setData(x, y);
 }
 
-DataSample::DataSample(DenseVector x, double y)
+SamplePoint::SamplePoint(DenseVector x, double y)
 {
     std::vector<double> newX;
 
@@ -38,13 +38,13 @@ DataSample::DataSample(DenseVector x, double y)
     setData(newX, y);
 }
 
-void DataSample::setData(const std::vector<double> &x, double y)
+void SamplePoint::setData(const std::vector<double> &x, double y)
 {
     this->x = x;
     this->y = y;
 }
 
-bool DataSample::operator<(const DataSample &rhs) const
+bool SamplePoint::operator<(const SamplePoint &rhs) const
 {
     assert(this->getDimX() == rhs.getDimX());
 

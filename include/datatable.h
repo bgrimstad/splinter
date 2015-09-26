@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#ifndef SPLINTER_DATATABLE_H
-#define SPLINTER_DATATABLE_H
+#ifndef SPLINTER_SAMPLE_H
+#define SPLINTER_SAMPLE_H
 
 #include <set>
 #include "datasample.h"
@@ -22,19 +22,19 @@ namespace SPLINTER
  * DataTable is a class for storing multidimensional data samples (x,y).
  * The samples are stored in a continuously sorted table.
  */
-class SPLINTER_API DataTable
+class SPLINTER_API Sample
 {
 public:
-    DataTable();
-    DataTable(bool allowDuplicates);
-    DataTable(bool allowDuplicates, bool allowIncompleteGrid);
-    DataTable(const char *fileName);
-    DataTable(const std::string fileName); // Load DataTable from file
+    Sample();
+    Sample(bool allowDuplicates);
+    Sample(bool allowDuplicates, bool allowIncompleteGrid);
+    Sample(const char *fileName);
+    Sample(const std::string fileName); // Load DataTable from file
 
     /*
      * Functions for adding a sample (x,y)
      */
-    void addSample(const DataSample &sample);
+    void addSample(const SamplePoint &sample);
     void addSample(double x, double y);
     void addSample(std::vector<double> x, double y);
     void addSample(DenseVector x, double y);
@@ -42,12 +42,12 @@ public:
     /*
      * Getters
      */
-    std::multiset<DataSample>::const_iterator cbegin() const;
-    std::multiset<DataSample>::const_iterator cend() const;
+    std::multiset<SamplePoint>::const_iterator cbegin() const;
+    std::multiset<SamplePoint>::const_iterator cend() const;
 
     unsigned int getNumVariables() const {return numVariables;}
     unsigned int getNumSamples() const {return samples.size();}
-    const std::multiset<DataSample>& getSamples() const {return samples;}
+    const std::multiset<SamplePoint>& getSamples() const {return samples;}
 
     std::vector<std::set<double>> getGrid() const { return grid; }
     std::vector< std::vector<double> > getTableX() const;
@@ -63,13 +63,13 @@ private:
     unsigned int numDuplicates;
     unsigned int numVariables;
 
-    std::multiset<DataSample> samples;
+    std::multiset<SamplePoint> samples;
     std::vector< std::set<double> > grid;
 
     void initDataStructures(); // Initialise grid to be a std::vector of xDim std::sets
     unsigned int getNumSamplesRequired() const;
 
-    void recordGridPoint(const DataSample &sample);
+    void recordGridPoint(const SamplePoint &sample);
 
     // Used by functions that require the grid to be complete before they start their operation
     // This function prints a message and exits the program if the grid is not complete.
@@ -78,12 +78,12 @@ private:
     void load(const std::string fileName);
 
     friend class Serializer;
-    friend bool operator==(const DataTable &lhs, const DataTable &rhs);
+    friend bool operator==(const Sample &lhs, const Sample &rhs);
 };
 
-DataTable operator+(const DataTable &lhs, const DataTable &rhs);
-DataTable operator-(const DataTable &lhs, const DataTable &rhs);
+Sample operator+(const Sample &lhs, const Sample &rhs);
+Sample operator-(const Sample &lhs, const Sample &rhs);
 
 } // namespace SPLINTER
 
-#endif // SPLINTER_DATATABLE_H
+#endif // SPLINTER_SAMPLE_H

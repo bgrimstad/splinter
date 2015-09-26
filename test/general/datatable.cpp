@@ -81,7 +81,7 @@ TEST_CASE("DataTable set operations", COMMON_TAGS) {
     CHECK(table3 - table1 == table2);
 
     // A table subtracted from itself should yield a table with no samples
-    DataTable zeroSampleTable;
+    Sample zeroSampleTable;
     CHECK(table3 - table3 == zeroSampleTable);
     CHECK(table3 - table2 - table1 == zeroSampleTable);
 

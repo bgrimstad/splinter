@@ -13,7 +13,7 @@
 namespace SPLINTER
 {
 
-DenseMatrix computeCoefficients(const LinearFunction &func, const DataTable &sample)
+DenseMatrix computeCoefficients(const LinearFunction &func, const Sample &sample)
 {
     // Left hand side
     DenseMatrix X = computeDesignMatrix(func, sample);
@@ -39,7 +39,7 @@ DenseMatrix computeCoefficients(const LinearFunction &func, const DataTable &sam
     return c;
 }
 
-DenseMatrix computeDesignMatrix(const LinearFunction &func, const DataTable &sample)
+DenseMatrix computeDesignMatrix(const LinearFunction &func, const Sample &sample)
 {
     DenseMatrix X = DenseMatrix::Zero(sample.getNumSamples(), func.getNumCoefficients());
 
@@ -68,7 +68,7 @@ DenseMatrix computeDesignMatrix(const LinearFunction &func, const DataTable &sam
 }
 
 
-SparseMatrix computeDesignMatrixSparse(const LinearFunction &func, const DataTable &sample)
+SparseMatrix computeDesignMatrixSparse(const LinearFunction &func, const Sample &sample)
 {
     unsigned int numVariables = sample.getNumVariables();
     unsigned int numSamples = sample.getNumSamples();

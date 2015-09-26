@@ -30,8 +30,8 @@ class SPLINTER_API RBFApproximant : public Approximant
 public:
     RBFApproximant(const char *filename);
     RBFApproximant(const std::string filename);
-    RBFApproximant(const DataTable &samples, RBFType type);
-    RBFApproximant(const DataTable &samples, RBFType type, bool normalized);
+    RBFApproximant(const Sample &samples, RBFType type);
+    RBFApproximant(const Sample &samples, RBFType type, bool normalized);
 
     virtual RBFApproximant* clone() const { return new RBFApproximant(*this); }
 
@@ -49,7 +49,7 @@ public:
 private:
     RBFApproximant();
 
-    DataTable samples;
+    Sample samples;
     bool normalized, precondition;
     unsigned int numSamples;
 
@@ -62,8 +62,8 @@ private:
     DenseMatrix computePreconditionMatrix() const;
 
     double dist(std::vector<double> x, std::vector<double> y) const;
-    double dist(DataSample x, DataSample y) const;
-    bool dist_sort(DataSample x, DataSample y) const;
+    double dist(SamplePoint x, SamplePoint y) const;
+    bool dist_sort(SamplePoint x, SamplePoint y) const;
 
     void load(const std::string fileName) override;
 

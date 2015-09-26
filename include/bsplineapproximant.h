@@ -52,13 +52,13 @@ class SPLINTER_API BSplineApproximant : public Approximant
 public:
     BSplineApproximant(const char *fileName);
     BSplineApproximant(const std::string fileName);
-    BSplineApproximant(const DataTable &samples, std::vector<unsigned int> basisDegrees);
-    BSplineApproximant(const DataTable &samples, BSplineType type);
+    BSplineApproximant(const Sample &samples, std::vector<unsigned int> basisDegrees);
+    BSplineApproximant(const Sample &samples, BSplineType type);
 
     virtual BSplineApproximant * clone() const { return new BSplineApproximant(*this); }
 
     // Build B-spline
-    BSpline buildBSpline(const DataTable &samples, std::vector<unsigned int> basisDegrees) const;
+    BSpline buildBSpline(const Sample &samples, std::vector<unsigned int> basisDegrees) const;
 
     // Evaluation
     double eval(DenseVector x) const override;
@@ -81,12 +81,12 @@ protected:
     BSpline bspline;
 
     // Control point computations
-    virtual DenseMatrix computeCoefficients(const DataTable &samples) const;
-    SparseMatrix computeBasisFunctionMatrix(const DataTable &samples) const;
-    DenseMatrix controlPointEquationRHS(const DataTable &samples) const;
+    virtual DenseMatrix computeCoefficients(const Sample &samples) const;
+    SparseMatrix computeBasisFunctionMatrix(const Sample &samples) const;
+    DenseMatrix controlPointEquationRHS(const Sample &samples) const;
 
     // Computing knots
-    std::vector<std::vector<double> > computeKnotVectorsFromSamples(const DataTable &samples, std::vector<unsigned int> degrees) const;
+    std::vector<std::vector<double> > computeKnotVectorsFromSamples(const Sample &samples, std::vector<unsigned int> degrees) const;
     virtual std::vector<double> computeKnotVector(const std::vector<double> &values, unsigned int degree) const;
     std::vector<double> knotVectorMovingAverage(const std::vector<double> &values, unsigned int degree) const;
     std::vector<double> knotVectorEquidistant(const std::vector<double> &values, unsigned int degree) const;

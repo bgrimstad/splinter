@@ -37,7 +37,7 @@ TEST_CASE("Linear BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::line
         }
 
         compareFunctionValue(testFunc,
-                             [](const DataTable &table)
+                             [](const Sample &table)
                              {
                                  return (Approximant*) new BSplineApproximant(table, BSplineType::LINEAR);
                              }
@@ -57,7 +57,7 @@ TEST_CASE("Linear BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::line
     for(auto testFunc : getPolynomialFunctions())
     {
         compareJacobianValue(testFunc,
-                             [](const DataTable &table)
+                             [](const Sample &table)
                              {
                                  return (Approximant*) new BSplineApproximant(table, BSplineType::LINEAR);
                              },
@@ -72,7 +72,7 @@ TEST_CASE("Linear BSpline hessian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::linea
     for(auto testFunc : getPolynomialFunctions())
     {
         checkHessianSymmetry(testFunc,
-                             [](const DataTable &table)
+                             [](const Sample &table)
                              {
                                  return (Approximant*) new BSplineApproximant(table, BSplineType::LINEAR);
                              },
@@ -102,7 +102,7 @@ TEST_CASE("Quadratic BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::q
         }
 
         compareFunctionValue(testFunc,
-                             [](const DataTable &table)
+                             [](const Sample &table)
                              {
                                  return (Approximant*) new BSplineApproximant(table, BSplineType::QUADRATIC);
                              },
@@ -121,7 +121,7 @@ TEST_CASE("Quadratic BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::q
     for(auto testFunc : getPolynomialFunctions())
     {
         compareJacobianValue(testFunc,
-                             [](const DataTable &table)
+                             [](const Sample &table)
                              {
                                  return (Approximant*) new BSplineApproximant(table, BSplineType::QUADRATIC);
                              },
@@ -136,7 +136,7 @@ TEST_CASE("Quadratic BSpline hessian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::qu
     for(auto testFunc : getPolynomialFunctions())
     {
         checkHessianSymmetry(testFunc,
-                             [](const DataTable &table)
+                             [](const Sample &table)
                              {
                                  return (Approximant*) new BSplineApproximant(table, BSplineType::QUADRATIC);
                              },
@@ -166,7 +166,7 @@ TEST_CASE("Cubic BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::cubic
         }
 
         compareFunctionValue(testFunc,
-                             [](const DataTable &table)
+                             [](const Sample &table)
                              {
                                  return (Approximant*) new BSplineApproximant(table, BSplineType::CUBIC);
                              },
@@ -185,7 +185,7 @@ TEST_CASE("Cubic BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::cubic
     for(auto testFunc : getPolynomialFunctions())
     {
         compareJacobianValue(testFunc,
-                             [](const DataTable &table)
+                             [](const Sample &table)
                              {
                                  return (Approximant*) new BSplineApproximant(table, BSplineType::CUBIC);
                              },
@@ -200,7 +200,7 @@ TEST_CASE("Cubic BSpline hessian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::cubic]
     for(auto testFunc : getPolynomialFunctions())
     {
         checkHessianSymmetry(testFunc,
-                             [](const DataTable &table)
+                             [](const Sample &table)
                              {
                                  return (Approximant*) new BSplineApproximant(table, BSplineType::CUBIC);
                              },
@@ -230,7 +230,7 @@ TEST_CASE("Quartic BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::qua
         }
 
         compareFunctionValue(testFunc,
-                             [](const DataTable &table)
+                             [](const Sample &table)
                              {
                                  return (Approximant*) new BSplineApproximant(table, BSplineType::QUARTIC);
                              },
@@ -249,7 +249,7 @@ TEST_CASE("Quartic BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::qua
     for(auto testFunc : getPolynomialFunctions())
     {
         compareJacobianValue(testFunc,
-                             [](const DataTable &table)
+                             [](const Sample &table)
                              {
                                  return (Approximant*) new BSplineApproximant(table, BSplineType::QUARTIC);
                              },
@@ -264,7 +264,7 @@ TEST_CASE("Quartic BSpline hessian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::quar
     for(auto testFunc : getPolynomialFunctions())
     {
         checkHessianSymmetry(testFunc,
-                             [](const DataTable &table)
+                             [](const Sample &table)
                              {
                                  return (Approximant*) new BSplineApproximant(table, BSplineType::QUARTIC);
                              },

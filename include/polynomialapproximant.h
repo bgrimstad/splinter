@@ -22,8 +22,8 @@ class SPLINTER_API PolynomialApproximant : public Approximant
 public:
     PolynomialApproximant(const char *fileName);
     PolynomialApproximant(const std::string fileName);
-    PolynomialApproximant(const DataTable &sample, unsigned int degree);
-    PolynomialApproximant(const DataTable &sample, std::vector<unsigned int> degrees);
+    PolynomialApproximant(const Sample &sample, unsigned int degree);
+    PolynomialApproximant(const Sample &sample, std::vector<unsigned int> degrees);
 
     virtual PolynomialApproximant * clone() const { return new PolynomialApproximant(*this); }
 

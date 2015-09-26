@@ -226,7 +226,7 @@ bool compareFunctions(const Function &exact, const Function &approx, const std::
 }
 
 void compareFunctionValue(std::vector<TestFunction *> funcs,
-                          std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                          std::function<Approximant *(const Sample &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints,
                           double one_eps, double two_eps, double inf_eps)
 {
@@ -236,7 +236,7 @@ void compareFunctionValue(std::vector<TestFunction *> funcs,
     }
 }
 void compareFunctionValue(TestFunction *exact,
-                          std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                          std::function<Approximant *(const Sample &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints,
                           double one_eps, double two_eps, double inf_eps)
 {
@@ -245,7 +245,7 @@ void compareFunctionValue(TestFunction *exact,
     auto samplePoints = linspace(dim, -5, 5, std::pow(numSamplePoints, 1.0/dim));
     auto evalPoints = linspace(dim, -5, 5, std::pow(numEvalPoints, 1.0/dim));
 
-    DataTable table = sample(exact, samplePoints);
+    Sample table = sample(exact, samplePoints);
 
     Approximant *approx = approx_gen_func(table);
 
@@ -314,7 +314,7 @@ void compareFunctionValue(TestFunction *exact,
 
 /* Compares the jacobian of the approximant to the central difference of the approximant function value */
 void compareJacobianValue(TestFunction *exact,
-                          std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                          std::function<Approximant *(const Sample &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints,
                           double one_eps, double two_eps, double inf_eps)
 {
@@ -323,7 +323,7 @@ void compareJacobianValue(TestFunction *exact,
     auto samplePoints = linspace(dim, -5, 5, std::pow(numSamplePoints, 1.0/dim));
     auto evalPoints = linspace(dim, -4.95, 4.95, std::pow(numEvalPoints, 1.0/dim));
 
-    DataTable table = sample(exact, samplePoints);
+    Sample table = sample(exact, samplePoints);
 
     Approximant *approx = approx_gen_func(table);
 
@@ -438,7 +438,7 @@ void compareJacobianValue(TestFunction *exact,
 }
 
 void checkHessianSymmetry(TestFunction *exact,
-                          std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                          std::function<Approximant *(const Sample &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints)
 {
     auto dim = exact->getNumVariables();
@@ -446,7 +446,7 @@ void checkHessianSymmetry(TestFunction *exact,
     auto samplePoints = linspace(dim, -5, 5, std::pow(numSamplePoints, 1.0/dim));
     auto evalPoints = linspace(dim, -4.95, 4.95, std::pow(numEvalPoints, 1.0/dim));
 
-    DataTable table = sample(exact, samplePoints);
+    Sample table = sample(exact, samplePoints);
 
     Approximant *approx = approx_gen_func(table);
 
@@ -531,13 +531,13 @@ bool compareBSplines(const BSpline &left, const BSpline &right)
 }
 
 
-DataTable sample(const Function &func, std::vector<std::vector<double>> &points) {
+Sample sample(const Function &func, std::vector<std::vector<double>> &points) {
     return sample(&func, points);
 }
 
-DataTable sample(const Function *func, std::vector<std::vector<double>> &points)
+Sample sample(const Function *func, std::vector<std::vector<double>> &points)
 {
-    DataTable table;
+    Sample table;
 
     for(auto &point : points) {
         DenseVector x = vecToDense(point);
@@ -889,7 +889,7 @@ void _checkNorm(DenseMatrix normValues, int row, size_t numPoints, double one_ep
 
 // Must use std::function because a capturing lambda cannot be converted to a function pointer
 void testApproximation(std::vector<TestFunction *> funcs,
-                       std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                       std::function<Approximant *(const Sample &table)> approx_gen_func,
                        TestType type, size_t numSamplePoints, size_t numEvalPoints,
                        double one_eps, double two_eps, double inf_eps)
 {
@@ -901,7 +901,7 @@ void testApproximation(std::vector<TestFunction *> funcs,
             auto samplePoints = linspace(dim, -5, 5, std::pow(numSamplePoints, 1.0/dim));
             auto evalPoints = linspace(dim, -4.95, 4.95, std::pow(numEvalPoints, 1.0/dim));
 
-            DataTable table = sample(exact, samplePoints);
+            Sample table = sample(exact, samplePoints);
 
             Approximant *approx = approx_gen_func(table);
 
@@ -1023,7 +1023,7 @@ bool domainReductionTest(BSpline &bs, const BSpline &bs_orig)
 bool runRecursiveDomainReductionTest()
 {
     // Create new DataTable to manage samples
-    DataTable samples;
+    Sample samples;
 
     // Sample function
     auto x0_vec = linspace(0,2,20);

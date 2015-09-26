@@ -18,17 +18,17 @@
 namespace SPLINTER
 {
 
-DataTable::DataTable()
-    : DataTable(false, false)
+Sample::Sample()
+    : Sample(false, false)
 {
 }
 
-DataTable::DataTable(bool allowDuplicates)
-    : DataTable(allowDuplicates, false)
+Sample::Sample(bool allowDuplicates)
+    : Sample(allowDuplicates, false)
 {
 }
 
-DataTable::DataTable(bool allowDuplicates, bool allowIncompleteGrid)
+Sample::Sample(bool allowDuplicates, bool allowIncompleteGrid)
     : allowDuplicates(allowDuplicates),
       allowIncompleteGrid(allowIncompleteGrid),
       numDuplicates(0),
@@ -36,32 +36,32 @@ DataTable::DataTable(bool allowDuplicates, bool allowIncompleteGrid)
 {
 }
 
-DataTable::DataTable(const char *fileName)
-    : DataTable(std::string(fileName))
+Sample::Sample(const char *fileName)
+    : Sample(std::string(fileName))
 {
 }
 
-DataTable::DataTable(const std::string fileName)
+Sample::Sample(const std::string fileName)
 {
     load(fileName);
 }
 
-void DataTable::addSample(double x, double y)
+void Sample::addSample(double x, double y)
 {
-    addSample(DataSample(x, y));
+    addSample(SamplePoint(x, y));
 }
 
-void DataTable::addSample(std::vector<double> x, double y)
+void Sample::addSample(std::vector<double> x, double y)
 {
-    addSample(DataSample(x, y));
+    addSample(SamplePoint(x, y));
 }
 
-void DataTable::addSample(DenseVector x, double y)
+void Sample::addSample(DenseVector x, double y)
 {
-    addSample(DataSample(x, y));
+    addSample(SamplePoint(x, y));
 }
 
-void DataTable::addSample(const DataSample &sample)
+void Sample::addSample(const SamplePoint &sample)
 {
     if (getNumSamples() == 0)
     {
@@ -94,7 +94,7 @@ void DataTable::addSample(const DataSample &sample)
     recordGridPoint(sample);
 }
 
-void DataTable::recordGridPoint(const DataSample &sample)
+void Sample::recordGridPoint(const SamplePoint &sample)
 {
     for (unsigned int i = 0; i < getNumVariables(); i++)
     {
@@ -102,7 +102,7 @@ void DataTable::recordGridPoint(const DataSample &sample)
     }
 }
 
-unsigned int DataTable::getNumSamplesRequired() const
+unsigned int Sample::getNumSamplesRequired() const
 {
     unsigned long samplesRequired = 1;
     unsigned int i = 0;
@@ -115,12 +115,12 @@ unsigned int DataTable::getNumSamplesRequired() const
     return (i > 0 ? samplesRequired : (unsigned long) 0);
 }
 
-bool DataTable::isGridComplete() const
+bool Sample::isGridComplete() const
 {
     return samples.size() > 0 && samples.size() - numDuplicates == getNumSamplesRequired();
 }
 
-void DataTable::initDataStructures()
+void Sample::initDataStructures()
 {
     for (unsigned int i = 0; i < getNumVariables(); i++)
     {
@@ -128,7 +128,7 @@ void DataTable::initDataStructures()
     }
 }
 
-void DataTable::gridCompleteGuard() const
+void Sample::gridCompleteGuard() const
 {
     if (!(isGridComplete() || allowIncompleteGrid))
     {
@@ -136,14 +136,14 @@ void DataTable::gridCompleteGuard() const
     }
 }
 
-void DataTable::save(const std::string fileName) const
+void Sample::save(const std::string fileName) const
 {
     Serializer s;
     s.serialize(*this);
     s.saveToFile(fileName);
 }
 
-void DataTable::load(const std::string fileName)
+void Sample::load(const std::string fileName)
 {
     Serializer s(fileName);
     s.deserialize(*this);
@@ -152,12 +152,12 @@ void DataTable::load(const std::string fileName)
 /*
  * Getters for iterators
  */
-std::multiset<DataSample>::const_iterator DataTable::cbegin() const
+std::multiset<SamplePoint>::const_iterator Sample::cbegin() const
 {
     return samples.cbegin();
 }
 
-std::multiset<DataSample>::const_iterator DataTable::cend() const
+std::multiset<SamplePoint>::const_iterator Sample::cend() const
 {
     return samples.cend();
 }
@@ -166,7 +166,7 @@ std::multiset<DataSample>::const_iterator DataTable::cend() const
  * Get table of samples x-values,
  * i.e. table[i][j] is the value of variable i at sample j
  */
-std::vector< std::vector<double> > DataTable::getTableX() const
+std::vector< std::vector<double> > Sample::getTableX() const
 {
     gridCompleteGuard();
 
@@ -195,23 +195,23 @@ std::vector< std::vector<double> > DataTable::getTableX() const
 }
 
 // Get vector of y-values
-std::vector<double> DataTable::getVectorY() const
+std::vector<double> Sample::getVectorY() const
 {
     std::vector<double> y;
-    for (std::multiset<DataSample>::const_iterator it = cbegin(); it != cend(); ++it)
+    for (std::multiset<SamplePoint>::const_iterator it = cbegin(); it != cend(); ++it)
     {
         y.push_back(it->getY());
     }
     return y;
 }
 
-DataTable operator+(const DataTable &lhs, const DataTable &rhs)
+Sample operator+(const Sample &lhs, const Sample &rhs)
 {
     if(lhs.getNumVariables() != rhs.getNumVariables()) {
         throw Exception("operator+(DataTable, DataTable): trying to add two DataTable's of different dimensions!");
     }
 
-    DataTable result;
+    Sample result;
     for(auto it = lhs.cbegin(); it != lhs.cend(); it++) {
         result.addSample(*it);
     }
@@ -222,13 +222,13 @@ DataTable operator+(const DataTable &lhs, const DataTable &rhs)
     return result;
 }
 
-DataTable operator-(const DataTable &lhs, const DataTable &rhs)
+Sample operator-(const Sample &lhs, const Sample &rhs)
 {
     if(lhs.getNumVariables() != rhs.getNumVariables()) {
         throw Exception("operator-(DataTable, DataTable): trying to subtract two DataTable's of different dimensions!");
     }
 
-    DataTable result;
+    Sample result;
     auto rhsSamples = rhs.getSamples();
     // Add all samples from lhs that are not in rhs
     for(auto it = lhs.cbegin(); it != lhs.cend(); it++) {

@@ -28,7 +28,7 @@ TEST_CASE("PSpline function" COMMON_TEXT, COMMON_TAGS "[function-value][polynomi
         double inf_eps = 0.1;
 
         compareFunctionValue(testFunc,
-                             [](const DataTable &table)
+                             [](const Sample &table)
                              {
                                  return (Approximant*) new PSplineApproximant(table);
                              },
@@ -47,7 +47,7 @@ TEST_CASE("PSpline jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian][polynomial]")
         double inf_eps = 6e-5;
 
         compareJacobianValue(testFunc,
-                             [](const DataTable &table)
+                             [](const Sample &table)
                              {
                                  return (Approximant*) new PSplineApproximant(table);
                              },
@@ -62,7 +62,7 @@ TEST_CASE("PSpline hessian" COMMON_TEXT, COMMON_TAGS "[hessian][polynomial]")
     for(auto testFunc : getPolynomialFunctions())
     {
         checkHessianSymmetry(testFunc,
-                             [](const DataTable &table)
+                             [](const Sample &table)
                              {
                                  return (Approximant*) new PSplineApproximant(table);
                              },

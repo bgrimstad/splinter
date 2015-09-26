@@ -16,7 +16,7 @@ namespace SPLINTER
 /*
  * Comparison operators (==)
  */
-bool operator==(const DataTable &lhs, const DataTable &rhs)
+bool operator==(const Sample &lhs, const Sample &rhs)
 {
     return
             lhs.allowDuplicates == rhs.allowDuplicates
@@ -31,7 +31,7 @@ bool operator==(const DataTable &lhs, const DataTable &rhs)
             && lhs.getGrid() == rhs.getGrid();
 }
 
-bool operator==(const DataSample &lhs, const DataSample &rhs)
+bool operator==(const SamplePoint &lhs, const SamplePoint &rhs)
 {
     for (unsigned int i = 0; i < lhs.getDimX(); i++)
     {
@@ -165,7 +165,7 @@ bool operator!=(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs)
     return !(lhs == rhs);
 }
 
-bool operator!=(const DataSample &lhs, const DataSample &rhs)
+bool operator!=(const SamplePoint &lhs, const SamplePoint &rhs)
 {
 	return !(lhs == rhs);
 }
@@ -173,7 +173,7 @@ bool operator!=(const DataSample &lhs, const DataSample &rhs)
 /*
  * Output stream operator
  */
-std::ostream &operator<<(std::ostream &out, const DataSample &sample) {
+std::ostream &operator<<(std::ostream &out, const SamplePoint &sample) {
     out << "(";
     bool firstLoop = true;
     for (auto val : sample.getX()) {
@@ -188,7 +188,7 @@ std::ostream &operator<<(std::ostream &out, const DataSample &sample) {
     return out;
 }
 
-std::ostream &operator<<(std::ostream &out, const DataTable &table)
+std::ostream &operator<<(std::ostream &out, const Sample &table)
 {
     out << "numVariables: " << table.getNumVariables() << std::endl;
     out << "numSamples: " << table.getNumSamples() << std::endl;

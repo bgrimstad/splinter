@@ -25,10 +25,10 @@ class SPLINTER_API PSplineApproximant : public BSplineApproximant
 public:
     PSplineApproximant(const char *fileName);
     PSplineApproximant(const std::string fileName);
-    PSplineApproximant(const DataTable &samples, std::vector<unsigned int> basisDegrees, double lambda);
-    PSplineApproximant(const DataTable &samples, BSplineType type, double lambda);
-    PSplineApproximant(const DataTable &samples, double lambda);
-    PSplineApproximant(const DataTable &samples) : PSplineApproximant(samples, 0.03) {}
+    PSplineApproximant(const Sample &samples, std::vector<unsigned int> basisDegrees, double lambda);
+    PSplineApproximant(const Sample &samples, BSplineType type, double lambda);
+    PSplineApproximant(const Sample &samples, double lambda);
+    PSplineApproximant(const Sample &samples) : PSplineApproximant(samples, 0.03) {}
 
     void save(const std::string fileName) const override;
 
@@ -40,7 +40,7 @@ private:
     double lambda; // Smoothing parameter. Requirement: lambda >= 0
 
     // P-spline control point calculation
-    DenseMatrix computeCoefficients(const DataTable &samples) const override;
+    DenseMatrix computeCoefficients(const Sample &samples) const override;
     SparseMatrix getSecondOrderFiniteDifferenceMatrix() const;
 
     void load(const std::string fileName) override;

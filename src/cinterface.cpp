@@ -35,11 +35,11 @@ static void set_error_string(const char *new_error_string)
 }
 
 /* Cast the obj_ptr to a DataTable * */
-static DataTable *get_datatable(obj_ptr datatable_ptr)
+static Sample *get_datatable(obj_ptr datatable_ptr)
 {
     if (objects.count(datatable_ptr) > 0)
     {
-        return (DataTable *) datatable_ptr;
+        return (Sample *) datatable_ptr;
     }
 
     set_error_string("Invalid reference to DataTable: Maybe it has been deleted?");
@@ -120,7 +120,7 @@ const char *get_error_string()
 /* DataTable constructor */
 obj_ptr datatable_init()
 {
-    obj_ptr dataTable = (obj_ptr) new DataTable();
+    obj_ptr dataTable = (obj_ptr) new Sample();
 
     objects.insert(dataTable);
 
@@ -133,7 +133,7 @@ obj_ptr datatable_load_init(const char *filename)
 
     try
     {
-        dataTable = (obj_ptr) new DataTable(filename);
+        dataTable = (obj_ptr) new Sample(filename);
         objects.insert(dataTable);
     }
     catch(const Exception &e)
@@ -146,7 +146,7 @@ obj_ptr datatable_load_init(const char *filename)
 
 void datatable_add_samples_row_major(obj_ptr datatable_ptr, double *x, int n_samples, int x_dim)
 {
-    DataTable *dataTable = get_datatable(datatable_ptr);
+    Sample *dataTable = get_datatable(datatable_ptr);
     if (dataTable != nullptr)
     {
         try
@@ -182,7 +182,7 @@ void datatable_add_samples_row_major(obj_ptr datatable_ptr, double *x, int n_sam
 
 void datatable_add_samples_col_major(obj_ptr datatable_ptr, double *x, int n_samples, int x_dim, int size)
 {
-    DataTable *dataTable = get_datatable(datatable_ptr);
+    Sample *dataTable = get_datatable(datatable_ptr);
     if (dataTable != nullptr)
     {
         try
@@ -217,7 +217,7 @@ void datatable_add_samples_col_major(obj_ptr datatable_ptr, double *x, int n_sam
 
 int datatable_get_num_variables(obj_ptr datatable_ptr)
 {
-    DataTable *dataTable = get_datatable(datatable_ptr);
+    Sample *dataTable = get_datatable(datatable_ptr);
     if (dataTable != nullptr)
     {
         return dataTable->getNumVariables();
@@ -229,7 +229,7 @@ int datatable_get_num_variables(obj_ptr datatable_ptr)
 
 int datatable_get_num_samples(obj_ptr datatable_ptr)
 {
-    DataTable *dataTable = get_datatable(datatable_ptr);
+    Sample *dataTable = get_datatable(datatable_ptr);
     if (dataTable != nullptr)
     {
         return dataTable->getNumSamples();
@@ -240,7 +240,7 @@ int datatable_get_num_samples(obj_ptr datatable_ptr)
 
 void datatable_save(obj_ptr datatable_ptr, const char *filename)
 {
-    DataTable *dataTable = get_datatable(datatable_ptr);
+    Sample *dataTable = get_datatable(datatable_ptr);
     if (dataTable != nullptr)
     {
         try
@@ -256,7 +256,7 @@ void datatable_save(obj_ptr datatable_ptr, const char *filename)
 
 void datatable_delete(obj_ptr datatable_ptr)
 {
-    DataTable *dataTable = get_datatable(datatable_ptr);
+    Sample *dataTable = get_datatable(datatable_ptr);
     if (dataTable != nullptr)
     {
         objects.erase(datatable_ptr);

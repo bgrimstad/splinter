@@ -20,7 +20,7 @@ namespace SPLINTER
 /**
   * Ordinary least-square (OLS)
   */
-DenseMatrix computeCoefficients(const LinearFunction &func, const DataTable &samples);
+DenseMatrix computeCoefficients(const LinearFunction &func, const Sample &samples);
 
 // TODO: implement OLS with regularization term (lambda/numSample)*coefficients^T*coefficients,
 // where lambda >= 0 and default is 0.1/N?
@@ -30,9 +30,9 @@ DenseMatrix computeCoefficients(const LinearFunction &func, const DataTable &sam
  * Computes design matrix by evaluating basis functions
  * at each sample point
  */
-DenseMatrix computeDesignMatrix(const LinearFunction &func, const DataTable &sample);
+DenseMatrix computeDesignMatrix(const LinearFunction &func, const Sample &sample);
 
-SparseMatrix computeDesignMatrixSparse(const LinearFunction &func, const DataTable &sample);
+SparseMatrix computeDesignMatrixSparse(const LinearFunction &func, const Sample &sample);
 
 } // namespace SPLINTER
 

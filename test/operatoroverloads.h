@@ -28,8 +28,8 @@ namespace SPLINTER
 /*
  * Comparison operators
  */
-bool operator==(const DataTable &lhs, const DataTable &rhs);
-bool operator==(const DataSample &lhs, const DataSample &rhs);
+bool operator==(const Sample &lhs, const Sample &rhs);
+bool operator==(const SamplePoint &lhs, const SamplePoint &rhs);
 bool operator==(const BSpline &lhs, const BSpline &rhs);
 bool operator==(const BSplineBasis &lhs, const BSplineBasis &rhs);
 bool operator==(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs);
@@ -87,13 +87,13 @@ bool operator==(const std::multiset<T> &lhs, const std::multiset<T> &rhs)
 }
 
 
-bool operator!=(const DataSample &lhs, const DataSample &rhs);
+bool operator!=(const SamplePoint &lhs, const SamplePoint &rhs);
 
 /*
  * Output stream operator
  */
-std::ostream &operator<<(std::ostream &out, const DataSample &sample);
-std::ostream &operator<<(std::ostream &out, const DataTable &table);
+std::ostream &operator<<(std::ostream &out, const SamplePoint &sample);
+std::ostream &operator<<(std::ostream &out, const Sample &table);
 template <class T>
 std::ostream &operator<<(std::ostream &out, const std::vector<T> &obj);
 template <class T>

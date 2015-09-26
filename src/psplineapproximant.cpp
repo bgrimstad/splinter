@@ -14,7 +14,7 @@
 namespace SPLINTER
 {
 
-PSplineApproximant::PSplineApproximant(const DataTable &samples, std::vector<unsigned int> basisDegrees, double lambda)
+PSplineApproximant::PSplineApproximant(const Sample &samples, std::vector<unsigned int> basisDegrees, double lambda)
     : BSplineApproximant(samples, basisDegrees),
       lambda(lambda)
 {
@@ -28,12 +28,12 @@ PSplineApproximant::PSplineApproximant(const DataTable &samples, std::vector<uns
     bspline.setCoefficients(coefficients);
 }
 
-PSplineApproximant::PSplineApproximant(const DataTable &samples, BSplineType type, double lambda)
+PSplineApproximant::PSplineApproximant(const Sample &samples, BSplineType type, double lambda)
     : PSplineApproximant(samples, getBSplineDegrees(samples.getNumVariables(), type), lambda)
 {
 }
 
-PSplineApproximant::PSplineApproximant(const DataTable &samples, double lambda)
+PSplineApproximant::PSplineApproximant(const Sample &samples, double lambda)
     : PSplineApproximant(samples, std::vector<unsigned int>(samples.getNumVariables(), 3), lambda)
 {
 }
@@ -53,7 +53,7 @@ PSplineApproximant::PSplineApproximant(const std::string fileName)
     load(fileName);
 }
 
-DenseMatrix PSplineApproximant::computeCoefficients(const DataTable &samples) const
+DenseMatrix PSplineApproximant::computeCoefficients(const Sample &samples) const
 {
     // Assuming regular grid
     unsigned int numSamples = samples.getNumSamples();

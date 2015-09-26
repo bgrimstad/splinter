@@ -24,7 +24,7 @@ BSplineApproximant::BSplineApproximant(unsigned int numVariables)
 {
 }
 
-BSplineApproximant::BSplineApproximant(const DataTable &samples, std::vector<unsigned int> basisDegrees)
+BSplineApproximant::BSplineApproximant(const Sample &samples, std::vector<unsigned int> basisDegrees)
     : Approximant(samples.getNumVariables()),
       bspline(buildBSpline(samples, basisDegrees))
 {
@@ -34,7 +34,7 @@ BSplineApproximant::BSplineApproximant(const DataTable &samples, std::vector<uns
 }
 
 // TODO: this may build the B-spline twice!
-BSplineApproximant::BSplineApproximant(const DataTable &samples, BSplineType type = BSplineType::CUBIC)
+BSplineApproximant::BSplineApproximant(const Sample &samples, BSplineType type = BSplineType::CUBIC)
     : BSplineApproximant(samples, getBSplineDegrees(samples.getNumVariables(), type))
 {
 }
@@ -57,7 +57,7 @@ BSplineApproximant::BSplineApproximant(const std::string fileName)
 /*
  * Build B-spline
  */
-BSpline BSplineApproximant::buildBSpline(const DataTable &samples, std::vector<unsigned int> basisDegrees) const
+BSpline BSplineApproximant::buildBSpline(const Sample &samples, std::vector<unsigned int> basisDegrees) const
 {
     // Check data
     if (!samples.isGridComplete())
@@ -83,7 +83,7 @@ DenseMatrix BSplineApproximant::evalHessian(DenseVector x) const
     return bspline.evalHessian(x);
 }
 
-DenseMatrix BSplineApproximant::computeCoefficients(const DataTable &samples) const
+DenseMatrix BSplineApproximant::computeCoefficients(const Sample &samples) const
 {
     /* Setup and solve equations Ac = b,
      * A = basis functions at sample x-values,
@@ -136,7 +136,7 @@ DenseMatrix BSplineApproximant::computeCoefficients(const DataTable &samples) co
     return w.transpose();
 }
 
-SparseMatrix BSplineApproximant::computeBasisFunctionMatrix(const DataTable &samples) const
+SparseMatrix BSplineApproximant::computeBasisFunctionMatrix(const Sample &samples) const
 {
     unsigned int numVariables = samples.getNumVariables();
     unsigned int numSamples = samples.getNumSamples();
@@ -170,7 +170,7 @@ SparseMatrix BSplineApproximant::computeBasisFunctionMatrix(const DataTable &sam
     return A;
 }
 
-DenseMatrix BSplineApproximant::controlPointEquationRHS(const DataTable &samples) const
+DenseMatrix BSplineApproximant::controlPointEquationRHS(const Sample &samples) const
 {
     DenseMatrix B = DenseMatrix::Zero(samples.getNumSamples(), 1);
 
@@ -181,7 +181,7 @@ DenseMatrix BSplineApproximant::controlPointEquationRHS(const DataTable &samples
     return B;
 }
 
-std::vector<std::vector<double> > BSplineApproximant::computeKnotVectorsFromSamples(const DataTable &samples, std::vector<unsigned int> degrees) const
+std::vector<std::vector<double> > BSplineApproximant::computeKnotVectorsFromSamples(const Sample &samples, std::vector<unsigned int> degrees) const
 {
     if (samples.getNumVariables() != degrees.size())
         throw Exception("BSpline::computeKnotVectorsFromSamples: Inconsistent sizes on input vectors.");

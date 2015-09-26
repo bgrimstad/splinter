@@ -21,7 +21,7 @@ TEST_CASE("BSpline can be saved and loaded", "[serialization][bspline]")
     auto func = getTestFunction(dim, 1);
     // Don't sample too fine, this test isn't supposed to test the speed
     auto points = linspace(dim, std::pow(300, 1.0/dim));
-    DataTable table = sample(func, points);
+    Sample table = sample(func, points);
 
     const char *fileName = "test.bspline";
 

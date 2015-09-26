@@ -31,7 +31,7 @@ TEST_CASE("Gaussian RadialBasisFunction function" COMMON_TEXT, COMMON_TAGS "[RBF
     for(auto testFunc : getPolynomialFunctions())
     {
         compareFunctionValue(testFunc,
-                             [](const DataTable &table)
+                             [](const Sample &table)
                              {
                                  return (Approximant *) new RBFApproximant(table, RBFType::GAUSSIAN);
                              },
@@ -50,7 +50,7 @@ TEST_CASE("Gaussian RadialBasisFunction jacobian" COMMON_TEXT, COMMON_TAGS "[RBF
     for(auto testFunc : getPolynomialFunctions())
     {
         compareJacobianValue(testFunc,
-                             [](const DataTable &table)
+                             [](const Sample &table)
                              {
                                  return (Approximant *) new RBFApproximant(table, RBFType::GAUSSIAN);
                              },
@@ -88,7 +88,7 @@ TEST_CASE("Inverse Multiquadric RadialBasisFunction function" COMMON_TEXT, COMMO
     for(auto testFunc : getPolynomialFunctions())
     {
         compareFunctionValue(testFunc,
-                             [](const DataTable &table)
+                             [](const Sample &table)
                              {
                                  return (Approximant *) new RBFApproximant(table, RBFType::INVERSE_MULTIQUADRIC);
                              },
@@ -107,7 +107,7 @@ TEST_CASE("Inverse Multiquadric RadialBasisFunction jacobian" COMMON_TEXT, COMMO
     for(auto testFunc : getPolynomialFunctions())
     {
         compareJacobianValue(testFunc,
-                             [](const DataTable &table)
+                             [](const Sample &table)
                              {
                                  return (Approximant *) new RBFApproximant(table, RBFType::INVERSE_MULTIQUADRIC);
                              },
@@ -145,7 +145,7 @@ TEST_CASE("Inverse Quadric RadialBasisFunction function" COMMON_TEXT, COMMON_TAG
     for(auto testFunc : getPolynomialFunctions())
     {
         compareFunctionValue(testFunc,
-                             [](const DataTable &table)
+                             [](const Sample &table)
                              {
                                  return (Approximant *) new RBFApproximant(table, RBFType::INVERSE_QUADRIC);
                              },
@@ -164,7 +164,7 @@ TEST_CASE("Inverse Quadric RadialBasisFunction jacobian" COMMON_TEXT, COMMON_TAG
     for(auto testFunc : getPolynomialFunctions())
     {
         compareJacobianValue(testFunc,
-                             [](const DataTable &table)
+                             [](const Sample &table)
                              {
                                  return (Approximant *) new RBFApproximant(table, RBFType::INVERSE_QUADRIC);
                              },
@@ -202,7 +202,7 @@ TEST_CASE("Multiquadric RadialBasisFunction function" COMMON_TEXT, COMMON_TAGS "
     for(auto testFunc : getPolynomialFunctions())
     {
         compareFunctionValue(testFunc,
-                             [](const DataTable &table)
+                             [](const Sample &table)
                              {
                                  return (Approximant *) new RBFApproximant(table, RBFType::MULTIQUADRIC);
                              },
@@ -221,7 +221,7 @@ TEST_CASE("Multiquadric RadialBasisFunction jacobian" COMMON_TEXT, COMMON_TAGS "
     for(auto testFunc : getPolynomialFunctions())
     {
         compareJacobianValue(testFunc,
-                             [](const DataTable &table)
+                             [](const Sample &table)
                              {
                                  return (Approximant *) new RBFApproximant(table, RBFType::MULTIQUADRIC);
                              },
@@ -259,7 +259,7 @@ TEST_CASE("Thin plate spline RadialBasisFunction function" COMMON_TEXT, COMMON_T
     for(auto testFunc : getPolynomialFunctions())
     {
         compareFunctionValue(testFunc,
-                             [](const DataTable &table)
+                             [](const Sample &table)
                              {
                                  return (Approximant *) new RBFApproximant(table, RBFType::THIN_PLATE_SPLINE);
                              },
@@ -278,7 +278,7 @@ TEST_CASE("Thin plate spline RadialBasisFunction jacobian" COMMON_TEXT, COMMON_T
     for(auto testFunc : getPolynomialFunctions())
     {
         compareJacobianValue(testFunc,
-                             [](const DataTable &table)
+                             [](const Sample &table)
                              {
                                  return (Approximant *) new RBFApproximant(table, RBFType::THIN_PLATE_SPLINE);
                              },

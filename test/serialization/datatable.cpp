@@ -16,12 +16,12 @@ using namespace SPLINTER;
 
 TEST_CASE("DataTable can be saved and loaded", "[serialization][datatable]")
 {
-    DataTable table;
+    Sample table;
     const char *fileName = "test.datatable";
 
     SECTION("DataTable with 0 samples") {
         table.save(fileName);
-        DataTable loadedTable(fileName);
+        Sample loadedTable(fileName);
 
         REQUIRE(table == loadedTable);
     }
@@ -34,7 +34,7 @@ TEST_CASE("DataTable can be saved and loaded", "[serialization][datatable]")
         table = sample(testFunc, points);
 
         table.save(fileName);
-        DataTable loadedTable(fileName);
+        Sample loadedTable(fileName);
 
         REQUIRE(table == loadedTable);
     }
@@ -47,7 +47,7 @@ TEST_CASE("DataTable can be saved and loaded", "[serialization][datatable]")
         table = sample(testFunc, points);
 
         table.save(fileName);
-        DataTable loadedTable(fileName);
+        Sample loadedTable(fileName);
 
         REQUIRE(table == loadedTable);
     }
