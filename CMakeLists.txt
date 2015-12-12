@@ -34,10 +34,17 @@ else()
 endif()
 
 # Detect compiler
-string(COMPARE EQUAL "Clang" ${CMAKE_CXX_COMPILER_ID} CLANG)
-string(COMPARE EQUAL "GNU"   ${CMAKE_CXX_COMPILER_ID} GCC)
-string(COMPARE EQUAL "Intel" ${CMAKE_CXX_COMPILER_ID} INTEL)
-string(COMPARE EQUAL "MSVC"  ${CMAKE_CXX_COMPILER_ID} MSVC)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  set(CLANG 1)
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
+  set(CLANG 1)
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  set(GCC 1)
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+  set(INTEL 1)
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  set(MSVC 1)
+endif()
 
 # Set build type
 if(NOT CMAKE_BUILD_TYPE)
@@ -105,7 +112,10 @@ elseif(GCC OR CLANG)
         # when a non-void function does not return a value.
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m${BITNESS} -std=c++11 -Werror=return-type")
         set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wno-long-long")
-#   TODO: Intel flags
+
+elseif(INTEL)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m${BITNESS} -std=c++11")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
 endif()
 
 if(NOT EIGEN_DIRECTORY)
