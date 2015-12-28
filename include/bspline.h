@@ -11,7 +11,7 @@
 #define SPLINTER_BSPLINE_H
 
 #include "datatable.h"
-#include "approximant.h"
+#include "function.h"
 #include "bsplinebasis.h"
 
 namespace SPLINTER
@@ -20,7 +20,7 @@ namespace SPLINTER
 /**
  * Class that implements the multivariate tensor product B-spline
  */
-class SPLINTER_API BSpline : public Approximant
+class SPLINTER_API BSpline : public Function
 {
 public:
     BSpline(unsigned int numVariables);

@@ -16,7 +16,7 @@ namespace SPLINTER
 {
 
 RBFApproximant::RBFApproximant()
-    : Approximant(1)
+    : Function(1)
 {
 }
 
@@ -26,7 +26,7 @@ RBFApproximant::RBFApproximant(const char *fileName)
 }
 
 RBFApproximant::RBFApproximant(const std::string fileName)
-    : Approximant(1)
+    : Function(1)
 {
     load(fileName);
 }
@@ -37,7 +37,7 @@ RBFApproximant::RBFApproximant(const DataTable &samples, RBFType type)
 }
 
 RBFApproximant::RBFApproximant(const DataTable &samples, RBFType type, bool normalized)
-    : Approximant(samples.getNumVariables()),
+    : Function(samples.getNumVariables()),
       samples(samples),
       type(type),
       normalized(normalized),

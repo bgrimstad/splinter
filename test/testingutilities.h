@@ -46,22 +46,22 @@ bool compareFunctions(const Function &exact, const Function &approx);
  * Also prints out the point with the largest error.
  */
 void compareFunctionValue(std::vector<TestFunction *> funcs,
-                          std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                          std::function<Function *(const DataTable &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints,
                           double one_eps, double two_eps, double inf_eps);
 
 void compareFunctionValue(TestFunction *exact,
-                          std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                          std::function<Function *(const DataTable &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints,
                           double one_eps, double two_eps, double inf_eps);
 
 void compareJacobianValue(TestFunction *exact,
-                          std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                          std::function<Function *(const DataTable &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints,
                           double one_eps, double two_eps, double inf_eps);
 
 void checkHessianSymmetry(TestFunction *exact,
-                          std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                          std::function<Function *(const DataTable &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints);
 
 bool compareBSplines(const BSpline &left, const BSpline &right);
@@ -69,9 +69,9 @@ bool compareBSplines(const BSpline &left, const BSpline &right);
 /*
  * Computes the central difference at x. Returns a 1xN row-vector.
  */
-DenseMatrix centralDifference(const Approximant &approx, const DenseVector &x);
+DenseMatrix centralDifference(const Function &approx, const DenseVector &x);
 
-bool isSymmetricHessian(const Approximant &approx, const DenseVector &x);
+bool isSymmetricHessian(const Function &approx, const DenseVector &x);
 
 DataTable sample(const Function &func, std::vector<std::vector<double>> &points);
 DataTable sample(const Function *func, std::vector<std::vector<double>> &points);
@@ -126,7 +126,7 @@ void checkNorm(DenseMatrix normValues, TestType type, size_t numPoints, double o
 void _checkNorm(DenseMatrix normValues, int row, size_t numPoints, double one_eps, double two_eps, double inf_eps);
 
 void testApproximation(std::vector<TestFunction *> funcs,
-                       std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                       std::function<Function *(const DataTable &table)> approx_gen_func,
                        TestType type, size_t numSamplePoints, size_t numEvalPoints,
                        double one_eps, double two_eps, double inf_eps);
 

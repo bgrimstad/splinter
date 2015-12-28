@@ -20,18 +20,18 @@ namespace SPLINTER
 {
 
 BSpline::BSpline()
-    : Approximant(1)
+    : Function(1)
 {}
 
 BSpline::BSpline(unsigned int numVariables)
-    : Approximant(numVariables)
+    : Function(numVariables)
 {}
 
 /*
  * Constructors for multivariate B-spline using explicit data
  */
 BSpline::BSpline(std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees)
-    : Approximant(knotVectors.size()),
+    : Function(knotVectors.size()),
       basis(BSplineBasis(knotVectors, basisDegrees)),
       coefficients(DenseMatrix::Ones(1, basis.getNumBasisFunctions()))
 {
@@ -46,7 +46,7 @@ BSpline::BSpline(std::vector<double> coefficients, std::vector< std::vector<doub
 }
 
 BSpline::BSpline(DenseMatrix coefficients, std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees)
-    : Approximant(knotVectors.size()),
+    : Function(knotVectors.size()),
       basis(BSplineBasis(knotVectors, basisDegrees)),
       coefficients(coefficients)
 {
@@ -64,7 +64,7 @@ BSpline::BSpline(const char *fileName)
 }
 
 BSpline::BSpline(const std::string fileName)
-    : Approximant(1)
+    : Function(1)
 {
     load(fileName);
 }

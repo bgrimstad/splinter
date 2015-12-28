@@ -10,6 +10,7 @@
 #ifndef SPLINTER_BSPLINEAPPROXIMANT_H
 #define SPLINTER_BSPLINEAPPROXIMANT_H
 
+#include "function.h"
 #include "datatable.h"
 #include "bspline.h"
 
@@ -47,7 +48,7 @@ inline std::vector<unsigned int> getBSplineDegrees(unsigned int numVariables, BS
     }
 }
 
-class SPLINTER_API BSplineApproximant : public Approximant
+class SPLINTER_API BSplineApproximant : public Function
 {
 public:
     BSplineApproximant(const char *fileName);

@@ -10,13 +10,12 @@
 #ifndef SPLINTER_POLYNOMIAL_H
 #define SPLINTER_POLYNOMIAL_H
 
-#include "approximant.h"
 #include "linearfunction.h"
 
 namespace SPLINTER
 {
 
-class SPLINTER_API Polynomial : public LinearFunction, public Saveable
+class SPLINTER_API Polynomial : public LinearFunction
 {
 public:
     Polynomial(const char *fileName);

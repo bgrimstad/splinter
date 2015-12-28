@@ -47,12 +47,13 @@ static DataTable *get_datatable(obj_ptr datatable_ptr)
     return nullptr;
 }
 
-/* Cast the obj_ptr to an Approximant * */
-static Approximant *get_approximant(obj_ptr approximant_ptr)
+/* Cast the obj_ptr to an Function * */
+static Function *get_approximant(obj_ptr approximant_ptr)
 {
     if (objects.count(approximant_ptr) > 0)
     {
-        return (Approximant *) approximant_ptr;
+        // NOTE: get_approximant now returns Function*
+        return (Function *) approximant_ptr;
     }
 
     set_error_string("Invalid reference to Approximant: Maybe it has been deleted?");

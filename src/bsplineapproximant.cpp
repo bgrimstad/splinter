@@ -19,13 +19,13 @@ namespace SPLINTER
 {
 
 BSplineApproximant::BSplineApproximant(unsigned int numVariables)
-    : Approximant(numVariables),
+    : Function(numVariables),
       bspline(numVariables)
 {
 }
 
 BSplineApproximant::BSplineApproximant(const DataTable &samples, std::vector<unsigned int> basisDegrees)
-    : Approximant(samples.getNumVariables()),
+    : Function(samples.getNumVariables()),
       bspline(buildBSpline(samples, basisDegrees))
 {
     // Compute coefficients
@@ -48,7 +48,7 @@ BSplineApproximant::BSplineApproximant(const char *fileName)
 }
 
 BSplineApproximant::BSplineApproximant(const std::string fileName)
-    : Approximant(1),
+    : Function(1),
       bspline(1)
 {
     load(fileName);

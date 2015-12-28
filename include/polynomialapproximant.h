@@ -10,14 +10,14 @@
 #ifndef SPLINTER_POLYNOMIALAPPROXIMANT_H
 #define SPLINTER_POLYNOMIALAPPROXIMANT_H
 
-#include "approximant.h"
+#include "function.h"
 #include "polynomial.h"
 #include "datatable.h"
 
 namespace SPLINTER
 {
 
-class SPLINTER_API PolynomialApproximant : public Approximant
+class SPLINTER_API PolynomialApproximant : public Function
 {
 public:
     PolynomialApproximant(const char *fileName);

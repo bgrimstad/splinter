@@ -12,7 +12,7 @@
 
 #include "definitions.h"
 #include "datatable.h"
-#include "approximant.h"
+#include "function.h"
 #include "rbfterm.h"
 #include "memory"
 
@@ -25,7 +25,7 @@ namespace SPLINTER
  * the solution of a fairly ill-conditioned linear system. This drawback may be
  * alleviated by applying a pre-conditioner to the linear system.
  */
-class SPLINTER_API RBFApproximant : public Approximant
+class SPLINTER_API RBFApproximant : public Function
 {
 public:
     RBFApproximant(const char *filename);

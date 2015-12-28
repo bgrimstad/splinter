@@ -11,14 +11,16 @@
 #define SPLINTER_FUNCTION_H
 
 #include "definitions.h"
+#include "saveable.h"
 
 namespace SPLINTER
 {
 
 /*
  * Interface for functions
+ * TODO: Remove current requirement that all functions must implement save and load!
  */
-class SPLINTER_API Function
+class SPLINTER_API Function : public Saveable
 {
 public:
     Function()
@@ -76,6 +78,14 @@ public:
 
     std::vector<std::vector<double>> secondOrderCentralDifference(const std::vector<double> &x) const;
     DenseMatrix secondOrderCentralDifference(DenseVector x) const;
+
+    /**
+     * Description of function.
+     */
+    virtual const std::string getDescription() const
+    {
+        return "";
+    }
 
 protected:
     unsigned int numVariables; // Dimension of domain (size of x)

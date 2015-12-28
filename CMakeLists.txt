@@ -134,7 +134,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/Catch)
 
 # These are the sources we need for compilation of the library
 set(SRC_LIST
-    include/approximant.h
     include/bsplineapproximant.h
     include/bsplinebuilder.h
     include/bspline.h

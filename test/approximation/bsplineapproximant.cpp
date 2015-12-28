@@ -39,7 +39,7 @@ TEST_CASE("Linear BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::line
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Approximant*) new BSplineApproximant(table, BSplineType::LINEAR);
+                                 return (Function*) new BSplineApproximant(table, BSplineType::LINEAR);
                              }
                 ,
                              500,  // Number of points to sample at
@@ -59,7 +59,7 @@ TEST_CASE("Linear BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::line
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Approximant*) new BSplineApproximant(table, BSplineType::LINEAR);
+                                 return (Function*) new BSplineApproximant(table, BSplineType::LINEAR);
                              },
                              300,  // Number of points to sample at
                              1337, // Number of points to test against
@@ -74,7 +74,7 @@ TEST_CASE("Linear BSpline hessian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::linea
         checkHessianSymmetry(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Approximant*) new BSplineApproximant(table, BSplineType::LINEAR);
+                                 return (Function*) new BSplineApproximant(table, BSplineType::LINEAR);
                              },
                              300,
                              1337);
@@ -104,7 +104,7 @@ TEST_CASE("Quadratic BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::q
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Approximant*) new BSplineApproximant(table, BSplineType::QUADRATIC);
+                                 return (Function*) new BSplineApproximant(table, BSplineType::QUADRATIC);
                              },
                              300,  // Number of points to sample at
                              1337, // Number of points to test against
@@ -123,7 +123,7 @@ TEST_CASE("Quadratic BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::q
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Approximant*) new BSplineApproximant(table, BSplineType::QUADRATIC);
+                                 return (Function*) new BSplineApproximant(table, BSplineType::QUADRATIC);
                              },
                              300,  // Number of points to sample at
                              1337, // Number of points to test against
@@ -138,7 +138,7 @@ TEST_CASE("Quadratic BSpline hessian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::qu
         checkHessianSymmetry(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Approximant*) new BSplineApproximant(table, BSplineType::QUADRATIC);
+                                 return (Function*) new BSplineApproximant(table, BSplineType::QUADRATIC);
                              },
                              300,   // Number of points to sample at
                              1337); // Number of points to test against
@@ -168,7 +168,7 @@ TEST_CASE("Cubic BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::cubic
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Approximant*) new BSplineApproximant(table, BSplineType::CUBIC);
+                                 return (Function*) new BSplineApproximant(table, BSplineType::CUBIC);
                              },
                              300,  // Number of points to sample at
                              1337, // Number of points to test against
@@ -187,7 +187,7 @@ TEST_CASE("Cubic BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::cubic
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Approximant*) new BSplineApproximant(table, BSplineType::CUBIC);
+                                 return (Function*) new BSplineApproximant(table, BSplineType::CUBIC);
                              },
                              300,  // Number of points to sample at
                              1337, // Number of points to test against
@@ -202,7 +202,7 @@ TEST_CASE("Cubic BSpline hessian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::cubic]
         checkHessianSymmetry(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Approximant*) new BSplineApproximant(table, BSplineType::CUBIC);
+                                 return (Function*) new BSplineApproximant(table, BSplineType::CUBIC);
                              },
                              300,   // Number of points to sample at
                              1337); // Number of points to test against
@@ -232,7 +232,7 @@ TEST_CASE("Quartic BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::qua
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Approximant*) new BSplineApproximant(table, BSplineType::QUARTIC);
+                                 return (Function*) new BSplineApproximant(table, BSplineType::QUARTIC);
                              },
                              300,  // Number of points to sample at
                              1337, // Number of points to test against
@@ -251,7 +251,7 @@ TEST_CASE("Quartic BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::qua
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Approximant*) new BSplineApproximant(table, BSplineType::QUARTIC);
+                                 return (Function*) new BSplineApproximant(table, BSplineType::QUARTIC);
                              },
                              300,  // Number of points to sample at
                              1337, // Number of points to test against
@@ -266,7 +266,7 @@ TEST_CASE("Quartic BSpline hessian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::quar
         checkHessianSymmetry(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Approximant*) new BSplineApproximant(table, BSplineType::QUARTIC);
+                                 return (Function*) new BSplineApproximant(table, BSplineType::QUARTIC);
                              },
                              300,   // Number of points to sample at
                              1337); // Number of points to test against

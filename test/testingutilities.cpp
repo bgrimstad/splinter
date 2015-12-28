@@ -226,7 +226,7 @@ bool compareFunctions(const Function &exact, const Function &approx, const std::
 }
 
 void compareFunctionValue(std::vector<TestFunction *> funcs,
-                          std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                          std::function<Function *(const DataTable &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints,
                           double one_eps, double two_eps, double inf_eps)
 {
@@ -236,7 +236,7 @@ void compareFunctionValue(std::vector<TestFunction *> funcs,
     }
 }
 void compareFunctionValue(TestFunction *exact,
-                          std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                          std::function<Function *(const DataTable &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints,
                           double one_eps, double two_eps, double inf_eps)
 {
@@ -247,7 +247,7 @@ void compareFunctionValue(TestFunction *exact,
 
     DataTable table = sample(exact, samplePoints);
 
-    Approximant *approx = approx_gen_func(table);
+    Function *approx = approx_gen_func(table);
 
     INFO("Approximant: " << approx->getDescription());
     INFO("Function: " << exact->getFunctionStr());
@@ -314,7 +314,7 @@ void compareFunctionValue(TestFunction *exact,
 
 /* Compares the jacobian of the approximant to the central difference of the approximant function value */
 void compareJacobianValue(TestFunction *exact,
-                          std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                          std::function<Function *(const DataTable &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints,
                           double one_eps, double two_eps, double inf_eps)
 {
@@ -325,7 +325,7 @@ void compareJacobianValue(TestFunction *exact,
 
     DataTable table = sample(exact, samplePoints);
 
-    Approximant *approx = approx_gen_func(table);
+    Function *approx = approx_gen_func(table);
 
     INFO("Approximant: " << approx->getDescription());
     INFO("Function: " << exact->getFunctionStr());
@@ -438,7 +438,7 @@ void compareJacobianValue(TestFunction *exact,
 }
 
 void checkHessianSymmetry(TestFunction *exact,
-                          std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                          std::function<Function *(const DataTable &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints)
 {
     auto dim = exact->getNumVariables();
@@ -448,7 +448,7 @@ void checkHessianSymmetry(TestFunction *exact,
 
     DataTable table = sample(exact, samplePoints);
 
-    Approximant *approx = approx_gen_func(table);
+    Function *approx = approx_gen_func(table);
 
     INFO("Approximant: " << approx->getDescription());
     INFO("Function: " << exact->getFunctionStr());
@@ -889,7 +889,7 @@ void _checkNorm(DenseMatrix normValues, int row, size_t numPoints, double one_ep
 
 // Must use std::function because a capturing lambda cannot be converted to a function pointer
 void testApproximation(std::vector<TestFunction *> funcs,
-                       std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                       std::function<Function *(const DataTable &table)> approx_gen_func,
                        TestType type, size_t numSamplePoints, size_t numEvalPoints,
                        double one_eps, double two_eps, double inf_eps)
 {
@@ -903,7 +903,7 @@ void testApproximation(std::vector<TestFunction *> funcs,
 
             DataTable table = sample(exact, samplePoints);
 
-            Approximant *approx = approx_gen_func(table);
+            Function *approx = approx_gen_func(table);
 
             INFO("Function: " << exact->getFunctionStr());
             INFO("Approximant: " << approx->getDescription());
@@ -917,7 +917,7 @@ void testApproximation(std::vector<TestFunction *> funcs,
     }
 }
 
-DenseMatrix centralDifference(const Approximant &approx, const DenseVector &x)
+DenseMatrix centralDifference(const Function &approx, const DenseVector &x)
 {
     DenseMatrix dx(1, x.size());
 
@@ -959,7 +959,7 @@ DenseMatrix centralDifference(const Approximant &approx, const DenseVector &x)
 /*
  * Checks that the hessian is symmetric across the diagonal
  */
-bool isSymmetricHessian(const Approximant &approx, const DenseVector &x)
+bool isSymmetricHessian(const Function &approx, const DenseVector &x)
 {
     DenseMatrix hessian = approx.evalHessian(x);
 

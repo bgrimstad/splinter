@@ -90,10 +90,9 @@ namespace SPLINTER
                     return std::vector<unsigned int>(numVariables, 3);
                 case BSplineDegree::QUARTIC:
                     return std::vector<unsigned int>(numVariables, 4);
+                default:
+                    return std::vector<unsigned int>(numVariables, 3);
             }
-
-            // Required return statement
-            return std::vector<unsigned int>(numVariables, 3);
         }
 
         // Control point computations

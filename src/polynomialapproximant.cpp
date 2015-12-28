@@ -17,7 +17,7 @@ namespace SPLINTER
 {
 
 PolynomialApproximant::PolynomialApproximant()
-    : Approximant(1),
+    : Function(1),
       poly(Polynomial(1, 1))
 {
 }
@@ -28,7 +28,7 @@ PolynomialApproximant::PolynomialApproximant(const char *fileName)
 }
 
 PolynomialApproximant::PolynomialApproximant(const std::string fileName)
-    : Approximant(1),
+    : Function(1),
       poly(Polynomial(1, 1))
 {
     load(fileName);
@@ -40,7 +40,7 @@ PolynomialApproximant::PolynomialApproximant(const DataTable &sample, unsigned i
 }
 
 PolynomialApproximant::PolynomialApproximant(const DataTable &sample, std::vector<unsigned int> degrees)
-    : Approximant(sample.getNumVariables()),
+    : Function(sample.getNumVariables()),
       poly(Polynomial(degrees))
 {
     if (poly.getNumCoefficients() > sample.getNumSamples())
