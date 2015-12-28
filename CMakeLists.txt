@@ -14,7 +14,7 @@ file(STRINGS "version.txt" VERSION)
 
 # Default configuration values
 set(DEFAULT_BUILD_TYPE "Release")
-set(DEFAULT_ARCH "x86")
+set(DEFAULT_ARCH "x86-64")
 set(DEFAULT_HEADER_INSTALL_DIRECTORY "include")
 set(DEFAULT_LIBRARY_INSTALL_DIRECTORY "lib")
 set(DEFAULT_EIGEN_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/Eigen)
@@ -143,15 +143,18 @@ set(SRC_LIST
     include/datasample.h
     include/datatable.h
     include/function.h
+    include/linearfunction.h
     include/definitions.h
     include/linearsolvers.h
     include/mykroneckerproduct.h
     include/polynomialapproximant.h
+    include/polynomial.h
     include/psplineapproximant.h
     include/rbfapproximant.h
     include/rbfterm.h
     include/serializer.h
     include/utilities.h
+    include/ols.h
     src/bsplineapproximant.cpp
     src/bspline.cpp
     src/bsplinebasis.cpp
@@ -160,12 +163,15 @@ set(SRC_LIST
     src/datasample.cpp
     src/datatable.cpp
     src/function.cpp
+    src/linearfunction.cpp
     src/mykroneckerproduct.cpp
     src/polynomialapproximant.cpp
+    src/polynomial.cpp
     src/psplineapproximant.cpp
     src/rbfapproximant.cpp
     src/serializer.cpp
     src/utilities.cpp
+    src/ols.cpp
 )
 set(TEST_SRC_LIST
     ${SRC_LIST}
