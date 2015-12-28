@@ -14,7 +14,7 @@ file(STRINGS "version.txt" VERSION)
 
 # Default configuration values
 set(DEFAULT_BUILD_TYPE "Release")
-set(DEFAULT_ARCH "x86-64")
+set(DEFAULT_ARCH "x86")
 set(DEFAULT_HEADER_INSTALL_DIRECTORY "include")
 set(DEFAULT_LIBRARY_INSTALL_DIRECTORY "lib")
 set(DEFAULT_EIGEN_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/Eigen)
@@ -136,6 +136,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/Catch)
 set(SRC_LIST
     include/approximant.h
     include/bsplineapproximant.h
+    include/bsplinebuilder.h
     include/bspline.h
     include/bsplinebasis.h
     include/bsplinebasis1d.h
@@ -156,6 +157,7 @@ set(SRC_LIST
     include/utilities.h
     include/ols.h
     src/bsplineapproximant.cpp
+    src/bsplinebuilder.cpp
     src/bspline.cpp
     src/bsplinebasis.cpp
     src/bsplinebasis1d.cpp
@@ -187,7 +189,6 @@ set(TEST_SRC_LIST
     test/serialization/psplineapproximant.cpp
     test/serialization/rbfapproximant.cpp
     test/serialization/polynomialapproximant.cpp
-
     test/operatoroverloads.h
     test/operatoroverloads.cpp
     test/testfunction.h
