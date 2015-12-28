@@ -14,7 +14,7 @@ file(STRINGS "version.txt" VERSION)
 
 # Default configuration values
 set(DEFAULT_BUILD_TYPE "Release")
-set(DEFAULT_ARCH "x86")
+set(DEFAULT_ARCH "x86-64")
 set(DEFAULT_HEADER_INSTALL_DIRECTORY "include")
 set(DEFAULT_LIBRARY_INSTALL_DIRECTORY "lib")
 set(DEFAULT_EIGEN_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/Eigen)
