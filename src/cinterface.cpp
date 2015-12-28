@@ -12,7 +12,7 @@
 #include <bspline.h>
 #include <bsplinebuilder.h>
 #include <rbfapproximant.h>
-#include <polynomialapproximant.h>
+#include <polynomial.h>
 #include "definitions.h"
 #include <set>
 #include <iostream>
@@ -433,7 +433,7 @@ obj_ptr rbf_load_init(const char *filename)
     return rbf;
 }
 
-/* PolynomialApproximant constructor */
+/* Polynomial constructor */
 obj_ptr polynomial_regression_init(obj_ptr datatable_ptr, int *degrees, int degrees_dim)
 {
     obj_ptr polyfit = nullptr;
@@ -449,7 +449,7 @@ obj_ptr polynomial_regression_init(obj_ptr datatable_ptr, int *degrees, int degr
 
         try
         {
-            polyfit = (obj_ptr) new PolynomialApproximant(*table, degreeVec);
+            polyfit = (obj_ptr) new Polynomial(*table, degreeVec);
             objects.insert(polyfit);
         }
         catch(const Exception &e)
@@ -467,7 +467,7 @@ obj_ptr polynomial_regression_load_init(const char *filename)
 
     try
     {
-        polyfit = (obj_ptr) new PolynomialApproximant(filename);
+        polyfit = (obj_ptr) new Polynomial(filename);
         objects.insert(polyfit);
     }
     catch(const Exception &e)

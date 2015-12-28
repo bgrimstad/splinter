@@ -44,7 +44,7 @@ TEST_CASE("Polynomial can be saved and loaded", "[serialization][polynomialregre
         REQUIRE(polyfit == loadedPolyfit);
     }
 
-    if(dim > 1) {
+    if (dim > 1) {
         SECTION("Polynomial of differing degrees in each dimension")
         {
             auto degrees = std::vector<unsigned int>(dim);
@@ -63,7 +63,7 @@ TEST_CASE("Polynomial can be saved and loaded", "[serialization][polynomialregre
     remove(fileName);
 }
 
-TEST_CASE("Polynomial can be saved and loaded", "[serialization][polynomial]")
+TEST_CASE("Polynomial can be saved and loaded (2)", "[serialization][polynomial]")
 {
     unsigned int dim = 3;
     std::vector<unsigned int> degrees = {1,2,3};

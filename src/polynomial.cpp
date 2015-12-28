@@ -10,20 +10,10 @@
 #include "polynomial.h"
 #include <serializer.h>
 #include "mykroneckerproduct.h"
+#include <ols.h>
 
 namespace SPLINTER
 {
-
-Polynomial::Polynomial(const char *fileName)
-    : Polynomial(std::string(fileName))
-{
-}
-
-Polynomial::Polynomial(const std::string fileName)
-    : LinearFunction(1, DenseVector::Zero(1))
-{
-    load(fileName);
-}
 
 Polynomial::Polynomial(unsigned int numVariables, unsigned int degree)
     : Polynomial(std::vector<unsigned int>(numVariables, degree))
@@ -41,6 +31,31 @@ Polynomial::Polynomial(std::vector<unsigned int> degrees, DenseVector coefficien
     : LinearFunction(degrees.size(), coefficients),
       degrees(degrees)
 {
+}
+
+Polynomial::Polynomial(const DataTable &data, unsigned int degree)
+        : Polynomial(data, std::vector<unsigned int>(data.getNumVariables(), degree))
+{
+}
+
+Polynomial::Polynomial(const DataTable &data, std::vector<unsigned int> degrees)
+        : Polynomial(degrees)
+{
+    if (getNumCoefficients() > data.getNumSamples())
+        throw Exception("Polynomial::Polynomial: Insufficient number of samples!");
+
+    setCoefficients(computeCoefficients(*this, data));
+}
+
+Polynomial::Polynomial(const char *fileName)
+        : Polynomial(std::string(fileName))
+{
+}
+
+Polynomial::Polynomial(const std::string fileName)
+        : LinearFunction(1, DenseVector::Zero(1))
+{
+    load(fileName);
 }
 
 unsigned int Polynomial::computeNumBasisFunctions(std::vector<unsigned int> degrees) const

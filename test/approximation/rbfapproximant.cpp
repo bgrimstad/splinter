@@ -15,7 +15,7 @@
 using namespace SPLINTER;
 
 
-#define COMMON_TAGS "[approximation][polynomial][rbf][radialbasisfunction]"
+#define COMMON_TAGS "[approximation][rbf][radialbasisfunction]"
 #define COMMON_TEXT " value approximation test with polynomials"
 
 

@@ -17,7 +17,6 @@
 #include <bsplinebasis1d.h>
 #include <rbfapproximant.h>
 #include <polynomial.h>
-#include <polynomialapproximant.h>
 
 namespace SPLINTER
 {
@@ -132,12 +131,6 @@ size_t Serializer::get_size(const Polynomial &obj)
             + get_size(obj.degrees);
 }
 
-size_t Serializer::get_size(const PolynomialApproximant &obj)
-{
-    return get_size(obj.numVariables)
-            + get_size(obj.poly);
-}
-
 /*
  * _serialize implementations
  */
@@ -195,12 +188,6 @@ void Serializer::_serialize(const Polynomial &obj)
     _serialize(obj.numVariables);
     _serialize(obj.coefficients);
     _serialize(obj.degrees);
-}
-
-void Serializer::_serialize(const PolynomialApproximant &obj)
-{
-    _serialize(obj.numVariables);
-    _serialize(obj.poly);
 }
 
 /*
@@ -284,12 +271,6 @@ void Serializer::deserialize(Polynomial &obj)
     deserialize(obj.numVariables);
     deserialize(obj.coefficients);
     deserialize(obj.degrees);
-}
-
-void Serializer::deserialize(PolynomialApproximant &obj)
-{
-    deserialize(obj.numVariables);
-    deserialize(obj.poly);
 }
 
 } // namespace SPLINTER

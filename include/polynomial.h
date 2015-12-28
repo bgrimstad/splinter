@@ -10,7 +10,8 @@
 #ifndef SPLINTER_POLYNOMIAL_H
 #define SPLINTER_POLYNOMIAL_H
 
-#include "linearfunction.h"
+#include <linearfunction.h>
+#include <datatable.h>
 
 namespace SPLINTER
 {
@@ -18,11 +19,13 @@ namespace SPLINTER
 class SPLINTER_API Polynomial : public LinearFunction
 {
 public:
-    Polynomial(const char *fileName);
-    Polynomial(const std::string fileName);
     Polynomial(unsigned int numVariables, unsigned int degree);
     Polynomial(std::vector<unsigned int> degrees);
     Polynomial(std::vector<unsigned int> degrees, DenseVector coefficients);
+    Polynomial(const DataTable &data, std::vector<unsigned int> degrees);
+    Polynomial(const DataTable &data, unsigned int degree);
+    Polynomial(const char *fileName);
+    Polynomial(const std::string fileName);
 
     SparseVector evalBasisFunctions(DenseVector x) const override;
 

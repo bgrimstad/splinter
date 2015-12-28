@@ -84,13 +84,6 @@ bool operator==(const RBFApproximant &lhs, const RBFApproximant &rhs)
             && lhs.getNumVariables() == rhs.getNumVariables();
 }
 
-bool operator==(const PolynomialApproximant &lhs, const PolynomialApproximant &rhs)
-{
-    return
-            lhs.numVariables == rhs.numVariables
-            && lhs.poly == rhs.poly;
-}
-
 bool operator==(const Polynomial &lhs, const Polynomial &rhs)
 {
     return
