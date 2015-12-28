@@ -151,7 +151,7 @@ SparseMatrix PSplineApproximant::getSecondOrderFiniteDifferenceMatrix() const
     for (unsigned int i=0; i < numVariables; i++)
     {
         // Need at least three coefficients in each variable
-        assert(basis.getNumBasisFunctions(i) >= 3);
+//        assert(basis.getNumBasisFunctions(i) >= 3);
     }
 
     // Number of rows in D and in each block
