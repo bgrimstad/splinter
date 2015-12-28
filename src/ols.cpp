@@ -17,22 +17,19 @@ DenseMatrix computeCoefficients(const LinearFunction &func, const DataTable &sam
 {
     // Left hand side
     DenseMatrix X = computeDesignMatrix(func, sample);
-    DenseMatrix Xt = X.transpose();
-    DenseMatrix XtX = Xt*X;
 
     // Right-hand side
     auto yvec = sample.getVectorY();
     DenseVector y(yvec.size());
     for (unsigned int i = 0; i < yvec.size(); ++i)
         y(i) = yvec.at(i);
-    DenseMatrix Xty = Xt*y;
 
     // Coefficients
     DenseMatrix c;
 
     // Solve for coefficients
     DenseQR s;
-    if (!s.solve(XtX, Xty, c))
+    if (!s.solve(X, y, c))
         throw Exception("PolynomialApproximant::computeCoefficients: Failed to solve for coefficients.");
 
     // TODO: consider returning a vector instead of a matrix!
