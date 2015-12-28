@@ -9,13 +9,13 @@
 
 #include <Catch.h>
 #include <datatable.h>
-#include "polynomialapproximant.h"
+#include "polynomial.h"
 #include "testingutilities.h"
 
 using namespace SPLINTER;
 
 
-TEST_CASE("PolynomialApproximant can be saved and loaded", "[serialization][polynomialregression]")
+TEST_CASE("Polynomial can be saved and loaded", "[serialization][polynomialregression]")
 {
     unsigned int dim = 2;
     auto func = getTestFunction(dim, 1);
@@ -25,36 +25,36 @@ TEST_CASE("PolynomialApproximant can be saved and loaded", "[serialization][poly
 
     const char *fileName = "test.polyfit";
 
-    SECTION("PolynomialApproximant of degree 1")
+    SECTION("Polynomial of degree 1")
     {
-        PolynomialApproximant polyfit(table, 1);
+        Polynomial polyfit(table, 1);
 
         polyfit.save(fileName);
-        PolynomialApproximant loadedPolyfit(fileName);
+        Polynomial loadedPolyfit(fileName);
 
         REQUIRE(polyfit == loadedPolyfit);
     }
 
-    SECTION("PolynomialApproximant of degree 5") {
-        PolynomialApproximant polyfit(table, 4);
+    SECTION("Polynomial of degree 5") {
+        Polynomial polyfit(table, 4);
 
         polyfit.save(fileName);
-        PolynomialApproximant loadedPolyfit(fileName);
+        Polynomial loadedPolyfit(fileName);
 
         REQUIRE(polyfit == loadedPolyfit);
     }
 
     if(dim > 1) {
-        SECTION("PolynomialApproximant of differing degrees in each dimension")
+        SECTION("Polynomial of differing degrees in each dimension")
         {
             auto degrees = std::vector<unsigned int>(dim);
             for (unsigned int i = 0; i < dim; i++)
                 degrees.at(i) = i + 1;
 
-            PolynomialApproximant polyfit(table, degrees);
+            Polynomial polyfit(table, degrees);
 
             polyfit.save(fileName);
-            PolynomialApproximant loadedPolyfit(fileName);
+            Polynomial loadedPolyfit(fileName);
 
             REQUIRE(polyfit == loadedPolyfit);
         }

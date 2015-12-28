@@ -9,7 +9,7 @@
 
 #include <Catch.h>
 #include <testingutilities.h>
-#include <polynomialapproximant.h>
+#include <polynomial.h>
 #include <testfunctions.h>
 #include <testfunction.h>
 #include <cmath>
@@ -21,7 +21,7 @@ using namespace SPLINTER;
 #define COMMON_TEXT " value approximation test with polynomials"
 
 
-TEST_CASE("PolynomialApproximant function" COMMON_TEXT, COMMON_TAGS "[function-value]")
+TEST_CASE("Polynomial function" COMMON_TEXT, COMMON_TAGS "[function-value]")
 {
     double one_eps = 6e-7;
     double two_eps = 6e-7;
@@ -41,7 +41,7 @@ TEST_CASE("PolynomialApproximant function" COMMON_TEXT, COMMON_TAGS "[function-v
         CHECK_NOTHROW(compareFunctionValue(testFunc,
                                            [degree](const DataTable &table)
                                            {
-                                                return (Function *) new PolynomialApproximant(table, degree);
+                                                return (Function *) new Polynomial(table, degree);
                                            },
                                            300,  // Number of points to sample at
                                            1337, // Number of points to test against
@@ -50,7 +50,7 @@ TEST_CASE("PolynomialApproximant function" COMMON_TEXT, COMMON_TAGS "[function-v
 }
 
 
-TEST_CASE("PolynomialApproximant jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian]")
+TEST_CASE("Polynomial jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian]")
 {
     double one_eps = 5e-6;
     double two_eps = 5e-6;
@@ -70,7 +70,7 @@ TEST_CASE("PolynomialApproximant jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian]"
         CHECK_NOTHROW(compareJacobianValue(testFunc,
                                            [degree](const DataTable &table)
                                            {
-                                                return (Function *) new PolynomialApproximant(table, degree);
+                                                return (Function *) new Polynomial(table, degree);
                                            },
                                            300,  // Number of points to sample at
                                            1337, // Number of points to test against

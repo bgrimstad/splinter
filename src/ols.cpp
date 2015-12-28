@@ -30,7 +30,7 @@ DenseMatrix computeCoefficients(const LinearFunction &func, const DataTable &sam
     // Solve for coefficients
     DenseQR s;
     if (!s.solve(X, y, c))
-        throw Exception("PolynomialApproximant::computeCoefficients: Failed to solve for coefficients.");
+        throw Exception("computeCoefficients: Failed to solve for coefficients.");
 
     // TODO: consider returning a vector instead of a matrix!
     return c;
@@ -54,7 +54,7 @@ DenseMatrix computeDesignMatrix(const LinearFunction &func, const DataTable &sam
 
         if (Xi.rows() != func.getNumCoefficients())
         {
-            throw Exception("PolynomialApproximant::computeDesignMatrix: Xi.rows() != numCoefficients.");
+            throw Exception("computeDesignMatrix: Xi.rows() != numCoefficients.");
         }
 
         // Add row to design matrix X
@@ -63,7 +63,6 @@ DenseMatrix computeDesignMatrix(const LinearFunction &func, const DataTable &sam
 
     return X;
 }
-
 
 SparseMatrix computeDesignMatrixSparse(const LinearFunction &func, const DataTable &sample)
 {
