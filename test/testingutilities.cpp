@@ -12,6 +12,7 @@
 #include <testfunctions.h>
 #include <Catch.h>
 #include <iostream>
+#include <bsplinebuilder.h>
 
 using namespace std;
 
@@ -1046,15 +1047,10 @@ bool runRecursiveDomainReductionTest()
     }
 
     // Build B-splines that interpolate the samples
-    BSplineApproximant approx1(samples, BSplineType::LINEAR);
-    BSplineApproximant approx2(samples, BSplineType::QUADRATIC);
-    BSplineApproximant approx3(samples, BSplineType::CUBIC);
-    BSplineApproximant approx4(samples, BSplineType::QUARTIC);
-
-    BSpline bspline1 = approx1.getBSpline();
-    BSpline bspline2 = approx2.getBSpline();
-    BSpline bspline3 = approx3.getBSpline();
-    BSpline bspline4 = approx4.getBSpline();
+    BSpline bspline1 = BSplineBuilder(samples).degree(BSplineDegree::LINEAR).build();
+    BSpline bspline2 = BSplineBuilder(samples).degree(BSplineDegree::QUADRATIC).build();
+    BSpline bspline3 = BSplineBuilder(samples).degree(BSplineDegree::CUBIC).build();
+    BSpline bspline4 = BSplineBuilder(samples).degree(BSplineDegree::QUARTIC).build();
 
     if (!domainReductionTest(bspline1, bspline1))
         return false;

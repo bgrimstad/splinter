@@ -11,6 +11,7 @@ from ctypes import *
 from .utilities import *
 
 
+# TODO: Approximant class has been replaced with Function class
 class Approximant:
 	def __init__(self):
 		self._handle = None

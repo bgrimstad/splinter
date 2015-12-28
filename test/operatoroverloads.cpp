@@ -74,13 +74,6 @@ bool operator==(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs)
             && lhs.targetNumBasisfunctions == rhs.targetNumBasisfunctions;
 }
 
-bool operator==(const BSplineApproximant &lhs, const BSplineApproximant &rhs)
-{
-    return
-            lhs.getNumVariables() == rhs.getNumVariables()
-            && lhs.bspline == rhs.bspline;
-}
-
 bool operator==(const RBFApproximant &lhs, const RBFApproximant &rhs)
 {
     return

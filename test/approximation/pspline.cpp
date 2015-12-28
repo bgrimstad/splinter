@@ -21,7 +21,7 @@ using namespace SPLINTER;
 
 TEST_CASE("PSpline function" COMMON_TEXT, COMMON_TAGS "[function-value]")
 {
-    for(auto testFunc : getPolynomialFunctions())
+    for (auto testFunc : getPolynomialFunctions())
     {
         double one_eps = 0.35;
         double two_eps = 0.1;
@@ -44,7 +44,7 @@ TEST_CASE("PSpline function" COMMON_TEXT, COMMON_TAGS "[function-value]")
 
 TEST_CASE("PSpline jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian]")
 {
-    for(auto testFunc : getPolynomialFunctions())
+    for (auto testFunc : getPolynomialFunctions())
     {
         double one_eps = 6e-6;
         double two_eps = 6e-6;
@@ -67,7 +67,7 @@ TEST_CASE("PSpline jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian]")
 
 TEST_CASE("PSpline hessian" COMMON_TEXT, COMMON_TAGS "[hessian]")
 {
-    for(auto testFunc : getPolynomialFunctions())
+    for (auto testFunc : getPolynomialFunctions())
     {
         checkHessianSymmetry(testFunc,
                              [](const DataTable &table)

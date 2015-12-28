@@ -16,7 +16,6 @@
 #include <datasample.h>
 #include <datatable.h>
 #include <bspline.h>
-#include <bsplineapproximant.h>
 #include <polynomial.h>
 #include <polynomialapproximant.h>
 #include <rbfapproximant.h>
@@ -33,7 +32,6 @@ bool operator==(const BSpline &lhs, const BSpline &rhs);
 bool operator==(const BSplineBasis &lhs, const BSplineBasis &rhs);
 bool operator==(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs);
 bool operator!=(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs);
-bool operator==(const BSplineApproximant &lhs, const BSplineApproximant &rhs);
 bool operator==(const Polynomial &lhs, const Polynomial &rhs);
 bool operator==(const PolynomialApproximant &lhs, const PolynomialApproximant &rhs);
 bool operator==(const RBFApproximant &lhs, const RBFApproximant &rhs);
