@@ -47,29 +47,49 @@ namespace SPLINTER
         BSplineBuilder(const DataTable &data);
 
         // Set build options
-        void degree(unsigned int numVariables, BSplineDegree degree)
+        BSplineBuilder& degree(BSplineDegree degree)
+        {
+            _degrees = getBSplineDegrees(_data.getNumVariables(), degree);
+            return *this;
+        }
+
+        BSplineBuilder& degree(unsigned int numVariables, BSplineDegree degree)
         {
             _degrees = getBSplineDegrees(numVariables, degree);
+            return *this;
         }
 
-        void numKnots(unsigned int numVariables, unsigned int numKnots)
+        BSplineBuilder& numKnots(unsigned int numVariables, unsigned int numKnots)
         {
             _numKnots = std::vector<unsigned int>(numVariables, numKnots);
+            return *this;
         }
 
-        void numKnots(std::vector<unsigned int> numKnots)
+        BSplineBuilder& numKnots(std::vector<unsigned int> numKnots)
         {
             _numKnots = numKnots;
+            return *this;
         }
 
-        void knotSpacing(BSplineKnotSpacing knotSpacing)
+        BSplineBuilder& knotSpacing(BSplineKnotSpacing knotSpacing)
         {
             _knotSpacing = knotSpacing;
+            return *this;
         }
 
-        void smooting(BSplineSmoothing smoothing)
+        BSplineBuilder& smoothing(BSplineSmoothing smoothing)
         {
             _smoothing = smoothing;
+            return *this;
+        }
+
+        BSplineBuilder& lambda(double lambda)
+        {
+            if (lambda < 0)
+                throw Exception("BSplineBuilder::lambda: Lambda must be non-negative.");
+
+            _lambda = lambda;
+            return *this;
         }
 
         // Build B-spline
@@ -96,9 +116,14 @@ namespace SPLINTER
         }
 
         // Control point computations
-        virtual DenseMatrix computeCoefficients(const DataTable &samples, BSpline& bspline) const;
-        SparseMatrix computeBasisFunctionMatrix(const DataTable &samples, BSpline& bspline) const;
+        virtual DenseMatrix computeCoefficients(const DataTable &samples, const BSpline &bspline) const;
+        virtual DenseMatrix computeBSplineCoefficients(const DataTable &samples, const BSpline &bspline) const;
+        SparseMatrix computeBasisFunctionMatrix(const DataTable &samples, const BSpline &bspline) const;
         DenseMatrix controlPointEquationRHS(const DataTable &samples) const;
+
+        // P-spline control point calculation
+        DenseMatrix computePSplineCoefficients(const DataTable &samples, const BSpline &bspline) const;
+        SparseMatrix getSecondOrderFiniteDifferenceMatrix(const BSpline &bspline) const;
 
         // Computing knots
         std::vector<std::vector<double> > computeKnotVectors(const DataTable &data, std::vector<unsigned int> degrees) const;
@@ -111,13 +136,12 @@ namespace SPLINTER
         std::vector<double> extractUniqueSorted(const std::vector<double> &values) const;
 
         // Member variables
+        DataTable _data;
         std::vector<unsigned int> _degrees;
-
         std::vector<unsigned int> _numKnots;
         BSplineKnotSpacing _knotSpacing;
-
-        DataTable _data;
         BSplineSmoothing _smoothing;
+        double _lambda;
     };
 
 } // namespace SPLINTER

@@ -17,7 +17,6 @@
 #include <datatable.h>
 #include <bspline.h>
 #include <bsplineapproximant.h>
-#include <psplineapproximant.h>
 #include <polynomial.h>
 #include <polynomialapproximant.h>
 #include <rbfapproximant.h>
@@ -35,7 +34,6 @@ bool operator==(const BSplineBasis &lhs, const BSplineBasis &rhs);
 bool operator==(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs);
 bool operator!=(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs);
 bool operator==(const BSplineApproximant &lhs, const BSplineApproximant &rhs);
-bool operator==(const PSplineApproximant &lhs, const PSplineApproximant &rhs);
 bool operator==(const Polynomial &lhs, const Polynomial &rhs);
 bool operator==(const PolynomialApproximant &lhs, const PolynomialApproximant &rhs);
 bool operator==(const RBFApproximant &lhs, const RBFApproximant &rhs);
@@ -85,7 +83,6 @@ bool operator==(const std::multiset<T> &lhs, const std::multiset<T> &rhs)
     }
     return true;
 }
-
 
 bool operator!=(const DataSample &lhs, const DataSample &rhs);
 

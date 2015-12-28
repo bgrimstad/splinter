@@ -23,7 +23,9 @@ BSplineBuilder::BSplineBuilder(const DataTable &data)
         : _data(data),
           _degrees(getBSplineDegrees(data.getNumVariables(), BSplineDegree::CUBIC)),
           _numKnots(std::vector<unsigned int>(data.getNumVariables(), 1e3)),
-          _smoothing(BSplineSmoothing::NONE)
+          _knotSpacing(BSplineKnotSpacing::SAMPLE),
+          _smoothing(BSplineSmoothing::NONE),
+          _lambda(0.03)
 {
 }
 
@@ -33,6 +35,7 @@ BSplineBuilder::BSplineBuilder(const DataTable &data)
 BSpline BSplineBuilder::build() const
 {
     // Check data
+    // TODO: Remove this test
     if (!_data.isGridComplete())
         throw Exception("BSplineBuilder::build: Cannot create B-spline from irregular (incomplete) grid.");
 
@@ -46,30 +49,41 @@ BSpline BSplineBuilder::build() const
     auto coefficients = computeCoefficients(_data, bspline);
     bspline.setCoefficients(coefficients);
 
-    // TODO: Implement different smoothing builds here
-
     return bspline;
 }
 
-DenseMatrix BSplineBuilder::computeCoefficients(const DataTable &data, BSpline& bspline) const
+DenseMatrix BSplineBuilder::computeCoefficients(const DataTable &data, const BSpline& bspline) const
 {
-    /* Setup and solve equations Ac = b,
+    switch (_smoothing)
+    {
+        case BSplineSmoothing::NONE:
+            return computeBSplineCoefficients(data, bspline);
+        case BSplineSmoothing::REGULARIZATION:
+            throw Exception("BSplineBuilder::computeCoefficients: Regularization is not implemented.");
+            return computeBSplineCoefficients(data, bspline);
+        case BSplineSmoothing::PSPLINE:
+            return computePSplineCoefficients(data, bspline);
+        default:
+            return computeBSplineCoefficients(data, bspline);
+    }
+}
+
+DenseMatrix BSplineBuilder::computeBSplineCoefficients(const DataTable &data, const BSpline& bspline) const
+{
+    /*
+     * Setup and solve equations Ac = b,
      * A = basis functions at sample x-values,
      * b = sample y-values when calculating control coefficients,
      * b = sample x-values when calculating knot averages
      * c = control coefficients or knot averages.
      */
-    SparseMatrix A2 = computeBasisFunctionMatrix(data, bspline);
-    DenseMatrix b2 = controlPointEquationRHS(data);
-
-    SparseMatrix At = A2.transpose();
-    SparseMatrix A = At*A2; // Multiply with transpose to obtain a symmetric matrix
-    DenseMatrix b = At*b2;
+    SparseMatrix A = computeBasisFunctionMatrix(data, bspline);
+    DenseMatrix b = controlPointEquationRHS(data);
 
     DenseMatrix w;
 
     int numEquations = A.rows();
-    int maxNumEquations = pow(2,10);
+    int maxNumEquations = pow(2, 10);
 
     bool solveAsDense = (numEquations < maxNumEquations);
 
@@ -104,7 +118,7 @@ DenseMatrix BSplineBuilder::computeCoefficients(const DataTable &data, BSpline& 
     return w.transpose();
 }
 
-SparseMatrix BSplineBuilder::computeBasisFunctionMatrix(const DataTable &samples, BSpline& bspline) const
+SparseMatrix BSplineBuilder::computeBasisFunctionMatrix(const DataTable &samples, const BSpline &bspline) const
 {
     unsigned int numVariables = samples.getNumVariables();
     unsigned int numSamples = samples.getNumSamples();
@@ -149,6 +163,192 @@ DenseMatrix BSplineBuilder::controlPointEquationRHS(const DataTable &samples) co
     return B;
 }
 
+/*
+ * The P-Spline is a smooting B-spline which relaxes the interpolation constraints on the control points to allow
+ * smoother spline curves. It minimizes an objective which penalizes both deviation from sample points (for
+ * interpolation) and the magnitude of second derivatives (for smoothing).
+ */
+DenseMatrix BSplineBuilder::computePSplineCoefficients(const DataTable &samples, const BSpline &bspline) const
+{
+    // Assuming regular grid
+    unsigned int numSamples = samples.getNumSamples();
+
+    /*
+     * Setup and solve equations Lc = R,
+     * L = B'*W*B + l*D'*D
+     * R = B'*W*y
+     * c = control coefficients or knot averages.
+     * B = basis functions at sample x-values,
+     * W = weighting matrix for interpolating specific points
+     * D = second-order finite difference matrix
+     * l = penalizing parameter (increase for more smoothing)
+     * y = sample y-values when calculating control coefficients,
+     * y = sample x-values when calculating knot averages
+     */
+
+    SparseMatrix L, W;
+
+    // Weight matrix
+    W.resize(numSamples, numSamples);
+    W.setIdentity();
+
+    // Basis function matrix
+    SparseMatrix B = computeBasisFunctionMatrix(samples, bspline);
+
+    // Second order finite difference matrix
+    SparseMatrix D = getSecondOrderFiniteDifferenceMatrix(bspline);
+
+    // Left-hand side matrix
+    L = B.transpose()*W*B + _lambda*D.transpose()*D;
+
+    // Compute right-hand side matrices
+    DenseMatrix By = controlPointEquationRHS(samples);
+    //Rx = B.transpose()*W*Bx;
+    DenseMatrix Ry = B.transpose()*W*By;
+
+    // Matrices to store the resulting coefficients
+    DenseMatrix Cy;
+
+    int numEquations = L.rows();
+    int maxNumEquations = pow(2,10);
+
+    bool solveAsDense = (numEquations < maxNumEquations);
+
+    if (!solveAsDense)
+    {
+#ifndef NDEBUG
+        std::cout << "Computing B-spline control points using sparse solver." << std::endl;
+#endif // NDEBUG
+
+        SparseLU s;
+        bool successfulSolve = s.solve(L,Ry,Cy);
+
+        solveAsDense = !successfulSolve;
+    }
+
+    if (solveAsDense)
+    {
+#ifndef NDEBUG
+        std::cout << "Computing B-spline control points using dense solver." << std::endl;
+#endif // NDEBUG
+
+        DenseMatrix Ld = L.toDense();
+        DenseQR s;
+        bool successfulSolve = s.solve(Ld, Ry, Cy);
+
+        if (!successfulSolve)
+        {
+            throw Exception("PSpline::computeControlPoints: Failed to solve for B-spline coefficients.");
+        }
+    }
+
+    return Cy.transpose();
+}
+
+/*
+ * Function for generating second order finite-difference matrix, which is used for penalizing the
+ * (approximate) second derivative in control point calculation for P-splines.
+ */
+SparseMatrix BSplineBuilder::getSecondOrderFiniteDifferenceMatrix(const BSpline &bspline) const
+{
+    unsigned int numVariables = bspline.getNumVariables();
+
+    // Number of (total) basis functions - defines the number of columns in D
+    unsigned int numCols = bspline.getNumBasisFunctionsTotal();
+    std::vector<unsigned int> numBasisFunctions = bspline.getNumBasisFunctions();
+
+    // Number of basis functions (and coefficients) in each variable
+    std::vector<unsigned int> dims;
+    for (unsigned int i = 0; i < numVariables; i++)
+        dims.push_back(numBasisFunctions.at(i));
+
+    std::reverse(dims.begin(), dims.end());
+
+    for (unsigned int i=0; i < numVariables; i++)
+    {
+        // Need at least three coefficients in each variable
+//        assert(basis.getNumBasisFunctions(i) >= 3);
+    }
+
+    // Number of rows in D and in each block
+    int numRows = 0;
+    std::vector< int > numBlkRows;
+    for (unsigned int i = 0; i < numVariables; i++)
+    {
+        int prod = 1;
+        for (unsigned int j = 0; j < numVariables; j++)
+        {
+            if (i == j)
+                prod *= (dims[j] - 2);
+            else
+                prod *= dims[j];
+        }
+        numRows += prod;
+        numBlkRows.push_back(prod);
+    }
+
+    // Resize and initialize D
+    SparseMatrix D(numRows, numCols);
+    D.reserve(DenseVector::Constant(numCols,2*numVariables));   // D has no more than two elems per col per dim
+
+    int i = 0;                                          // Row index
+    // Loop though each dimension (each dimension has its own block)
+    for (unsigned int d = 0; d < numVariables; d++)
+    {
+        // Calculate left and right products
+        int leftProd = 1;
+        int rightProd = 1;
+        for (unsigned int k = 0; k < d; k++)
+        {
+            leftProd *= dims[k];
+        }
+        for (unsigned int k = d+1; k < numVariables; k++)
+        {
+            rightProd *= dims[k];
+        }
+
+        // Loop through subblocks on the block diagonal
+        for (int j = 0; j < rightProd; j++)
+        {
+            // Start column of current subblock
+            int blkBaseCol = j*leftProd*dims[d];
+            // Block rows [I -2I I] of subblock
+            for (unsigned int l = 0; l < (dims[d] - 2); l++)
+            {
+                // Special case for first dimension
+                if (d == 0)
+                {
+                    int k = j*leftProd*dims[d] + l;
+                    D.insert(i,k) = 1;
+                    k += leftProd;
+                    D.insert(i,k) = -2;
+                    k += leftProd;
+                    D.insert(i,k) = 1;
+                    i++;
+                }
+                else
+                {
+                    // Loop for identity matrix
+                    for (int n = 0; n < leftProd; n++)
+                    {
+                        int k = blkBaseCol + l*leftProd + n;
+                        D.insert(i,k) = 1;
+                        k += leftProd;
+                        D.insert(i,k) = -2;
+                        k += leftProd;
+                        D.insert(i,k) = 1;
+                        i++;
+                    }
+                }
+            }
+        }
+    }
+
+    D.makeCompressed();
+
+    return D;
+}
+
 // Compute all knot vectors from sample data
 std::vector<std::vector<double> > BSplineBuilder::computeKnotVectors(const DataTable &data, std::vector<unsigned int> degrees) const
 {
@@ -181,10 +381,9 @@ std::vector<double> BSplineBuilder::computeKnotVector(const std::vector<double> 
             return knotVectorEquidistant(values, degree);
         case BSplineKnotSpacing::EXPERIMENTAL:
             return knotVectorBuckets(values, degree);
+        default:
+            return knotVectorMovingAverage(values, degree);
     }
-
-    // Required return statement
-    return knotVectorMovingAverage(values, degree);
 }
 
 /*
@@ -207,12 +406,13 @@ std::vector<double> BSplineBuilder::computeKnotVector(const std::vector<double> 
  * The resulting knot vector has n - k + 2*p = n + p + 1 knots.
  *
  * NOTE:
- * For _equidistant_ samples, the resulting knot vector is identicaly to
+ * For equidistant samples, the resulting knot vector is identically to
  * the free end conditions knot vector used in cubic interpolation.
  * That is, samples (a,b,c,d,e,f) produces the knot vector (a,a,a,a,c,d,f,f,f,f) for p = 3.
  * For p = 1, (a,b,c,d,e,f) becomes (a,a,b,c,d,e,f,f).
  *
- * TODO: does not work well when number of knots is << number of samples! For such cases
+ * TODO:
+ * Does not work well when number of knots is << number of samples! For such cases
  * almost all knots will lie close to the left samples. Try a bucket approach, where the
  * samples are added to buckets and the knots computed as the average of these.
  */

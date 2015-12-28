@@ -16,7 +16,6 @@
 #include <bsplinebasis.h>
 #include <bsplinebasis1d.h>
 #include <bsplineapproximant.h>
-#include <psplineapproximant.h>
 #include <rbfapproximant.h>
 #include <polynomial.h>
 #include <polynomialapproximant.h>
@@ -122,13 +121,6 @@ size_t Serializer::get_size(const BSplineApproximant &obj)
            + get_size(obj.bspline);
 }
 
-size_t Serializer::get_size(const PSplineApproximant &obj)
-{
-    return get_size(obj.numVariables)
-           + get_size(obj.bspline)
-           + get_size(obj.lambda);
-}
-
 size_t Serializer::get_size(const RBFApproximant &obj)
 {
     return get_size(obj.samples)
@@ -200,13 +192,6 @@ void Serializer::_serialize(const BSplineApproximant &obj)
     _serialize(obj.bspline);
 }
 
-void Serializer::_serialize(const PSplineApproximant &obj)
-{
-    _serialize(obj.numVariables);
-    _serialize(obj.bspline);
-    _serialize(obj.lambda);
-}
-
 void Serializer::_serialize(const RBFApproximant &obj)
 {
     _serialize(obj.samples);
@@ -276,13 +261,6 @@ void Serializer::deserialize(BSplineApproximant &obj)
 {
     deserialize(obj.numVariables);
     deserialize(obj.bspline);
-}
-
-void Serializer::deserialize(PSplineApproximant &obj)
-{
-    deserialize(obj.numVariables);
-    deserialize(obj.bspline);
-    deserialize(obj.lambda);
 }
 
 void Serializer::deserialize(RBFApproximant &obj)

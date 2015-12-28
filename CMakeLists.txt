@@ -149,7 +149,6 @@ set(SRC_LIST
     include/mykroneckerproduct.h
     include/polynomialapproximant.h
     include/polynomial.h
-    include/psplineapproximant.h
     include/rbfapproximant.h
     include/rbfterm.h
     include/serializer.h
@@ -168,7 +167,6 @@ set(SRC_LIST
     src/mykroneckerproduct.cpp
     src/polynomialapproximant.cpp
     src/polynomial.cpp
-    src/psplineapproximant.cpp
     src/rbfapproximant.cpp
     src/serializer.cpp
     src/utilities.cpp
@@ -177,15 +175,15 @@ set(SRC_LIST
 set(TEST_SRC_LIST
     ${SRC_LIST}
     test/main.cpp
-    test/approximation/bsplineapproximant.cpp
-    test/approximation/psplineapproximant.cpp
+    test/approximation/bspline.cpp
+    test/approximation/pspline.cpp
     test/approximation/rbfapproximant.cpp
     test/approximation/polynomialapproximant.cpp
+    test/general/bspline.cpp
     test/general/datatable.cpp
     test/general/utilities.cpp
     test/serialization/datatable.cpp
-    test/serialization/bsplineapproximant.cpp
-    test/serialization/psplineapproximant.cpp
+    test/serialization/bspline.cpp
     test/serialization/rbfapproximant.cpp
     test/serialization/polynomialapproximant.cpp
     test/operatoroverloads.h

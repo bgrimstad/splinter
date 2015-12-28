@@ -9,17 +9,17 @@
 
 #include <Catch.h>
 #include <testingutilities.h>
-#include <psplineapproximant.h>
+#include <bsplinebuilder.h>
 #include <testfunction.h>
 
 using namespace SPLINTER;
 
 
-#define COMMON_TAGS "[approximation][pspline][polynomial]"
+#define COMMON_TAGS "[approximation][pspline]"
 #define COMMON_TEXT " value approximation test with polynomials"
 
 
-TEST_CASE("PSpline function" COMMON_TEXT, COMMON_TAGS "[function-value][polynomial]")
+TEST_CASE("PSpline function" COMMON_TEXT, COMMON_TAGS "[function-value]")
 {
     for(auto testFunc : getPolynomialFunctions())
     {
@@ -30,7 +30,11 @@ TEST_CASE("PSpline function" COMMON_TEXT, COMMON_TAGS "[function-value][polynomi
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Function*) new PSplineApproximant(table);
+                                 BSpline bs = BSplineBuilder(table)
+                                         .smoothing(BSplineSmoothing::PSPLINE)
+                                         .lambda(0.03)
+                                         .build();
+                                 return (Function*) new BSpline(bs);
                              },
                              300,  // Number of points to sample at
                              1337, // Number of points to test against
@@ -38,7 +42,7 @@ TEST_CASE("PSpline function" COMMON_TEXT, COMMON_TAGS "[function-value][polynomi
     }
 }
 
-TEST_CASE("PSpline jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian][polynomial]")
+TEST_CASE("PSpline jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian]")
 {
     for(auto testFunc : getPolynomialFunctions())
     {
@@ -49,7 +53,11 @@ TEST_CASE("PSpline jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian][polynomial]")
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Function*) new PSplineApproximant(table);
+                                 BSpline bs = BSplineBuilder(table)
+                                         .smoothing(BSplineSmoothing::PSPLINE)
+                                         .lambda(0.03)
+                                         .build();
+                                 return (Function*) new BSpline(bs);
                              },
                              300,  // Number of points to sample at
                              1337, // Number of points to test against
@@ -57,14 +65,18 @@ TEST_CASE("PSpline jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian][polynomial]")
     }
 }
 
-TEST_CASE("PSpline hessian" COMMON_TEXT, COMMON_TAGS "[hessian][polynomial]")
+TEST_CASE("PSpline hessian" COMMON_TEXT, COMMON_TAGS "[hessian]")
 {
     for(auto testFunc : getPolynomialFunctions())
     {
         checkHessianSymmetry(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Function*) new PSplineApproximant(table);
+                                 BSpline bs = BSplineBuilder(table)
+                                         .smoothing(BSplineSmoothing::PSPLINE)
+                                         .lambda(0.03)
+                                         .build();
+                                 return (Function*) new BSpline(bs);
                              },
                              300,   // Number of points to sample at
                              1337); // Number of points to test against

@@ -91,12 +91,8 @@ DenseMatrix BSplineApproximant::computeCoefficients(const DataTable &samples) co
      * b = sample x-values when calculating knot averages
      * c = control coefficients or knot averages.
      */
-    SparseMatrix A2 = computeBasisFunctionMatrix(samples);
-    DenseMatrix b2 = controlPointEquationRHS(samples);
-
-    SparseMatrix At = A2.transpose();
-    SparseMatrix A = At*A2; // Multiply with transpose to obtain a symmetric matrix
-    DenseMatrix b = At*b2;
+    SparseMatrix A = computeBasisFunctionMatrix(samples);
+    DenseMatrix b = controlPointEquationRHS(samples);
 
     DenseMatrix w;
 

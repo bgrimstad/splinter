@@ -10,8 +10,7 @@
 #include "cinterface.h"
 #include <datatable.h>
 #include <bspline.h>
-#include <bsplineapproximant.h>
-#include <psplineapproximant.h>
+#include <bsplinebuilder.h>
 #include <rbfapproximant.h>
 #include <polynomialapproximant.h>
 #include "definitions.h"
@@ -273,22 +272,22 @@ obj_ptr bspline_init(obj_ptr datatable_ptr, int degree)
     auto table = get_datatable(datatable_ptr);
     if (table != nullptr)
     {
-        BSplineType bsplineType;
+        BSplineDegree bsplineDegree;
         switch (degree) {
             case 1: {
-                bsplineType = BSplineType::LINEAR;
+                bsplineDegree = BSplineDegree::LINEAR;
                 break;
             }
             case 2: {
-                bsplineType = BSplineType::QUADRATIC;
+                bsplineDegree = BSplineDegree::QUADRATIC;
                 break;
             }
             case 3: {
-                bsplineType = BSplineType::CUBIC;
+                bsplineDegree = BSplineDegree::CUBIC;
                 break;
             }
             case 4: {
-                bsplineType = BSplineType::QUARTIC;
+                bsplineDegree = BSplineDegree::QUARTIC;
                 break;
             }
             default: {
@@ -299,7 +298,8 @@ obj_ptr bspline_init(obj_ptr datatable_ptr, int degree)
 
         try
         {
-            bspline = (obj_ptr) new BSplineApproximant(*table, bsplineType);
+            BSpline bs = BSplineBuilder(*table).degree(bsplineDegree).build();
+            bspline = (obj_ptr) new BSpline(bs);
             objects.insert(bspline);
         }
         catch(const Exception &e)
@@ -317,7 +317,7 @@ obj_ptr bspline_load_init(const char *filename)
 
     try
     {
-        bspline = (obj_ptr) new BSplineApproximant(filename);
+        bspline = (obj_ptr) new BSpline(filename);
         objects.insert(bspline);
     }
     catch(const Exception &e)
@@ -338,7 +338,8 @@ obj_ptr pspline_init(obj_ptr datatable_ptr, double lambda)
     {
         try
         {
-            pspline = (obj_ptr) new PSplineApproximant(*table, lambda);
+            BSpline bs = BSplineBuilder(*table).smoothing(BSplineSmoothing::PSPLINE).lambda(lambda).build();
+            pspline = (obj_ptr) new BSpline(bs);
             objects.insert(pspline);
         }
         catch(const Exception &e)
@@ -356,7 +357,8 @@ obj_ptr pspline_load_init(const char *filename)
 
     try
     {
-        pspline = (obj_ptr) new PSplineApproximant(filename);
+        // TODO: this code is equivalent to that in bspline_load_init() and can be removed
+        pspline = (obj_ptr) new BSpline(filename);
         objects.insert(pspline);
     }
     catch(const Exception &e)

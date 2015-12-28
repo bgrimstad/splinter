@@ -81,14 +81,6 @@ bool operator==(const BSplineApproximant &lhs, const BSplineApproximant &rhs)
             && lhs.bspline == rhs.bspline;
 }
 
-bool operator==(const PSplineApproximant &lhs, const PSplineApproximant &rhs)
-{
-    return
-            lhs.getNumVariables() == rhs.getNumVariables()
-            && lhs.bspline == rhs.bspline
-            && lhs.lambda == rhs.lambda;
-}
-
 bool operator==(const RBFApproximant &lhs, const RBFApproximant &rhs)
 {
     return
