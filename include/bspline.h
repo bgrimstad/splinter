@@ -46,25 +46,8 @@ public:
     DenseMatrix evalHessian(DenseVector x) const override;
 
     // Evaluation of B-spline basis functions
-    SparseVector evalBasisFunctions(DenseVector x) const
-    {
-        return basis.eval(x);
-    }
-
-    SparseMatrix evalBasisFunctionsJacobian(DenseVector x) const
-    {
-        if (!pointInDomain(x))
-        {
-            throw Exception("BSpline::evalJacobian: Evaluation at point outside domain.");
-        }
-
-        //SparseMatrix Bi = basis.evalBasisJacobian(x);       // Sparse Jacobian implementation
-        //SparseMatrix Bi = basis.evalBasisJacobian2(x);  // Sparse Jacobian implementation
-        DenseMatrix Bi = basis.evalBasisJacobianOld(x);  // Old Jacobian implementation
-
-        return Bi.sparseView();
-    }
-
+    SparseVector evalBasisFunctions(DenseVector x) const;
+    SparseMatrix evalBasisFunctionsJacobian(DenseVector x) const;
 
     // Getters
     unsigned int getNumControlPoints() const { return coefficients.cols(); }
@@ -79,9 +62,10 @@ public:
     std::vector<double> getDomainLowerBound() const;
 
     // Control point related
+    DenseMatrix getControlPoints() const;
+    void updateControlPoints(const DenseMatrix &A);
     void setCoefficients(const DenseMatrix &coefficients);
     void setControlPoints(const DenseMatrix &controlPoints);
-    DenseMatrix getControlPoints() const;
     void checkControlPoints() const;
 
     // B-spline operations
@@ -93,9 +77,7 @@ public:
     // Perform a local knot refinement at x
     void localKnotRefinement(DenseVector x);
 
-    /**
-     * Decompose B-spline to Bezier form
-     */
+    // Decompose B-spline to Bezier form
     void decomposeToBezierForm();
 
     void insertKnots(double tau, unsigned int dim, unsigned int multiplicity = 1); // TODO: move back to private after testing

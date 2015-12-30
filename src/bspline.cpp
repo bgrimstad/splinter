@@ -73,6 +73,7 @@ double BSpline::eval(DenseVector x) const
 {
 	if (!pointInDomain(x))
 	{
+        // NOTE: Consider returning 0 rather than of throwing an exception
 		throw Exception("BSpline::eval: Evaluation at point outside domain.");
 	}
 
@@ -131,6 +132,26 @@ DenseMatrix BSpline::evalHessian(DenseVector x) const
     return H;
 }
 
+// Evaluation of B-spline basis functions
+SparseVector BSpline::evalBasisFunctions(DenseVector x) const
+{
+    return basis.eval(x);
+}
+
+SparseMatrix BSpline::evalBasisFunctionsJacobian(DenseVector x) const
+{
+    if (!pointInDomain(x))
+    {
+        throw Exception("BSpline::evalJacobian: Evaluation at point outside domain.");
+    }
+
+    //SparseMatrix Bi = basis.evalBasisJacobian(x);       // Sparse Jacobian implementation
+    //SparseMatrix Bi = basis.evalBasisJacobian2(x);  // Sparse Jacobian implementation
+    DenseMatrix Bi = basis.evalBasisJacobianOld(x);  // Old Jacobian implementation
+
+    return Bi.sparseView();
+}
+
 std::vector<unsigned int> BSpline::getNumBasisFunctions() const
 {
     std::vector<unsigned int> ret;
@@ -185,6 +206,13 @@ void BSpline::setControlPoints(const DenseMatrix &controlPoints)
     coefficients = controlPoints.block(numVariables, 0, 1, nc);
 
     checkControlPoints();
+}
+
+void BSpline::updateControlPoints(const DenseMatrix &A)
+{
+    assert(A.cols() == coefficients.cols());
+    coefficients = coefficients*A.transpose();
+    knotaverages = knotaverages*A.transpose();
 }
 
 // TODO: change return type to bool and name to checkDataConsistency
@@ -244,9 +272,7 @@ void BSpline::globalKnotRefinement()
     SparseMatrix A = basis.refineKnots();
 
     // Update control points
-    assert(A.cols() == coefficients.cols());
-    coefficients = coefficients*A.transpose();
-    knotaverages = knotaverages*A.transpose();
+    updateControlPoints(A);
 }
 
 void BSpline::localKnotRefinement(DenseVector x)
@@ -255,9 +281,7 @@ void BSpline::localKnotRefinement(DenseVector x)
     SparseMatrix A = basis.refineKnotsLocally(x);
 
     // Update control points
-    assert(A.cols() == coefficients.cols());
-    coefficients = coefficients*A.transpose();
-    knotaverages = knotaverages*A.transpose();
+    updateControlPoints(A);
 }
 
 void BSpline::decomposeToBezierForm()
@@ -266,9 +290,7 @@ void BSpline::decomposeToBezierForm()
     SparseMatrix A = basis.decomposeToBezierForm();
 
     // Update control points
-    assert(A.cols() == coefficients.cols());
-    coefficients = coefficients*A.transpose();
-    knotaverages = knotaverages*A.transpose();
+    updateControlPoints(A);
 }
 
 // Computes knot averages: assumes that basis is initialized!
@@ -327,9 +349,7 @@ void BSpline::insertKnots(double tau, unsigned int dim, unsigned int multiplicit
     SparseMatrix A = basis.insertKnots(tau, dim, multiplicity);
 
     // Update control points
-    assert(A.cols() == coefficients.cols());
-    coefficients = coefficients*A.transpose();
-    knotaverages = knotaverages*A.transpose();
+    updateControlPoints(A);
 }
 
 void BSpline::regularizeKnotVectors(std::vector<double> &lb, std::vector<double> &ub)
