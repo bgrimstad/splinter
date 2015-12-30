@@ -105,7 +105,8 @@ SparseVector BSplineBasis1D::evaluateDerivative(double x, int r) const
     double factorial = std::tgamma(p+1)/std::tgamma(p-r+1);
     B = B*factorial;
 
-    assert(B.cols() == p+1);
+    if (B.cols() != p+1)
+        throw Exception("BSplineBasis1D::evaluateDerivative: Wrong number of columns of B matrix.");
 
     // From row vector to extended column vector
     SparseVector DB(getNumBasisFunctions());

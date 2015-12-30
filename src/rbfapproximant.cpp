@@ -160,7 +160,9 @@ double RBFApproximant::eval(DenseVector x) const
 
 double RBFApproximant::eval(std::vector<double> x) const
 {
-    assert(x.size() == numVariables);
+    if (x.size() != numVariables)
+        throw Exception("RBFApproximant::eval: Wrong dimension of evaluation point x.");
+
     double fval, sum = 0, sumw = 0;
     int i = 0;
     for (auto it = samples.cbegin(); it != samples.cend(); ++it, ++i)
@@ -281,7 +283,8 @@ DenseMatrix RBFApproximant::computePreconditionMatrix() const
         DenseMatrix B; B.setZero(m,m);
         DenseMatrix w; w.setZero(m,1);
 
-        assert(points.front().getIndex() == i);
+        if (points.front().getIndex() != i)
+            throw Exception("RBFApproximant::computePreconditionMatrix: Point has wrong index.");
 
         for (int k1=0; k1<m; k1++)
         {
@@ -308,7 +311,8 @@ DenseMatrix RBFApproximant::computePreconditionMatrix() const
 
                 P(i,j) = w(k,0);
                 //cout << "j/k/g " << j << "/" << k << "/" << points.at(k).getIndex() << endl;
-                assert(points.at(k).getIndex()==j);
+                if (points.at(k).getIndex() != j)
+                    throw Exception("RBFApproximant::computePreconditionMatrix: Point has wrong index.");
             }
         }
     }
@@ -321,7 +325,8 @@ DenseMatrix RBFApproximant::computePreconditionMatrix() const
  */
 double RBFApproximant::dist(std::vector<double> x, std::vector<double> y) const
 {
-    assert(x.size() == y.size());
+    if (x.size() != y.size())
+        throw Exception("RBFApproximant::dist: Cannot measure distance between two points of different dimension");
     double sum = 0.0;
     for (unsigned int i=0; i<x.size(); i++)
         sum += (x.at(i)-y.at(i))*(x.at(i)-y.at(i));

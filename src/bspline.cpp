@@ -199,7 +199,8 @@ void BSpline::setCoefficients(const DenseMatrix &coefficients)
 
 void BSpline::setControlPoints(const DenseMatrix &controlPoints)
 {
-    assert(controlPoints.rows() == numVariables + 1);
+    if (controlPoints.rows() != numVariables + 1)
+        throw Exception("BSpline::setControlPoints: Incompatible size of control point matrix.");
     int nc = controlPoints.cols();
 
     knotaverages = controlPoints.block(0, 0, numVariables, nc);
@@ -210,7 +211,8 @@ void BSpline::setControlPoints(const DenseMatrix &controlPoints)
 
 void BSpline::updateControlPoints(const DenseMatrix &A)
 {
-    assert(A.cols() == coefficients.cols());
+    if (A.cols() != coefficients.cols())
+        throw Exception("BSpline::updateControlPoints: Incompatible size of linear transformation matrix.");
     coefficients = coefficients*A.transpose();
     knotaverages = knotaverages*A.transpose();
 }
@@ -336,11 +338,13 @@ void BSpline::computeKnotAverages()
             else
                 mu_ext = Eigen::kroneckerProduct(temp, knotOnes.at(j));
         }
-        assert(mu_ext.rows() == basis.getNumBasisFunctions());
+        if (mu_ext.rows() != basis.getNumBasisFunctions())
+            throw Exception("BSpline::computeKnotAverages: Incompatible size of knot average matrix.");
         knotaverages.block(i,0,1,basis.getNumBasisFunctions()) = mu_ext.transpose();
     }
 
-    assert(knotaverages.rows() == numVariables && knotaverages.cols() == basis.getNumBasisFunctions());
+    if (!(knotaverages.rows() == numVariables && knotaverages.cols() == basis.getNumBasisFunctions()))
+        throw Exception("BSpline::computeKnotAverages: Incompatible size of knot average matrix.");
 }
 
 void BSpline::insertKnots(double tau, unsigned int dim, unsigned int multiplicity)
@@ -384,8 +388,8 @@ void BSpline::regularizeKnotVectors(std::vector<double> &lb, std::vector<double>
 
 bool BSpline::removeUnsupportedBasisFunctions(std::vector<double> &lb, std::vector<double> &ub)
 {
-    assert(lb.size() == numVariables);
-    assert(ub.size() == numVariables);
+    if (lb.size() != numVariables || ub.size() != numVariables)
+        throw Exception("BSpline::removeUnsupportedBasisFunctions: Incompatible dimension of domain bounds.");
 
     SparseMatrix A = basis.reduceSupport(lb, ub);
 

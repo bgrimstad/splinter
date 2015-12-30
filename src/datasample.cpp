@@ -46,7 +46,8 @@ void DataSample::setData(const std::vector<double> &x, double y)
 
 bool DataSample::operator<(const DataSample &rhs) const
 {
-    assert(this->getDimX() == rhs.getDimX());
+    if (this->getDimX() != rhs.getDimX())
+        throw Exception("DataSample::operator<: Cannot compare data points of different dimensions");
 
     for (unsigned int i = 0; i < this->getDimX(); i++)
     {

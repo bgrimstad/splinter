@@ -328,8 +328,8 @@ SparseMatrix BSplineBasis::decomposeToBezierForm()
 
 SparseMatrix BSplineBasis::reduceSupport(std::vector<double>& lb, std::vector<double>& ub)
 {
-    assert(lb.size() == ub.size());
-    assert(lb.size() == numVariables);
+    if (lb.size() != ub.size() || lb.size() != numVariables)
+        throw Exception("BSplineBasis::reduceSupport: Incompatible dimension of domain bounds.");
 
     SparseMatrix A(1,1);
     A.insert(0,0) = 1;

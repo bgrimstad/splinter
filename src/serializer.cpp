@@ -63,7 +63,7 @@ void Serializer::loadFromFile(std::string fileName)
     // Elements of the vector are guaranteed to be stored in a contiguous array,
     // *result.data() can therefore be treated as an array of the same type as the vector
     ifs.read(result.data(), pos);
-    assert(ifs);
+    //assert(ifs);
 
     stream.clear();
     // Convert from char to uint_8 vector
