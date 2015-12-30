@@ -1047,10 +1047,10 @@ bool runRecursiveDomainReductionTest()
     }
 
     // Build B-splines that interpolate the samples
-    BSpline bspline1 = BSplineBuilder(samples).degree(BSplineDegree::LINEAR).build();
-    BSpline bspline2 = BSplineBuilder(samples).degree(BSplineDegree::QUADRATIC).build();
-    BSpline bspline3 = BSplineBuilder(samples).degree(BSplineDegree::CUBIC).build();
-    BSpline bspline4 = BSplineBuilder(samples).degree(BSplineDegree::QUARTIC).build();
+    BSpline bspline1 = BSpline::Builder(samples).degree(BSpline::Degree::LINEAR).build();
+    BSpline bspline2 = BSpline::Builder(samples).degree(BSpline::Degree::QUADRATIC).build();
+    BSpline bspline3 = BSpline::Builder(samples).degree(BSpline::Degree::CUBIC).build();
+    BSpline bspline4 = BSpline::Builder(samples).degree(BSpline::Degree::QUARTIC).build();
 
     if (!domainReductionTest(bspline1, bspline1))
         return false;

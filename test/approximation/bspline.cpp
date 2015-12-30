@@ -39,7 +39,7 @@ TEST_CASE("Linear BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::line
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSplineBuilder(table).degree(BSplineDegree::LINEAR).build();
+                                 BSpline bs = BSpline::Builder(table).degree(BSpline::Degree::LINEAR).build();
                                  return (Function*) new BSpline(bs);
                              }
                 ,
@@ -60,7 +60,7 @@ TEST_CASE("Linear BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::line
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSplineBuilder(table).degree(BSplineDegree::LINEAR).build();
+                                 BSpline bs = BSpline::Builder(table).degree(BSpline::Degree::LINEAR).build();
                                  return (Function*) new BSpline(bs);
                              },
                              300,  // Number of points to sample at
@@ -76,7 +76,7 @@ TEST_CASE("Linear BSpline hessian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::linea
         checkHessianSymmetry(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSplineBuilder(table).degree(BSplineDegree::LINEAR).build();
+                                 BSpline bs = BSpline::Builder(table).degree(BSpline::Degree::LINEAR).build();
                                  return (Function*) new BSpline(bs);
                              },
                              300,
@@ -107,7 +107,7 @@ TEST_CASE("Quadratic BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::q
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSplineBuilder(table).degree(BSplineDegree::QUADRATIC).build();
+                                 BSpline bs = BSpline::Builder(table).degree(BSpline::Degree::QUADRATIC).build();
                                  return (Function*) new BSpline(bs);
                              },
                              300,  // Number of points to sample at
@@ -127,7 +127,7 @@ TEST_CASE("Quadratic BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::q
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSplineBuilder(table).degree(BSplineDegree::QUADRATIC).build();
+                                 BSpline bs = BSpline::Builder(table).degree(BSpline::Degree::QUADRATIC).build();
                                  return (Function*) new BSpline(bs);
                              },
                              300,  // Number of points to sample at
@@ -143,7 +143,7 @@ TEST_CASE("Quadratic BSpline hessian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::qu
         checkHessianSymmetry(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSplineBuilder(table).degree(BSplineDegree::QUADRATIC).build();
+                                 BSpline bs = BSpline::Builder(table).degree(BSpline::Degree::QUADRATIC).build();
                                  return (Function*) new BSpline(bs);
                              },
                              300,   // Number of points to sample at
@@ -174,7 +174,7 @@ TEST_CASE("Cubic BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::cubic
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSplineBuilder(table).degree(BSplineDegree::CUBIC).build();
+                                 BSpline bs = BSpline::Builder(table).degree(BSpline::Degree::CUBIC).build();
                                  return (Function*) new BSpline(bs);
                              },
                              300,  // Number of points to sample at
@@ -194,7 +194,7 @@ TEST_CASE("Cubic BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::cubic
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSplineBuilder(table).degree(BSplineDegree::CUBIC).build();
+                                 BSpline bs = BSpline::Builder(table).degree(BSpline::Degree::CUBIC).build();
                                  return (Function*) new BSpline(bs);
                              },
                              300,  // Number of points to sample at
@@ -210,7 +210,7 @@ TEST_CASE("Cubic BSpline hessian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::cubic]
         checkHessianSymmetry(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSplineBuilder(table).degree(BSplineDegree::CUBIC).build();
+                                 BSpline bs = BSpline::Builder(table).degree(BSpline::Degree::CUBIC).build();
                                  return (Function*) new BSpline(bs);
                              },
                              300,   // Number of points to sample at
@@ -241,7 +241,7 @@ TEST_CASE("Quartic BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::qua
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSplineBuilder(table).degree(BSplineDegree::QUARTIC).build();
+                                 BSpline bs = BSpline::Builder(table).degree(BSpline::Degree::QUARTIC).build();
                                  return (Function*) new BSpline(bs);
                              },
                              300,  // Number of points to sample at
@@ -261,7 +261,7 @@ TEST_CASE("Quartic BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::qua
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSplineBuilder(table).degree(BSplineDegree::QUARTIC).build();
+                                 BSpline bs = BSpline::Builder(table).degree(BSpline::Degree::QUARTIC).build();
                                  return (Function*) new BSpline(bs);
                              },
                              300,  // Number of points to sample at
@@ -277,7 +277,7 @@ TEST_CASE("Quartic BSpline hessian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::quar
         checkHessianSymmetry(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSplineBuilder(table).degree(BSplineDegree::QUARTIC).build();
+                                 BSpline bs = BSpline::Builder(table).degree(BSpline::Degree::QUARTIC).build();
                                  return (Function*) new BSpline(bs);
                              },
                              300,   // Number of points to sample at

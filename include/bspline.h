@@ -38,6 +38,15 @@ public:
     BSpline(const char *fileName);
     BSpline(const std::string fileName);
 
+    /**
+     * Builder class for construction by regression
+     * Implemented in BSplineBuilder.*
+     */
+    class Builder;
+    enum class Degree;
+    enum class Smoothing;
+    enum class KnotSpacing;
+
     virtual BSpline* clone() const { return new BSpline(*this); }
 
     // Evaluation of B-spline

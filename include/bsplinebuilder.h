@@ -16,7 +16,7 @@
 namespace SPLINTER
 {
     // B-spline degrees
-    enum class BSplineDegree
+    enum class BSpline::Degree
     {
         LINEAR,     // Linear basis functions in each variable
         QUADRATIC,  // Quadratic basis functions in each variable
@@ -25,7 +25,7 @@ namespace SPLINTER
     };
 
     // B-spline smoothing
-    enum class BSplineSmoothing
+    enum class BSpline::Smoothing
     {
         NONE,           // No smoothing
         REGULARIZATION, // Regularization term lambda*c^2 is added to OLS objective
@@ -33,7 +33,7 @@ namespace SPLINTER
     };
 
     // B-spline knot spacing
-    enum class BSplineKnotSpacing
+    enum class BSpline::KnotSpacing
     {
         SAMPLE,         // Knot spacing mimicking sample spacing (moving average)
         EQUIDISTANT,    // Equidistant knots
@@ -41,52 +41,52 @@ namespace SPLINTER
     };
 
     // B-spline builder class
-    class SPLINTER_API BSplineBuilder
+    class SPLINTER_API BSpline::Builder
     {
     public:
-        BSplineBuilder(const DataTable &data);
+        Builder(const DataTable &data);
 
         // Set build options
-        BSplineBuilder& degree(BSplineDegree degree)
+        Builder& degree(Degree degree)
         {
             _degrees = getBSplineDegrees(_data.getNumVariables(), degree);
             return *this;
         }
 
-        BSplineBuilder& degree(unsigned int numVariables, BSplineDegree degree)
+        Builder& degree(unsigned int numVariables, Degree degree)
         {
             _degrees = getBSplineDegrees(numVariables, degree);
             return *this;
         }
 
-        BSplineBuilder& numKnots(unsigned int numVariables, unsigned int numKnots)
+        Builder& numKnots(unsigned int numVariables, unsigned int numKnots)
         {
             _numKnots = std::vector<unsigned int>(numVariables, numKnots);
             return *this;
         }
 
-        BSplineBuilder& numKnots(std::vector<unsigned int> numKnots)
+        Builder& numKnots(std::vector<unsigned int> numKnots)
         {
             _numKnots = numKnots;
             return *this;
         }
 
-        BSplineBuilder& knotSpacing(BSplineKnotSpacing knotSpacing)
+        Builder& knotSpacing(KnotSpacing knotSpacing)
         {
             _knotSpacing = knotSpacing;
             return *this;
         }
 
-        BSplineBuilder& smoothing(BSplineSmoothing smoothing)
+        Builder& smoothing(Smoothing smoothing)
         {
             _smoothing = smoothing;
             return *this;
         }
 
-        BSplineBuilder& lambda(double lambda)
+        Builder& lambda(double lambda)
         {
             if (lambda < 0)
-                throw Exception("BSplineBuilder::lambda: Lambda must be non-negative.");
+                throw Exception("BSpline::Builder::lambda: Lambda must be non-negative.");
 
             _lambda = lambda;
             return *this;
@@ -96,19 +96,19 @@ namespace SPLINTER
         BSpline build() const;
 
     private:
-        BSplineBuilder();
+        Builder();
 
-        std::vector<unsigned int> getBSplineDegrees(unsigned int numVariables, BSplineDegree type)
+        std::vector<unsigned int> getBSplineDegrees(unsigned int numVariables, Degree degree)
         {
-            switch (type)
+            switch (degree)
             {
-                case BSplineDegree::LINEAR:
+                case Degree::LINEAR:
                     return std::vector<unsigned int>(numVariables, 1);
-                case BSplineDegree::QUADRATIC:
+                case Degree::QUADRATIC:
                     return std::vector<unsigned int>(numVariables, 2);
-                case BSplineDegree::CUBIC:
+                case Degree::CUBIC:
                     return std::vector<unsigned int>(numVariables, 3);
-                case BSplineDegree::QUARTIC:
+                case Degree::QUARTIC:
                     return std::vector<unsigned int>(numVariables, 4);
                 default:
                     return std::vector<unsigned int>(numVariables, 3);
@@ -139,8 +139,8 @@ namespace SPLINTER
         DataTable _data;
         std::vector<unsigned int> _degrees;
         std::vector<unsigned int> _numKnots;
-        BSplineKnotSpacing _knotSpacing;
-        BSplineSmoothing _smoothing;
+        KnotSpacing _knotSpacing;
+        Smoothing _smoothing;
         double _lambda;
     };
 

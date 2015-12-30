@@ -30,8 +30,8 @@ TEST_CASE("PSpline function" COMMON_TEXT, COMMON_TAGS "[function-value]")
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSplineBuilder(table)
-                                         .smoothing(BSplineSmoothing::PSPLINE)
+                                 BSpline bs = BSpline::Builder(table)
+                                         .smoothing(BSpline::Smoothing::PSPLINE)
                                          .lambda(0.03)
                                          .build();
                                  return (Function*) new BSpline(bs);
@@ -53,8 +53,8 @@ TEST_CASE("PSpline jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian]")
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSplineBuilder(table)
-                                         .smoothing(BSplineSmoothing::PSPLINE)
+                                 BSpline bs = BSpline::Builder(table)
+                                         .smoothing(BSpline::Smoothing::PSPLINE)
                                          .lambda(0.03)
                                          .build();
                                  return (Function*) new BSpline(bs);
@@ -72,8 +72,8 @@ TEST_CASE("PSpline hessian" COMMON_TEXT, COMMON_TAGS "[hessian]")
         checkHessianSymmetry(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSplineBuilder(table)
-                                         .smoothing(BSplineSmoothing::PSPLINE)
+                                 BSpline bs = BSpline::Builder(table)
+                                         .smoothing(BSpline::Smoothing::PSPLINE)
                                          .lambda(0.03)
                                          .build();
                                  return (Function*) new BSpline(bs);

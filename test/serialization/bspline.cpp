@@ -27,7 +27,7 @@ TEST_CASE("BSpline can be saved and loaded", "[serialization][bspline]")
 
     SECTION("Linear BSpline")
     {
-        BSpline bspline = BSplineBuilder(table).degree(BSplineDegree::LINEAR).build();
+        BSpline bspline = BSpline::Builder(table).degree(BSpline::Degree::LINEAR).build();
         bspline.save(fileName);
         BSpline loadedBSpline(fileName);
         REQUIRE(bspline == loadedBSpline);
@@ -35,7 +35,7 @@ TEST_CASE("BSpline can be saved and loaded", "[serialization][bspline]")
 
     SECTION("Quadratic BSpline")
     {
-        BSpline bspline = BSplineBuilder(table).degree(BSplineDegree::QUADRATIC).build();
+        BSpline bspline = BSpline::Builder(table).degree(BSpline::Degree::QUADRATIC).build();
         bspline.save(fileName);
         BSpline loadedBSpline(fileName);
         REQUIRE(bspline == loadedBSpline);
@@ -43,7 +43,7 @@ TEST_CASE("BSpline can be saved and loaded", "[serialization][bspline]")
 
     SECTION("Cubic BSpline")
     {
-        BSpline bspline = BSplineBuilder(table).degree(BSplineDegree::CUBIC).build();
+        BSpline bspline = BSpline::Builder(table).degree(BSpline::Degree::CUBIC).build();
         bspline.save(fileName);
         BSpline loadedBSpline(fileName);
         REQUIRE(bspline == loadedBSpline);
@@ -51,7 +51,7 @@ TEST_CASE("BSpline can be saved and loaded", "[serialization][bspline]")
 
     SECTION("Quartic BSpline")
     {
-        BSpline bspline = BSplineBuilder(table).degree(BSplineDegree::QUARTIC).build();
+        BSpline bspline = BSpline::Builder(table).degree(BSpline::Degree::QUARTIC).build();
         bspline.save(fileName);
         BSpline loadedBSpline(fileName);
         REQUIRE(bspline == loadedBSpline);

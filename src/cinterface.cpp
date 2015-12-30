@@ -272,22 +272,22 @@ obj_ptr bspline_init(obj_ptr datatable_ptr, int degree)
     auto table = get_datatable(datatable_ptr);
     if (table != nullptr)
     {
-        BSplineDegree bsplineDegree;
+        BSpline::Degree bsplineDegree;
         switch (degree) {
             case 1: {
-                bsplineDegree = BSplineDegree::LINEAR;
+                bsplineDegree = BSpline::Degree::LINEAR;
                 break;
             }
             case 2: {
-                bsplineDegree = BSplineDegree::QUADRATIC;
+                bsplineDegree = BSpline::Degree::QUADRATIC;
                 break;
             }
             case 3: {
-                bsplineDegree = BSplineDegree::CUBIC;
+                bsplineDegree = BSpline::Degree::CUBIC;
                 break;
             }
             case 4: {
-                bsplineDegree = BSplineDegree::QUARTIC;
+                bsplineDegree = BSpline::Degree::QUARTIC;
                 break;
             }
             default: {
@@ -298,7 +298,7 @@ obj_ptr bspline_init(obj_ptr datatable_ptr, int degree)
 
         try
         {
-            BSpline bs = BSplineBuilder(*table).degree(bsplineDegree).build();
+            BSpline bs = BSpline::Builder(*table).degree(bsplineDegree).build();
             bspline = (obj_ptr) new BSpline(bs);
             objects.insert(bspline);
         }
@@ -338,7 +338,7 @@ obj_ptr pspline_init(obj_ptr datatable_ptr, double lambda)
     {
         try
         {
-            BSpline bs = BSplineBuilder(*table).smoothing(BSplineSmoothing::PSPLINE).lambda(lambda).build();
+            BSpline bs = BSpline::Builder(*table).smoothing(BSpline::Smoothing::PSPLINE).lambda(lambda).build();
             pspline = (obj_ptr) new BSpline(bs);
             objects.insert(pspline);
         }
