@@ -152,6 +152,7 @@ set(SRC_LIST
     include/serializer.h
     include/utilities.h
     include/ols.h
+    include/saveable.h
     src/bsplinebuilder.cpp
     src/bspline.cpp
     src/bsplinebasis.cpp
