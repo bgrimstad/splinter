@@ -8,7 +8,7 @@
 */
 
 #include <Catch.h>
-#include <testingutilities.h>
+#include <bsplinetestingutilities.h>
 
 using namespace SPLINTER;
 

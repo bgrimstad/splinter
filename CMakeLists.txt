@@ -191,6 +191,8 @@ set(TEST_SRC_LIST
     test/testfunctions.cpp
     test/testingutilities.h
     test/testingutilities.cpp
+    test/bsplinetestingutilities.h
+    test/bsplinetestingutilities.cpp
 )
 
 set(SHARED_LIBRARY ${PROJECT_NAME_LOWER}-${VERSION})

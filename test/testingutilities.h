@@ -130,12 +130,6 @@ void testApproximation(std::vector<TestFunction *> funcs,
                        TestType type, size_t numSamplePoints, size_t numEvalPoints,
                        double one_eps, double two_eps, double inf_eps);
 
-/*
- * Methods for B-spline domain reduction testing
- */
-bool domainReductionTest(BSpline &bs, const BSpline &bs_orig);
-bool runRecursiveDomainReductionTest();
-
 } // namespace SPLINTER
 
 #endif // SPLINTER_TESTINGUTILITIES_H
