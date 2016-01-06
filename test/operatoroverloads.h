@@ -17,7 +17,7 @@
 #include <datatable.h>
 #include <bspline.h>
 #include <polynomial.h>
-#include <rbfapproximant.h>
+#include "rbfnetwork.h"
 
 namespace SPLINTER
 {
@@ -32,7 +32,7 @@ bool operator==(const BSplineBasis &lhs, const BSplineBasis &rhs);
 bool operator==(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs);
 bool operator!=(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs);
 bool operator==(const Polynomial &lhs, const Polynomial &rhs);
-bool operator==(const RBFApproximant &lhs, const RBFApproximant &rhs);
+bool operator==(const RBFNetwork &lhs, const RBFNetwork &rhs);
 
 // Note: overloading operator== for std::vector and DenseVector/DenseMatrix makes Clang unable to find the overload
 // Therefore using separate functions for those types

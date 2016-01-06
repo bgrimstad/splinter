@@ -25,7 +25,7 @@ class DataTable;
 class BSpline;
 class BSplineBasis;
 class BSplineBasis1D;
-class RBFApproximant;
+class RBFNetwork;
 class Polynomial;
 class PolynomialApproximant;
 
@@ -63,7 +63,7 @@ public:
     void deserialize(BSpline &obj);
     void deserialize(BSplineBasis &obj);
     void deserialize(BSplineBasis1D &obj);
-    void deserialize(RBFApproximant &obj);
+    void deserialize(RBFNetwork &obj);
     void deserialize(Polynomial &obj);
     void deserialize(PolynomialApproximant &obj);
 
@@ -96,7 +96,7 @@ protected:
     size_t get_size(const BSpline &obj);
     size_t get_size(const BSplineBasis &obj);
     size_t get_size(const BSplineBasis1D &obj);
-    size_t get_size(const RBFApproximant &obj);
+    size_t get_size(const RBFNetwork &obj);
     size_t get_size(const Polynomial &obj);
     size_t get_size(const PolynomialApproximant &obj);
 
@@ -120,7 +120,7 @@ protected:
     void _serialize(const BSpline &obj);
     void _serialize(const BSplineBasis &obj);
     void _serialize(const BSplineBasis1D &obj);
-    void _serialize(const RBFApproximant &obj);
+    void _serialize(const RBFNetwork &obj);
     void _serialize(const Polynomial &obj);
     void _serialize(const PolynomialApproximant &obj);
 

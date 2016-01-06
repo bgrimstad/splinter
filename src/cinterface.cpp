@@ -11,7 +11,7 @@
 #include <datatable.h>
 #include <bspline.h>
 #include <bsplinebuilder.h>
-#include <rbfapproximant.h>
+#include "rbfnetwork.h"
 #include <polynomial.h>
 #include "definitions.h"
 #include <set>
@@ -404,7 +404,7 @@ obj_ptr rbf_init(obj_ptr datatable_ptr, int type_index, int normalized)
 
         try
         {
-            rbf = (obj_ptr) new RBFApproximant(*table, type, norm);
+            rbf = (obj_ptr) new RBFNetwork(*table, type, norm);
             objects.insert(rbf);
         }
         catch(const Exception &e)
@@ -422,7 +422,7 @@ obj_ptr rbf_load_init(const char *filename)
 
     try
     {
-        rbf = (obj_ptr) new RBFApproximant(filename);
+        rbf = (obj_ptr) new RBFNetwork(filename);
         objects.insert(rbf);
     }
     catch(const Exception &e)

@@ -15,7 +15,7 @@
 #include <bspline.h>
 #include <bsplinebasis.h>
 #include <bsplinebasis1d.h>
-#include <rbfapproximant.h>
+#include "rbfnetwork.h"
 #include <polynomial.h>
 
 namespace SPLINTER
@@ -113,7 +113,7 @@ size_t Serializer::get_size(const BSplineBasis1D &obj)
            + get_size(obj.targetNumBasisfunctions);
 }
 
-size_t Serializer::get_size(const RBFApproximant &obj)
+size_t Serializer::get_size(const RBFNetwork &obj)
 {
     return get_size(obj.samples)
            + get_size(obj.normalized)
@@ -172,7 +172,7 @@ void Serializer::_serialize(const BSplineBasis1D &obj)
     _serialize(obj.targetNumBasisfunctions);
 }
 
-void Serializer::_serialize(const RBFApproximant &obj)
+void Serializer::_serialize(const RBFNetwork &obj)
 {
     _serialize(obj.samples);
     _serialize(obj.normalized);
@@ -231,7 +231,7 @@ void Serializer::deserialize(BSplineBasis1D &obj)
     deserialize(obj.targetNumBasisfunctions);
 }
 
-void Serializer::deserialize(RBFApproximant &obj)
+void Serializer::deserialize(RBFNetwork &obj)
 {
     deserialize(obj.samples);
     deserialize(obj.normalized);
@@ -241,27 +241,27 @@ void Serializer::deserialize(RBFApproximant &obj)
     deserialize(obj.type);
     if (obj.type == RBFType::THIN_PLATE_SPLINE)
     {
-        obj.fn = std::shared_ptr<RBFTerm>(new ThinPlateSpline());
+        obj.fn = std::shared_ptr<RBF>(new ThinPlateSpline());
     }
     else if (obj.type == RBFType::MULTIQUADRIC)
     {
-        obj.fn = std::shared_ptr<RBFTerm>(new Multiquadric());
+        obj.fn = std::shared_ptr<RBF>(new Multiquadric());
     }
     else if (obj.type == RBFType::INVERSE_QUADRIC)
     {
-        obj.fn = std::shared_ptr<RBFTerm>(new InverseQuadric());
+        obj.fn = std::shared_ptr<RBF>(new InverseQuadric());
     }
     else if (obj.type == RBFType::INVERSE_MULTIQUADRIC)
     {
-        obj.fn = std::shared_ptr<RBFTerm>(new InverseMultiquadric());
+        obj.fn = std::shared_ptr<RBF>(new InverseMultiquadric());
     }
     else if (obj.type == RBFType::GAUSSIAN)
     {
-        obj.fn = std::shared_ptr<RBFTerm>(new Gaussian());
+        obj.fn = std::shared_ptr<RBF>(new Gaussian());
     }
     else
     {
-        obj.fn = std::shared_ptr<RBFTerm>(new ThinPlateSpline());
+        obj.fn = std::shared_ptr<RBF>(new ThinPlateSpline());
     }
     deserialize(obj.weights);
 }

@@ -7,13 +7,13 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#ifndef SPLINTER_RBFAPPROXIMANT_H
-#define SPLINTER_RBFAPPROXIMANT_H
+#ifndef SPLINTER_RBFNETWORK_H
+#define SPLINTER_RBFNETWORK_H
 
 #include "definitions.h"
 #include "datatable.h"
 #include "function.h"
-#include "rbfterm.h"
+#include "rbf.h"
 #include "memory"
 
 namespace SPLINTER
@@ -25,15 +25,15 @@ namespace SPLINTER
  * the solution of a fairly ill-conditioned linear system. This drawback may be
  * alleviated by applying a pre-conditioner to the linear system.
  */
-class SPLINTER_API RBFApproximant : public Function
+class SPLINTER_API RBFNetwork : public Function
 {
 public:
-    RBFApproximant(const char *filename);
-    RBFApproximant(const std::string filename);
-    RBFApproximant(const DataTable &samples, RBFType type);
-    RBFApproximant(const DataTable &samples, RBFType type, bool normalized);
+    RBFNetwork(const char *filename);
+    RBFNetwork(const std::string filename);
+    RBFNetwork(const DataTable &samples, RBFType type);
+    RBFNetwork(const DataTable &samples, RBFType type, bool normalized);
 
-    virtual RBFApproximant* clone() const { return new RBFApproximant(*this); }
+    virtual RBFNetwork * clone() const { return new RBFNetwork(*this); }
 
     double eval(DenseVector x) const;
     double eval(std::vector<double> x) const;
@@ -47,7 +47,7 @@ public:
     const std::string getDescription() const override;
 
 private:
-    RBFApproximant();
+    RBFNetwork();
 
     DataTable samples;
     bool normalized, precondition;
@@ -55,7 +55,7 @@ private:
 
     // Store the type so we can reconstruct the object when deserializing
     RBFType type;
-    std::shared_ptr<RBFTerm> fn;
+    std::shared_ptr<RBF> fn;
 
     DenseMatrix weights;
 
@@ -68,9 +68,9 @@ private:
     void load(const std::string fileName) override;
 
     friend class Serializer;
-    friend bool operator==(const RBFApproximant &lhs, const RBFApproximant &rhs);
+    friend bool operator==(const RBFNetwork &lhs, const RBFNetwork &rhs);
 };
 
 } // namespace SPLINTER
 
-#endif // SPLINTER_RBFAPPROXIMANT_H
+#endif // SPLINTER_RBFNETWORK_H

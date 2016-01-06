@@ -8,35 +8,35 @@
 */
 
 #include <serializer.h>
-#include "rbfapproximant.h"
+#include "rbfnetwork.h"
 #include "linearsolvers.h"
 #include "Eigen/SVD"
 
 namespace SPLINTER
 {
 
-RBFApproximant::RBFApproximant()
+RBFNetwork::RBFNetwork()
     : Function(1)
 {
 }
 
-RBFApproximant::RBFApproximant(const char *fileName)
-    : RBFApproximant(std::string(fileName))
+RBFNetwork::RBFNetwork(const char *fileName)
+    : RBFNetwork(std::string(fileName))
 {
 }
 
-RBFApproximant::RBFApproximant(const std::string fileName)
+RBFNetwork::RBFNetwork(const std::string fileName)
     : Function(1)
 {
     load(fileName);
 }
 
-RBFApproximant::RBFApproximant(const DataTable &samples, RBFType type)
-    : RBFApproximant(samples, type, false)
+RBFNetwork::RBFNetwork(const DataTable &samples, RBFType type)
+    : RBFNetwork(samples, type, false)
 {
 }
 
-RBFApproximant::RBFApproximant(const DataTable &samples, RBFType type, bool normalized)
+RBFNetwork::RBFNetwork(const DataTable &samples, RBFType type, bool normalized)
     : Function(samples.getNumVariables()),
       samples(samples),
       type(type),
@@ -46,27 +46,27 @@ RBFApproximant::RBFApproximant(const DataTable &samples, RBFType type, bool norm
 {
     if (type == RBFType::THIN_PLATE_SPLINE)
     {
-        fn = std::shared_ptr<RBFTerm>(new ThinPlateSpline());
+        fn = std::shared_ptr<RBF>(new ThinPlateSpline());
     }
     else if (type == RBFType::MULTIQUADRIC)
     {
-        fn = std::shared_ptr<RBFTerm>(new Multiquadric());
+        fn = std::shared_ptr<RBF>(new Multiquadric());
     }
     else if (type == RBFType::INVERSE_QUADRIC)
     {
-        fn = std::shared_ptr<RBFTerm>(new InverseQuadric());
+        fn = std::shared_ptr<RBF>(new InverseQuadric());
     }
     else if (type == RBFType::INVERSE_MULTIQUADRIC)
     {
-        fn = std::shared_ptr<RBFTerm>(new InverseMultiquadric());
+        fn = std::shared_ptr<RBF>(new InverseMultiquadric());
     }
     else if (type == RBFType::GAUSSIAN)
     {
-        fn = std::shared_ptr<RBFTerm>(new Gaussian());
+        fn = std::shared_ptr<RBF>(new Gaussian());
     }
     else
     {
-        fn = std::shared_ptr<RBFTerm>(new ThinPlateSpline());
+        fn = std::shared_ptr<RBF>(new ThinPlateSpline());
     }
 
     /* Want to solve the linear system A*w = b,
@@ -146,7 +146,7 @@ RBFApproximant::RBFApproximant(const DataTable &samples, RBFType type, bool norm
     // NOTE: Tried using experimental GMRES solver in Eigen, but it did not work very well.
 }
 
-double RBFApproximant::eval(DenseVector x) const
+double RBFNetwork::eval(DenseVector x) const
 {
     std::vector<double> y;
     for (int i=0; i<x.rows(); i++)
@@ -154,10 +154,10 @@ double RBFApproximant::eval(DenseVector x) const
     return eval(y);
 }
 
-double RBFApproximant::eval(std::vector<double> x) const
+double RBFNetwork::eval(std::vector<double> x) const
 {
     if (x.size() != numVariables)
-        throw Exception("RBFApproximant::eval: Wrong dimension on evaluation point x.");
+        throw Exception("RBFNetwork::eval: Wrong dimension on evaluation point x.");
 
     double fval, sum = 0, sumw = 0;
     int i = 0;
@@ -170,7 +170,7 @@ double RBFApproximant::eval(std::vector<double> x) const
     return normalized ? sumw/sum : sumw;
 }
 
-DenseMatrix RBFApproximant::evalJacobian(DenseVector x) const
+DenseMatrix RBFNetwork::evalJacobian(DenseVector x) const
 {
     std::vector<double> x_vec;
     for (unsigned int i = 0; i<x.size(); i++)
@@ -223,7 +223,7 @@ DenseMatrix RBFApproximant::evalJacobian(DenseVector x) const
  * Calculate precondition matrix
  * TODO: implement
  */
-DenseMatrix RBFApproximant::computePreconditionMatrix() const
+DenseMatrix RBFNetwork::computePreconditionMatrix() const
 {
     return DenseMatrix::Zero(numSamples, numSamples);
 }
@@ -231,10 +231,10 @@ DenseMatrix RBFApproximant::computePreconditionMatrix() const
 /*
  * Computes Euclidean distance ||x-y||
  */
-double RBFApproximant::dist(std::vector<double> x, std::vector<double> y) const
+double RBFNetwork::dist(std::vector<double> x, std::vector<double> y) const
 {
     if (x.size() != y.size())
-        throw Exception("RBFApproximant::dist: Cannot measure distance between two points of different dimension");
+        throw Exception("RBFNetwork::dist: Cannot measure distance between two points of different dimension");
     double sum = 0.0;
     for (unsigned int i=0; i<x.size(); i++)
         sum += (x.at(i)-y.at(i))*(x.at(i)-y.at(i));
@@ -244,12 +244,12 @@ double RBFApproximant::dist(std::vector<double> x, std::vector<double> y) const
 /*
  * Computes Euclidean distance ||x-y||
  */
-double RBFApproximant::dist(DataSample x, DataSample y) const
+double RBFNetwork::dist(DataSample x, DataSample y) const
 {
     return dist(x.getX(), y.getX());
 }
 
-bool RBFApproximant::dist_sort(DataSample x, DataSample y) const
+bool RBFNetwork::dist_sort(DataSample x, DataSample y) const
 {
     std::vector<double> zeros(x.getDimX(), 0);
     DataSample origin(zeros, 0.0);
@@ -258,20 +258,20 @@ bool RBFApproximant::dist_sort(DataSample x, DataSample y) const
     return (x_dist<y_dist);
 }
 
-void RBFApproximant::save(const std::string fileName) const
+void RBFNetwork::save(const std::string fileName) const
 {
     Serializer s;
     s.serialize(*this);
     s.saveToFile(fileName);
 }
 
-void RBFApproximant::load(const std::string fileName)
+void RBFNetwork::load(const std::string fileName)
 {
     Serializer s(fileName);
     s.deserialize(*this);
 }
 
-const std::string RBFApproximant::getDescription() const {
+const std::string RBFNetwork::getDescription() const {
     std::string description("RadialBasisFunction of type ");
     switch(type) {
     case RBFType::GAUSSIAN:

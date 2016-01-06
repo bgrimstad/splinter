@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#ifndef SPLINTER_RBFTERM_H
-#define SPLINTER_RBFTERM_H
+#ifndef SPLINTER_RBF_H
+#define SPLINTER_RBF_H
 
 #include "datatable.h"
 #include "definitions.h"
@@ -28,21 +28,22 @@ enum class RBFType
 
 /*
  * Base class for radial basis functions.
+ * TODO: this class should inherit from Function
  */
-class RBFTerm
+class RBF
 {
 public:
-    RBFTerm() : e(1.0) {}
-    RBFTerm(double e) : e(e) {}
+    RBF() : e(1.0) {}
+    RBF(double e) : e(e) {}
     virtual double eval(double r) const = 0;
     virtual double evalDerivative(double r) const = 0;
-    virtual ~RBFTerm() {}
+    virtual ~RBF() {}
 
 protected:
     double e;
 };
 
-class ThinPlateSpline : public RBFTerm
+class ThinPlateSpline : public RBF
 {
 public:
     double eval(double r) const
@@ -55,7 +56,7 @@ public:
     }
 };
 
-class Multiquadric : public RBFTerm
+class Multiquadric : public RBF
 {
 public:
     double eval(double r) const
@@ -68,7 +69,7 @@ public:
     }
 };
 
-class InverseMultiquadric : public RBFTerm
+class InverseMultiquadric : public RBF
 {
 public:
     double eval(double r) const
@@ -81,7 +82,7 @@ public:
     }
 };
 
-class InverseQuadric : public RBFTerm
+class InverseQuadric : public RBF
 {
 public:
     double eval(double r) const
@@ -94,7 +95,7 @@ public:
     }
 };
 
-class Gaussian : public RBFTerm
+class Gaussian : public RBF
 {
 public:
     double eval(double r) const
@@ -109,4 +110,4 @@ public:
 
 } // namespace SPLINTER
 
-#endif // SPLINTER_RBFTERM_H
+#endif // SPLINTER_RBF_H

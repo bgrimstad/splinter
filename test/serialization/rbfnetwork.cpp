@@ -9,7 +9,7 @@
 
 #include <Catch.h>
 #include <datatable.h>
-#include <rbfapproximant.h>
+#include "rbfnetwork.h"
 #include "testingutilities.h"
 
 using namespace SPLINTER;
@@ -26,46 +26,46 @@ TEST_CASE("RadialBasisFunction can be saved and loaded", "[serialization][rbf][r
     const char *fileName = "test.rbf";
 
     SECTION("Gaussian") {
-        RBFApproximant rbf(table, RBFType::GAUSSIAN);
+        RBFNetwork rbf(table, RBFType::GAUSSIAN);
 
         rbf.save(fileName);
-        RBFApproximant loadedRBF(fileName);
+        RBFNetwork loadedRBF(fileName);
 
         REQUIRE(rbf == loadedRBF);
     }
 
     SECTION("Inverse multiquadric") {
-        RBFApproximant rbf(table, RBFType::INVERSE_MULTIQUADRIC);
+        RBFNetwork rbf(table, RBFType::INVERSE_MULTIQUADRIC);
 
         rbf.save(fileName);
-        RBFApproximant loadedRBF(fileName);
+        RBFNetwork loadedRBF(fileName);
 
         REQUIRE(rbf == loadedRBF);
     }
 
     SECTION("Inverse quadric") {
-        RBFApproximant rbf(table, RBFType::INVERSE_QUADRIC);
+        RBFNetwork rbf(table, RBFType::INVERSE_QUADRIC);
 
         rbf.save(fileName);
-        RBFApproximant loadedRBF(fileName);
+        RBFNetwork loadedRBF(fileName);
 
         REQUIRE(rbf == loadedRBF);
     }
 
     SECTION("Multiquadric") {
-        RBFApproximant rbf(table, RBFType::MULTIQUADRIC);
+        RBFNetwork rbf(table, RBFType::MULTIQUADRIC);
 
         rbf.save(fileName);
-        RBFApproximant loadedRBF(fileName);
+        RBFNetwork loadedRBF(fileName);
 
         REQUIRE(rbf == loadedRBF);
     }
 
     SECTION("Thin plate spline") {
-        RBFApproximant rbf(table, RBFType::THIN_PLATE_SPLINE);
+        RBFNetwork rbf(table, RBFType::THIN_PLATE_SPLINE);
 
         rbf.save(fileName);
-        RBFApproximant loadedRBF(fileName);
+        RBFNetwork loadedRBF(fileName);
 
         REQUIRE(rbf == loadedRBF);
     }

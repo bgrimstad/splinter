@@ -7,7 +7,7 @@ The workflow to construct an approximation is simple: sample a function and cons
 Figure: A possible workflow for building approximations with SPLINTER.
 
 The header files and classes intended for the end user of this library are:
-[DataTable](../include/datatable.h), [BSplineApproximant](../include/bsplineapproximant.h), [BSplineType](../include/bsplineapproximant.h), [PSplineApproximant](../include/psplineapproximant.h), [RBFApproximant](../include/rbfapproximant.h), [RBFType](../include/rbfterm.h) and [PolynomialApproximant](../include/polynomialapproximant.h).
+[DataTable](../include/datatable.h), [BSplineApproximant](../include/bsplineapproximant.h), [BSplineType](../include/bsplineapproximant.h), [PSplineApproximant](../include/psplineapproximant.h), [RBFNetwork](../include/rbfapproximant.h), [RBFType](../include/rbfterm.h) and [PolynomialApproximant](../include/polynomialapproximant.h).
 
 This is a simple example demonstrating the use of SPLINTER.
 
@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
     PSplineApproximant pspline(samples, 0.03);
 
     // Build radial basis function spline that interpolate the samples
-    RBFApproximant rbfspline(samples, RBFType::THIN_PLATE_SPLINE);
+    RBFNetwork rbfspline(samples, RBFType::THIN_PLATE_SPLINE);
 
     /* The six-hump camelback is a function of degree 6 in x(0) and degree 4 in x(1),
      * therefore a polynomial of degree 6 in the first variable and 4 in the second

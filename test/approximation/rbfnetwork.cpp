@@ -9,7 +9,7 @@
 
 #include <Catch.h>
 #include <testingutilities.h>
-#include <rbfapproximant.h>
+#include "rbfnetwork.h"
 #include <testfunction.h>
 
 using namespace SPLINTER;
@@ -33,7 +33,7 @@ TEST_CASE("Gaussian RadialBasisFunction function" COMMON_TEXT, COMMON_TAGS "[RBF
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Function *) new RBFApproximant(table, RBFType::GAUSSIAN);
+                                 return (Function *) new RBFNetwork(table, RBFType::GAUSSIAN);
                              },
                              400,  // Number of points to sample at
                              1337, // Number of points to test against
@@ -52,7 +52,7 @@ TEST_CASE("Gaussian RadialBasisFunction jacobian" COMMON_TEXT, COMMON_TAGS "[RBF
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Function *) new RBFApproximant(table, RBFType::GAUSSIAN);
+                                 return (Function *) new RBFNetwork(table, RBFType::GAUSSIAN);
                              },
                              200,  // Number of points to sample at
                              999, // Number of points to test against
@@ -90,7 +90,7 @@ TEST_CASE("Inverse Multiquadric RadialBasisFunction function" COMMON_TEXT, COMMO
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Function *) new RBFApproximant(table, RBFType::INVERSE_MULTIQUADRIC);
+                                 return (Function *) new RBFNetwork(table, RBFType::INVERSE_MULTIQUADRIC);
                              },
                              300,  // Number of points to sample at
                              1337, // Number of points to test against
@@ -109,7 +109,7 @@ TEST_CASE("Inverse Multiquadric RadialBasisFunction jacobian" COMMON_TEXT, COMMO
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Function *) new RBFApproximant(table, RBFType::INVERSE_MULTIQUADRIC);
+                                 return (Function *) new RBFNetwork(table, RBFType::INVERSE_MULTIQUADRIC);
                              },
                              200,  // Number of points to sample at
                              999, // Number of points to test against
@@ -147,7 +147,7 @@ TEST_CASE("Inverse Quadric RadialBasisFunction function" COMMON_TEXT, COMMON_TAG
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Function *) new RBFApproximant(table, RBFType::INVERSE_QUADRIC);
+                                 return (Function *) new RBFNetwork(table, RBFType::INVERSE_QUADRIC);
                              },
                              350,  // Number of points to sample at
                              1337, // Number of points to test against
@@ -166,7 +166,7 @@ TEST_CASE("Inverse Quadric RadialBasisFunction jacobian" COMMON_TEXT, COMMON_TAG
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Function *) new RBFApproximant(table, RBFType::INVERSE_QUADRIC);
+                                 return (Function *) new RBFNetwork(table, RBFType::INVERSE_QUADRIC);
                              },
                              200,  // Number of points to sample at
                              999, // Number of points to test against
@@ -204,7 +204,7 @@ TEST_CASE("Multiquadric RadialBasisFunction function" COMMON_TEXT, COMMON_TAGS "
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Function *) new RBFApproximant(table, RBFType::MULTIQUADRIC);
+                                 return (Function *) new RBFNetwork(table, RBFType::MULTIQUADRIC);
                              },
                              300,  // Number of points to sample at
                              1337, // Number of points to test against
@@ -223,7 +223,7 @@ TEST_CASE("Multiquadric RadialBasisFunction jacobian" COMMON_TEXT, COMMON_TAGS "
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Function *) new RBFApproximant(table, RBFType::MULTIQUADRIC);
+                                 return (Function *) new RBFNetwork(table, RBFType::MULTIQUADRIC);
                              },
                              200,  // Number of points to sample at
                              999, // Number of points to test against
@@ -261,7 +261,7 @@ TEST_CASE("Thin plate spline RadialBasisFunction function" COMMON_TEXT, COMMON_T
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Function *) new RBFApproximant(table, RBFType::THIN_PLATE_SPLINE);
+                                 return (Function *) new RBFNetwork(table, RBFType::THIN_PLATE_SPLINE);
                              },
                              300,  // Number of points to sample at
                              1337, // Number of points to test against
@@ -280,7 +280,7 @@ TEST_CASE("Thin plate spline RadialBasisFunction jacobian" COMMON_TEXT, COMMON_T
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Function *) new RBFApproximant(table, RBFType::THIN_PLATE_SPLINE);
+                                 return (Function *) new RBFNetwork(table, RBFType::THIN_PLATE_SPLINE);
                              },
                              200,  // Number of points to sample at
                              999, // Number of points to test against
