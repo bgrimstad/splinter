@@ -7,7 +7,7 @@ The workflow to construct an approximation is simple: sample a function and cons
 Figure: A possible workflow for building approximations with SPLINTER.
 
 The header files and classes intended for the end user of this library are:
-[DataTable](../include/datatable.h), [BSplineApproximant](../include/bsplineapproximant.h), [BSplineType](../include/bsplineapproximant.h), [PSplineApproximant](../include/psplineapproximant.h), [RBFNetwork](../include/rbfapproximant.h), [RBFType](../include/rbfterm.h) and [PolynomialApproximant](../include/polynomialapproximant.h).
+[DataTable](../include/datatable.h), [BSpline](../include/bspline.h), [BSplineBuilder](../include/bsplinebuilder.h), [RBFNetwork](../include/rbfnetwork.h), [RBFType](../include/rbf.h) and [Polynomial](../include/polynomial.h).
 
 This is a simple example demonstrating the use of SPLINTER.
 
@@ -16,10 +16,9 @@ Remember to compile with a C++11 compatible compiler! That means you probably ha
 ```c++
 #include <iostream>
 #include "datatable.h"
-#include "bsplineapproximant.h"
-#include "psplineapproximant.h"
-#include "rbfapproximant.h"
-#include "polynomialapproximant.h"
+#include "bsplinebuilder.h"
+#include "rbfnetwork.h"
+#include "polynomial.h"
 
 using std::cout;
 using std::endl;
@@ -31,7 +30,7 @@ double f(DenseVector x)
 {
     assert(x.rows() == 2);
     return (4 - 2.1*x(0)*x(0)
-           + (1/3.)*x(0)*x(0)*x(0)*x(0))*x(0)*x(0)
+            + (1/3.)*x(0)*x(0)*x(0)*x(0))*x(0)*x(0)
            + x(0)*x(1)
            + (-4 + 4*x(1)*x(1))*x(1)*x(1);
 }
@@ -59,14 +58,18 @@ int main(int argc, char *argv[])
     }
 
     // Build B-splines that interpolate the samples
-    BSplineApproximant bspline1(samples, BSplineType::LINEAR);
-    BSplineApproximant bspline3(samples, BSplineType::CUBIC);
+    BSpline bspline1 = BSpline::Builder(samples).degree(BSpline::Degree::LINEAR).build();
+    BSpline bspline3 = BSpline::Builder(samples).degree(BSpline::Degree::CUBIC).build();
 
     // Build penalized B-spline (P-spline) that smooths the samples
-    PSplineApproximant pspline(samples, 0.03);
+    BSpline pspline = BSpline::Builder(samples)
+            .degree(BSpline::Degree::CUBIC)
+            .smoothing(BSpline::Smoothing::PSPLINE)
+            .lambda(0.03)
+            .build();
 
     // Build radial basis function spline that interpolate the samples
-    RBFNetwork rbfspline(samples, RBFType::THIN_PLATE_SPLINE);
+    RBFNetwork rbfn(samples, RBFType::THIN_PLATE_SPLINE);
 
     /* The six-hump camelback is a function of degree 6 in x(0) and degree 4 in x(1),
      * therefore a polynomial of degree 6 in the first variable and 4 in the second
@@ -75,21 +78,21 @@ int main(int argc, char *argv[])
     auto degrees = std::vector<unsigned int>(2);
     degrees.at(0) = 6;
     degrees.at(1) = 4;
-    PolynomialApproximant polyfit(samples, degrees);
+    Polynomial polyfit(samples, degrees);
 
     /* Evaluate the approximants at x = (1,1)
      * Note that the error will be 0 at that point (except for the P-spline, which may introduce an error
      * in favor of a smooth approximation) because it is a point we sampled at.
      */
     x(0) = 1; x(1) = 1;
-    cout << "-------------------------------------------------"        << endl;
-    cout << "Function at x: \t\t\t"            << f(x)                 << endl;
-    cout << "Linear B-spline at x: \t\t"       << bspline1.eval(x)     << endl;
-    cout << "Cubic B-spline at x: \t\t"        << bspline3.eval(x)     << endl;
-    cout << "P-spline at x: \t\t\t"            << pspline.eval(x)      << endl;
-    cout << "Thin-plate spline at x:\t\t"      << rbfspline.eval(x)    << endl;
-    cout << "Polynomial of degree 6 at x:\t"   << polyfit.eval(x)      << endl;
-    cout << "-------------------------------------------------"        << endl;
+    cout << "-----------------------------------------------------" << endl;
+    cout << "Function at x:                 " << f(x)               << endl;
+    cout << "Linear B-spline at x:          " << bspline1.eval(x)   << endl;
+    cout << "Cubic B-spline at x:           " << bspline3.eval(x)   << endl;
+    cout << "P-spline at x:                 " << pspline.eval(x)    << endl;
+    cout << "Thin-plate spline at x:        " << rbfn.eval(x)       << endl;
+    cout << "Polynomial of degree 6 at x:   " << polyfit.eval(x)    << endl;
+    cout << "-----------------------------------------------------" << endl;
 
     return 0;
 }
