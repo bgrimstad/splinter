@@ -31,7 +31,7 @@ bool operator==(const DataTable &lhs, const DataTable &rhs)
             && lhs.getGrid() == rhs.getGrid();
 }
 
-bool operator==(const DataSample &lhs, const DataSample &rhs)
+bool operator==(const DataPoint &lhs, const DataPoint &rhs)
 {
     for (unsigned int i = 0; i < lhs.getDimX(); i++)
     {
@@ -143,7 +143,7 @@ bool operator!=(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs)
     return !(lhs == rhs);
 }
 
-bool operator!=(const DataSample &lhs, const DataSample &rhs)
+bool operator!=(const DataPoint &lhs, const DataPoint &rhs)
 {
 	return !(lhs == rhs);
 }
@@ -151,7 +151,7 @@ bool operator!=(const DataSample &lhs, const DataSample &rhs)
 /*
  * Output stream operator
  */
-std::ostream &operator<<(std::ostream &out, const DataSample &sample) {
+std::ostream &operator<<(std::ostream &out, const DataPoint &sample) {
     out << "(";
     bool firstLoop = true;
     for (auto val : sample.getX()) {

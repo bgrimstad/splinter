@@ -139,7 +139,7 @@ set(SRC_LIST
     include/bsplinebasis.h
     include/bsplinebasis1d.h
     include/cinterface.h
-    include/datasample.h
+    include/datapoint.h
     include/datatable.h
     include/function.h
     include/linearfunction.h
@@ -158,7 +158,7 @@ set(SRC_LIST
     src/bsplinebasis.cpp
     src/bsplinebasis1d.cpp
     src/cinterface.cpp
-    src/datasample.cpp
+    src/datapoint.cpp
     src/datatable.cpp
     src/function.cpp
     src/linearfunction.cpp

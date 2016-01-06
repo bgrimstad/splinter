@@ -7,33 +7,34 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#ifndef SPLINTER_DATASAMPLE_H
-#define SPLINTER_DATASAMPLE_H
+#ifndef SPLINTER_DATAPOINT_H
+#define SPLINTER_DATAPOINT_H
 
 #include "definitions.h"
 
 namespace SPLINTER
 {
 
-/* Class representing a data sample (x,y)
- * where y is the value obtained by sampling
- * at a point x.
-*/
-class DataSample
+/*
+ * DataPoint is a class representing a data point (x, y),
+ * where y is the value obtained by sampling at a point x.
+ * Note that x is a vector and y is a scalar.
+ */
+class DataPoint
 {
 public:
-    DataSample(double x, double y);
-    DataSample(std::vector<double> x, double y);
-    DataSample(DenseVector x, double y);
+    DataPoint(double x, double y);
+    DataPoint(std::vector<double> x, double y);
+    DataPoint(DenseVector x, double y);
 
-    bool operator<(const DataSample &rhs) const; // Returns false if the two are equal
+    bool operator<(const DataPoint &rhs) const; // Returns false if the two are equal
 
     std::vector<double> getX() const { return x; }
     double getY() const { return y; }
     unsigned int getDimX() const { return x.size(); }
 
 private:
-    DataSample();
+    DataPoint();
 
     std::vector<double> x;
     double y;
@@ -44,4 +45,4 @@ private:
 
 } // namespace SPLINTER
 
-#endif // SPLINTER_DATASAMPLE_H
+#endif // SPLINTER_DATAPOINT_H

@@ -244,15 +244,15 @@ double RBFNetwork::dist(std::vector<double> x, std::vector<double> y) const
 /*
  * Computes Euclidean distance ||x-y||
  */
-double RBFNetwork::dist(DataSample x, DataSample y) const
+double RBFNetwork::dist(DataPoint x, DataPoint y) const
 {
     return dist(x.getX(), y.getX());
 }
 
-bool RBFNetwork::dist_sort(DataSample x, DataSample y) const
+bool RBFNetwork::dist_sort(DataPoint x, DataPoint y) const
 {
     std::vector<double> zeros(x.getDimX(), 0);
-    DataSample origin(zeros, 0.0);
+    DataPoint origin(zeros, 0.0);
     double x_dist = dist(x, origin);
     double y_dist = dist(y, origin);
     return (x_dist<y_dist);

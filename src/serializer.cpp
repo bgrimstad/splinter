@@ -10,7 +10,7 @@
 #include "serializer.h"
 #include <fstream>
 #include "definitions.h"
-#include <datasample.h>
+#include "datapoint.h"
 #include <datatable.h>
 #include <bspline.h>
 #include <bsplinebasis.h>
@@ -77,7 +77,7 @@ void Serializer::loadFromFile(std::string fileName)
  * get_size implementations
  */
 
-size_t Serializer::get_size(const DataSample &obj)
+size_t Serializer::get_size(const DataPoint &obj)
 {
     return get_size(obj.x) + get_size(obj.y);
 }
@@ -135,7 +135,7 @@ size_t Serializer::get_size(const Polynomial &obj)
  * _serialize implementations
  */
 
-void Serializer::_serialize(const DataSample &obj)
+void Serializer::_serialize(const DataPoint &obj)
 {
     _serialize(obj.x);
     _serialize(obj.y);
@@ -194,7 +194,7 @@ void Serializer::_serialize(const Polynomial &obj)
  * deserialize implementations
  */
 
-void Serializer::deserialize(DataSample &obj)
+void Serializer::deserialize(DataPoint &obj)
 {
     deserialize(obj.x);
     deserialize(obj.y);

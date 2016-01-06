@@ -13,7 +13,7 @@
 #include <definitions.h>
 #include <vector>
 #include <set>
-#include <datasample.h>
+#include "datapoint.h"
 #include <datatable.h>
 #include <bspline.h>
 #include <polynomial.h>
@@ -26,7 +26,7 @@ namespace SPLINTER
  * Comparison operators
  */
 bool operator==(const DataTable &lhs, const DataTable &rhs);
-bool operator==(const DataSample &lhs, const DataSample &rhs);
+bool operator==(const DataPoint &lhs, const DataPoint &rhs);
 bool operator==(const BSpline &lhs, const BSpline &rhs);
 bool operator==(const BSplineBasis &lhs, const BSplineBasis &rhs);
 bool operator==(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs);
@@ -80,12 +80,12 @@ bool operator==(const std::multiset<T> &lhs, const std::multiset<T> &rhs)
     return true;
 }
 
-bool operator!=(const DataSample &lhs, const DataSample &rhs);
+bool operator!=(const DataPoint &lhs, const DataPoint &rhs);
 
 /*
  * Output stream operator
  */
-std::ostream &operator<<(std::ostream &out, const DataSample &sample);
+std::ostream &operator<<(std::ostream &out, const DataPoint &sample);
 std::ostream &operator<<(std::ostream &out, const DataTable &table);
 template <class T>
 std::ostream &operator<<(std::ostream &out, const std::vector<T> &obj);

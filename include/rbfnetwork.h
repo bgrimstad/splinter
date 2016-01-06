@@ -62,8 +62,8 @@ private:
     DenseMatrix computePreconditionMatrix() const;
 
     double dist(std::vector<double> x, std::vector<double> y) const;
-    double dist(DataSample x, DataSample y) const;
-    bool dist_sort(DataSample x, DataSample y) const;
+    double dist(DataPoint x, DataPoint y) const;
+    bool dist_sort(DataPoint x, DataPoint y) const;
 
     void load(const std::string fileName) override;
 

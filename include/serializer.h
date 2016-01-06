@@ -20,7 +20,7 @@
 namespace SPLINTER
 {
 
-class DataSample;
+class DataPoint;
 class DataTable;
 class BSpline;
 class BSplineBasis;
@@ -58,7 +58,7 @@ public:
     template <class T>
     void deserialize(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &obj);
 
-    void deserialize(DataSample &obj);
+    void deserialize(DataPoint &obj);
     void deserialize(DataTable &obj);
     void deserialize(BSpline &obj);
     void deserialize(BSplineBasis &obj);
@@ -91,7 +91,7 @@ protected:
     template <class T>
     size_t get_size(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &obj);
 
-    size_t get_size(const DataSample &obj);
+    size_t get_size(const DataPoint &obj);
     size_t get_size(const DataTable &obj);
     size_t get_size(const BSpline &obj);
     size_t get_size(const BSplineBasis &obj);
@@ -115,7 +115,7 @@ protected:
     template <class T>
     void _serialize(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &obj);
 
-    void _serialize(const DataSample &obj);
+    void _serialize(const DataPoint &obj);
     void _serialize(const DataTable &obj);
     void _serialize(const BSpline &obj);
     void _serialize(const BSplineBasis &obj);
