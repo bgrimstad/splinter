@@ -27,7 +27,6 @@ class BSplineBasis;
 class BSplineBasis1D;
 class RBFNetwork;
 class Polynomial;
-class PolynomialApproximant;
 
 /**
  * Class for serialization
@@ -58,6 +57,8 @@ public:
     template <class T>
     void deserialize(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &obj);
 
+    void deserialize(DenseVector &obj);
+
     void deserialize(DataPoint &obj);
     void deserialize(DataTable &obj);
     void deserialize(BSpline &obj);
@@ -65,7 +66,6 @@ public:
     void deserialize(BSplineBasis1D &obj);
     void deserialize(RBFNetwork &obj);
     void deserialize(Polynomial &obj);
-    void deserialize(PolynomialApproximant &obj);
 
     // Save the serialized stream to fileName
     void saveToFile(std::string fileName);
@@ -91,6 +91,8 @@ protected:
     template <class T>
     size_t get_size(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &obj);
 
+    size_t get_size(const DenseVector &obj);
+
     size_t get_size(const DataPoint &obj);
     size_t get_size(const DataTable &obj);
     size_t get_size(const BSpline &obj);
@@ -98,7 +100,6 @@ protected:
     size_t get_size(const BSplineBasis1D &obj);
     size_t get_size(const RBFNetwork &obj);
     size_t get_size(const Polynomial &obj);
-    size_t get_size(const PolynomialApproximant &obj);
 
     template <class T>
     void _serialize(const T &obj);
@@ -115,6 +116,8 @@ protected:
     template <class T>
     void _serialize(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &obj);
 
+    void _serialize(const DenseVector &obj);
+
     void _serialize(const DataPoint &obj);
     void _serialize(const DataTable &obj);
     void _serialize(const BSpline &obj);
@@ -122,7 +125,6 @@ protected:
     void _serialize(const BSplineBasis1D &obj);
     void _serialize(const RBFNetwork &obj);
     void _serialize(const Polynomial &obj);
-    void _serialize(const PolynomialApproximant &obj);
 
 private:
     typedef std::vector<uint8_t> StreamType;

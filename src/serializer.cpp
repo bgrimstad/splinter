@@ -77,6 +77,13 @@ void Serializer::loadFromFile(std::string fileName)
  * get_size implementations
  */
 
+size_t Serializer::get_size(const DenseVector &obj)
+{
+    size_t size = sizeof(obj.size());
+    size += obj.size() * sizeof(double);
+    return size;
+}
+
 size_t Serializer::get_size(const DataPoint &obj)
 {
     return get_size(obj.x) + get_size(obj.y);
@@ -134,6 +141,14 @@ size_t Serializer::get_size(const Polynomial &obj)
 /*
  * _serialize implementations
  */
+
+void Serializer::_serialize(const DenseVector &obj)
+{
+    _serialize(obj.size());
+    for (size_t i = 0; i < obj.size(); ++i) {
+        _serialize(obj(i));
+    }
+}
 
 void Serializer::_serialize(const DataPoint &obj)
 {
@@ -193,6 +208,16 @@ void Serializer::_serialize(const Polynomial &obj)
 /*
  * deserialize implementations
  */
+
+void Serializer::deserialize(DenseVector &obj)
+{
+    size_t length;
+    deserialize(length);
+    obj.resize(length);
+    for (size_t i = 0; i < length; ++i) {
+        deserialize(obj(i));
+    }
+}
 
 void Serializer::deserialize(DataPoint &obj)
 {
