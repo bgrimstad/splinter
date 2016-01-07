@@ -19,6 +19,14 @@
 #include <polynomial.h>
 #include "rbfnetwork.h"
 
+
+namespace Eigen
+{
+    // Can't use the typedefs here, Clang won't be able to find them then (bug)
+    bool operator==(const SparseMatrix<double> &lhs, const SparseMatrix<double> &rhs);
+    bool operator==(const SparseVector<double> &lhs, const SparseVector<double> &rhs);
+}
+
 namespace SPLINTER
 {
 

@@ -10,6 +10,20 @@
 #include <operatoroverloads.h>
 #include <testingutilities.h>
 
+
+namespace Eigen
+{
+    bool operator==(const SparseMatrix<double> &lhs, const SparseMatrix<double> &rhs)
+    {
+        return SPLINTER::DenseMatrix(lhs) == SPLINTER::DenseMatrix(rhs);
+    }
+
+    bool operator==(const SparseVector<double> &lhs, const SparseVector<double> &rhs)
+    {
+        return SPLINTER::DenseVector(lhs) == SPLINTER::DenseVector(rhs);
+    }
+}
+
 namespace SPLINTER
 {
 
