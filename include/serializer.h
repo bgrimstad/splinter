@@ -16,6 +16,7 @@
 #include "definitions.h"
 #include <set>
 #include <stdint.h>
+#include <type_traits>
 
 namespace SPLINTER
 {
@@ -31,12 +32,16 @@ class Polynomial;
 /**
  * Class for serialization
  * NOTE: member variables must be serialized and deserialized in the same order.
+ * NOTE2: Serialization / deserialization of SparseMatrix/SparseVector works by first converting to
+ * DenseMatrix/DenseVector and vice versa.
  */
 class Serializer
 {
 public:
     Serializer();
     Serializer(std::string fileName);
+
+    virtual ~Serializer() {}
 
     // Serialize obj into the internal stream
     template <class T>
@@ -54,10 +59,10 @@ public:
     template <class T>
     void deserialize(std::multiset<T> &obj);
 
-    template <class T>
-    void deserialize(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &obj);
-
+    void deserialize(DenseMatrix &obj);
     void deserialize(DenseVector &obj);
+    void deserialize(SparseMatrix &obj);
+    void deserialize(SparseVector &obj);
 
     void deserialize(DataPoint &obj);
     void deserialize(DataTable &obj);
@@ -73,34 +78,32 @@ public:
     // Load fileName into the internal stream
     void loadFromFile(std::string fileName);
 
-    virtual ~Serializer() {}
+    template <class T>
+    static size_t get_size(const T &obj);
+
+    template <class T>
+    static size_t get_size(const std::vector<T> &obj);
+
+    template <class T>
+    static size_t get_size(const std::set<T> &obj);
+
+    template <class T>
+    static size_t get_size(const std::multiset<T> &obj);
+
+    static size_t get_size(const DenseMatrix &obj);
+    static size_t get_size(const DenseVector &obj);
+    static size_t get_size(const SparseMatrix &obj);
+    static size_t get_size(const SparseVector &obj);
+
+    static size_t get_size(const DataPoint &obj);
+    static size_t get_size(const DataTable &obj);
+    static size_t get_size(const BSpline &obj);
+    static size_t get_size(const BSplineBasis &obj);
+    static size_t get_size(const BSplineBasis1D &obj);
+    static size_t get_size(const RBFNetwork &obj);
+    static size_t get_size(const Polynomial &obj);
 
 protected:
-    template <class T>
-    size_t get_size(const T &obj);
-
-    template <class T>
-    size_t get_size(const std::vector<T> &obj);
-
-    template <class T>
-    size_t get_size(const std::set<T> &obj);
-
-    template <class T>
-    size_t get_size(const std::multiset<T> &obj);
-
-    template <class T>
-    size_t get_size(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &obj);
-
-    size_t get_size(const DenseVector &obj);
-
-    size_t get_size(const DataPoint &obj);
-    size_t get_size(const DataTable &obj);
-    size_t get_size(const BSpline &obj);
-    size_t get_size(const BSplineBasis &obj);
-    size_t get_size(const BSplineBasis1D &obj);
-    size_t get_size(const RBFNetwork &obj);
-    size_t get_size(const Polynomial &obj);
-
     template <class T>
     void _serialize(const T &obj);
 
@@ -113,10 +116,10 @@ protected:
     template <class T>
     void _serialize(const std::multiset<T> &obj);
 
-    template <class T>
-    void _serialize(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &obj);
-
+    void _serialize(const DenseMatrix &obj);
     void _serialize(const DenseVector &obj);
+    void _serialize(const SparseMatrix &obj);
+    void _serialize(const SparseVector &obj);
 
     void _serialize(const DataPoint &obj);
     void _serialize(const DataTable &obj);
@@ -126,7 +129,6 @@ protected:
     void _serialize(const RBFNetwork &obj);
     void _serialize(const Polynomial &obj);
 
-private:
     typedef std::vector<uint8_t> StreamType;
     StreamType stream;
 
@@ -157,6 +159,10 @@ void Serializer::serialize(const T &obj)
 template <class T>
 void Serializer::_serialize(const T &obj)
 {
+    // This should really be used to avoid simply copying complex objects that are not trivially copyable
+    // std::is_trivially_copyable is shipped with GCC 5
+//    static_assert(std::is_trivially_copyable<T>::value, "Missing Serializer::_serialize overload for T = "/* __PRETTY_FUNCTION__*/);
+
     // Get a uint8_t pointer to the object, so we can copy it into the stream
     auto objPtr = reinterpret_cast<const uint8_t *>(&obj);
 
@@ -168,6 +174,10 @@ void Serializer::_serialize(const T &obj)
 template <class T>
 void Serializer::deserialize(T &obj)
 {
+    // This should really be used to avoid simply copying complex objects that are not trivially copyable
+    // std::is_trivially_copyable is shipped with GCC 5
+//    static_assert(std::is_trivially_copyable<T>::value, "Missing Serializer::deserialize overload for T = "/* __PRETTY_FUNCTION__*/);
+
     if (read + sizeof(T) > stream.cend()) {
         throw Exception("Serializer::deserialize: Stream is missing bytes!");
     }
@@ -183,6 +193,10 @@ void Serializer::deserialize(T &obj)
 template <class T>
 size_t Serializer::get_size(const T &obj)
 {
+    // This should really be used to avoid simply copying complex objects that are not trivially copyable
+    // std::is_trivially_copyable is shipped with GCC 5
+//    static_assert(std::is_trivially_copyable<T>::value, "Missing Serializer::get_size overload for T = "/* __PRETTY_FUNCTION__*/);
+
     return sizeof(T);
 }
 
@@ -212,22 +226,12 @@ size_t Serializer::get_size(const std::set<T> &obj)
 }
 
 template <class T>
-size_t Serializer::get_size(const std::multiset<T> &obj)
-{
+size_t Serializer::get_size(const std::multiset<T> &obj) {
     size_t size = sizeof(size_t);
-    for(auto &elem : obj) {
+    for (auto &elem : obj) {
         size += get_size(elem);
     }
 
-    return size;
-}
-
-template <class T>
-size_t Serializer::get_size(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &obj)
-{
-    size_t size = sizeof(obj.rows());
-    size += sizeof(obj.cols());
-    size += obj.rows() * obj.cols() * sizeof(T);
     return size;
 }
 
@@ -264,20 +268,7 @@ void Serializer::_serialize(const std::multiset<T> &obj)
     }
 }
 
-template <class T>
-void Serializer::_serialize(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &obj)
-{
-    // Store the number of matrix rows and columns first
-    _serialize(obj.rows());
-    _serialize(obj.cols());
-    // Store the matrix elements
-    for (size_t i = 0; i < obj.rows(); ++i) {
-        for (size_t j = 0; j < obj.cols(); ++j) {
-            _serialize(obj(i,j));
-        }
-    }
-}
-
+    
 /*
  * deserialize specializations
  */
@@ -312,30 +303,13 @@ void Serializer::deserialize(std::multiset<T> &obj)
     size_t size; deserialize(size);
 
     T elem;
-    for (int i = 0; i < size; i++)
+    for (int i = 0; i < size; ++i)
     {
         deserialize(elem);
         obj.insert(elem);
     }
 }
 
-template <class T>
-void Serializer::deserialize(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &obj)
-{
-    // Retrieve the number of rows
-    size_t rows; deserialize(rows);
-    size_t cols; deserialize(cols);
-
-    obj.resize(rows, cols);
-
-    for (size_t i = 0; i < rows; ++i)
-    {
-        for (size_t j = 0; j < cols; ++j)
-        {
-            deserialize(obj(i, j));
-        }
-    }
-}
 
 } // namespace SPLINTER
 

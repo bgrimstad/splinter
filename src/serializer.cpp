@@ -77,13 +77,6 @@ void Serializer::loadFromFile(std::string fileName)
  * get_size implementations
  */
 
-size_t Serializer::get_size(const DenseVector &obj)
-{
-    size_t size = sizeof(obj.size());
-    size += obj.size() * sizeof(double);
-    return size;
-}
-
 size_t Serializer::get_size(const DataPoint &obj)
 {
     return get_size(obj.x) + get_size(obj.y);
@@ -138,17 +131,42 @@ size_t Serializer::get_size(const Polynomial &obj)
             + get_size(obj.degrees);
 }
 
+size_t Serializer::get_size(const DenseMatrix &obj)
+{
+    size_t size = sizeof(obj.rows());
+    size += sizeof(obj.cols());
+    size_t numElements = obj.rows() * obj.cols();
+    if (numElements > 0) {
+        size += numElements * sizeof(obj(0,0));
+    }
+    return size;
+}
+
+size_t Serializer::get_size(const DenseVector &obj)
+{
+    size_t size = sizeof(obj.rows());
+    size_t numElements = obj.rows();
+    if (numElements > 0) {
+        size += numElements * sizeof(obj(0));
+    }
+    return size;
+}
+
+size_t Serializer::get_size(const SparseMatrix &obj)
+{
+    DenseMatrix temp(obj);
+    return get_size(temp);
+}
+
+size_t Serializer::get_size(const SparseVector &obj)
+{
+    DenseVector temp(obj);
+    return get_size(temp);
+}
+
 /*
  * _serialize implementations
  */
-
-void Serializer::_serialize(const DenseVector &obj)
-{
-    _serialize(obj.size());
-    for (size_t i = 0; i < obj.size(); ++i) {
-        _serialize(obj(i));
-    }
-}
 
 void Serializer::_serialize(const DataPoint &obj)
 {
@@ -205,19 +223,44 @@ void Serializer::_serialize(const Polynomial &obj)
     _serialize(obj.degrees);
 }
 
+void Serializer::_serialize(const DenseMatrix &obj)
+{
+    // Store the number of matrix rows and columns first
+    _serialize(obj.rows());
+    _serialize(obj.cols());
+    // Store the matrix elements
+    for (size_t i = 0; i < obj.rows(); ++i) {
+        for (size_t j = 0; j < obj.cols(); ++j) {
+            _serialize(obj(i,j));
+        }
+    }
+}
+
+void Serializer::_serialize(const DenseVector &obj)
+{
+    // Store the number of vector rows
+    _serialize(obj.rows());
+    // Store the vector elements
+    for (size_t i = 0; i < obj.rows(); ++i) {
+        _serialize(obj(i));
+    }
+}
+
+void Serializer::_serialize(const SparseMatrix &obj)
+{
+    DenseMatrix temp(obj);
+    _serialize(temp);
+}
+
+void Serializer::_serialize(const SparseVector &obj)
+{
+    DenseVector temp(obj);
+    _serialize(temp);
+}
+
 /*
  * deserialize implementations
  */
-
-void Serializer::deserialize(DenseVector &obj)
-{
-    size_t length;
-    deserialize(length);
-    obj.resize(length);
-    for (size_t i = 0; i < length; ++i) {
-        deserialize(obj(i));
-    }
-}
 
 void Serializer::deserialize(DataPoint &obj)
 {
@@ -296,6 +339,50 @@ void Serializer::deserialize(Polynomial &obj)
     deserialize(obj.numVariables);
     deserialize(obj.coefficients);
     deserialize(obj.degrees);
+}
+
+void Serializer::deserialize(DenseMatrix &obj)
+{
+    // Retrieve the number of rows
+    size_t rows; deserialize(rows);
+    size_t cols; deserialize(cols);
+
+    obj.resize(rows, cols);
+
+    for (size_t i = 0; i < rows; ++i)
+    {
+        for (size_t j = 0; j < cols; ++j)
+        {
+            deserialize(obj(i, j));
+        }
+    }
+}
+
+void Serializer::deserialize(DenseVector &obj)
+{
+    // Retrieve the number of rows
+    size_t rows; deserialize(rows);
+
+    obj.resize(rows);
+
+    for (size_t i = 0; i < rows; ++i)
+    {
+        deserialize(obj(i));
+    }
+}
+
+void Serializer::deserialize(SparseMatrix &obj)
+{
+    DenseMatrix temp(obj);
+    deserialize(temp);
+    obj = temp.sparseView();
+}
+
+void Serializer::deserialize(SparseVector &obj)
+{
+    DenseVector temp(obj);
+    deserialize(temp);
+    obj = temp.sparseView();
 }
 
 } // namespace SPLINTER
