@@ -88,7 +88,7 @@ SparseVector Polynomial::evalBasisFunctions(DenseVector x) const
 
     if (monomials.rows() != getNumCoefficients())
     {
-        throw Exception("PolynomialApproximant::evalMonomials: monomials.rows() != numCoefficients.");
+        throw Exception("Polynomial::evalMonomials: monomials.rows() != numCoefficients.");
     }
 
     return monomials.sparseView();
@@ -107,7 +107,7 @@ SparseMatrix Polynomial::evalBasisFunctionsJacobian(DenseVector x) const
 DenseVector Polynomial::evalDifferentiatedMonomials(DenseVector x, unsigned int var) const
 {
     if (var < 0 || var >= numVariables)
-        throw Exception("PolynomialApproximant::evalDifferentiatedMonomials: invalid variable.");
+        throw Exception("Polynomial::evalDifferentiatedMonomials: invalid variable.");
 
     std::vector<DenseVector> powers;
 
@@ -135,7 +135,7 @@ DenseVector Polynomial::evalDifferentiatedMonomials(DenseVector x, unsigned int 
     DenseVector monomials = kroneckerProductVectors(powers);
 
     if (monomials.rows() != getNumCoefficients())
-        throw Exception("PolynomialApproximant::evalMonomials: monomials.rows() != numCoefficients.");
+        throw Exception("Polynomial::evalMonomials: monomials.rows() != numCoefficients.");
 
     return monomials;
 }
@@ -155,7 +155,7 @@ void Polynomial::load(const std::string fileName)
 
 const std::string Polynomial::getDescription() const
 {
-    std::string description("PolynomialApproximant of degree");
+    std::string description("Polynomial of degree");
 
     // See if all degrees are the same.
     bool equal = true;

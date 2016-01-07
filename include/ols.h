@@ -20,7 +20,7 @@ namespace SPLINTER
 /**
   * Ordinary least-square (OLS)
   */
-DenseMatrix computeCoefficients(const LinearFunction &func, const DataTable &samples);
+DenseVector computeCoefficients(const LinearFunction &func, const DataTable &samples);
 
 // TODO: implement OLS with regularization term (lambda/numSample)*coefficients^T*coefficients,
 // where lambda >= 0 and default is 0.1/N?

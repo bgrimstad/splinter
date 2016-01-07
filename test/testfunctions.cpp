@@ -62,7 +62,7 @@ void setupTestFunctions() {
     three_degrees = {1,1,1};
     auto f_3_1 = MAKE_CONSTDEGREE_TESTFUNCTION(x.at(0)+x.at(1)-x.at(2)-1, 3, "x + y - z - 1", three_degrees);
 
-    /* The next two functions causes a lot of trouble for some of the Approximants, especially RBF and PolynomialApproximant
+    /* The next two functions causes a lot of trouble for some of the Approximants, especially RBF and Polynomial
      Main problem is probably that it is a three-dimensional function, so the number of grid points per dimension
      becomes small.
      */

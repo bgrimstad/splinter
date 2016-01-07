@@ -17,7 +17,7 @@ namespace SPLINTER
 {
 
 /**
- * Interface for functions (linear in the coefficients) on the form:
+ * Interface for functions (linear in the coefficients):
  * f(x) = c(1)*b1(x) + c(2)*b2(x) + ... + c(n)*bn(x) = c^T * b(x),
  * where c are coefficients and b is a vector of basis functions.
  */
@@ -75,11 +75,7 @@ protected:
               coefficients(coefficients)
     {}
 
-    /**
-     * Coefficients
-     * NOTE: serialization fails when using DenseVector
-     */
-    DenseMatrix coefficients;
+    DenseVector coefficients;
 
     friend class Serializer;
     friend bool operator==(const LinearFunction &lhs, const LinearFunction &rhs);

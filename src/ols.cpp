@@ -9,30 +9,27 @@
 
 #include "ols.h"
 #include <linearsolvers.h>
+#include <utilities.h>
 
 namespace SPLINTER
 {
 
-DenseMatrix computeCoefficients(const LinearFunction &func, const DataTable &sample)
+DenseVector computeCoefficients(const LinearFunction &func, const DataTable &sample)
 {
     // Left hand side
     DenseMatrix X = computeDesignMatrix(func, sample);
 
     // Right-hand side
-    auto yvec = sample.getVectorY();
-    DenseVector y(yvec.size());
-    for (unsigned int i = 0; i < yvec.size(); ++i)
-        y(i) = yvec.at(i);
+    auto y = vectorToDenseVector(sample.getVectorY());
 
     // Coefficients
-    DenseMatrix c;
+    DenseVector c;
 
     // Solve for coefficients
-    DenseQR s;
+    DenseQR<> s;
     if (!s.solve(X, y, c))
         throw Exception("computeCoefficients: Failed to solve for coefficients.");
 
-    // TODO: consider returning a vector instead of a matrix!
     return c;
 }
 

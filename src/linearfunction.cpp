@@ -16,7 +16,7 @@ double LinearFunction::eval(DenseVector x) const
 {
     SparseVector basis = evalBasisFunctions(x);
     DenseVector res = coefficients.transpose()*basis;
-    return res(0,0);
+    return res(0);
 }
 
 DenseMatrix LinearFunction::evalJacobian(DenseVector x) const

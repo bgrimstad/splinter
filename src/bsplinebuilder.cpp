@@ -106,7 +106,7 @@ namespace SPLINTER
             #endif // NDEBUG
 
             DenseMatrix Ad = A.toDense();
-            DenseQR s;
+            DenseQR<DenseMatrix> s;
             //bool successfulSolve = (s.solve(Ad,Bx,Cx) && s.solve(Ad,By,Cy));
             if (!s.solve(Ad,b,w))
             {
@@ -232,7 +232,7 @@ namespace SPLINTER
             #endif // NDEBUG
 
             DenseMatrix Ld = L.toDense();
-            DenseQR s;
+            DenseQR<DenseMatrix> s;
             bool successfulSolve = s.solve(Ld, Ry, Cy);
 
             if (!successfulSolve)

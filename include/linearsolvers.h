@@ -57,10 +57,12 @@ private:
     }
 };
 
-class DenseQR : public LinearSolver<DenseMatrix, DenseMatrix>
+
+template<class rhs = DenseVector>
+class DenseQR : public LinearSolver<DenseMatrix, rhs>
 {
 private:
-    bool doSolve(const DenseMatrix &A, const DenseMatrix &b, DenseMatrix &x) const
+    bool doSolve(const DenseMatrix &A, const rhs &b, rhs &x) const
     {
         //x = A.colPivHouseholderQr().solve(b);
 
@@ -77,7 +79,7 @@ private:
     }
 };
 
-class SparseBiCG : public LinearSolver<SparseMatrix,DenseMatrix>
+class SparseBiCG : public LinearSolver<SparseMatrix, DenseMatrix>
 {
 private:
     bool doSolve(const SparseMatrix &A, const DenseMatrix &b, DenseMatrix &x) const

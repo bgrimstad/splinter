@@ -78,7 +78,7 @@ TEST_CASE("Polynomial jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian]")
     }
 }
 
-//TEST_CASE("PolynomialApproximant hessian" COMMON_TEXT, COMMON_TAGS "[hessian]")
+//TEST_CASE("Polynomial hessian" COMMON_TEXT, COMMON_TAGS "[hessian]")
 //{
 //    for(int degree = 1; degree <= MAX_DEGREE; ++degree)
 //    {
@@ -87,7 +87,7 @@ TEST_CASE("Polynomial jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian]")
 //            checkHessianSymmetry(testFunc,
 //                                 [degree](const DataTable &table)
 //                                 {
-//                                     return (Approximant *) new PolynomialApproximant(table, degree);
+//                                     return (Function *) new Polynomial(table, degree);
 //                                 },
 //                                 300,   // Number of points to sample at
 //                                 1337); // Number of points to test against
