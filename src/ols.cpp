@@ -40,19 +40,12 @@ DenseMatrix computeDesignMatrix(const LinearFunction &func, const DataTable &sam
     unsigned int i = 0;
     for (auto it = sample.cbegin(); it != sample.cend(); ++it, ++i)
     {
-        // Get point x
-        auto xvec = it->getX();
-        DenseVector x(xvec.size());
-        for (unsigned int j = 0; j < xvec.size(); ++j)
-            x(j) = xvec.at(j);
-
         // Evaluate basis functions at x
-        DenseVector Xi(func.evalBasisFunctions(x));
+        DenseVector x = vectorToDenseVector(it->getX());
+        DenseVector Xi(func.evalBasis(x));
 
         if (Xi.rows() != func.getNumCoefficients())
-        {
             throw Exception("computeDesignMatrix: Xi.rows() != numCoefficients.");
-        }
 
         // Add row to design matrix X
         X.block(i,0,1,func.getNumCoefficients()) = Xi.transpose();
@@ -83,7 +76,7 @@ SparseMatrix computeDesignMatrixSparse(const LinearFunction &func, const DataTab
             xi(j) = xv.at(j);
         }
 
-        SparseVector basisValues = func.evalBasisFunctions(xi);
+        SparseVector basisValues = func.evalBasis(xi);
 
         for (SparseVector::InnerIterator it2(basisValues); it2; ++it2)
         {

@@ -70,7 +70,7 @@ unsigned int Polynomial::computeNumBasisFunctions(std::vector<unsigned int> degr
 /**
  * Evaluate monomials
  */
-SparseVector Polynomial::evalBasisFunctions(DenseVector x) const
+SparseVector Polynomial::evalBasis(DenseVector x) const
 {
     std::vector<DenseVector> powers;
 
@@ -94,7 +94,7 @@ SparseVector Polynomial::evalBasisFunctions(DenseVector x) const
     return monomials.sparseView();
 }
 
-SparseMatrix Polynomial::evalBasisFunctionsJacobian(DenseVector x) const
+SparseMatrix Polynomial::evalBasisJacobian(DenseVector x) const
 {
     DenseMatrix jac = DenseMatrix::Zero(getNumCoefficients(), numVariables);
 

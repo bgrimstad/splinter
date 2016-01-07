@@ -128,7 +128,7 @@ size_t Serializer::get_size(const RBFNetwork &obj)
            + get_size(obj.numVariables)
            + get_size(obj.numSamples)
            + get_size(obj.type)
-           + get_size(obj.weights);
+           + get_size(obj.coefficients);
 }
 
 size_t Serializer::get_size(const Polynomial &obj)
@@ -195,7 +195,7 @@ void Serializer::_serialize(const RBFNetwork &obj)
     _serialize(obj.numVariables);
     _serialize(obj.numSamples);
     _serialize(obj.type);
-    _serialize(obj.weights);
+    _serialize(obj.coefficients);
 }
 
 void Serializer::_serialize(const Polynomial &obj)
@@ -288,7 +288,7 @@ void Serializer::deserialize(RBFNetwork &obj)
     {
         obj.fn = std::shared_ptr<RBF>(new ThinPlateSpline());
     }
-    deserialize(obj.weights);
+    deserialize(obj.coefficients);
 }
 
 void Serializer::deserialize(Polynomial &obj)
