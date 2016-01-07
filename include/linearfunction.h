@@ -48,29 +48,27 @@ public:
     /**
      * Evaluate basis functions at x
      */
-    virtual SparseVector evalBasisFunctions(DenseVector x) const = 0;
+    virtual SparseVector evalBasis(DenseVector x) const = 0;
 
     /**
      * Evaluate Jacobian of basis functions at x
      */
-    virtual SparseMatrix evalBasisFunctionsJacobian(DenseVector x) const = 0;
+    virtual SparseMatrix evalBasisJacobian(DenseVector x) const = 0;
 
-    DenseMatrix getCoefficients()
+    DenseVector getCoefficients()
     {
         return coefficients;
     }
 
-    void setCoefficients(DenseMatrix coefficients)
+    void setCoefficients(DenseVector coefficients)
     {
-        if (coefficients.cols() != 1)
-            throw Exception("LinearFunction::setCoefficients: coefficient matrix must have exactly one column.");
         this->coefficients = coefficients;
     }
 
     unsigned int getNumCoefficients() const { return coefficients.size(); }
 
 protected:
-    LinearFunction(unsigned int numVariables, DenseMatrix coefficients)
+    LinearFunction(unsigned int numVariables, DenseVector coefficients)
             : Function(numVariables),
               coefficients(coefficients)
     {}

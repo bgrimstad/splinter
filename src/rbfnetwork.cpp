@@ -11,14 +11,11 @@
 #include "rbfnetwork.h"
 #include "linearsolvers.h"
 #include "Eigen/SVD"
+#include <utilities.h>
+
 
 namespace SPLINTER
 {
-
-RBFNetwork::RBFNetwork()
-    : Function(1)
-{
-}
 
 RBFNetwork::RBFNetwork(const char *fileName)
     : RBFNetwork(std::string(fileName))
@@ -77,7 +74,7 @@ RBFNetwork::RBFNetwork(const DataTable &samples, RBFType type, bool normalized)
      * NOTE: Consider trying the Łukaszyk–Karmowski metric (for two variables)
      */
     DenseMatrix A; A.setZero(numSamples, numSamples);
-    DenseMatrix b; b.setZero(numSamples,1);
+    DenseVector b; b.setZero(numSamples);
 
     int i=0;
     for (auto it1 = samples.cbegin(); it1 != samples.cend(); ++it1, ++i)
@@ -129,18 +126,18 @@ RBFNetwork::RBFNetwork(const DataTable &samples, RBFType type, bool normalized)
     std::cout << "Largest/smallest singular value: " << svalmax << " / " << svalmin << std::endl;
     #endif // NDEBUG
 
-    // Solve for weights
-    weights = svd.solve(b);
+    // Solve for coefficients/weights
+    coefficients = svd.solve(b);
 
     #ifndef NDEBUG
     // Compute error. If it is used later on, move this statement above the NDEBUG
-    double err = (A*weights - b).norm() / b.norm();
+    double err = (A * coefficients - b).norm() / b.norm();
     std::cout << "Error: " << std::setprecision(10) << err << std::endl;
     #endif // NDEBUG
 
 //    // Alternative solver
 //    DenseQR s;
-//    bool success = s.solve(A,b,weights);
+//    bool success = s.solve(A,b,coefficients);
 //    assert(success);
 
     // NOTE: Tried using experimental GMRES solver in Eigen, but it did not work very well.
@@ -148,26 +145,46 @@ RBFNetwork::RBFNetwork(const DataTable &samples, RBFType type, bool normalized)
 
 double RBFNetwork::eval(DenseVector x) const
 {
-    std::vector<double> y;
-    for (int i=0; i<x.rows(); i++)
-        y.push_back(x(i));
-    return eval(y);
-}
-
-double RBFNetwork::eval(const std::vector<double> &x) const
-{
     if (x.size() != numVariables)
         throw Exception("RBFNetwork::eval: Wrong dimension on evaluation point x.");
+
+    auto xv = denseVectorToVector(x);
 
     double fval, sum = 0, sumw = 0;
     int i = 0;
     for (auto it = samples.cbegin(); it != samples.cend(); ++it, ++i)
     {
-        fval = fn->eval(dist(x,it->getX()));
-        sumw += weights(i)*fval;
+        fval = fn->eval(dist(xv, it->getX()));
+        sumw += coefficients(i) * fval;
         sum += fval;
     }
-    return normalized ? sumw/sum : sumw;
+
+    auto ret = sumw;
+    if (normalized) ret /= sum;
+
+//    auto basis = evalBasis(x);
+//    auto ret2 = coefficients.transpose()*basis;
+//    return ret2(0);
+
+    return ret;
+//    return normalized ? sumw/sum : sumw;
+}
+
+DenseVector RBFNetwork::evalBasis(DenseVector x) const
+{
+    if (x.size() != numVariables)
+        throw Exception("RBFNetwork::evalBasis: Wrong dimension on evaluation point x.");
+
+    auto xv = denseVectorToVector(x);
+
+    int i = 0;
+    DenseVector basis(getNumCoefficients());
+    for (auto it = samples.cbegin(); it != samples.cend(); ++it, ++i)
+        basis(i) = fn->eval(dist(xv, it->getX()));
+
+    if (normalized) basis /= basis.sum();
+
+    return basis;
 }
 
 DenseMatrix RBFNetwork::evalJacobian(DenseVector x) const
@@ -177,7 +194,7 @@ DenseMatrix RBFNetwork::evalJacobian(DenseVector x) const
         x_vec.push_back(x(i));
 
     DenseMatrix jac;
-    jac.setZero(1,numVariables);
+    jac.setZero(1, numVariables);
 
     for (unsigned int i = 0; i < numVariables; i++)
     {
@@ -201,13 +218,13 @@ DenseMatrix RBFNetwork::evalJacobian(DenseVector x) const
             double dfdr = fn->evalDerivative(r);
 
             sum += f;
-            sumw += weights(j)*f;
+            sumw += coefficients(j) * f;
 
             // TODO: check if this assumption is correct
             if (r != 0)
             {
                 sum_d += dfdr*ri/r;
-                sumw_d += weights(j)*dfdr*ri/r;
+                sumw_d += coefficients(j) * dfdr * ri / r;
             }
         }
 

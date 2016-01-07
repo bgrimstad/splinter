@@ -33,22 +33,23 @@ public:
     RBFNetwork(const DataTable &samples, RBFType type);
     RBFNetwork(const DataTable &samples, RBFType type, bool normalized);
 
-    virtual RBFNetwork * clone() const { return new RBFNetwork(*this); }
+    virtual RBFNetwork* clone() const { return new RBFNetwork(*this); }
 
     double eval(DenseVector x) const override;
-    double eval(const std::vector<double> &x) const override;
+    DenseVector evalBasis(DenseVector x) const;
+
     DenseMatrix evalJacobian(DenseVector x) const override;
     DenseMatrix evalHessian(DenseVector x) const override { DenseMatrix h(numVariables, numVariables); h.fill(0.0); return h; }; // TODO: implement
-    //    std::vector<double> getDomainUpperBound() const;
-    //    std::vector<double> getDomainLowerBound() const;
+
+    unsigned int getNumCoefficients() const {
+        return coefficients.size();
+    }
 
     void save(const std::string fileName) const override;
 
     const std::string getDescription() const override;
 
 private:
-    RBFNetwork();
-
     DataTable samples;
     bool normalized, precondition;
     unsigned int numSamples;
@@ -57,7 +58,7 @@ private:
     RBFType type;
     std::shared_ptr<RBF> fn;
 
-    DenseMatrix weights;
+    DenseVector coefficients;
 
     DenseMatrix computePreconditionMatrix() const;
 

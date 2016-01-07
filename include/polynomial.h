@@ -27,9 +27,9 @@ public:
     Polynomial(const char *fileName);
     Polynomial(const std::string fileName);
 
-    SparseVector evalBasisFunctions(DenseVector x) const override;
+    SparseVector evalBasis(DenseVector x) const override;
 
-    SparseMatrix evalBasisFunctionsJacobian(DenseVector x) const override;
+    SparseMatrix evalBasisJacobian(DenseVector x) const override;
 
     void save(const std::string fileName) const override;
 
