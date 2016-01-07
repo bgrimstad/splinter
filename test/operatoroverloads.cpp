@@ -11,17 +11,66 @@
 #include <testingutilities.h>
 
 
+/*
+ * Overload of operators where an Eigen type is one or more of the arguments.
+ * Must be defined in the Eigen namespace for Clang to find the overloads.
+ */
 namespace Eigen
 {
-    bool operator==(const SparseMatrix<double> &lhs, const SparseMatrix<double> &rhs)
+
+bool operator==(const SPLINTER::SparseMatrix &lhs, const SPLINTER::SparseMatrix &rhs)
+{
+    return SPLINTER::DenseMatrix(lhs) == SPLINTER::DenseMatrix(rhs);
+}
+
+bool operator==(const SPLINTER::SparseVector &lhs, const SPLINTER::SparseVector &rhs)
+{
+    return SPLINTER::DenseVector(lhs) == SPLINTER::DenseVector(rhs);
+}
+
+bool operator==(const SPLINTER::DenseVector &denseVec, const std::vector<double> &vec)
+{
+    return vec == denseVec;
+}
+
+bool operator==(const SPLINTER::DenseMatrix &denseMat, const std::vector<std::vector<double>> &vecVec)
+{
+    return vecVec == denseMat;
+}
+
+bool operator==(const std::vector<double> &vec, const SPLINTER::DenseVector &denseVec)
+{
+    if (vec.size() != denseVec.size())
+        return false;
+
+    for (size_t i = 0; i < vec.size(); ++i)
+        if (vec.at(i) != denseVec(i))
+            return false;
+
+    return true;
+}
+
+bool operator==(const std::vector<std::vector<double>> &vecVec, const SPLINTER::DenseMatrix &denseMat)
+{
+    size_t matCols = denseMat.cols();
+    if(vecVec.size() != denseMat.rows())
     {
-        return SPLINTER::DenseMatrix(lhs) == SPLINTER::DenseMatrix(rhs);
+        return false;
     }
 
-    bool operator==(const SparseVector<double> &lhs, const SparseVector<double> &rhs)
+    for (size_t i = 0; i < vecVec.size(); ++i)
     {
-        return SPLINTER::DenseVector(lhs) == SPLINTER::DenseVector(rhs);
+        if (vecVec.at(i).size() != matCols)
+            return false;
+
+        for (size_t j = 0; j < matCols; ++j)
+            if (vecVec.at(i).at(j) != denseMat(i, j))
+                return false;
     }
+
+    return true;
+}
+
 }
 
 namespace SPLINTER
@@ -104,49 +153,6 @@ bool operator==(const Polynomial &lhs, const Polynomial &rhs)
             lhs.numVariables == rhs.numVariables
             && lhs.coefficients == rhs.coefficients
             && lhs.degrees == rhs.degrees;
-}
-
-bool compareVecDenseVec(const DenseVector &denseVec, const std::vector<double> &vec)
-{
-    return compareVecDenseVec(vec, denseVec);
-}
-
-bool compareVecVecDenseMatrix(const DenseMatrix &denseMat, const std::vector<std::vector<double>> &vecVec)
-{
-    return compareVecVecDenseMatrix(vecVec, denseMat);
-}
-
-bool compareVecDenseVec(const std::vector<double> &vec, const DenseVector &denseVec)
-{
-    if (vec.size() != denseVec.size())
-        return false;
-
-    for (size_t i = 0; i < vec.size(); ++i)
-        if (vec.at(i) != denseVec(i))
-            return false;
-
-    return true;
-}
-
-bool compareVecVecDenseMatrix(const std::vector<std::vector<double>> &vecVec, const DenseMatrix &denseMat)
-{
-    size_t matCols = denseMat.cols();
-    if(vecVec.size() != denseMat.rows())
-    {
-        return false;
-    }
-
-    for (size_t i = 0; i < vecVec.size(); ++i)
-    {
-        if (vecVec.at(i).size() != matCols)
-            return false;
-
-        for (size_t j = 0; j < matCols; ++j)
-            if (vecVec.at(i).at(j) != denseMat(i, j))
-                return false;
-    }
-
-    return true;
 }
 
 /*

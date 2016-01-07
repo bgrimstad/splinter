@@ -61,7 +61,7 @@ TEST_CASE("Eigen types to standard C++ conversion", COMMON_TAGS)
 
     SECTION("Converting between standard vector and DenseVector works correctly")
     {
-        CHECK(compareVecDenseVec(originalVec, vecToDense(originalVec)));
+        CHECK(originalVec == vecToDense(originalVec));
         CHECK(originalVec == denseToVec(vecToDense(originalVec)));
         CHECK(emptyVec == denseToVec(emptyDenseVec));
         CHECK(emptyVec == denseToVec(vecToDense(emptyVec)));
@@ -69,9 +69,9 @@ TEST_CASE("Eigen types to standard C++ conversion", COMMON_TAGS)
 
     SECTION("Converting between standard vector<vector<double>> and DenseMatrix works correctly")
     {
-        CHECK(compareVecVecDenseMatrix(originalVecVec, vectorVectorToDenseMatrix(originalVecVec)));
+        CHECK(originalVecVec == vectorVectorToDenseMatrix(originalVecVec));
         CHECK(originalVecVec == denseMatrixToVectorVector(vectorVectorToDenseMatrix(originalVecVec)));
-        CHECK(compareVecVecDenseMatrix(emptyVecVec, vectorVectorToDenseMatrix(emptyVecVec)));
+        CHECK(emptyVecVec == vectorVectorToDenseMatrix(emptyVecVec));
         CHECK(emptyVecVec == denseMatrixToVectorVector(vectorVectorToDenseMatrix(emptyVecVec)));
     }
 }
