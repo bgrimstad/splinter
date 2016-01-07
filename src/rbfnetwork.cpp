@@ -39,10 +39,10 @@ RBFNetwork::RBFNetwork(const DataTable &samples, RBFType type)
 RBFNetwork::RBFNetwork(const DataTable &samples, RBFType type, bool normalized)
     : Function(samples.getNumVariables()),
       samples(samples),
-      type(type),
       normalized(normalized),
       precondition(false),
-      numSamples(samples.getNumSamples())
+      numSamples(samples.getNumSamples()),
+      type(type)
 {
     if (type == RBFType::THIN_PLATE_SPLINE)
     {
@@ -154,7 +154,7 @@ double RBFNetwork::eval(DenseVector x) const
     return eval(y);
 }
 
-double RBFNetwork::eval(std::vector<double> x) const
+double RBFNetwork::eval(const std::vector<double> &x) const
 {
     if (x.size() != numVariables)
         throw Exception("RBFNetwork::eval: Wrong dimension on evaluation point x.");

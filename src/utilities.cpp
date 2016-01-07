@@ -16,7 +16,7 @@ std::vector<double> denseVectorToVector(const DenseVector &denseVec)
 {
     std::vector<double> vec(denseVec.size());
 
-    for(size_t i = 0; i < denseVec.size(); ++i)
+    for(size_t i = 0; i < (size_t) denseVec.size(); ++i)
     {
         vec.at(i) = denseVec(i);
     }
@@ -40,9 +40,9 @@ std::vector<std::vector<double>> denseMatrixToVectorVector(const DenseMatrix &ma
 {
     std::vector<std::vector<double>> vec(mat.rows());
 
-    for(size_t i = 0; i < mat.rows(); ++i)
+    for(size_t i = 0; i < (size_t) mat.rows(); ++i)
     {
-        for(size_t j = 0; j < mat.cols(); ++j)
+        for(size_t j = 0; j < (size_t) mat.cols(); ++j)
         {
             vec.at(i).push_back(mat(i, j));
         }

@@ -528,10 +528,10 @@ namespace SPLINTER
         }
 
         // Num knots
-        unsigned int nk = ns + degree + 1;
+//        unsigned int nk = ns + degree + 1;
 
         // Check numbers
-        if (ni < 0 || ni > unique.size() - degree - 1)
+        if (ni > unique.size() - degree - 1)
             throw Exception("BSplineApproximant::knotVectorBuckets: Invalid number of internal knots!");
 
         // Compute window sizes

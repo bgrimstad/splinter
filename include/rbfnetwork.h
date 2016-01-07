@@ -35,10 +35,10 @@ public:
 
     virtual RBFNetwork * clone() const { return new RBFNetwork(*this); }
 
-    double eval(DenseVector x) const;
-    double eval(std::vector<double> x) const;
-    DenseMatrix evalJacobian(DenseVector x) const;
-    DenseMatrix evalHessian(DenseVector x) const { DenseMatrix h(numVariables, numVariables); h.fill(0.0); return h; }; // TODO: implement
+    double eval(DenseVector x) const override;
+    double eval(const std::vector<double> &x) const override;
+    DenseMatrix evalJacobian(DenseVector x) const override;
+    DenseMatrix evalHessian(DenseVector x) const override { DenseMatrix h(numVariables, numVariables); h.fill(0.0); return h; }; // TODO: implement
     //    std::vector<double> getDomainUpperBound() const;
     //    std::vector<double> getDomainLowerBound() const;
 

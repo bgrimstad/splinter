@@ -40,7 +40,7 @@ bool operator==(const SPLINTER::DenseMatrix &denseMat, const std::vector<std::ve
 
 bool operator==(const std::vector<double> &vec, const SPLINTER::DenseVector &denseVec)
 {
-    if (vec.size() != denseVec.size())
+    if (vec.size() != (unsigned long) denseVec.size())
         return false;
 
     for (size_t i = 0; i < vec.size(); ++i)
@@ -53,7 +53,7 @@ bool operator==(const std::vector<double> &vec, const SPLINTER::DenseVector &den
 bool operator==(const std::vector<std::vector<double>> &vecVec, const SPLINTER::DenseMatrix &denseMat)
 {
     size_t matCols = denseMat.cols();
-    if(vecVec.size() != denseMat.rows())
+    if(vecVec.size() != (unsigned long) denseMat.rows())
     {
         return false;
     }

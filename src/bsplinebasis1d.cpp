@@ -20,8 +20,8 @@ BSplineBasis1D::BSplineBasis1D()
 }
 
 BSplineBasis1D::BSplineBasis1D(const std::vector<double> &knots, unsigned int degree)
-    : knots(knots),
-      degree(degree),
+    : degree(degree),
+      knots(knots),
       targetNumBasisfunctions((degree+1)+2*degree+1) // Minimum p+1
 {
     if (degree <= 0)

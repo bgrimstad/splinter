@@ -16,21 +16,21 @@ namespace SPLINTER
 TestFunction::TestFunction(std::function<double (const std::vector<double> &)> f,
                            size_t numVariables,
                            std::string functionString)
-        : f(f),
-          Function(numVariables),
+        : Function(numVariables),
           functionString(functionString),
           constDegree(false),
-          constDegreeVal(std::vector<double>(numVariables, 0.0))
+          constDegreeVal(std::vector<double>(numVariables, 0.0)),
+          f(f)
 {
 }
 
 TestFunction::TestFunction(std::function<double (const std::vector<double> &)> f, size_t numVariables,
                            std::string functionString,  std::vector<double> &degrees)
-        : f(f),
-          Function(numVariables),
+        : Function(numVariables),
           functionString(functionString),
           constDegree(true),
-          constDegreeVal(degrees)
+          constDegreeVal(degrees),
+          f(f)
 {
 }
 

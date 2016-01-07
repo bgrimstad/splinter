@@ -268,7 +268,7 @@ void Serializer::_serialize(const std::multiset<T> &obj)
     }
 }
 
-    
+
 /*
  * deserialize specializations
  */
@@ -303,7 +303,7 @@ void Serializer::deserialize(std::multiset<T> &obj)
     size_t size; deserialize(size);
 
     T elem;
-    for (int i = 0; i < size; ++i)
+    for (size_t i = 0; i < size; ++i)
     {
         deserialize(elem);
         obj.insert(elem);

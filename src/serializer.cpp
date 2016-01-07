@@ -229,8 +229,8 @@ void Serializer::_serialize(const DenseMatrix &obj)
     _serialize(obj.rows());
     _serialize(obj.cols());
     // Store the matrix elements
-    for (size_t i = 0; i < obj.rows(); ++i) {
-        for (size_t j = 0; j < obj.cols(); ++j) {
+    for (size_t i = 0; i < (size_t) obj.rows(); ++i) {
+        for (size_t j = 0; j < (size_t) obj.cols(); ++j) {
             _serialize(obj(i,j));
         }
     }
@@ -241,7 +241,7 @@ void Serializer::_serialize(const DenseVector &obj)
     // Store the number of vector rows
     _serialize(obj.rows());
     // Store the vector elements
-    for (size_t i = 0; i < obj.rows(); ++i) {
+    for (size_t i = 0; i < (size_t) obj.rows(); ++i) {
         _serialize(obj(i));
     }
 }

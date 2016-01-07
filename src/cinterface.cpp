@@ -60,10 +60,10 @@ static Function *get_approximant(obj_ptr approximant_ptr)
     return nullptr;
 }
 
-static DenseVector get_densevector(double *x, int x_dim)
+static DenseVector get_densevector(double *x, size_t x_dim)
 {
     DenseVector xvec(x_dim);
-    for (int i = 0; i < x_dim; i++)
+    for (size_t i = 0; i < x_dim; i++)
     {
         xvec(i) = x[i];
     }
@@ -488,8 +488,8 @@ double *eval_row_major(obj_ptr approximant, double *x, int x_len)
     {
         try
         {
-            int num_variables = approx->getNumVariables();
-            int num_points = x_len / num_variables;
+            size_t num_variables = approx->getNumVariables();
+            size_t num_points = x_len / num_variables;
 
             retVal = (double *) malloc(sizeof(double) * num_points);
             for (size_t i = 0; i < num_points; ++i)
@@ -517,8 +517,8 @@ double *eval_jacobian_row_major(obj_ptr approximant, double *x, int x_len)
     {
         try
         {
-            int num_variables = approx->getNumVariables();
-            int num_points = x_len / num_variables;
+            size_t num_variables = approx->getNumVariables();
+            size_t num_points = x_len / num_variables;
 
             retVal = (double *) malloc(sizeof(double) * num_variables * num_points);
             for (size_t i = 0; i < num_points; ++i)
@@ -549,8 +549,8 @@ double *eval_hessian_row_major(obj_ptr approximant, double *x, int x_len)
     {
         try
         {
-            int num_variables = approx->getNumVariables();
-            int num_points = x_len / num_variables;
+            size_t num_variables = approx->getNumVariables();
+            size_t num_points = x_len / num_variables;
 
             retVal = (double *) malloc(sizeof(double) * num_variables * num_variables * num_points);
             for (size_t i = 0; i < num_points; ++i)

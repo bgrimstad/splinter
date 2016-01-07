@@ -106,7 +106,7 @@ SparseMatrix Polynomial::evalBasisFunctionsJacobian(DenseVector x) const
 
 DenseVector Polynomial::evalDifferentiatedMonomials(DenseVector x, unsigned int var) const
 {
-    if (var < 0 || var >= numVariables)
+    if (var >= numVariables)
         throw Exception("Polynomial::evalDifferentiatedMonomials: invalid variable.");
 
     std::vector<DenseVector> powers;
