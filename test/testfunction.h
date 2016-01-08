@@ -42,7 +42,7 @@ public:
 
     double getMaxDegree() const;
 
-    void save(const std::string fileName) const override {}
+    void save(const std::string &fileName) const override {}
 
 
 private:
@@ -53,7 +53,7 @@ private:
 
     std::function<double (const std::vector<double> &)> f;
 
-    void load(const std::string fileName) override {}
+    void load(const std::string &fileName) override {}
 };
 
 } // namespace SPLINTER

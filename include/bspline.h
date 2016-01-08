@@ -36,7 +36,7 @@ public:
      * Construct B-spline from file
      */
     BSpline(const char *fileName);
-    BSpline(const std::string fileName);
+    BSpline(const std::string &fileName);
 
     /**
      * Builder class for construction by regression
@@ -91,9 +91,9 @@ public:
 
     void insertKnots(double tau, unsigned int dim, unsigned int multiplicity = 1); // TODO: move back to private after testing
 
-    void save(const std::string fileName) const override;
+    void save(const std::string &fileName) const override;
 
-    const std::string getDescription() const override;
+    std::string getDescription() const override;
 
 protected:
     BSpline();
@@ -113,7 +113,7 @@ private:
     // Helper functions
     bool pointInDomain(DenseVector x) const;
 
-    void load(const std::string fileName) override;
+    void load(const std::string &fileName) override;
 
     friend class Serializer;
     friend bool operator==(const BSpline &lhs, const BSpline &rhs);

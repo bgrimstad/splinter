@@ -26,7 +26,7 @@ public:
      * Serialize and save object to fileName
      * Should throw exception if file could not be opened
      */
-    virtual void save(const std::string fileName) const = 0;
+    virtual void save(const std::string &fileName) const = 0;
 
 protected:
     /**
@@ -34,7 +34,7 @@ protected:
      * Should throw exception if file could not be opened
      * or if the file format is wrong
      */
-    virtual void load(const std::string fileName) = 0;
+    virtual void load(const std::string &fileName) = 0;
 };
 
 } // namespace SPLINTER

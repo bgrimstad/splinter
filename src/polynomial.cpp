@@ -52,7 +52,7 @@ Polynomial::Polynomial(const char *fileName)
 {
 }
 
-Polynomial::Polynomial(const std::string fileName)
+Polynomial::Polynomial(const std::string &fileName)
         : LinearFunction(1, DenseVector::Zero(1))
 {
     load(fileName);
@@ -140,20 +140,20 @@ DenseVector Polynomial::evalDifferentiatedMonomials(DenseVector x, unsigned int 
     return monomials;
 }
 
-void Polynomial::save(const std::string fileName) const
+void Polynomial::save(const std::string &fileName) const
 {
     Serializer s;
     s.serialize(*this);
     s.saveToFile(fileName);
 }
 
-void Polynomial::load(const std::string fileName)
+void Polynomial::load(const std::string &fileName)
 {
     Serializer s(fileName);
     s.deserialize(*this);
 }
 
-const std::string Polynomial::getDescription() const
+std::string Polynomial::getDescription() const
 {
     std::string description("Polynomial of degree");
 
