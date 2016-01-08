@@ -20,6 +20,8 @@ namespace SPLINTER
  * Interface for functions (linear in the coefficients):
  * f(x) = c(1)*b1(x) + c(2)*b2(x) + ... + c(n)*bn(x) = c^T * b(x),
  * where c are coefficients and b is a vector of basis functions.
+ *
+ * TODO: consider templating to differ between functions with dense and sparse bases
  */
 class SPLINTER_API LinearFunction : public Function
 {
