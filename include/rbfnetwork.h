@@ -29,7 +29,7 @@ class SPLINTER_API RBFNetwork : public LinearFunction<DenseVector, DenseMatrix>
 {
 public:
     RBFNetwork(const char *filename);
-    RBFNetwork(const std::string filename);
+    RBFNetwork(const std::string &filename);
     RBFNetwork(const DataTable &samples, RBFType type);
     RBFNetwork(const DataTable &samples, RBFType type, bool normalized);
 
@@ -45,9 +45,9 @@ public:
         return DenseMatrix::Zero(getNumCoefficients(), numVariables);
     };
 
-    void save(const std::string fileName) const override;
+    void save(const std::string &fileName) const override;
 
-    const std::string getDescription() const override;
+    std::string getDescription() const override;
 
 private:
     DataTable samples;
@@ -66,7 +66,7 @@ private:
     double dist(DataPoint x, DataPoint y) const;
     bool dist_sort(DataPoint x, DataPoint y) const;
 
-    void load(const std::string fileName) override;
+    void load(const std::string &fileName) override;
 
     friend class Serializer;
     friend bool operator==(const RBFNetwork &lhs, const RBFNetwork &rhs);

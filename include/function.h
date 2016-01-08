@@ -82,7 +82,7 @@ public:
     /**
      * Description of function.
      */
-    virtual const std::string getDescription() const
+    virtual std::string getDescription() const
     {
         return "";
     }

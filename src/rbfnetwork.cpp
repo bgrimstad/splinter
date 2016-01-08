@@ -22,7 +22,7 @@ RBFNetwork::RBFNetwork(const char *fileName)
 {
 }
 
-RBFNetwork::RBFNetwork(const std::string fileName)
+RBFNetwork::RBFNetwork(const std::string &fileName)
     : LinearFunction(1, DenseVector::Zero(1))
 {
     load(fileName);
@@ -248,20 +248,20 @@ bool RBFNetwork::dist_sort(DataPoint x, DataPoint y) const
     return (x_dist<y_dist);
 }
 
-void RBFNetwork::save(const std::string fileName) const
+void RBFNetwork::save(const std::string &fileName) const
 {
     Serializer s;
     s.serialize(*this);
     s.saveToFile(fileName);
 }
 
-void RBFNetwork::load(const std::string fileName)
+void RBFNetwork::load(const std::string &fileName)
 {
     Serializer s(fileName);
     s.deserialize(*this);
 }
 
-const std::string RBFNetwork::getDescription() const {
+std::string RBFNetwork::getDescription() const {
     std::string description("RadialBasisFunction of type ");
     switch(type) {
     case RBFType::GAUSSIAN:

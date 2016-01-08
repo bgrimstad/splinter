@@ -41,7 +41,7 @@ DataTable::DataTable(const char *fileName)
 {
 }
 
-DataTable::DataTable(const std::string fileName)
+DataTable::DataTable(const std::string &fileName)
 {
     load(fileName);
 }
@@ -136,14 +136,14 @@ void DataTable::gridCompleteGuard() const
     }
 }
 
-void DataTable::save(const std::string fileName) const
+void DataTable::save(const std::string &fileName) const
 {
     Serializer s;
     s.serialize(*this);
     s.saveToFile(fileName);
 }
 
-void DataTable::load(const std::string fileName)
+void DataTable::load(const std::string &fileName)
 {
     Serializer s(fileName);
     s.deserialize(*this);

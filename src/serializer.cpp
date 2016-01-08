@@ -26,13 +26,13 @@ Serializer::Serializer()
     stream = StreamType(0);
 }
 
-Serializer::Serializer(std::string fileName)
+Serializer::Serializer(const std::string &fileName)
 {
     stream = StreamType(0);
     loadFromFile(fileName);
 }
 
-void Serializer::saveToFile(std::string fileName)
+void Serializer::saveToFile(const std::string &fileName)
 {
     std::fstream fs(fileName, std::fstream::out | std::fstream::binary);
 
@@ -40,7 +40,7 @@ void Serializer::saveToFile(std::string fileName)
         fs << byte;
 }
 
-void Serializer::loadFromFile(std::string fileName)
+void Serializer::loadFromFile(const std::string &fileName)
 {
     // Open the file in binary mode at the end
     std::ifstream ifs(fileName, std::ios::binary | std::ios::ate);

@@ -25,15 +25,15 @@ public:
     Polynomial(const DataTable &data, std::vector<unsigned int> degrees);
     Polynomial(const DataTable &data, unsigned int degree);
     Polynomial(const char *fileName);
-    Polynomial(const std::string fileName);
+    Polynomial(const std::string &fileName);
 
     DenseVector evalBasis(DenseVector x) const override;
 
     DenseMatrix evalBasisJacobian(DenseVector x) const override;
 
-    void save(const std::string fileName) const override;
+    void save(const std::string &fileName) const override;
 
-    const std::string getDescription() const override;
+    std::string getDescription() const override;
 
 private:
     Polynomial();
@@ -44,7 +44,7 @@ private:
 
     unsigned int computeNumBasisFunctions(std::vector<unsigned int> degrees) const;
 
-    void load(const std::string fileName) override;
+    void load(const std::string &fileName) override;
 
     friend class Serializer;
     friend bool operator==(const Polynomial &lhs, const Polynomial &rhs);

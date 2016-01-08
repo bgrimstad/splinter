@@ -63,7 +63,7 @@ BSpline::BSpline(const char *fileName)
 {
 }
 
-BSpline::BSpline(const std::string fileName)
+BSpline::BSpline(const std::string &fileName)
     : Function(1)
 {
     load(fileName);
@@ -403,20 +403,20 @@ bool BSpline::removeUnsupportedBasisFunctions(std::vector<double> &lb, std::vect
     return true;
 }
 
-void BSpline::save(const std::string fileName) const
+void BSpline::save(const std::string &fileName) const
 {
     Serializer s;
     s.serialize(*this);
     s.saveToFile(fileName);
 }
 
-void BSpline::load(const std::string fileName)
+void BSpline::load(const std::string &fileName)
 {
     Serializer s(fileName);
     s.deserialize(*this);
 }
 
-const std::string BSpline::getDescription() const
+std::string BSpline::getDescription() const
 {
     std::string description("BSpline of degree");
     auto degrees = getBasisDegrees();

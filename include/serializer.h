@@ -39,7 +39,7 @@ class Serializer
 {
 public:
     Serializer();
-    Serializer(std::string fileName);
+    Serializer(const std::string &fileName);
 
     virtual ~Serializer() {}
 
@@ -73,10 +73,10 @@ public:
     void deserialize(Polynomial &obj);
 
     // Save the serialized stream to fileName
-    void saveToFile(std::string fileName);
+    void saveToFile(const std::string &fileName);
 
     // Load fileName into the internal stream
-    void loadFromFile(std::string fileName);
+    void loadFromFile(const std::string &fileName);
 
     template <class T>
     static size_t get_size(const T &obj);
