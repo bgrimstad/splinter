@@ -16,7 +16,7 @@
 namespace SPLINTER
 {
 
-class SPLINTER_API Polynomial : public LinearFunction
+class SPLINTER_API Polynomial : public LinearFunction<DenseVector, DenseMatrix>
 {
 public:
     Polynomial(unsigned int numVariables, unsigned int degree);
@@ -27,9 +27,9 @@ public:
     Polynomial(const char *fileName);
     Polynomial(const std::string fileName);
 
-    SparseVector evalBasis(DenseVector x) const override;
+    DenseVector evalBasis(DenseVector x) const override;
 
-    SparseMatrix evalBasisJacobian(DenseVector x) const override;
+    DenseMatrix evalBasisJacobian(DenseVector x) const override;
 
     void save(const std::string fileName) const override;
 

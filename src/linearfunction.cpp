@@ -12,17 +12,19 @@
 namespace SPLINTER
 {
 
-double LinearFunction::eval(DenseVector x) const
-{
-    auto basis = evalBasis(x);
-    DenseVector res = coefficients.transpose()*basis;
-    return res(0);
-}
-
-DenseMatrix LinearFunction::evalJacobian(DenseVector x) const
-{
-    auto basisJacobian = evalBasisJacobian(x);
-    return coefficients.transpose()*basisJacobian;
-}
+//double LinearFunction::eval(DenseVector x) const
+//{
+//    if (x.size() != numVariables)
+//        throw Exception("LinearFunction::eval: Wrong dimension on evaluation point x.");
+//    auto res = coefficients.transpose()*evalBasis(x);
+//    return res(0);
+//}
+//
+//DenseMatrix LinearFunction::evalJacobian(DenseVector x) const
+//{
+//    if (x.size() != numVariables)
+//        throw Exception("LinearFunction::eval: Wrong dimension on evaluation point x.");
+//    return coefficients.transpose()*evalBasisJacobian(x);
+//}
 
 } // namespace SPLINTER

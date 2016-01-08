@@ -12,7 +12,7 @@
 
 #include "definitions.h"
 #include "datatable.h"
-#include "function.h"
+#include "linearfunction.h"
 #include "rbf.h"
 #include "memory"
 
@@ -25,7 +25,7 @@ namespace SPLINTER
  * the solution of a fairly ill-conditioned linear system. This drawback may be
  * alleviated by applying a pre-conditioner to the linear system.
  */
-class SPLINTER_API RBFNetwork : public Function
+class SPLINTER_API RBFNetwork : public LinearFunction<DenseVector, DenseMatrix>
 {
 public:
     RBFNetwork(const char *filename);
@@ -35,15 +35,15 @@ public:
 
     virtual RBFNetwork* clone() const { return new RBFNetwork(*this); }
 
-    double eval(DenseVector x) const override;
-    DenseVector evalBasis(DenseVector x) const;
-
+    // Currently overriding since evalBasisJacobian is not implemented
     DenseMatrix evalJacobian(DenseVector x) const override;
-    DenseMatrix evalHessian(DenseVector x) const override { DenseMatrix h(numVariables, numVariables); h.fill(0.0); return h; }; // TODO: implement
 
-    unsigned int getNumCoefficients() const {
-        return coefficients.size();
-    }
+    // Should return dense types
+    DenseVector evalBasis(DenseVector x) const override;
+    DenseMatrix evalBasisJacobian(DenseVector x) const override {
+        // TODO: implement
+        return DenseMatrix::Zero(getNumCoefficients(), numVariables);
+    };
 
     void save(const std::string fileName) const override;
 
@@ -58,7 +58,7 @@ private:
     RBFType type;
     std::shared_ptr<RBF> fn;
 
-    DenseVector coefficients;
+    //DenseVector coefficients;
 
     DenseMatrix computePreconditionMatrix() const;
 

@@ -158,24 +158,10 @@ DenseMatrix Function::centralDifference(DenseVector x) const
     for (unsigned int i = 0; i < getNumVariables(); ++i)
     {
         DenseVector xForward(x);
-//        if (xForward(i) + hForward > variables.at(i)->getUpperBound())
-//        {
-//            hForward = 0;
-//        }
-//        else
-//        {
         xForward(i) = xForward(i) + hForward;
-//        }
 
         DenseVector xBackward(x);
-//        if (xBackward(i) - hBackward < variables.at(i)->getLowerBound())
-//        {
-//            hBackward = 0;
-//        }
-//        else
-//        {
         xBackward(i) = xBackward(i) - hBackward;
-//        }
 
         double yForward = eval(xForward);
         double yBackward = eval(xBackward);

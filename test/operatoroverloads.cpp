@@ -140,10 +140,11 @@ bool operator==(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs)
 bool operator==(const RBFNetwork &lhs, const RBFNetwork &rhs)
 {
     return
-            lhs.samples == rhs.samples
+            lhs.type == rhs.type
+            && lhs.coefficients == rhs.coefficients
+            && lhs.samples == rhs.samples
             && lhs.normalized == rhs.normalized
             && lhs.precondition == rhs.precondition
-            && lhs.numSamples == rhs.numSamples
             && lhs.getNumVariables() == rhs.getNumVariables();
 }
 

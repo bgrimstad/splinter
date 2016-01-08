@@ -23,7 +23,7 @@ RBFNetwork::RBFNetwork(const char *fileName)
 }
 
 RBFNetwork::RBFNetwork(const std::string fileName)
-    : Function(1)
+    : LinearFunction(1, DenseVector::Zero(1))
 {
     load(fileName);
 }
@@ -34,11 +34,10 @@ RBFNetwork::RBFNetwork(const DataTable &samples, RBFType type)
 }
 
 RBFNetwork::RBFNetwork(const DataTable &samples, RBFType type, bool normalized)
-    : Function(samples.getNumVariables()),
+    : LinearFunction(samples.getNumVariables(), DenseVector::Zero(samples.getNumSamples())),
       samples(samples),
       normalized(normalized),
       precondition(false),
-      numSamples(samples.getNumSamples()),
       type(type)
 {
     if (type == RBFType::THIN_PLATE_SPLINE)
@@ -73,6 +72,7 @@ RBFNetwork::RBFNetwork(const DataTable &samples, RBFType type, bool normalized)
      * with preconditioning (e.g. ACBF) as in Matlab.
      * NOTE: Consider trying the Łukaszyk–Karmowski metric (for two variables)
      */
+    unsigned int numSamples = samples.getNumSamples();
     DenseMatrix A; A.setZero(numSamples, numSamples);
     DenseVector b; b.setZero(numSamples);
 
@@ -141,33 +141,6 @@ RBFNetwork::RBFNetwork(const DataTable &samples, RBFType type, bool normalized)
 //    assert(success);
 
     // NOTE: Tried using experimental GMRES solver in Eigen, but it did not work very well.
-}
-
-double RBFNetwork::eval(DenseVector x) const
-{
-    if (x.size() != numVariables)
-        throw Exception("RBFNetwork::eval: Wrong dimension on evaluation point x.");
-
-    auto xv = denseVectorToVector(x);
-
-    double fval, sum = 0, sumw = 0;
-    int i = 0;
-    for (auto it = samples.cbegin(); it != samples.cend(); ++it, ++i)
-    {
-        fval = fn->eval(dist(xv, it->getX()));
-        sumw += coefficients(i) * fval;
-        sum += fval;
-    }
-
-    auto ret = sumw;
-    if (normalized) ret /= sum;
-
-//    auto basis = evalBasis(x);
-//    auto ret2 = coefficients.transpose()*basis;
-//    return ret2(0);
-
-    return ret;
-//    return normalized ? sumw/sum : sumw;
 }
 
 DenseVector RBFNetwork::evalBasis(DenseVector x) const
@@ -242,7 +215,7 @@ DenseMatrix RBFNetwork::evalJacobian(DenseVector x) const
  */
 DenseMatrix RBFNetwork::computePreconditionMatrix() const
 {
-    return DenseMatrix::Zero(numSamples, numSamples);
+    return DenseMatrix::Zero(samples.getNumSamples(), samples.getNumSamples());
 }
 
 /*

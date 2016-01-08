@@ -20,9 +20,8 @@ namespace SPLINTER
  * Interface for functions (linear in the coefficients):
  * f(x) = c(1)*b1(x) + c(2)*b2(x) + ... + c(n)*bn(x) = c^T * b(x),
  * where c are coefficients and b is a vector of basis functions.
- *
- * TODO: consider templating to differ between functions with dense and sparse bases
  */
+template <class Vec, class Mat>
 class SPLINTER_API LinearFunction : public Function
 {
 public:
@@ -31,12 +30,23 @@ public:
     /**
      * Returns the function value at x
      */
-    double eval(DenseVector x) const override;
+    double eval(DenseVector x) const override
+    {
+        if (x.size() != numVariables)
+            throw Exception("LinearFunction::eval: Wrong dimension on evaluation point x.");
+        auto res = coefficients.transpose()*evalBasis(x);
+        return res(0);
+    }
 
     /**
      * Returns the (1 x numVariables) Jacobian evaluated at x
      */
-    DenseMatrix evalJacobian(DenseVector x) const override;
+    DenseMatrix evalJacobian(DenseVector x) const override
+    {
+        if (x.size() != numVariables)
+            throw Exception("LinearFunction::eval: Wrong dimension on evaluation point x.");
+        return coefficients.transpose()*evalBasisJacobian(x);
+    }
 
     /**
      * Returns the (numVariables x numVariables) Hessian evaluated at x
@@ -50,12 +60,12 @@ public:
     /**
      * Evaluate basis functions at x
      */
-    virtual SparseVector evalBasis(DenseVector x) const = 0;
+    virtual Vec evalBasis(DenseVector x) const = 0;
 
     /**
      * Evaluate Jacobian of basis functions at x
      */
-    virtual SparseMatrix evalBasisJacobian(DenseVector x) const = 0;
+    virtual Mat evalBasisJacobian(DenseVector x) const = 0;
 
     DenseVector getCoefficients()
     {
@@ -67,7 +77,9 @@ public:
         this->coefficients = coefficients;
     }
 
-    unsigned int getNumCoefficients() const { return coefficients.size(); }
+    unsigned int getNumCoefficients() const {
+        return coefficients.size();
+    }
 
 protected:
     LinearFunction(unsigned int numVariables, DenseVector coefficients)
@@ -78,8 +90,10 @@ protected:
     DenseVector coefficients;
 
     friend class Serializer;
-    friend bool operator==(const LinearFunction &lhs, const LinearFunction &rhs);
+
+//    friend bool operator== <>(const LinearFunction<Vec, Mat> &lhs, const LinearFunction<Vec, Mat> &rhs);
 };
+
 
 } // namespace SPLINTER
 

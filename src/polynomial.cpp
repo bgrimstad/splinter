@@ -22,13 +22,13 @@ Polynomial::Polynomial(unsigned int numVariables, unsigned int degree)
 
 // Initialize coefficients to zero
 Polynomial::Polynomial(std::vector<unsigned int> degrees)
-    : LinearFunction(degrees.size(), DenseVector::Zero(computeNumBasisFunctions(degrees))),
+    : LinearFunction<DenseVector, DenseMatrix>(degrees.size(), DenseVector::Zero(computeNumBasisFunctions(degrees))),
       degrees(degrees)
 {
 }
 
 Polynomial::Polynomial(std::vector<unsigned int> degrees, DenseVector coefficients)
-    : LinearFunction(degrees.size(), coefficients),
+    : LinearFunction<DenseVector, DenseMatrix>(degrees.size(), coefficients),
       degrees(degrees)
 {
 }
@@ -70,7 +70,7 @@ unsigned int Polynomial::computeNumBasisFunctions(std::vector<unsigned int> degr
 /**
  * Evaluate monomials
  */
-SparseVector Polynomial::evalBasis(DenseVector x) const
+DenseVector Polynomial::evalBasis(DenseVector x) const
 {
     std::vector<DenseVector> powers;
 
@@ -87,21 +87,19 @@ SparseVector Polynomial::evalBasis(DenseVector x) const
     DenseVector monomials = kroneckerProductVectors(powers);
 
     if (monomials.rows() != getNumCoefficients())
-    {
         throw Exception("Polynomial::evalMonomials: monomials.rows() != numCoefficients.");
-    }
 
-    return monomials.sparseView();
+    return monomials;
 }
 
-SparseMatrix Polynomial::evalBasisJacobian(DenseVector x) const
+DenseMatrix Polynomial::evalBasisJacobian(DenseVector x) const
 {
     DenseMatrix jac = DenseMatrix::Zero(getNumCoefficients(), numVariables);
 
     for (unsigned int var = 0; var < numVariables; ++var)
         jac.block(0,var,getNumCoefficients(),1) = evalDifferentiatedMonomials(x, var);
 
-    return jac.sparseView();
+    return jac;
 }
 
 DenseVector Polynomial::evalDifferentiatedMonomials(DenseVector x, unsigned int var) const

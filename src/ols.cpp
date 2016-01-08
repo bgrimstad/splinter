@@ -7,86 +7,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include "ols.h"
-#include <linearsolvers.h>
-#include <utilities.h>
+//#include "ols.h"
+//#include <linearsolvers.h>
+//#include <utilities.h>
 
 namespace SPLINTER
 {
-
-DenseVector computeCoefficients(const LinearFunction &func, const DataTable &sample)
-{
-    // Left hand side
-    DenseMatrix X = computeDesignMatrix(func, sample);
-
-    // Right-hand side
-    auto y = vectorToDenseVector(sample.getVectorY());
-
-    // Coefficients
-    DenseVector c;
-
-    // Solve for coefficients
-    DenseQR<> s;
-    if (!s.solve(X, y, c))
-        throw Exception("computeCoefficients: Failed to solve for coefficients.");
-
-    return c;
-}
-
-DenseMatrix computeDesignMatrix(const LinearFunction &func, const DataTable &sample)
-{
-    DenseMatrix X = DenseMatrix::Zero(sample.getNumSamples(), func.getNumCoefficients());
-
-    unsigned int i = 0;
-    for (auto it = sample.cbegin(); it != sample.cend(); ++it, ++i)
-    {
-        // Evaluate basis functions at x
-        DenseVector x = vectorToDenseVector(it->getX());
-        DenseVector Xi(func.evalBasis(x));
-
-        if (Xi.rows() != func.getNumCoefficients())
-            throw Exception("computeDesignMatrix: Xi.rows() != numCoefficients.");
-
-        // Add row to design matrix X
-        X.block(i,0,1,func.getNumCoefficients()) = Xi.transpose();
-    }
-
-    return X;
-}
-
-SparseMatrix computeDesignMatrixSparse(const LinearFunction &func, const DataTable &sample)
-{
-    unsigned int numVariables = sample.getNumVariables();
-    unsigned int numSamples = sample.getNumSamples();
-    unsigned int numCoefficients = func.getNumCoefficients(); // Must equal number of basis functions
-
-    // TODO: Reserve nnz per row (degree+1)
-    //int nnzPrCol = bspline.basis.supportedPrInterval();
-
-    SparseMatrix A(numSamples, numCoefficients);
-    //A.reserve(DenseVector::Constant(numSamples, nnzPrCol)); // TODO: should reserve nnz per row!
-
-    int i = 0;
-    for (auto it = sample.cbegin(); it != sample.cend(); ++it, ++i)
-    {
-        DenseVector xi(numVariables);
-        std::vector<double> xv = it->getX();
-        for (unsigned int j = 0; j < numVariables; ++j)
-        {
-            xi(j) = xv.at(j);
-        }
-
-        SparseVector basisValues = func.evalBasis(xi);
-
-        for (SparseVector::InnerIterator it2(basisValues); it2; ++it2)
-        {
-            A.insert(i,it2.index()) = it2.value();
-        }
-    }
-
-    A.makeCompressed();
-
-    return A;
-}
 
 } // namespace SPLINTER
