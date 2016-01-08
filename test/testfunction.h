@@ -32,7 +32,7 @@ public:
      * to be hidden. Doing this avoids that "problem" (it is actually a feature).
      */
     using Function::eval;
-    double eval(const std::vector<double> &x) const override;
+    double eval(DenseVector x) const override;
 
     inline std::string getFunctionStr() const { return functionString; }
 

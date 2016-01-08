@@ -8,6 +8,7 @@
 */
 
 #include <testfunction.h>
+#include <utilities.h>
 #include <cmath> // std::ceil
 
 namespace SPLINTER
@@ -38,9 +39,9 @@ TestFunction::~TestFunction()
 {
 }
 
-double TestFunction::eval(const std::vector<double> &x) const
+double TestFunction::eval(DenseVector x) const
 {
-    return f(x);
+    return f(denseVectorToVector(x));
 }
 
 std::vector<unsigned int> TestFunction::getConstDegreeInt() const
