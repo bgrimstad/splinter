@@ -52,7 +52,6 @@ public:
 private:
     DataTable samples;
     bool normalized, precondition;
-    unsigned int numSamples;
 
     // Store the type so we can reconstruct the object when deserializing
     RBFType type;
