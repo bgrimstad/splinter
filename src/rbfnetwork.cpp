@@ -145,8 +145,7 @@ RBFNetwork::RBFNetwork(const DataTable &samples, RBFType type, bool normalized)
 
 DenseVector RBFNetwork::evalBasis(DenseVector x) const
 {
-    if (x.size() != numVariables)
-        throw Exception("RBFNetwork::evalBasis: Wrong dimension on evaluation point x.");
+    checkInput(x);
 
     auto xv = denseVectorToVector(x);
 
@@ -162,6 +161,8 @@ DenseVector RBFNetwork::evalBasis(DenseVector x) const
 
 DenseMatrix RBFNetwork::evalJacobian(DenseVector x) const
 {
+    checkInput(x);
+
     auto x_vec = denseVectorToVector(x);
 
     DenseMatrix jac = DenseMatrix::Zero(1, numVariables);

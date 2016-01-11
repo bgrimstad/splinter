@@ -72,6 +72,14 @@ public:
     }
 
     /**
+     * Check input
+     */
+    void checkInput(DenseVector x) const {
+        if (x.size() != numVariables)
+            throw Exception("Function::checkInput: Wrong dimension on evaluation point x.");
+    }
+
+    /**
      * Returns the central difference at x
      * Vector of numVariables length
      */

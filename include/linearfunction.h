@@ -32,8 +32,7 @@ public:
      */
     double eval(DenseVector x) const override
     {
-        if (x.size() != numVariables)
-            throw Exception("LinearFunction::eval: Wrong dimension on evaluation point x.");
+        checkInput(x);
         auto res = coefficients.transpose()*evalBasis(x);
         return res(0);
     }
@@ -43,8 +42,7 @@ public:
      */
     DenseMatrix evalJacobian(DenseVector x) const override
     {
-        if (x.size() != numVariables)
-            throw Exception("LinearFunction::eval: Wrong dimension on evaluation point x.");
+        checkInput(x);
         return coefficients.transpose()*evalBasisJacobian(x);
     }
 
