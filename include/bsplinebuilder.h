@@ -53,21 +53,25 @@ namespace SPLINTER
             return *this;
         }
 
-        Builder& degree(unsigned int numVariables, Degree degree)
+        Builder& degree(std::vector<unsigned int> degrees)
         {
-            _degrees = getBSplineDegrees(numVariables, degree);
+            if (degrees.size() != _data.getNumVariables())
+                throw Exception("BSpline::Builder: Inconsistent length on degree vector.");
+            _degrees = degrees;
             return *this;
         }
 
-        Builder& numKnots(unsigned int numVariables, unsigned int numKnots)
+        Builder& numBasisFunctions(unsigned int numBasisFunctions)
         {
-            _numKnots = std::vector<unsigned int>(numVariables, numKnots);
+            _numBasisFunctions = std::vector<unsigned int>(_data.getNumVariables(), numBasisFunctions);
             return *this;
         }
 
-        Builder& numKnots(std::vector<unsigned int> numKnots)
+        Builder& numBasisFunctions(std::vector<unsigned int> numBasisFunctions)
         {
-            _numKnots = numKnots;
+            if (numBasisFunctions.size() != _data.getNumVariables())
+                throw Exception("BSpline::Builder: Inconsistent length on numBasisFunctions vector.");
+            _numBasisFunctions = numBasisFunctions;
             return *this;
         }
 
@@ -138,7 +142,7 @@ namespace SPLINTER
         // Member variables
         DataTable _data;
         std::vector<unsigned int> _degrees;
-        std::vector<unsigned int> _numKnots;
+        std::vector<unsigned int> _numBasisFunctions;
         KnotSpacing _knotSpacing;
         Smoothing _smoothing;
         double _lambda;
