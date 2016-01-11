@@ -7,11 +7,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include "rbfnetwork.h"
 #include <serializer.h>
-#include <utilities.h>
+#include "rbfnetwork.h"
 #include "linearsolvers.h"
 #include "Eigen/SVD"
+#include <utilities.h>
 
 
 namespace SPLINTER
@@ -22,8 +22,13 @@ RBFNetwork::RBFNetwork(const char *fileName)
 {
 }
 
-RBFNetwork::RBFNetwork(const std::string &fileName)
+<<<<<<< HEAD
+RBFNetwork::RBFNetwork(const std::string fileName)
     : LinearFunction(1, DenseVector::Zero(1))
+=======
+RBFNetwork::RBFNetwork(const std::string &fileName)
+    : Function(1)
+>>>>>>> 8cff7f3d0d959a8cba99d66fe4fa5909f8fa702c
 {
     load(fileName);
 }
@@ -162,9 +167,12 @@ DenseVector RBFNetwork::evalBasis(DenseVector x) const
 
 DenseMatrix RBFNetwork::evalJacobian(DenseVector x) const
 {
-    auto x_vec = denseVectorToVector(x);
+    std::vector<double> x_vec;
+    for (unsigned int i = 0; i<x.size(); i++)
+        x_vec.push_back(x(i));
 
-    DenseMatrix jac = DenseMatrix::Zero(1, numVariables);
+    DenseMatrix jac;
+    jac.setZero(1, numVariables);
 
     for (unsigned int i = 0; i < numVariables; i++)
     {
@@ -213,6 +221,36 @@ DenseMatrix RBFNetwork::evalJacobian(DenseVector x) const
 DenseMatrix RBFNetwork::computePreconditionMatrix() const
 {
     return DenseMatrix::Zero(samples.getNumSamples(), samples.getNumSamples());
+}
+
+/*
+ * Computes Euclidean distance ||x-y||
+ */
+double RBFNetwork::dist(std::vector<double> x, std::vector<double> y) const
+{
+    if (x.size() != y.size())
+        throw Exception("RBFNetwork::dist: Cannot measure distance between two points of different dimension");
+    double sum = 0.0;
+    for (unsigned int i=0; i<x.size(); i++)
+        sum += (x.at(i)-y.at(i))*(x.at(i)-y.at(i));
+    return std::sqrt(sum);
+}
+
+/*
+ * Computes Euclidean distance ||x-y||
+ */
+double RBFNetwork::dist(DataPoint x, DataPoint y) const
+{
+    return dist(x.getX(), y.getX());
+}
+
+bool RBFNetwork::dist_sort(DataPoint x, DataPoint y) const
+{
+    std::vector<double> zeros(x.getDimX(), 0);
+    DataPoint origin(zeros, 0.0);
+    double x_dist = dist(x, origin);
+    double y_dist = dist(y, origin);
+    return (x_dist<y_dist);
 }
 
 void RBFNetwork::save(const std::string &fileName) const

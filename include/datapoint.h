@@ -43,6 +43,11 @@ private:
     friend class Serializer;
 };
 
+// Measure distance between two points
+double dist(const std::vector<double> x, const std::vector<double> y);
+double dist(const DataPoint x, const DataPoint y);
+bool dist_sort(const DataPoint x, const DataPoint y);
+
 } // namespace SPLINTER
 
 #endif // SPLINTER_DATAPOINT_H

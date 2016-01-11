@@ -60,4 +60,34 @@ bool DataPoint::operator<(const DataPoint &rhs) const
     return false;
 }
 
+/*
+* Computes Euclidean distance ||x-y||
+*/
+double dist(const std::vector<double> x, const std::vector<double> y)
+{
+    if (x.size() != y.size())
+        throw Exception("RBFNetwork::dist: Cannot measure distance between two points of different dimension");
+    double sum = 0.0;
+    for (unsigned int i=0; i<x.size(); i++)
+        sum += (x.at(i)-y.at(i))*(x.at(i)-y.at(i));
+    return std::sqrt(sum);
+}
+
+/*
+* Computes Euclidean distance ||x-y||
+*/
+double dist(const DataPoint x, const DataPoint y)
+{
+    return dist(x.getX(), y.getX());
+}
+
+bool dist_sort(const DataPoint x, const DataPoint y)
+{
+    std::vector<double> zeros(x.getDimX(), 0);
+    DataPoint origin(zeros, 0.0);
+    double x_dist = dist(x, origin);
+    double y_dist = dist(y, origin);
+    return (x_dist<y_dist);
+}
+
 } // namespace SPLINTER
