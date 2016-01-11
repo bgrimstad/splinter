@@ -92,12 +92,6 @@ def __init():
     _getHandle().polynomial_regression_init.restype = handle_type
     _getHandle().polynomial_regression_init.argtypes = [handle_type, c_int_p, c_int]
 
-    _getHandle().pspline_load_init.restype = handle_type
-    _getHandle().pspline_load_init.argtypes = [c_char_p]
-
-    _getHandle().pspline_init.restype = handle_type
-    _getHandle().pspline_init.argtypes = [handle_type, c_double]
-
     _getHandle().function_get_num_variables.restype = c_int
     _getHandle().function_get_num_variables.argtypes = [handle_type]
 
