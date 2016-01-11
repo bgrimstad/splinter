@@ -15,16 +15,17 @@ sys.path.append(path.dirname(path.dirname(path.dirname(path.abspath(__file__))))
 import splinter
 
 # Must be done if splinter was unable to locate the shared library by itself
-splinter.load("/home/anders/SPLINTER/build/release/libsplinter-matlab-1-4.so")
+splinter.load("/home/anders/SPLINTER/build/debug/libsplinter-2-0.so")
+
 
 def f(x):
-	return x[0]*x[1]
+    return x[0]*x[1]
 
 # Create a DataTable and populate it with samples
 d = splinter.DataTable()
 for i in range(10):
-	for j in range(10):
-		d.addSample([i,j], f([i,j]))
+    for j in range(10):
+        d.addSample([i,j], f([i,j]))
 
 # Create a PolynomialRegression of degree 1 in all dimensions
 # You can also specify the degree of all dimensions by providing a list of numbers

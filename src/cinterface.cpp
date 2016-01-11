@@ -46,16 +46,28 @@ static DataTable *get_datatable(obj_ptr datatable_ptr)
     return nullptr;
 }
 
-/* Cast the obj_ptr to an Function * */
-static Function *get_approximant(obj_ptr approximant_ptr)
+/* Cast the obj_ptr to a Function * */
+static Function *get_function(obj_ptr function_ptr)
 {
-    if (objects.count(approximant_ptr) > 0)
+    if (objects.count(function_ptr) > 0)
     {
-        // NOTE: get_approximant now returns Function*
-        return (Function *) approximant_ptr;
+        // NOTE: get_function now returns Function*
+        return (Function *) function_ptr;
     }
 
-    set_error_string("Invalid reference to Approximant: Maybe it has been deleted?");
+    set_error_string("Invalid reference to Function: Maybe it has been deleted?");
+
+    return nullptr;
+}
+
+static BSpline::Builder *get_bspline_builder(obj_ptr bspline_builder_ptr)
+{
+    if (objects.count(bspline_builder_ptr) > 0)
+    {
+        return (BSpline::Builder *) bspline_builder_ptr;
+    }
+
+    set_error_string("Invalid reference to BSpline::Builder: Maybe it has been deleted?");
 
     return nullptr;
 }
@@ -264,53 +276,6 @@ void datatable_delete(obj_ptr datatable_ptr)
     }
 }
 
-/* BSpline constructor */
-obj_ptr bspline_init(obj_ptr datatable_ptr, int degree)
-{
-    obj_ptr bspline = nullptr;
-
-    auto table = get_datatable(datatable_ptr);
-    if (table != nullptr)
-    {
-        BSpline::Degree bsplineDegree;
-        switch (degree) {
-            case 1: {
-                bsplineDegree = BSpline::Degree::LINEAR;
-                break;
-            }
-            case 2: {
-                bsplineDegree = BSpline::Degree::QUADRATIC;
-                break;
-            }
-            case 3: {
-                bsplineDegree = BSpline::Degree::CUBIC;
-                break;
-            }
-            case 4: {
-                bsplineDegree = BSpline::Degree::QUARTIC;
-                break;
-            }
-            default: {
-                set_error_string("Invalid BSplineType!");
-                return nullptr;
-            }
-        }
-
-        try
-        {
-            BSpline bs = BSpline::Builder(*table).degree(bsplineDegree).build();
-            bspline = (obj_ptr) new BSpline(bs);
-            objects.insert(bspline);
-        }
-        catch(const Exception &e)
-        {
-            set_error_string(e.what());
-        }
-    }
-
-    return bspline;
-}
-
 obj_ptr bspline_load_init(const char *filename)
 {
     obj_ptr bspline = nullptr;
@@ -326,47 +291,6 @@ obj_ptr bspline_load_init(const char *filename)
     }
 
     return bspline;
-}
-
-/* PSpline constructor */
-obj_ptr pspline_init(obj_ptr datatable_ptr, double lambda)
-{
-    obj_ptr pspline = nullptr;
-
-    auto table = get_datatable(datatable_ptr);
-    if (table != nullptr)
-    {
-        try
-        {
-            BSpline bs = BSpline::Builder(*table).smoothing(BSpline::Smoothing::PSPLINE).lambda(lambda).build();
-            pspline = (obj_ptr) new BSpline(bs);
-            objects.insert(pspline);
-        }
-        catch(const Exception &e)
-        {
-            set_error_string(e.what());
-        }
-    }
-
-    return pspline;
-}
-
-obj_ptr pspline_load_init(const char *filename)
-{
-    obj_ptr pspline = nullptr;
-
-    try
-    {
-        // TODO: this code is equivalent to that in bspline_load_init() and can be removed
-        pspline = (obj_ptr) new BSpline(filename);
-        objects.insert(pspline);
-    }
-    catch(const Exception &e)
-    {
-        set_error_string(e.what());
-    }
-
-    return pspline;
 }
 
 /* RadialBasisFunction constructor */
@@ -478,24 +402,138 @@ obj_ptr polynomial_regression_load_init(const char *filename)
     return polyfit;
 }
 
+obj_ptr bsplinebuilder_init(obj_ptr datatable_ptr)
+{
+    obj_ptr bspline_builder_ptr = nullptr;
 
-double *eval_row_major(obj_ptr approximant, double *x, int x_len)
+    try
+    {
+        DataTable *dataTable = get_datatable(datatable_ptr);
+        bspline_builder_ptr = new BSpline::Builder(*dataTable);
+        objects.insert(bspline_builder_ptr);
+    }
+    catch (const Exception &e)
+    {
+        set_error_string(e.what());
+    }
+
+    return bspline_builder_ptr;
+}
+
+void bsplinebuilder_set_degree(obj_ptr bsplinebuilder_ptr, int *degrees, int n)
+{
+    BSpline::Builder *builder = get_bspline_builder(bsplinebuilder_ptr);
+    if(builder != nullptr)
+    {
+        std::vector<unsigned int> _degrees((unsigned int) n);
+        for (int i = 0; i < n; ++i)
+        {
+            _degrees.at(i) = (unsigned int) degrees[i];
+        }
+        builder->degree(_degrees);
+    }
+}
+
+void bsplinebuilder_set_num_basis_functions(obj_ptr bsplinebuilder_ptr, int *num_basis_functions, int n)
+{
+    BSpline::Builder *builder = get_bspline_builder(bsplinebuilder_ptr);
+    if(builder != nullptr)
+    {
+        std::vector<unsigned int> _num_basis_functions((unsigned int) n);
+        for (int i = 0; i < n; ++i)
+        {
+            _num_basis_functions.at(i) = (unsigned int) num_basis_functions[i];
+        }
+        builder->numBasisFunctions(_num_basis_functions);
+    }
+}
+
+void bsplinebuilder_set_knot_spacing(obj_ptr bsplinebuilder_ptr, int knot_spacing)
+{
+    BSpline::Builder *builder = get_bspline_builder(bsplinebuilder_ptr);
+    if(builder != nullptr)
+    {
+        switch (knot_spacing)
+        {
+            case 0:
+                builder->knotSpacing(BSpline::KnotSpacing::SAMPLE);
+                break;
+            case 1:
+                builder->knotSpacing(BSpline::KnotSpacing::EQUIDISTANT);
+                break;
+            case 2:
+                builder->knotSpacing(BSpline::KnotSpacing::EXPERIMENTAL);
+                break;
+            default:
+                set_error_string("Error: Invalid knot spacing!");
+                break;
+        }
+    }
+}
+
+void bsplinebuilder_set_smoothing(obj_ptr bsplinebuilder_ptr, int smoothing)
+{
+    BSpline::Builder *builder = get_bspline_builder(bsplinebuilder_ptr);
+    if(builder != nullptr)
+    {
+        switch (smoothing)
+        {
+            case 0:
+                builder->smoothing(BSpline::Smoothing::NONE);
+                break;
+            case 1:
+                builder->smoothing(BSpline::Smoothing::REGULARIZATION);
+                break;
+            case 2:
+                builder->smoothing(BSpline::Smoothing::PSPLINE);
+                break;
+            default:
+                set_error_string("Error: Invalid smoothing!");
+                break;
+        }
+    }
+}
+
+void bsplinebuilder_set_lambda(obj_ptr bsplinebuilder_ptr, double lambda)
+{
+    BSpline::Builder *builder = get_bspline_builder(bsplinebuilder_ptr);
+    if(builder != nullptr) {
+        builder->lambda(lambda);
+    }
+}
+
+obj_ptr bsplinebuilder_build(obj_ptr bsplinebuilder_ptr)
+{
+    BSpline *bspline = nullptr;
+    BSpline::Builder *builder = get_bspline_builder(bsplinebuilder_ptr);
+    if(builder != nullptr)
+    {
+        bspline = builder->build().clone();
+        if (bspline != nullptr)
+        {
+            objects.insert(bspline);
+        }
+    }
+    return bspline;
+}
+
+double *eval_row_major(obj_ptr function, double *x, int x_len)
 {
     double *retVal = nullptr;
 
-    auto approx = get_approximant(approximant);
-    if (approx != nullptr)
+    auto func = get_function(function);
+    if (func != nullptr)
     {
         try
         {
-            size_t num_variables = approx->getNumVariables();
+            size_t num_variables = func->getNumVariables();
             size_t num_points = x_len / num_variables;
 
             retVal = (double *) malloc(sizeof(double) * num_points);
             for (size_t i = 0; i < num_points; ++i)
             {
                 auto xvec = get_densevector(x, num_variables);
-                retVal[i] = approx->eval(xvec);
+                retVal[i] = func->eval(xvec);
                 x += num_variables;
             }
         }
@@ -508,23 +546,23 @@ double *eval_row_major(obj_ptr approximant, double *x, int x_len)
     return retVal;
 }
 
-double *eval_jacobian_row_major(obj_ptr approximant, double *x, int x_len)
+double *eval_jacobian_row_major(obj_ptr function, double *x, int x_len)
 {
     double *retVal = nullptr;
 
-    auto approx = get_approximant(approximant);
-    if (approx != nullptr)
+    auto func = get_function(function);
+    if (func != nullptr)
     {
         try
         {
-            size_t num_variables = approx->getNumVariables();
+            size_t num_variables = func->getNumVariables();
             size_t num_points = x_len / num_variables;
 
             retVal = (double *) malloc(sizeof(double) * num_variables * num_points);
             for (size_t i = 0; i < num_points; ++i)
             {
                 auto xvec = get_densevector(x, num_variables);
-                DenseMatrix jacobian = approx->evalJacobian(xvec);
+                DenseMatrix jacobian = func->evalJacobian(xvec);
 
                 /* Copy jacobian from stack to heap */
                 memcpy(retVal + i*num_variables, jacobian.data(), sizeof(double) * num_variables);
@@ -540,23 +578,23 @@ double *eval_jacobian_row_major(obj_ptr approximant, double *x, int x_len)
     return retVal;
 }
 
-double *eval_hessian_row_major(obj_ptr approximant, double *x, int x_len)
+double *eval_hessian_row_major(obj_ptr function, double *x, int x_len)
 {
     double *retVal = nullptr;
 
-    auto approx = get_approximant(approximant);
-    if (approx != nullptr)
+    auto func = get_function(function);
+    if (func != nullptr)
     {
         try
         {
-            size_t num_variables = approx->getNumVariables();
+            size_t num_variables = func->getNumVariables();
             size_t num_points = x_len / num_variables;
 
             retVal = (double *) malloc(sizeof(double) * num_variables * num_variables * num_points);
             for (size_t i = 0; i < num_points; ++i)
             {
                 auto xvec = get_densevector(x, num_variables);
-                DenseMatrix hessian = approx->evalHessian(xvec);
+                DenseMatrix hessian = func->evalHessian(xvec);
 
                 /* Copy hessian from stack to heap */
                 memcpy(retVal + i*num_variables*num_variables, hessian.data(), sizeof(double) * num_variables * num_variables);
@@ -572,23 +610,23 @@ double *eval_hessian_row_major(obj_ptr approximant, double *x, int x_len)
     return retVal;
 }
 
-double *eval_col_major(obj_ptr approximant, double *x, int x_len)
+double *eval_col_major(obj_ptr function, double *x, int x_len)
 {
     double *retVal = nullptr;
 
-    auto approx = get_approximant(approximant);
-    if (approx != nullptr)
+    auto func = get_function(function);
+    if (func != nullptr)
     {
         double *row_major = nullptr;
         try
         {
-            row_major = get_row_major(x, approx->getNumVariables(), x_len);
+            row_major = get_row_major(x, func->getNumVariables(), x_len);
             if (row_major == nullptr)
             {
                 return nullptr; // Pass on the error message set by get_row_major
             }
 
-            retVal = eval_row_major(approx, row_major, x_len);
+            retVal = eval_row_major(func, row_major, x_len);
         }
         catch(const Exception &e)
         {
@@ -600,23 +638,23 @@ double *eval_col_major(obj_ptr approximant, double *x, int x_len)
     return retVal;
 }
 
-double *eval_jacobian_col_major(obj_ptr approximant, double *x, int x_len)
+double *eval_jacobian_col_major(obj_ptr function, double *x, int x_len)
 {
     double *retVal = nullptr;
 
-    auto approx = get_approximant(approximant);
-    if (approx != nullptr)
+    auto func = get_function(function);
+    if (func != nullptr)
     {
         double *row_major = nullptr;
         try
         {
-            row_major = get_row_major(x, approx->getNumVariables(), x_len);
+            row_major = get_row_major(x, func->getNumVariables(), x_len);
             if (row_major == nullptr)
             {
                 return nullptr; // Pass on the error message set by get_row_major
             }
 
-            retVal = eval_jacobian_row_major(approx, row_major, x_len);
+            retVal = eval_jacobian_row_major(func, row_major, x_len);
         }
         catch(const Exception &e)
         {
@@ -628,22 +666,22 @@ double *eval_jacobian_col_major(obj_ptr approximant, double *x, int x_len)
     return retVal;
 }
 
-double *eval_hessian_col_major(obj_ptr approximant, double *x, int x_len)
+double *eval_hessian_col_major(obj_ptr function, double *x, int x_len)
 {
     double *retVal = nullptr;
 
-    auto approx = get_approximant(approximant);
-    if (approx != nullptr)
+    auto func = get_function(function);
+    if (func != nullptr)
     {double *row_major = nullptr;
         try
         {
-            row_major = get_row_major(x, approx->getNumVariables(), x_len);
+            row_major = get_row_major(x, func->getNumVariables(), x_len);
             if (row_major == nullptr)
             {
                 return nullptr; // Pass on the error message set by get_row_major
             }
 
-            retVal = eval_hessian_row_major(approx, row_major, x_len);
+            retVal = eval_hessian_row_major(func, row_major, x_len);
         }
         catch(const Exception &e)
         {
@@ -654,27 +692,27 @@ double *eval_hessian_col_major(obj_ptr approximant, double *x, int x_len)
     return retVal;
 }
 
-int approximant_get_num_variables(obj_ptr approximant)
+int function_get_num_variables(obj_ptr function)
 {
     int retVal = 0;
 
-    auto approx = get_approximant(approximant);
-    if (approx != nullptr)
+    auto func = get_function(function);
+    if (func != nullptr)
     {
-        retVal = approx->getNumVariables();
+        retVal = func->getNumVariables();
     }
 
     return retVal;
 }
 
-void approximant_save(obj_ptr approximant, const char *filename)
+void function_save(obj_ptr function, const char *filename)
 {
-    auto approx = get_approximant(approximant);
-    if (approx != nullptr)
+    auto func = get_function(function);
+    if (func != nullptr)
     {
         try
         {
-            approx->save(filename);
+            func->save(filename);
         }
         catch(const Exception &e)
         {
@@ -683,14 +721,14 @@ void approximant_save(obj_ptr approximant, const char *filename)
     }
 }
 
-void approximant_delete(obj_ptr approximant)
+void function_delete(obj_ptr function)
 {
-    auto approx = get_approximant(approximant);
+    auto func = get_function(function);
 
-    if (approx != nullptr)
+    if (func != nullptr)
     {
-        objects.erase(approximant);
-        delete approx;
+        objects.erase(function);
+        delete func;
     }
 }
 

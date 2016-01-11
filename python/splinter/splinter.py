@@ -6,7 +6,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
-from ctypes import * # Loading libraries
+from ctypes import *  # Loading libraries
 from .utilities import *
 
 
@@ -17,150 +17,163 @@ __handle = None
 # Try to load the library libFile
 # If libFile is not specified, we try to locate and load SPLINTER
 def load(libFile = None):
-	global __handle
-	if __handle is not None:
-		out("SPLINTER is already loaded!")
-		out("If you wish to unload it you must first call unload.")
-	else:
-		if libFile is None:
-			libFile = __locateSplinter()
-		if libFile is None:
-			raise Exception("Unable to automatically locate SPLINTER.\nYou can load it manually by doing splinter.load(\"/path/to/SPLINTER.so\")")
-			
-		try:
-			__handle = cdll.LoadLibrary(libFile)
-			__init()
-			out("Loaded SPLINTER from " + str(libFile) + "!")
+    global __handle
+    if __handle is not None:
+        out("SPLINTER is already loaded!")
+        out("If you wish to unload it you must first call unload.")
+    else:
+        if libFile is None:
+            libFile = __locateSplinter()
+        if libFile is None:
+            raise Exception("Unable to automatically locate SPLINTER.\nYou can load it manually by doing splinter.load(\"/path/to/SPLINTER.so\")")
 
-		except Exception as e:
-			out("Error:")
-			out("Either you are trying to load a library with another architecture (32 bit/64 bit) than the Python you are using, ", True)
-			out("or the file you are trying to load (" + libFile + ") could not be found.")
-			out("For reference your Python is " + str(8*sizeof(c_void_p)) + "bit.")
-			out("Here is the error message:")
-			out(e)
-			__handle = None
+        try:
+            __handle = cdll.LoadLibrary(libFile)
+            __init()
+            out("Loaded SPLINTER from " + str(libFile) + "!")
+
+        except Exception as e:
+            out("Error:")
+            out("Either you are trying to load a library with another architecture (32 bit/64 bit) than the Python you are using, ", True)
+            out("or the file you are trying to load (" + libFile + ") could not be found.")
+            out("For reference your Python is " + str(8*sizeof(c_void_p)) + "bit.")
+            out("Here is the error message:")
+            out(e)
+            __handle = None
+
 
 def isLoaded():
-	global __handle
-	return __handle is not None
+    global __handle
+    return __handle is not None
+
 
 # TODO:
 # Is this function really necessary?
 def unload():
-	global __handle
-	__handle = None
+    global __handle
+    __handle = None
 
 
 # Below are functions that should only be used internally
 def _getHandle():
-	global __handle
-	
-	if __handle is None:
-		raise Exception("splinter is not loaded!")
-	
-	return __handle
+    global __handle
+
+    if __handle is None:
+        raise Exception("splinter is not loaded!")
+
+    return __handle
 
 
 # Set expected argument types and return types of all functions
 def __init():
-	# Define types for int * and double *
-	c_int_p = POINTER(c_int)
-	c_double_p = POINTER(c_double)
-	
-	_getHandle().get_error_string.restype = c_char_p
-	_getHandle().get_error_string.argtypes = []
-	
-	_getHandle().datatable_load_init.restype = c_void_p
-	_getHandle().datatable_load_init.argtypes = [c_char_p]
-	
-	_getHandle().datatable_add_samples_row_major.restype = c_void_p
-	_getHandle().datatable_add_samples_row_major.argtypes = [c_void_p, c_double_p, c_int, c_int]
-	
-	_getHandle().eval_row_major.restype = c_double_p
-	_getHandle().eval_row_major.argtypes = [c_void_p, c_double_p, c_int]
-	
-	_getHandle().eval_jacobian_row_major.restype = c_double_p
-	_getHandle().eval_jacobian_row_major.argtypes = [c_void_p, c_double_p, c_int]
-	
-	_getHandle().eval_hessian_row_major.restype = c_double_p
-	_getHandle().eval_hessian_row_major.argtypes = [c_void_p, c_double_p, c_int]
-	
-	_getHandle().polynomial_regression_init.restype = c_void_p
-	_getHandle().polynomial_regression_init.argtypes = [c_void_p, c_int_p, c_int]
-	
-	_getHandle().pspline_load_init.restype = c_void_p
-	_getHandle().pspline_load_init.argtypes = [c_char_p]
-	
-	_getHandle().pspline_init.restype = c_void_p
-	_getHandle().pspline_init.argtypes = [c_void_p, c_double]
-	
-	_getHandle().approximant_get_num_variables.restype = c_int
-	_getHandle().approximant_get_num_variables.argtypes = [c_void_p]
-	
-	_getHandle().datatable_get_num_variables.restype = c_int
-	_getHandle().datatable_get_num_variables.argtypes = [c_void_p]
+    # Define types for int* and double*
+    c_int_p = POINTER(c_int)
+    c_double_p = POINTER(c_double)
+    handle_type = c_void_p
+
+    _getHandle().get_error_string.restype = c_char_p
+    _getHandle().get_error_string.argtypes = []
+
+    _getHandle().datatable_load_init.restype = handle_type
+    _getHandle().datatable_load_init.argtypes = [c_char_p]
+
+    _getHandle().datatable_add_samples_row_major.restype = handle_type
+    _getHandle().datatable_add_samples_row_major.argtypes = [handle_type, c_double_p, c_int, c_int]
+
+    _getHandle().eval_row_major.restype = c_double_p
+    _getHandle().eval_row_major.argtypes = [handle_type, c_double_p, c_int]
+
+    _getHandle().eval_jacobian_row_major.restype = c_double_p
+    _getHandle().eval_jacobian_row_major.argtypes = [handle_type, c_double_p, c_int]
+
+    _getHandle().eval_hessian_row_major.restype = c_double_p
+    _getHandle().eval_hessian_row_major.argtypes = [handle_type, c_double_p, c_int]
+
+    _getHandle().polynomial_regression_init.restype = handle_type
+    _getHandle().polynomial_regression_init.argtypes = [handle_type, c_int_p, c_int]
+
+    _getHandle().pspline_load_init.restype = handle_type
+    _getHandle().pspline_load_init.argtypes = [c_char_p]
+
+    _getHandle().pspline_init.restype = handle_type
+    _getHandle().pspline_init.argtypes = [handle_type, c_double]
+
+    _getHandle().function_get_num_variables.restype = c_int
+    _getHandle().function_get_num_variables.argtypes = [handle_type]
+
+    _getHandle().datatable_get_num_variables.restype = c_int
+    _getHandle().datatable_get_num_variables.argtypes = [handle_type]
+
+    _getHandle().bsplinebuilder_init.restype = handle_type
+    _getHandle().bsplinebuilder_init.argtypes = [handle_type]
+
+    _getHandle().bsplinebuilder_set_degree.argtypes = [handle_type, c_int_p, c_int]
+    _getHandle().bsplinebuilder_set_num_basis_functions.argtypes = [handle_type, c_int_p, c_int]
+    _getHandle().bsplinebuilder_set_knot_spacing.argtypes = [handle_type, c_int]
+    _getHandle().bsplinebuilder_set_smoothing.argtypes = [handle_type, c_int]
+    _getHandle().bsplinebuilder_set_lambda.argtypes = [handle_type, c_double]
 
 
 # Try to locate SPLINTER relative to this script
 # Assumes the Python interface of splinter has the following directory structure:
 # splinter/
 # - version.txt
-# - approximant.py
+# - function.py
 # - *.py
 # - lib/
 #   - linux or windows or osx
 #     - x86 or x86_64
 #       - libsplinter-x-y.so / splinter-x-y.dll
 def __locateSplinter():
-	import os
-	import platform # Detect OS
-	
-	isLinux = platform.system() == 'Linux'
-	isWindows = platform.system() == 'Windows'
-	isMac = platform.system() == 'Darwin'
-	
-	fullPath = os.path.realpath(__file__) # Path to this file
-	# Go two folders up (yes, two is correct, because the first dirname doesnt "go up").
-	splinterPythonMainDir = os.path.dirname(os.path.dirname(os.path.dirname(fullPath)))
-	
-	# Locate version.txt. If we cannot find it then we won't be able to find splinter either
-	versionFile = os.path.join(splinterPythonMainDir, "version")
-	if not os.path.exists(versionFile):
-		return None
-	
-	f = open(versionFile)
-	splinterVersion = f.read().strip()
-	
-	splinterBaseName = "splinter-" + splinterVersion
-	if isWindows:
-		splinterName = splinterBaseName + ".dll"
-	elif isLinux or isMac:
-		splinterName = "lib" + splinterBaseName + ".so"
-	else:
-		raise("Unknown platform: " + platform.system())
-	
-	operatingSystem = "unknown"
-	if isLinux:
-		operatingSystem = "linux"
-	elif isWindows:
-		operatingSystem = "windows"
-	elif isMac:
-		operatingSystem = "osx"
-	
-	libSplinter = os.path.join(splinterPythonMainDir, "lib", operatingSystem, getArchitecture(), splinterName)
-	
-	if os.path.exists(libSplinter):
-		return libSplinter
-	
-	return None
+    import os
+    import platform # Detect OS
+
+    isLinux = platform.system() == 'Linux'
+    isWindows = platform.system() == 'Windows'
+    isMac = platform.system() == 'Darwin'
+
+    fullPath = os.path.realpath(__file__)  # Path to this file
+    # Go two folders up (yes, two is correct, because the first dirname doesnt "go up").
+    splinterPythonMainDir = os.path.dirname(os.path.dirname(os.path.dirname(fullPath)))
+
+    # Locate version.txt. If we cannot find it then we won't be able to find splinter either
+    versionFile = os.path.join(splinterPythonMainDir, "version")
+    if not os.path.exists(versionFile):
+        return None
+
+    f = open(versionFile)
+    splinterVersion = f.read().strip()
+
+    splinterBaseName = "splinter-" + splinterVersion
+    if isWindows:
+        splinterName = splinterBaseName + ".dll"
+    elif isLinux or isMac:
+        splinterName = "lib" + splinterBaseName + ".so"
+    else:
+        raise("Unknown platform: " + platform.system())
+
+    operatingSystem = "unknown"
+    if isLinux:
+        operatingSystem = "linux"
+    elif isWindows:
+        operatingSystem = "windows"
+    elif isMac:
+        operatingSystem = "osx"
+
+    libSplinter = os.path.join(splinterPythonMainDir, "lib", operatingSystem, getArchitecture(), splinterName)
+
+    if os.path.exists(libSplinter):
+        return libSplinter
+
+    return None
+
 
 def _call(function, *args):
-	res = function(*args)
-	
-	if _getHandle().get_error():
-		# TODO: Sometimes the string is correct, sometimes not. Investigate.
-		errorMsg = getPyString(_getHandle().get_error_string())
-		raise Exception(errorMsg)
-	
-	return res
+    res = function(*args)
+
+    if _getHandle().get_error():
+        # TODO: Sometimes the string is correct, sometimes not. Investigate.
+        errorMsg = getPyString(_getHandle().get_error_string())
+        raise Exception(errorMsg)
+
+    return res
