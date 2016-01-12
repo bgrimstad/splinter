@@ -30,22 +30,23 @@ BSpline::BSpline(unsigned int numVariables)
 /*
  * Constructors for multivariate B-spline using explicit data
  */
-BSpline::BSpline(std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees)
+BSpline::BSpline(std::vector<std::vector<double>> knotVectors, std::vector<unsigned int> basisDegrees)
     : Function(knotVectors.size()),
       basis(BSplineBasis(knotVectors, basisDegrees)),
-      coefficients(DenseMatrix::Ones(1, basis.getNumBasisFunctions()))
+      coefficients(DenseVector::Ones(basis.getNumBasisFunctions()))
 {
     computeKnotAverages();
 
     checkControlPoints();
 }
 
-BSpline::BSpline(std::vector<double> coefficients, std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees)
+
+BSpline::BSpline(std::vector<double> coefficients, std::vector<std::vector<double>> knotVectors, std::vector<unsigned int> basisDegrees)
     : BSpline(vectorToDenseVector(coefficients), knotVectors, basisDegrees)
 {
 }
 
-BSpline::BSpline(DenseMatrix coefficients, std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees)
+BSpline::BSpline(DenseVector coefficients, std::vector<std::vector<double>> knotVectors, std::vector<unsigned int> basisDegrees)
     : Function(knotVectors.size()),
       basis(BSplineBasis(knotVectors, basisDegrees)),
       coefficients(coefficients)
@@ -78,7 +79,7 @@ double BSpline::eval(DenseVector x) const
 	}
 
 	SparseVector tensorvalues = basis.eval(x);
-	DenseVector y = coefficients*tensorvalues;
+	DenseVector y = coefficients.transpose()*tensorvalues;
 	return y(0);
 }
 
@@ -98,7 +99,7 @@ DenseMatrix BSpline::evalJacobian(DenseVector x) const
     //SparseMatrix Bi = basis.evalBasisJacobian2(x);  // Sparse Jacobian implementation
     DenseMatrix Bi = basis.evalBasisJacobianOld(x);  // Old Jacobian implementation
 
-    return coefficients*Bi;
+    return coefficients.transpose()*Bi;
 }
 
 /*
@@ -115,20 +116,16 @@ DenseMatrix BSpline::evalHessian(DenseVector x) const
 
     DenseMatrix H;
     H.setZero(1,1);
-    DenseMatrix identity = DenseMatrix::Identity(numVariables,numVariables);
-    DenseMatrix caug;
-    caug = kroneckerProduct(identity, coefficients);
+    DenseMatrix identity = DenseMatrix::Identity(numVariables, numVariables);
+    DenseMatrix caug = kroneckerProduct(identity, coefficients.transpose());
     DenseMatrix DB = basis.evalBasisHessian(x);
     H = caug*DB;
 
     // Fill in upper triangular of Hessian
     for (size_t i = 0; i < numVariables; ++i)
-    {
         for (size_t j = i+1; j < numVariables; ++j)
-        {
             H(i,j) = H(j,i);
-        }
-    }
+
     return H;
 }
 
@@ -182,16 +179,16 @@ std::vector<double> BSpline::getDomainLowerBound() const
 
 DenseMatrix BSpline::getControlPoints() const
 {
-    int nc = coefficients.cols();
+    int nc = coefficients.size();
     DenseMatrix controlPoints(numVariables + 1, nc);
 
     controlPoints.block(0, 0, numVariables, nc) = knotaverages;
-    controlPoints.block(numVariables, 0, 1, nc) = coefficients;
+    controlPoints.block(numVariables, 0, 1, nc) = coefficients.transpose();
 
     return controlPoints;
 }
 
-void BSpline::setCoefficients(const DenseMatrix &coefficients)
+void BSpline::setCoefficients(const DenseVector &coefficients)
 {
     this->coefficients = coefficients;
     checkControlPoints();
@@ -204,7 +201,7 @@ void BSpline::setControlPoints(const DenseMatrix &controlPoints)
     int nc = controlPoints.cols();
 
     knotaverages = controlPoints.block(0, 0, numVariables, nc);
-    coefficients = controlPoints.block(numVariables, 0, 1, nc);
+    coefficients = controlPoints.block(numVariables, 0, 1, nc).transpose();
 
     checkControlPoints();
 }
@@ -213,19 +210,16 @@ void BSpline::updateControlPoints(const DenseMatrix &A)
 {
     if (A.cols() != coefficients.cols())
         throw Exception("BSpline::updateControlPoints: Incompatible size of linear transformation matrix.");
-    coefficients = coefficients*A.transpose();
+    coefficients = A*coefficients;
     knotaverages = knotaverages*A.transpose();
 }
 
-// TODO: change return type to bool and name to checkDataConsistency
 void BSpline::checkControlPoints() const
 {
-    if (coefficients.cols() != knotaverages.cols())
+    if (coefficients.rows() != knotaverages.cols())
         throw Exception("BSpline::checkControlPoints: Inconsistent size of coefficients and knot averages matrices.");
     if (knotaverages.rows() != numVariables)
         throw Exception("BSpline::checkControlPoints: Inconsistent size of knot averages matrix.");
-    if (coefficients.rows() != 1)
-        throw Exception("BSpline::checkControlPoints: Coefficients matrix does not have one row.");
 }
 
 bool BSpline::pointInDomain(DenseVector x) const
@@ -393,12 +387,11 @@ bool BSpline::removeUnsupportedBasisFunctions(std::vector<double> &lb, std::vect
 
     SparseMatrix A = basis.reduceSupport(lb, ub);
 
-    if (coefficients.cols() != A.rows())
+    if (coefficients.size() != A.rows())
         return false;
 
     // Remove unsupported control points (basis functions)
-    coefficients = coefficients*A;
-    knotaverages = knotaverages*A;
+    updateControlPoints(A.transpose());
 
     return true;
 }

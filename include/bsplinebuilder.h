@@ -121,11 +121,11 @@ private:
     }
 
     // Control point computations
-    DenseMatrix computeCoefficients(const BSpline &bspline) const;
-    DenseMatrix computeBSplineCoefficients(const BSpline &bspline) const;
-    DenseMatrix computeBSplineCoefficientsRegularized(const BSpline &bspline) const;
+    DenseVector computeCoefficients(const BSpline &bspline) const;
+    DenseVector computeBSplineCoefficients(const BSpline &bspline) const;
+    DenseVector computeBSplineCoefficientsRegularized(const BSpline &bspline) const;
     SparseMatrix computeBasisFunctionMatrix(const BSpline &bspline) const;
-    DenseMatrix controlPointEquationRHS() const;
+    DenseVector controlPointEquationRHS() const;
 
     // P-spline control point calculation
     DenseMatrix computePSplineCoefficients(const BSpline &bspline) const;

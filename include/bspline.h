@@ -26,11 +26,11 @@ public:
     BSpline(unsigned int numVariables);
 
     /**
-     * Construct B-spline from knot vectors, control coefficients (assumed vectorized), and basis degrees
+     * Construct B-spline from knot vectors, coefficients, and basis degrees
      */
     BSpline(std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees); // All coefficients set to 1
     BSpline(std::vector<double> coefficients, std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees);
-    BSpline(DenseMatrix coefficients, std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees);
+    BSpline(DenseVector coefficients, std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees);
 
     /**
      * Construct B-spline from file
@@ -59,7 +59,7 @@ public:
     SparseMatrix evalBasisFunctionsJacobian(DenseVector x) const;
 
     // Getters
-    unsigned int getNumControlPoints() const { return coefficients.cols(); }
+    unsigned int getNumControlPoints() const { return coefficients.size(); }
     std::vector<unsigned int> getNumBasisFunctions() const;
     unsigned int getNumBasisFunctionsTotal() const
     {
@@ -73,7 +73,7 @@ public:
     // Control point related
     DenseMatrix getControlPoints() const;
     void updateControlPoints(const DenseMatrix &A);
-    void setCoefficients(const DenseMatrix &coefficients);
+    void setCoefficients(const DenseVector &coefficients);
     void setControlPoints(const DenseMatrix &controlPoints);
     void checkControlPoints() const;
 
@@ -100,7 +100,7 @@ protected:
 
     BSplineBasis basis;
     DenseMatrix knotaverages; // One row per input
-    DenseMatrix coefficients; // One row per output
+    DenseVector coefficients;
 
     // Control point computations
     void computeKnotAverages();

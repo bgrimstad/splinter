@@ -51,7 +51,7 @@ BSpline BSpline::Builder::build() const
     return bspline;
 }
 
-DenseMatrix BSpline::Builder::computeCoefficients(const BSpline& bspline) const
+DenseVector BSpline::Builder::computeCoefficients(const BSpline& bspline) const
 {
     switch (_smoothing)
     {
@@ -73,12 +73,12 @@ DenseMatrix BSpline::Builder::computeCoefficients(const BSpline& bspline) const
  * b = sample x-values when calculating knot averages
  * c = control coefficients or knot averages.
  */
-DenseMatrix BSpline::Builder::computeBSplineCoefficients(const BSpline& bspline) const
+DenseVector BSpline::Builder::computeBSplineCoefficients(const BSpline& bspline) const
 {
     SparseMatrix A = computeBasisFunctionMatrix(bspline);
-    DenseMatrix b = controlPointEquationRHS();
+    DenseVector b = controlPointEquationRHS();
 
-    DenseMatrix w;
+    DenseVector w;
 
     int numEquations = A.rows();
     int maxNumEquations = pow(2, 10);
@@ -92,7 +92,7 @@ DenseMatrix BSpline::Builder::computeBSplineCoefficients(const BSpline& bspline)
         std::cout << "Computing B-spline control points using sparse solver." << std::endl;
         #endif // NDEBUG
 
-        SparseLU s;
+        SparseLU<> s;
         //bool successfulSolve = (s.solve(A,Bx,Cx) && s.solve(A,By,Cy));
 
         solveAsDense = !s.solve(A,b,w);
@@ -105,7 +105,7 @@ DenseMatrix BSpline::Builder::computeBSplineCoefficients(const BSpline& bspline)
         #endif // NDEBUG
 
         DenseMatrix Ad = A.toDense();
-        DenseQR<DenseMatrix> s;
+        DenseQR<DenseVector> s;
         //bool successfulSolve = (s.solve(Ad,Bx,Cx) && s.solve(Ad,By,Cy));
         if (!s.solve(Ad,b,w))
         {
@@ -113,7 +113,7 @@ DenseMatrix BSpline::Builder::computeBSplineCoefficients(const BSpline& bspline)
         }
     }
 
-    return w.transpose();
+    return w;
 }
 
 SparseMatrix BSpline::Builder::computeBasisFunctionMatrix(const BSpline &bspline) const
@@ -150,13 +150,13 @@ SparseMatrix BSpline::Builder::computeBasisFunctionMatrix(const BSpline &bspline
     return A;
 }
 
-DenseMatrix BSpline::Builder::controlPointEquationRHS() const
+DenseVector BSpline::Builder::controlPointEquationRHS() const
 {
-    DenseMatrix B = DenseMatrix::Zero(_data.getNumSamples(), 1);
+    DenseVector B = DenseVector::Zero(_data.getNumSamples());
 
     int i = 0;
     for (auto it = _data.cbegin(); it != _data.cend(); ++it, ++i)
-        B(i,0) = it->getY();
+        B(i) = it->getY();
 
     return B;
 }
@@ -172,16 +172,16 @@ DenseMatrix BSpline::Builder::controlPointEquationRHS() const
  *
  * NOTE2: consider changing regularization factor to (lambda/numSample)
  */
-DenseMatrix BSpline::Builder::computeBSplineCoefficientsRegularized(const BSpline& bspline) const
+DenseVector BSpline::Builder::computeBSplineCoefficientsRegularized(const BSpline& bspline) const
 {
     SparseMatrix A2 = computeBasisFunctionMatrix(bspline);
-    DenseMatrix b2 = controlPointEquationRHS();
+    DenseVector b2 = controlPointEquationRHS();
     SparseMatrix I(A2.cols(), A2.cols());
     I.setIdentity();
     SparseMatrix A = A2.transpose()*A2 + _lambda*I;
-    DenseMatrix b = A2.transpose()*b2;
+    DenseVector b = A2.transpose()*b2;
 
-    DenseMatrix w;
+    DenseVector w;
 
     int numEquations = A.rows();
     int maxNumEquations = pow(2, 10);
@@ -195,7 +195,7 @@ DenseMatrix BSpline::Builder::computeBSplineCoefficientsRegularized(const BSplin
         std::cout << "Computing B-spline control points using sparse solver." << std::endl;
         #endif // NDEBUG
 
-        SparseLU s;
+        SparseLU<> s;
         //bool successfulSolve = (s.solve(A,Bx,Cx) && s.solve(A,By,Cy));
 
         solveAsDense = !s.solve(A,b,w);
@@ -208,7 +208,7 @@ DenseMatrix BSpline::Builder::computeBSplineCoefficientsRegularized(const BSplin
         #endif // NDEBUG
 
         DenseMatrix Ad = A.toDense();
-        DenseQR<DenseMatrix> s;
+        DenseQR<DenseVector> s;
         //bool successfulSolve = (s.solve(Ad,Bx,Cx) && s.solve(Ad,By,Cy));
         if (!s.solve(Ad,b,w))
         {
@@ -216,7 +216,7 @@ DenseMatrix BSpline::Builder::computeBSplineCoefficientsRegularized(const BSplin
         }
     }
 
-    return w.transpose();
+    return w;
 }
 
 /*
@@ -258,12 +258,12 @@ DenseMatrix BSpline::Builder::computePSplineCoefficients(const BSpline &bspline)
     L = B.transpose()*W*B + _lambda*D.transpose()*D;
 
     // Compute right-hand side matrices
-    DenseMatrix By = controlPointEquationRHS();
+    DenseVector By = controlPointEquationRHS();
     //Rx = B.transpose()*W*Bx;
-    DenseMatrix Ry = B.transpose()*W*By;
+    DenseVector Ry = B.transpose()*W*By;
 
-    // Matrices to store the resulting coefficients
-    DenseMatrix Cy;
+    // Vector to store the resulting coefficients
+    DenseVector Cy;
 
     int numEquations = L.rows();
     int maxNumEquations = pow(2,10);
@@ -276,7 +276,7 @@ DenseMatrix BSpline::Builder::computePSplineCoefficients(const BSpline &bspline)
         std::cout << "Computing B-spline control points using sparse solver." << std::endl;
         #endif // NDEBUG
 
-        SparseLU s;
+        SparseLU<> s;
         bool successfulSolve = s.solve(L,Ry,Cy);
 
         solveAsDense = !successfulSolve;
@@ -289,7 +289,7 @@ DenseMatrix BSpline::Builder::computePSplineCoefficients(const BSpline &bspline)
         #endif // NDEBUG
 
         DenseMatrix Ld = L.toDense();
-        DenseQR<DenseMatrix> s;
+        DenseQR<DenseVector> s;
         bool successfulSolve = s.solve(Ld, Ry, Cy);
 
         if (!successfulSolve)
@@ -298,7 +298,7 @@ DenseMatrix BSpline::Builder::computePSplineCoefficients(const BSpline &bspline)
         }
     }
 
-    return Cy.transpose();
+    return Cy;
 }
 
 /*
