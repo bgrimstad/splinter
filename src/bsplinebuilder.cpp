@@ -169,6 +169,8 @@ DenseMatrix BSpline::Builder::controlPointEquationRHS() const
  *
  * NOTE: This corresponds to a Tikhonov regularization (or ridge regression) with the identity matrix.
  * See: https://en.wikipedia.org/wiki/Tikhonov_regularization
+ *
+ * NOTE2: consider changing regularization factor to (lambda/numSample)
  */
 DenseMatrix BSpline::Builder::computeBSplineCoefficientsRegularized(const BSpline& bspline) const
 {
