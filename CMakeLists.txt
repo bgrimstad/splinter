@@ -157,6 +157,7 @@ set(SRC_LIST
     include/linearsolvers.h
     include/mykroneckerproduct.h
     include/polynomial.h
+    include/polynomial2.h
     include/rbfnetwork.h
     include/rbf.h
     include/serializer.h
@@ -174,6 +175,7 @@ set(SRC_LIST
     src/linearfunction.cpp
     src/mykroneckerproduct.cpp
     src/polynomial.cpp
+    src/polynomial2.cpp
     src/rbfnetwork.cpp
     src/serializer.cpp
     src/utilities.cpp
@@ -203,7 +205,7 @@ set(TEST_SRC_LIST
     test/testingutilities.cpp
     test/bsplinetestingutilities.h
     test/bsplinetestingutilities.cpp
-        test/serialization/eigentypes.cpp)
+    test/serialization/eigentypes.cpp)
 
 set(SHARED_LIBRARY ${PROJECT_NAME_LOWER}-${VERSION})
 set(STATIC_LIBRARY ${PROJECT_NAME_LOWER}-static-${VERSION})
