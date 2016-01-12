@@ -20,25 +20,26 @@ namespace SPLINTER
 {
 
 BSpline::BSpline()
-    : Function(1)
+    : LinearFunction<SparseVector, SparseMatrix>(1, DenseVector::Zero(1))
 {}
 
 BSpline::BSpline(unsigned int numVariables)
-    : Function(numVariables)
+    : LinearFunction<SparseVector, SparseMatrix>(numVariables, DenseVector::Zero(1))
 {}
 
 /*
  * Constructors for multivariate B-spline using explicit data
  */
 BSpline::BSpline(std::vector<std::vector<double>> knotVectors, std::vector<unsigned int> basisDegrees)
-    : Function(knotVectors.size()),
+    : LinearFunction<SparseVector, SparseMatrix>(knotVectors.size(), DenseVector::Zero(1)),
       basis(BSplineBasis(knotVectors, basisDegrees)),
-      coefficients(DenseVector::Ones(basis.getNumBasisFunctions())),
       knotaverages(computeKnotAverages())
 {
+    // Initialize coefficients to ones
+    setCoefficients(DenseVector::Ones(basis.getNumBasisFunctions()));
+
     checkControlPoints();
 }
-
 
 BSpline::BSpline(std::vector<double> coefficients, std::vector<std::vector<double>> knotVectors, std::vector<unsigned int> basisDegrees)
     : BSpline(vectorToDenseVector(coefficients), knotVectors, basisDegrees)
@@ -46,11 +47,12 @@ BSpline::BSpline(std::vector<double> coefficients, std::vector<std::vector<doubl
 }
 
 BSpline::BSpline(DenseVector coefficients, std::vector<std::vector<double>> knotVectors, std::vector<unsigned int> basisDegrees)
-    : Function(knotVectors.size()),
+    : LinearFunction<SparseVector, SparseMatrix>(knotVectors.size(), coefficients),
       basis(BSplineBasis(knotVectors, basisDegrees)),
-      coefficients(coefficients),
       knotaverages(computeKnotAverages())
 {
+    setCoefficients(coefficients);
+
     checkControlPoints();
 }
 
@@ -63,42 +65,37 @@ BSpline::BSpline(const char *fileName)
 }
 
 BSpline::BSpline(const std::string &fileName)
-    : Function(1)
+    : LinearFunction<SparseVector, SparseMatrix>(1, DenseVector::Zero(1))
 {
     load(fileName);
 }
 
-double BSpline::eval(DenseVector x) const
-{
-	if (!pointInDomain(x))
-	{
-        // NOTE: Consider returning 0 rather than of throwing an exception
-		throw Exception("BSpline::eval: Evaluation at point outside domain.");
-	}
+//double BSpline::eval(DenseVector x) const
+//{
+//	if (!pointInDomain(x))
+//	{
+//        // NOTE: Consider returning 0 rather than of throwing an exception
+//		throw Exception("BSpline::eval: Evaluation at point outside domain.");
+//	}
+//
+//	SparseVector tensorvalues = basis.eval(x);
+//	DenseVector y = coefficients.transpose()*tensorvalues;
+//	return y(0);
+//}
 
-	SparseVector tensorvalues = basis.eval(x);
-	DenseVector y = coefficients.transpose()*tensorvalues;
-	return y(0);
-}
-
-/*
- * Returns the Jacobian evaluated at x.
- * The Jacobian is an 1 x n matrix,
- * where n is the dimension of x.
- */
-DenseMatrix BSpline::evalJacobian(DenseVector x) const
-{
-    if (!pointInDomain(x))
-    {
-        throw Exception("BSpline::evalJacobian: Evaluation at point outside domain.");
-    }
-
-    //SparseMatrix Bi = basis.evalBasisJacobian(x);       // Sparse Jacobian implementation
-    //SparseMatrix Bi = basis.evalBasisJacobian2(x);  // Sparse Jacobian implementation
-    DenseMatrix Bi = basis.evalBasisJacobianOld(x);  // Old Jacobian implementation
-
-    return coefficients.transpose()*Bi;
-}
+//DenseMatrix BSpline::evalJacobian(DenseVector x) const
+//{
+//    if (!pointInDomain(x))
+//    {
+//        throw Exception("BSpline::evalJacobian: Evaluation at point outside domain.");
+//    }
+//
+//    //SparseMatrix Bi = basis.evalBasisJacobian(x);       // Sparse Jacobian implementation
+//    //SparseMatrix Bi = basis.evalBasisJacobian2(x);  // Sparse Jacobian implementation
+//    DenseMatrix Bi = basis.evalBasisJacobianOld(x);  // Old Jacobian implementation
+//
+//    return coefficients.transpose()*Bi;
+//}
 
 /*
  * Returns the Hessian evaluated at x.
@@ -128,17 +125,18 @@ DenseMatrix BSpline::evalHessian(DenseVector x) const
 }
 
 // Evaluation of B-spline basis functions
-SparseVector BSpline::evalBasisFunctions(DenseVector x) const
+SparseVector BSpline::evalBasis(DenseVector x) const
 {
+    if (!pointInDomain(x))
+        throw Exception("BSpline::evalBasis: Evaluation at point outside domain.");
+
     return basis.eval(x);
 }
 
-SparseMatrix BSpline::evalBasisFunctionsJacobian(DenseVector x) const
+SparseMatrix BSpline::evalBasisJacobian(DenseVector x) const
 {
     if (!pointInDomain(x))
-    {
-        throw Exception("BSpline::evalJacobian: Evaluation at point outside domain.");
-    }
+        throw Exception("BSpline::evalBasisJacobian: Evaluation at point outside domain.");
 
     //SparseMatrix Bi = basis.evalBasisJacobian(x);       // Sparse Jacobian implementation
     //SparseMatrix Bi = basis.evalBasisJacobian2(x);  // Sparse Jacobian implementation

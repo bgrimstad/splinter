@@ -20,6 +20,10 @@ namespace SPLINTER
  * Interface for functions (linear in the coefficients):
  * f(x) = c(1)*b1(x) + c(2)*b2(x) + ... + c(n)*bn(x) = c^T * b(x),
  * where c are coefficients and b is a vector of basis functions.
+ *
+ * NOTE: The class is templated to differentiate between dense and sparse bases.
+ * Dense bases should inherit from LinearFunction<DenseVector, DenseMatrix>
+ * Sparse bases should inherit from LinearFunction<SparseVector, SparseMatrix>
  */
 template <class Vec, class Mat>
 class SPLINTER_API LinearFunction : public Function
@@ -30,17 +34,18 @@ public:
     /**
      * Returns the function value at x
      */
-    double eval(DenseVector x) const override
+    virtual double eval(DenseVector x) const override
     {
         checkInput(x);
-        auto res = coefficients.transpose()*evalBasis(x);
+        // NOTE: casting to DenseVector to allow accessing as res(0)
+        DenseVector res = coefficients.transpose()*evalBasis(x);
         return res(0);
     }
 
     /**
      * Returns the (1 x numVariables) Jacobian evaluated at x
      */
-    DenseMatrix evalJacobian(DenseVector x) const override
+    virtual DenseMatrix evalJacobian(DenseVector x) const override
     {
         checkInput(x);
         return coefficients.transpose()*evalBasisJacobian(x);
@@ -50,10 +55,9 @@ public:
      * Returns the (numVariables x numVariables) Hessian evaluated at x
      * TODO: implement
      */
-    DenseMatrix evalHessian(DenseVector x) const override
+    virtual DenseMatrix evalHessian(DenseVector x) const override
     {
         throw Exception("LinearFunction::evalHessian: Not implemented!");
-//        return DenseMatrix::Zero(numVariables, numVariables);
     }
 
     /**
@@ -71,12 +75,13 @@ public:
         return coefficients;
     }
 
-    void setCoefficients(DenseVector coefficients)
+    virtual void setCoefficients(const DenseVector &coefficients)
     {
         this->coefficients = coefficients;
     }
 
-    unsigned int getNumCoefficients() const {
+    unsigned int getNumCoefficients() const
+    {
         return coefficients.size();
     }
 

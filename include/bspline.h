@@ -11,7 +11,7 @@
 #define SPLINTER_BSPLINE_H
 
 #include "datatable.h"
-#include "function.h"
+#include "linearfunction.h"
 #include "bsplinebasis.h"
 
 namespace SPLINTER
@@ -20,7 +20,7 @@ namespace SPLINTER
 /**
  * Class that implements the multivariate tensor product B-spline
  */
-class SPLINTER_API BSpline : public Function
+class SPLINTER_API BSpline : public LinearFunction<SparseVector, SparseMatrix>
 {
 public:
     BSpline(unsigned int numVariables);
@@ -28,7 +28,7 @@ public:
     /**
      * Construct B-spline from knot vectors, coefficients, and basis degrees
      */
-    BSpline(std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees); // All coefficients set to 1
+    BSpline(std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees);
     BSpline(std::vector<double> coefficients, std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees);
     BSpline(DenseVector coefficients, std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees);
 
@@ -50,13 +50,13 @@ public:
     virtual BSpline* clone() const { return new BSpline(*this); }
 
     // Evaluation of B-spline
-    double eval(DenseVector x) const override;
-    DenseMatrix evalJacobian(DenseVector x) const override;
+    //double eval(DenseVector x) const override;
+    //DenseMatrix evalJacobian(DenseVector x) const override;
     DenseMatrix evalHessian(DenseVector x) const override;
 
     // Evaluation of B-spline basis functions
-    SparseVector evalBasisFunctions(DenseVector x) const;
-    SparseMatrix evalBasisFunctionsJacobian(DenseVector x) const;
+    SparseVector evalBasis(DenseVector x) const override;
+    SparseMatrix evalBasisJacobian(DenseVector x) const override;
 
     // Getters
     unsigned int getNumControlPoints() const { return coefficients.size(); }
@@ -70,7 +70,7 @@ public:
     // Control point related
     DenseMatrix getControlPoints() const;
     void updateControlPoints(const DenseMatrix &A);
-    void setCoefficients(const DenseVector &coefficients);
+    void setCoefficients(const DenseVector &coefficients) override;
     void setControlPoints(const DenseMatrix &controlPoints);
     void checkControlPoints() const;
 
@@ -102,7 +102,6 @@ protected:
      * where m = numBasisFunctions and n = numVariables + 1. Each row in P is a control point.
      */
     DenseMatrix knotaverages;
-    DenseVector coefficients;
 
     // Control point computations
     DenseMatrix computeKnotAverages() const;

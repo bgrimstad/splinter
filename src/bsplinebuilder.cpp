@@ -137,7 +137,7 @@ SparseMatrix BSpline::Builder::computeBasisFunctionMatrix(const BSpline &bspline
             xi(j) = xv.at(j);
         }
 
-        SparseVector basisValues = bspline.evalBasisFunctions(xi);
+        SparseVector basisValues = bspline.evalBasis(xi);
 
         for (SparseVector::InnerIterator it2(basisValues); it2; ++it2)
         {
