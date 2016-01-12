@@ -60,11 +60,8 @@ public:
 
     // Getters
     unsigned int getNumControlPoints() const { return coefficients.size(); }
-    std::vector<unsigned int> getNumBasisFunctions() const;
-    unsigned int getNumBasisFunctionsTotal() const
-    {
-        return basis.getNumBasisFunctions();
-    }
+    std::vector<unsigned int> getNumBasisFunctionsPerVariable() const;
+    unsigned int getNumBasisFunctions() const { return basis.getNumBasisFunctions(); }
     std::vector< std::vector<double>> getKnotVectors() const;
     std::vector<unsigned int> getBasisDegrees() const;
     std::vector<double> getDomainUpperBound() const;

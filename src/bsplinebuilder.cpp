@@ -124,7 +124,7 @@ SparseMatrix BSpline::Builder::computeBasisFunctionMatrix(const BSpline &bspline
     // TODO: Reserve nnz per row (degree+1)
     //int nnzPrCol = bspline.basis.supportedPrInterval();
 
-    SparseMatrix A(numSamples, bspline.getNumBasisFunctionsTotal());
+    SparseMatrix A(numSamples, bspline.getNumBasisFunctions());
     //A.reserve(DenseVector::Constant(numSamples, nnzPrCol)); // TODO: should reserve nnz per row!
 
     int i = 0;
@@ -310,8 +310,8 @@ SparseMatrix BSpline::Builder::getSecondOrderFiniteDifferenceMatrix(const BSplin
     unsigned int numVariables = bspline.getNumVariables();
 
     // Number of (total) basis functions - defines the number of columns in D
-    unsigned int numCols = bspline.getNumBasisFunctionsTotal();
-    std::vector<unsigned int> numBasisFunctions = bspline.getNumBasisFunctions();
+    unsigned int numCols = bspline.getNumBasisFunctions();
+    std::vector<unsigned int> numBasisFunctions = bspline.getNumBasisFunctionsPerVariable();
 
     // Number of basis functions (and coefficients) in each variable
     std::vector<unsigned int> dims;
@@ -320,11 +320,9 @@ SparseMatrix BSpline::Builder::getSecondOrderFiniteDifferenceMatrix(const BSplin
 
     std::reverse(dims.begin(), dims.end());
 
-    for (unsigned int i=0; i < numVariables; i++)
-    {
-        // Need at least three coefficients in each variable
-//        assert(basis.getNumBasisFunctions(i) >= 3);
-    }
+    for (unsigned int i=0; i < numVariables; ++i)
+        if (numBasisFunctions.at(i) < 3)
+            throw Exception("BSpline::Builder::getSecondOrderDifferenceMatrix: Need at least three coefficients/basis function per variable.");
 
     // Number of rows in D and in each block
     int numRows = 0;

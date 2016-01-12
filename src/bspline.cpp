@@ -147,7 +147,7 @@ SparseMatrix BSpline::evalBasisFunctionsJacobian(DenseVector x) const
     return Bi.sparseView();
 }
 
-std::vector<unsigned int> BSpline::getNumBasisFunctions() const
+std::vector<unsigned int> BSpline::getNumBasisFunctionsPerVariable() const
 {
     std::vector<unsigned int> ret;
     for (unsigned int i = 0; i < numVariables; i++)
@@ -188,7 +188,7 @@ DenseMatrix BSpline::getControlPoints() const
 
 void BSpline::setCoefficients(const DenseVector &coefficients)
 {
-    if (coefficients.size() != getNumBasisFunctionsTotal())
+    if (coefficients.size() != getNumBasisFunctions())
         throw Exception("BSpline::setControlPoints: Incompatible size of coefficient vector.");
 
     this->coefficients = coefficients;

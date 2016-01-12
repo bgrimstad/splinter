@@ -115,7 +115,7 @@ bool operator==(const BSpline &lhs, const BSpline &rhs)
             && lhs.coefficients == rhs.coefficients
             && lhs.knotaverages == rhs.knotaverages
             && lhs.basis == rhs.basis
-            && lhs.getNumBasisFunctions() == rhs.getNumBasisFunctions()
+            && lhs.getNumBasisFunctionsPerVariable() == rhs.getNumBasisFunctionsPerVariable()
             && lhs.getKnotVectors() == rhs.getKnotVectors()
             && lhs.getBasisDegrees() == rhs.getBasisDegrees()
             && lhs.getDomainLowerBound() == rhs.getDomainLowerBound()
