@@ -52,7 +52,8 @@ public:
      */
     DenseMatrix evalHessian(DenseVector x) const override
     {
-        return DenseMatrix::Zero(numVariables, numVariables);
+        throw Exception("LinearFunction::evalHessian: Not implemented!");
+//        return DenseMatrix::Zero(numVariables, numVariables);
     }
 
     /**
