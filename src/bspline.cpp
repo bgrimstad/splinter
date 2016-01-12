@@ -33,10 +33,9 @@ BSpline::BSpline(unsigned int numVariables)
 BSpline::BSpline(std::vector<std::vector<double>> knotVectors, std::vector<unsigned int> basisDegrees)
     : Function(knotVectors.size()),
       basis(BSplineBasis(knotVectors, basisDegrees)),
-      coefficients(DenseVector::Ones(basis.getNumBasisFunctions()))
+      coefficients(DenseVector::Ones(basis.getNumBasisFunctions())),
+      knotaverages(computeKnotAverages())
 {
-    computeKnotAverages();
-
     checkControlPoints();
 }
 
@@ -49,10 +48,9 @@ BSpline::BSpline(std::vector<double> coefficients, std::vector<std::vector<doubl
 BSpline::BSpline(DenseVector coefficients, std::vector<std::vector<double>> knotVectors, std::vector<unsigned int> basisDegrees)
     : Function(knotVectors.size()),
       basis(BSplineBasis(knotVectors, basisDegrees)),
-      coefficients(coefficients)
+      coefficients(coefficients),
+      knotaverages(computeKnotAverages())
 {
-    computeKnotAverages();
-
     checkControlPoints();
 }
 
@@ -180,45 +178,49 @@ std::vector<double> BSpline::getDomainLowerBound() const
 DenseMatrix BSpline::getControlPoints() const
 {
     int nc = coefficients.size();
-    DenseMatrix controlPoints(numVariables + 1, nc);
+    DenseMatrix controlPoints(nc, numVariables + 1);
 
-    controlPoints.block(0, 0, numVariables, nc) = knotaverages;
-    controlPoints.block(numVariables, 0, 1, nc) = coefficients.transpose();
+    controlPoints.block(0, 0, nc, numVariables) = knotaverages;
+    controlPoints.block(0, numVariables, nc, 1) = coefficients;
 
     return controlPoints;
 }
 
 void BSpline::setCoefficients(const DenseVector &coefficients)
 {
+    if (coefficients.size() != getNumBasisFunctionsTotal())
+        throw Exception("BSpline::setControlPoints: Incompatible size of coefficient vector.");
+
     this->coefficients = coefficients;
     checkControlPoints();
 }
 
 void BSpline::setControlPoints(const DenseMatrix &controlPoints)
 {
-    if (controlPoints.rows() != numVariables + 1)
+    if (controlPoints.cols() != numVariables + 1)
         throw Exception("BSpline::setControlPoints: Incompatible size of control point matrix.");
-    int nc = controlPoints.cols();
 
-    knotaverages = controlPoints.block(0, 0, numVariables, nc);
-    coefficients = controlPoints.block(numVariables, 0, 1, nc).transpose();
+    int nc = controlPoints.rows();
+
+    knotaverages = controlPoints.block(0, 0, nc, numVariables);
+    coefficients = controlPoints.block(0, numVariables, nc, 1);
 
     checkControlPoints();
 }
 
 void BSpline::updateControlPoints(const DenseMatrix &A)
 {
-    if (A.cols() != coefficients.cols())
+    if (A.cols() != coefficients.rows() || A.cols() != knotaverages.rows())
         throw Exception("BSpline::updateControlPoints: Incompatible size of linear transformation matrix.");
     coefficients = A*coefficients;
-    knotaverages = knotaverages*A.transpose();
+    knotaverages = A*knotaverages;
 }
 
 void BSpline::checkControlPoints() const
 {
-    if (coefficients.rows() != knotaverages.cols())
+    if (coefficients.rows() != knotaverages.rows())
         throw Exception("BSpline::checkControlPoints: Inconsistent size of coefficients and knot averages matrices.");
-    if (knotaverages.rows() != numVariables)
+    if (knotaverages.cols() != numVariables)
         throw Exception("BSpline::checkControlPoints: Inconsistent size of knot averages matrix.");
 }
 
@@ -290,10 +292,10 @@ void BSpline::decomposeToBezierForm()
 }
 
 // Computes knot averages: assumes that basis is initialized!
-void BSpline::computeKnotAverages()
+DenseMatrix BSpline::computeKnotAverages() const
 {
     // Calculate knot averages for each knot vector
-    std::vector< DenseVector > knotAverages;
+    std::vector<DenseVector> mu_vectors;
     for (unsigned int i = 0; i < numVariables; i++)
     {
         std::vector<double> knots = basis.getKnotVector(i);
@@ -308,18 +310,16 @@ void BSpline::computeKnotAverages()
             }
             mu(j) = knotAvg/basis.getBasisDegree(i);
         }
-        knotAverages.push_back(mu);
+        mu_vectors.push_back(mu);
     }
 
     // Calculate vectors of ones (with same length as corresponding knot average vector)
     std::vector<DenseVector> knotOnes;
     for (unsigned int i = 0; i < numVariables; i++)
-        knotOnes.push_back(DenseVector::Ones(knotAverages.at(i).rows()));
+        knotOnes.push_back(DenseVector::Ones(mu_vectors.at(i).rows()));
 
-    // Fill knot average matrix one row at the time
-    // NOTE: Must have same pattern as samples in DataTable
-    // NOTE: Could use DataTable to achieve the same pattern
-    knotaverages.resize(numVariables, basis.getNumBasisFunctions());
+    // Fill knot average matrix one column at the time
+    DenseMatrix knot_averages = DenseMatrix::Zero(basis.getNumBasisFunctions(), numVariables);
 
     for (unsigned int i = 0; i < numVariables; i++)
     {
@@ -328,17 +328,16 @@ void BSpline::computeKnotAverages()
         {
             DenseMatrix temp = mu_ext;
             if (i == j)
-                mu_ext = Eigen::kroneckerProduct(temp, knotAverages.at(j));
+                mu_ext = Eigen::kroneckerProduct(temp, mu_vectors.at(j));
             else
                 mu_ext = Eigen::kroneckerProduct(temp, knotOnes.at(j));
         }
         if (mu_ext.rows() != basis.getNumBasisFunctions())
             throw Exception("BSpline::computeKnotAverages: Incompatible size of knot average matrix.");
-        knotaverages.block(i,0,1,basis.getNumBasisFunctions()) = mu_ext.transpose();
+        knot_averages.block(0, i, basis.getNumBasisFunctions(), 1) = mu_ext;
     }
 
-    if (!(knotaverages.rows() == numVariables && knotaverages.cols() == basis.getNumBasisFunctions()))
-        throw Exception("BSpline::computeKnotAverages: Incompatible size of knot average matrix.");
+    return knot_averages;
 }
 
 void BSpline::insertKnots(double tau, unsigned int dim, unsigned int multiplicity)

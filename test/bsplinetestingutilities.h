@@ -11,9 +11,17 @@
 #define SPLINTER_BSPLINETESTINGUTILITIES_H
 
 #include <bsplinebuilder.h>
+#include <datatable.h>
 
 namespace SPLINTER
 {
+
+DataTable sampleTestFunction();
+
+/*
+ * Test knot insertion
+ */
+bool testKnotInsertion();
 
 /*
  * Methods for B-spline domain reduction testing

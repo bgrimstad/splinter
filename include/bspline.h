@@ -65,7 +65,7 @@ public:
     {
         return basis.getNumBasisFunctions();
     }
-    std::vector< std::vector<double> > getKnotVectors() const;
+    std::vector< std::vector<double>> getKnotVectors() const;
     std::vector<unsigned int> getBasisDegrees() const;
     std::vector<double> getDomainUpperBound() const;
     std::vector<double> getDomainLowerBound() const;
@@ -99,11 +99,16 @@ protected:
     BSpline();
 
     BSplineBasis basis;
-    DenseMatrix knotaverages; // One row per input
+
+    /*
+     * The control point matrix is P = (knotaverages, coefficients) in R^(m x n),
+     * where m = numBasisFunctions and n = numVariables + 1. Each row in P is a control point.
+     */
+    DenseMatrix knotaverages;
     DenseVector coefficients;
 
     // Control point computations
-    void computeKnotAverages();
+    DenseMatrix computeKnotAverages() const;
 
 private:
     // Domain reduction

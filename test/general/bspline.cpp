@@ -15,8 +15,13 @@ using namespace SPLINTER;
 #define COMMON_TAGS "[general][bspline]"
 #define COMMON_TEXT " subdivision test"
 
-TEST_CASE("BSpline" COMMON_TEXT, COMMON_TAGS "[subdivision]")
+TEST_CASE("BSpline recursive subdivision" COMMON_TEXT, COMMON_TAGS "[subdivision]")
 {
     // TODO: The current code for comparing BSplines require identical bounds which fails in this test.
     //REQUIRE(runRecursiveDomainReductionTest());
+}
+
+TEST_CASE("BSpline knot insertion" COMMON_TEXT, COMMON_TAGS "[knotinsertion]")
+{
+    REQUIRE(testKnotInsertion());
 }

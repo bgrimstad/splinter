@@ -14,6 +14,89 @@
 namespace SPLINTER
 {
 
+DataTable sampleTestFunction()
+{
+    DataTable samples;
+
+    // Sample function
+    auto x0_vec = linspace(0,2,20);
+    auto x1_vec = linspace(0,2,20);
+    DenseVector x(2);
+    double y;
+
+    for (auto x0 : x0_vec)
+    {
+        for (auto x1 : x1_vec)
+        {
+            // Sample function at x
+            x(0) = x0;
+            x(1) = x1;
+            y = sixHumpCamelBack(x);
+
+            // Store sample
+            samples.addSample(x,y);
+        }
+    }
+
+    return samples;
+}
+
+bool testKnotInsertion()
+{
+    DataTable samples = sampleTestFunction();
+
+    // Build B-splines that interpolate the samples
+    BSpline bspline1 = BSpline::Builder(samples).degree(BSpline::Degree::LINEAR).build();
+    BSpline bspline2 = BSpline::Builder(samples).degree(BSpline::Degree::QUADRATIC).build();
+    BSpline bspline3 = BSpline::Builder(samples).degree(BSpline::Degree::CUBIC).build();
+
+    BSpline bspline1_copy(bspline1);
+    BSpline bspline2_copy(bspline2);
+    BSpline bspline3_copy(bspline3);
+
+    bspline1.insertKnots(0.83, 0);
+    bspline1.insertKnots(1.37, 1);
+    bspline2.insertKnots(0.83, 1);
+    bspline2.insertKnots(1.37, 0);
+    bspline3.insertKnots(0.83, 1);
+    bspline3.insertKnots(1.37, 1);
+
+    // Sample function
+    auto x0_vec = linspace(0, 2, 200);
+    auto x1_vec = linspace(0, 2, 200);
+    DenseVector x(2);
+
+    for (auto x0 : x0_vec)
+    {
+        for (auto x1 : x1_vec)
+        {
+            // Sample function at x
+            x(0) = x0;
+            x(1) = x1;
+
+            double y1 = bspline1.eval(x);
+            double y1_copy = bspline1_copy.eval(x);
+
+            if (!assertNear(y1, y1_copy, 1e-10))
+                return false;
+
+            double y2 = bspline2.eval(x);
+            double y2_copy = bspline2_copy.eval(x);
+
+            if (!assertNear(y2, y2_copy, 1e-10))
+                return false;
+
+            double y3 = bspline3.eval(x);
+            double y3_copy = bspline3_copy.eval(x);
+
+            if (!assertNear(y3, y3_copy, 1e-10))
+                return false;
+        }
+    }
+
+    return true;
+}
+
 bool domainReductionTest(BSpline &bs, const BSpline &bs_orig)
 {
     if (bs.getNumVariables() != 2 || bs_orig.getNumVariables() != 2)
@@ -60,27 +143,7 @@ bool domainReductionTest(BSpline &bs, const BSpline &bs_orig)
 bool runRecursiveDomainReductionTest()
 {
     // Create new DataTable to manage samples
-    DataTable samples;
-
-    // Sample function
-    auto x0_vec = linspace(0,2,20);
-    auto x1_vec = linspace(0,2,20);
-    DenseVector x(2);
-    double y;
-
-    for (auto x0 : x0_vec)
-    {
-        for (auto x1 : x1_vec)
-        {
-            // Sample function at x
-            x(0) = x0;
-            x(1) = x1;
-            y = sixHumpCamelBack(x);
-
-            // Store sample
-            samples.addSample(x,y);
-        }
-    }
+    DataTable samples = sampleTestFunction();
 
     // Build B-splines that interpolate the samples
     BSpline bspline1 = BSpline::Builder(samples).degree(BSpline::Degree::LINEAR).build();
