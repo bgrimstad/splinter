@@ -25,7 +25,9 @@ int lastFuncCallError = 0;
 const char *error_string = "No error.";
 
 // Keep a list of objects so we avoid performing operations on objects that don't exist
-std::set<obj_ptr> objects = std::set<obj_ptr>();
+std::set<obj_ptr> dataTables = std::set<obj_ptr>();
+std::set<obj_ptr> functions = std::set<obj_ptr>();
+std::set<obj_ptr> bsplineBuilders = std::set<obj_ptr>();
 
 static void set_error_string(const char *new_error_string)
 {
@@ -36,9 +38,9 @@ static void set_error_string(const char *new_error_string)
 /* Cast the obj_ptr to a DataTable * */
 static DataTable *get_datatable(obj_ptr datatable_ptr)
 {
-    if (objects.count(datatable_ptr) > 0)
+    if (dataTables.count(datatable_ptr) > 0)
     {
-        return (DataTable *) datatable_ptr;
+        return static_cast<DataTable *>(datatable_ptr);
     }
 
     set_error_string("Invalid reference to DataTable: Maybe it has been deleted?");
@@ -49,10 +51,9 @@ static DataTable *get_datatable(obj_ptr datatable_ptr)
 /* Cast the obj_ptr to a Function * */
 static Function *get_function(obj_ptr function_ptr)
 {
-    if (objects.count(function_ptr) > 0)
+    if (functions.count(function_ptr) > 0)
     {
-        // NOTE: get_function now returns Function*
-        return (Function *) function_ptr;
+        return static_cast<Function *>(function_ptr);
     }
 
     set_error_string("Invalid reference to Function: Maybe it has been deleted?");
@@ -60,11 +61,15 @@ static Function *get_function(obj_ptr function_ptr)
     return nullptr;
 }
 
+/**
+ * Cast bspline_builder_ptr to BSpline::Builder* if possible.
+ * Checks the internal objects index to see if bspline_builder_ptr is a valid pointer.
+ */
 static BSpline::Builder *get_bspline_builder(obj_ptr bspline_builder_ptr)
 {
-    if (objects.count(bspline_builder_ptr) > 0)
+    if (bsplineBuilders.count(bspline_builder_ptr) > 0)
     {
-        return (BSpline::Builder *) bspline_builder_ptr;
+        return static_cast<BSpline::Builder *>(bspline_builder_ptr);
     }
 
     set_error_string("Invalid reference to BSpline::Builder: Maybe it has been deleted?");
@@ -72,6 +77,13 @@ static BSpline::Builder *get_bspline_builder(obj_ptr bspline_builder_ptr)
     return nullptr;
 }
 
+/**
+ * Convert from standard C array to DenseVector.
+ *
+ * @param x C array to convert from.
+ * @pararm x_dim The size of x.
+ * @return DenseVector with the same data as x.
+ */
 static DenseVector get_densevector(double *x, size_t x_dim)
 {
     DenseVector xvec(x_dim);
@@ -83,6 +95,13 @@ static DenseVector get_densevector(double *x, size_t x_dim)
     return xvec;
 }
 
+/**
+ * Convert from column major to row major with point_dim number of columns.
+ *
+ * @param col_major Column major data
+ * @param point_dim Dimension of each point (= number of columns)
+ * @return col_major data stored row major.
+ */
 static double *get_row_major(double *col_major, size_t point_dim, size_t x_len)
 {
     if (point_dim == 0)
@@ -101,9 +120,9 @@ static double *get_row_major(double *col_major, size_t point_dim, size_t x_len)
     size_t num_points = x_len / point_dim;
     for (size_t i = 0; i < x_len; ++i)
     {
-        size_t sample_number = i / point_dim; // Intentional integer division
-        size_t dimension_number = i % point_dim;
-        row_major[i] = col_major[dimension_number * num_points + sample_number];
+        size_t row_num = i / point_dim; // Intentional integer division
+        size_t col_num = i % point_dim;
+        row_major[i] = col_major[col_num * num_points + row_num];
     }
 
     return row_major;
@@ -111,12 +130,6 @@ static double *get_row_major(double *col_major, size_t point_dim, size_t x_len)
 
 extern "C"
 {
-/* 1 if the last call to the library resulted in an error,
-    *  0 otherwise. This is used to avoid throwing exceptions across library boundaries,
-    *  and we expect the caller to manually check the value of this flag.
-    *  We always reset it when it is checked, then we won't have to reset it in the beginning of every
-    *  end user visible function.
-    */
 int get_error()
 {
     int temp = lastFuncCallError;
@@ -134,7 +147,7 @@ obj_ptr datatable_init()
 {
     obj_ptr dataTable = (obj_ptr) new DataTable();
 
-    objects.insert(dataTable);
+    dataTables.insert(dataTable);
 
     return dataTable;
 }
@@ -146,7 +159,7 @@ obj_ptr datatable_load_init(const char *filename)
     try
     {
         dataTable = (obj_ptr) new DataTable(filename);
-        objects.insert(dataTable);
+        dataTables.insert(dataTable);
     }
     catch(const Exception &e)
     {
@@ -271,7 +284,7 @@ void datatable_delete(obj_ptr datatable_ptr)
     DataTable *dataTable = get_datatable(datatable_ptr);
     if (dataTable != nullptr)
     {
-        objects.erase(datatable_ptr);
+        dataTables.erase(datatable_ptr);
         delete dataTable;
     }
 }
@@ -283,7 +296,7 @@ obj_ptr bspline_load_init(const char *filename)
     try
     {
         bspline = (obj_ptr) new BSpline(filename);
-        objects.insert(bspline);
+        functions.insert(bspline);
     }
     catch(const Exception &e)
     {
@@ -329,7 +342,7 @@ obj_ptr rbf_init(obj_ptr datatable_ptr, int type_index, int normalized)
         try
         {
             rbf = (obj_ptr) new RBFNetwork(*table, type, norm);
-            objects.insert(rbf);
+            functions.insert(rbf);
         }
         catch(const Exception &e)
         {
@@ -347,7 +360,7 @@ obj_ptr rbf_load_init(const char *filename)
     try
     {
         rbf = (obj_ptr) new RBFNetwork(filename);
-        objects.insert(rbf);
+        functions.insert(rbf);
     }
     catch(const Exception &e)
     {
@@ -374,7 +387,7 @@ obj_ptr polynomial_regression_init(obj_ptr datatable_ptr, int *degrees, int degr
         try
         {
             polyfit = (obj_ptr) new Polynomial(*table, degreeVec);
-            objects.insert(polyfit);
+            functions.insert(polyfit);
         }
         catch(const Exception &e)
         {
@@ -392,7 +405,7 @@ obj_ptr polynomial_regression_load_init(const char *filename)
     try
     {
         polyfit = (obj_ptr) new Polynomial(filename);
-        objects.insert(polyfit);
+        functions.insert(polyfit);
     }
     catch(const Exception &e)
     {
@@ -402,7 +415,7 @@ obj_ptr polynomial_regression_load_init(const char *filename)
     return polyfit;
 }
 
-obj_ptr bsplinebuilder_init(obj_ptr datatable_ptr)
+obj_ptr bspline_builder_init(obj_ptr datatable_ptr)
 {
     obj_ptr bspline_builder_ptr = nullptr;
 
@@ -410,7 +423,7 @@ obj_ptr bsplinebuilder_init(obj_ptr datatable_ptr)
     {
         DataTable *dataTable = get_datatable(datatable_ptr);
         bspline_builder_ptr = new BSpline::Builder(*dataTable);
-        objects.insert(bspline_builder_ptr);
+        bsplineBuilders.insert(bspline_builder_ptr);
     }
     catch (const Exception &e)
     {
@@ -420,9 +433,9 @@ obj_ptr bsplinebuilder_init(obj_ptr datatable_ptr)
     return bspline_builder_ptr;
 }
 
-void bsplinebuilder_set_degree(obj_ptr bsplinebuilder_ptr, int *degrees, int n)
+void bspline_builder_set_degree(obj_ptr bspline_builder_ptr, int *degrees, int n)
 {
-    BSpline::Builder *builder = get_bspline_builder(bsplinebuilder_ptr);
+    BSpline::Builder *builder = get_bspline_builder(bspline_builder_ptr);
     if(builder != nullptr)
     {
         std::vector<unsigned int> _degrees((unsigned int) n);
@@ -434,9 +447,9 @@ void bsplinebuilder_set_degree(obj_ptr bsplinebuilder_ptr, int *degrees, int n)
     }
 }
 
-void bsplinebuilder_set_num_basis_functions(obj_ptr bsplinebuilder_ptr, int *num_basis_functions, int n)
+void bspline_builder_set_num_basis_functions(obj_ptr bspline_builder_ptr, int *num_basis_functions, int n)
 {
-    BSpline::Builder *builder = get_bspline_builder(bsplinebuilder_ptr);
+    BSpline::Builder *builder = get_bspline_builder(bspline_builder_ptr);
     if(builder != nullptr)
     {
         std::vector<unsigned int> _num_basis_functions((unsigned int) n);
@@ -448,9 +461,9 @@ void bsplinebuilder_set_num_basis_functions(obj_ptr bsplinebuilder_ptr, int *num
     }
 }
 
-void bsplinebuilder_set_knot_spacing(obj_ptr bsplinebuilder_ptr, int knot_spacing)
+void bspline_builder_set_knot_spacing(obj_ptr bspline_builder_ptr, int knot_spacing)
 {
-    BSpline::Builder *builder = get_bspline_builder(bsplinebuilder_ptr);
+    BSpline::Builder *builder = get_bspline_builder(bspline_builder_ptr);
     if(builder != nullptr)
     {
         switch (knot_spacing)
@@ -471,9 +484,9 @@ void bsplinebuilder_set_knot_spacing(obj_ptr bsplinebuilder_ptr, int knot_spacin
     }
 }
 
-void bsplinebuilder_set_smoothing(obj_ptr bsplinebuilder_ptr, int smoothing)
+void bspline_builder_set_smoothing(obj_ptr bspline_builder_ptr, int smoothing)
 {
-    BSpline::Builder *builder = get_bspline_builder(bsplinebuilder_ptr);
+    BSpline::Builder *builder = get_bspline_builder(bspline_builder_ptr);
     if(builder != nullptr)
     {
         switch (smoothing)
@@ -494,27 +507,38 @@ void bsplinebuilder_set_smoothing(obj_ptr bsplinebuilder_ptr, int smoothing)
     }
 }
 
-void bsplinebuilder_set_lambda(obj_ptr bsplinebuilder_ptr, double lambda)
+void bspline_builder_set_lambda(obj_ptr bspline_builder_ptr, double lambda)
 {
-    BSpline::Builder *builder = get_bspline_builder(bsplinebuilder_ptr);
+    BSpline::Builder *builder = get_bspline_builder(bspline_builder_ptr);
     if(builder != nullptr) {
         builder->lambda(lambda);
     }
 }
 
-obj_ptr bsplinebuilder_build(obj_ptr bsplinebuilder_ptr)
+obj_ptr bspline_builder_build(obj_ptr bspline_builder_ptr)
 {
     BSpline *bspline = nullptr;
-    BSpline::Builder *builder = get_bspline_builder(bsplinebuilder_ptr);
+    BSpline::Builder *builder = get_bspline_builder(bspline_builder_ptr);
     if(builder != nullptr)
     {
         bspline = builder->build().clone();
         if (bspline != nullptr)
         {
-            objects.insert(bspline);
+            functions.insert(bspline);
         }
     }
     return bspline;
+}
+
+void bspline_builder_delete(obj_ptr bspline_builder_ptr)
+{
+    auto func = get_bspline_builder(bspline_builder_ptr);
+
+    if (func != nullptr)
+    {
+        bsplineBuilders.erase(bspline_builder_ptr);
+        delete func;
+    }
 }
 
 double *eval_row_major(obj_ptr function, double *x, int x_len)
@@ -672,7 +696,8 @@ double *eval_hessian_col_major(obj_ptr function, double *x, int x_len)
 
     auto func = get_function(function);
     if (func != nullptr)
-    {double *row_major = nullptr;
+    {
+        double *row_major = nullptr;
         try
         {
             row_major = get_row_major(x, func->getNumVariables(), x_len);
@@ -727,7 +752,7 @@ void function_delete(obj_ptr function)
 
     if (func != nullptr)
     {
-        objects.erase(function);
+        functions.erase(function);
         delete func;
     }
 }

@@ -12,17 +12,23 @@ from .utilities import *
 
 
 class DataTable:
-    def __init__(self, fileName=None):
+    def __init__(self, fileNameOrData=None):
         self.__handle = None  # Handle to instance in the library
         self.__xDim = None
         self.__numSamples = 0  # Number of samples not yet transferred to back end
         self.__samples = []
 
-        if fileName is not None:
-            self.__handle = splinter._call(splinter._getHandle().datatable_load_init, getCString(fileName))
+        if isString(fileNameOrData):
+            self.__handle = splinter._call(splinter._getHandle().datatable_load_init, getCString(fileNameOrData))
             self.__xDim = splinter._call(splinter._getHandle().datatable_get_num_variables, self.__handle)
         else:
             self.__handle = splinter._call(splinter._getHandle().datatable_init)
+
+            # If fileNameOrData is not a string and not none, we expect it to be an iterable with rows of data,
+            # where the last column in each row is y and the first n-1 columns is x.
+            if fileNameOrData is not None:
+                for dataRow in fileNameOrData:
+                    self.addSample(list(dataRow[:-1]), dataRow[-1])
 
     # "Public" methods (for use by end user of the library)
     def addSample(self, x, y):

@@ -10,6 +10,7 @@ from . import splinter
 from .datatable import DataTable
 from ctypes import *
 from .bspline import BSpline
+from .datatable import DataTable
 
 
 class BSplineBuilder:
@@ -34,17 +35,17 @@ class BSplineBuilder:
         def isValid(value):
             return value in range(3)
 
-    def __init__(self, datatable):
+    def __init__(self, data):
         self._handle = None  # Handle for referencing the c side of this object
 
-        self._datatable = datatable
-        self._degrees = [BSplineBuilder.Degree.CUBIC] * datatable.getNumVariables()
-        self._numBasisFunctions = [10**3] * datatable.getNumVariables()
+        self._datatable = DataTable(data)
+        self._degrees = [BSplineBuilder.Degree.CUBIC] * self._datatable.getNumVariables()
+        self._numBasisFunctions = [10**3] * self._datatable.getNumVariables()
         self._knotSpacing = BSplineBuilder.KnotSpacing.SAMPLE
         self._smoothing = BSplineBuilder.Smoothing.NONE
         self._lambda = 0.03
 
-        self._handle = splinter._call(splinter._getHandle().bsplinebuilder_init, datatable._getHandle())
+        self._handle = splinter._call(splinter._getHandle().bspline_builder_init, self._datatable._getHandle())
 
     def degree(self, degrees):
         # If the value is a single number, make it a list of numVariables length
@@ -60,7 +61,7 @@ class BSplineBuilder:
 
         self._degrees = degrees
 
-        splinter._call(splinter._getHandle().bsplinebuilder_set_degree, self._handle, (c_int * len(self._degrees))(*self._degrees), len(self._degrees))
+        splinter._call(splinter._getHandle().bspline_builder_set_degree, self._handle, (c_int * len(self._degrees))(*self._degrees), len(self._degrees))
         return self
 
     def numBasisFunctions(self, numBasisFunctions):
@@ -77,7 +78,7 @@ class BSplineBuilder:
 
         self._numBasisFunctions = numBasisFunctions
 
-        splinter._call(splinter._getHandle().bsplinebuilder_set_num_basis_functions, self._handle, (c_int * len(self._numBasisFunctions))(*self._numBasisFunctions), len(self._numBasisFunctions))
+        splinter._call(splinter._getHandle().bspline_builder_set_num_basis_functions, self._handle, (c_int * len(self._numBasisFunctions))(*self._numBasisFunctions), len(self._numBasisFunctions))
         return self
 
     def knotSpacing(self, knotSpacing):
@@ -86,7 +87,7 @@ class BSplineBuilder:
 
         self._knotSpacing = knotSpacing
 
-        splinter._call(splinter._getHandle().bsplinebuilder_set_knot_spacing, self._handle, self._knotSpacing)
+        splinter._call(splinter._getHandle().bspline_builder_set_knot_spacing, self._handle, self._knotSpacing)
         return self
 
     def smoothing(self, smoothing):
@@ -95,7 +96,7 @@ class BSplineBuilder:
 
         self._smoothing = smoothing
 
-        splinter._call(splinter._getHandle().bsplinebuilder_set_smoothing, self._handle, self._smoothing)
+        splinter._call(splinter._getHandle().bspline_builder_set_smoothing, self._handle, self._smoothing)
         return self
 
     def setLambda(self, newLambda):
@@ -104,11 +105,16 @@ class BSplineBuilder:
 
         self._lambda = newLambda
 
-        splinter._call(splinter._getHandle().bsplinebuilder_set_lambda, self._handle, self._lambda)
+        splinter._call(splinter._getHandle().bspline_builder_set_lambda, self._handle, self._lambda)
         return self
 
     # Returns a handle to the created internal BSpline object
     def build(self):
-        bspline_handle = splinter._call(splinter._getHandle().bsplinebuilder_build, self._handle)
+        bspline_handle = splinter._call(splinter._getHandle().bspline_builder_build, self._handle)
 
         return BSpline(bspline_handle)
+
+    def __del__(self):
+        if self._handle is not None:
+            splinter._call(splinter._getHandle().bspline_builder_delete, self._handle)
+        self._handle = None

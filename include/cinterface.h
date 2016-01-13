@@ -28,17 +28,24 @@ typedef void *obj_ptr;
     {
 #endif
 /**
- * 1 if the previous function call caused an error, 0 otherwise.
+ * Check if the last library call resulted in an error.
+ * Will reset upon call, so two consecutive calls to this function may not return the same value.
+ *
+ * @return 1 if error, 0 else.
  */
 SPLINTER_API int get_error();
 
 /**
- * Returns the error string, if the last function call resulted in an error.
+ * Get a string describing the error.
+ *
+ * @return Error string.
  */
 SPLINTER_API const char *get_error_string();
 
 /**
  * Initialize a new DataTable.
+ *
+ * @return Pointer to the created DataTable.
  */
 SPLINTER_API obj_ptr datatable_init();
 
@@ -46,6 +53,7 @@ SPLINTER_API obj_ptr datatable_init();
  * Load a datatable from file
  *
  * @param filename Name of the file to load. Must be a datatable that has previously been stored.
+ * @return Pointer to the loaded DataTable.
  */
 SPLINTER_API obj_ptr datatable_load_init(const char *filename);
 
@@ -152,58 +160,64 @@ SPLINTER_API obj_ptr polynomial_regression_load_init(const char *filename);
  * @param datatable_ptr The datatable to create the BSplineBuilder from.
  * @return Pointer to the created BSplineBuilder.
  */
-SPLINTER_API obj_ptr bsplinebuilder_init(obj_ptr datatable_ptr);
+SPLINTER_API obj_ptr bspline_builder_init(obj_ptr datatable_ptr);
 
 /**
  * Set the degree of the BSplineBuilder.
  *
- * @param bsplinebuilder_ptr The BSplineBuilder to set the degree of.
+ * @param bspline_builder_ptr The BSplineBuilder to set the degree of.
  * @param degrees Array of degrees (must be of the same dimension as the BSplineBuilder).
  * @param n Dimension of degrees
  */
-SPLINTER_API void bsplinebuilder_set_degree(obj_ptr bsplinebuilder_ptr, int *degrees, int n);
+SPLINTER_API void bspline_builder_set_degree(obj_ptr bspline_builder_ptr, int *degrees, int n);
 
 /**
  * Set the number of basis functions of the BSplineBuilder.
  *
- * @param bsplinebuilder_ptr The BSplineBuilder to set the number of basis function for.
+ * @param bspline_builder_ptr The BSplineBuilder to set the number of basis function for.
  * @param num_basis_functions Array of numbers denoting the number of basis functions in corresponding dimensions.
- * @param n Size of num_basis_functions (must match the dimension of bsplinebuilder_ptr).
+ * @param n Size of num_basis_functions (must match the dimension of bspline_builder_ptr).
  */
-SPLINTER_API void bsplinebuilder_set_num_basis_functions(obj_ptr bsplinebuilder_ptr, int *num_basis_functions, int n);
+SPLINTER_API void bspline_builder_set_num_basis_functions(obj_ptr bspline_builder_ptr, int *num_basis_functions, int n);
 
 /**
  * Set the knot spacing of the BSplineBuilder.
  *
- * @param bsplinebuilder_ptr The BSplineBuilder to set the knot spacing of.
+ * @param bspline_builder_ptr The BSplineBuilder to set the knot spacing of.
  * @param knot_spacing The knot spacing (actually an enum, see the implementation of this function for details).
  */
-SPLINTER_API void bsplinebuilder_set_knot_spacing(obj_ptr bsplinebuilder_ptr, int knot_spacing);
+SPLINTER_API void bspline_builder_set_knot_spacing(obj_ptr bspline_builder_ptr, int knot_spacing);
 
 /**
  * Set the smoothing of the BSplineBuilder.
  *
- * @param bsplinebuilder_ptr The BSplineBuilder to set the knot spacing of.
+ * @param bspline_builder_ptr The BSplineBuilder to set the knot spacing of.
  * @param smoothing The smoothing to use (actually an enum, see the implementation of this function for details).
  */
-SPLINTER_API void bsplinebuilder_set_smoothing(obj_ptr bsplinebuilder_ptr, int smoothing);
+SPLINTER_API void bspline_builder_set_smoothing(obj_ptr bspline_builder_ptr, int smoothing);
 
 /**
  * Set the lambda of the BSplineBuilder.
  *
- * @param bsplinebuilder_ptr The BSplineBuilder to set the lambda of.
+ * @param bspline_builder_ptr The BSplineBuilder to set the lambda of.
  * @param lambda The new lambda to use (must be non-negative).
  */
-SPLINTER_API void bsplinebuilder_set_lambda(obj_ptr bsplinebuilder_ptr, double lambda);
+SPLINTER_API void bspline_builder_set_lambda(obj_ptr bspline_builder_ptr, double lambda);
 
 /**
  * Build the BSpline with the parameters of the BSplineBuilder.
  *
- * @param bsplinebuilder_ptr The BSplineBuilder to "build the BSpline with".
+ * @param bspline_builder_ptr The BSplineBuilder to "build the BSpline with".
  * @return Pointer to the created BSpline.
  */
-SPLINTER_API obj_ptr bsplinebuilder_build(obj_ptr bsplinebuilder_ptr);
+SPLINTER_API obj_ptr bspline_builder_build(obj_ptr bspline_builder_ptr);
 
+/**
+ * Free the memory of the internal BSpline::Builder
+ *
+ * @param bspline_builder_ptr Pointer to the BSpline::Builder.
+ */
+SPLINTER_API void bspline_builder_delete(obj_ptr bspline_builder_ptr);
 
 /**
  * Evaluate a function in one or more points. Can "batch evaluate" several points by storing the points consecutively in

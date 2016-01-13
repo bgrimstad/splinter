@@ -16,21 +16,20 @@ sys.path.append(path.dirname(path.dirname(path.dirname(path.abspath(__file__))))
 ##### Start of the example #####
 import splinter
 
-splinter.load("/home/bjarne/Code/C++/splinter4/splinter/bin/Release/libsplinter-2-0.so")
+#splinter.load("/home/bjarne/Code/C++/splinter4/splinter/bin/Release/libsplinter-2-0.so")
+splinter.load("/home/anders/SPLINTER/build/debug/libsplinter-2-0.so")
 
 
-# Example with one variables
+# Example with one variable
 def f1(x):
     return -1. + 2*x + 0.1*(x**2) + 10*np.random.rand(1)[0]
 
-# Create a DataTable and populate it with samples
 x = [0.]*11
 y = [0.]*11
-d1 = splinter.DataTable()
 for i in range(11):
     x[i] = i
     y[i] = f1(i)
-    d1.addSample(x[i], y[i])
+d1 = list(zip(x, y))
 
 # Cubic B-spline that interpolates the data
 b1 = splinter.BSplineBuilder(d1)\
@@ -75,13 +74,12 @@ plt.show()
 def f2(x):
     return x[0]*x[1]
 
-# Create a DataTable and populate it with samples
-d2 = splinter.DataTable()
+d2 = []
 for i in range(11):
     for j in range(11):
-        d2.addSample([i,j], f2([i,j]))
+        d2.append([i,j, f2([i,j])])
 
-# Cubic P-spline
+# Cubic B-spline
 b2d = splinter.BSplineBuilder(d2)\
     .smoothing(splinter.BSplineBuilder.Smoothing.NONE)\
     .build()

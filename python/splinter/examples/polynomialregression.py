@@ -13,19 +13,22 @@ sys.path.append(path.dirname(path.dirname(path.dirname(path.abspath(__file__))))
 
 ##### Start of the example #####
 import splinter
+import numpy as np
 
 # Must be done if splinter was unable to locate the shared library by itself
-splinter.load("/home/anders/SPLINTER/build/debug/libsplinter-2-0.so")
+splinter.load("/home/anders/SPLINTER/build/release/libsplinter-2-0.so")
 
 
 def f(x):
     return x[0]*x[1]
 
-# Create a DataTable and populate it with samples
-d = splinter.DataTable()
+# Create a numpy array and populate it with samples
+d = np.empty((10*10, 3))
+idx = 0
 for i in range(10):
     for j in range(10):
-        d.addSample([i,j], f([i,j]))
+        d[idx] = [i, j, f([i, j])]
+        idx += 1
 
 # Create a PolynomialRegression of degree 1 in all dimensions
 # You can also specify the degree of all dimensions by providing a list of numbers
@@ -36,7 +39,13 @@ for i in range(10):
 poly = splinter.PolynomialRegression(d, 1)
 
 print("Jacobian at [3.2,3.2]: " + str(poly.evalJacobian([3.2,3.2])))
-print("Hessian at [3.2,3.2]: " + str(poly.evalHessian([3.2,3.2])))
+
+# evalHessian is not implemented for PolynomialRegression, expecting error:
+try:
+    print("Hessian at [3.2,3.2]: " + str(poly.evalHessian([3.2,3.2])))
+except Exception as e:
+    print(e)
+
 
 # Save the PolynomialRegression to test.poly
 # The file ending doesn't matter

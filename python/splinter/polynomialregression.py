@@ -9,20 +9,21 @@
 from . import splinter
 from .function import Function
 from .utilities import *
+from .datatable import DataTable
 
 
 class PolynomialRegression(Function):
-    def __init__(self, dataTableOrFileName, degree=None):
+    def __init__(self, dataOrFileName, degree=None):
         # If string we load the PolynomialRegression from the file
-        if isString(dataTableOrFileName):
-            fileName = getCString(dataTableOrFileName)
+        if isString(dataOrFileName):
+            fileName = getCString(dataOrFileName)
             self._handle = splinter._call(splinter._getHandle().polynomial_regression_load_init, fileName)
 
         # Else, construct PolynomialRegression from DataTable
         else:
+            dataTable = DataTable(dataOrFileName)
             if not isinstance(degree, list):
-                degree = [degree]*dataTableOrFileName.getNumVariables()
-            dataTable = dataTableOrFileName
+                degree = [degree]*dataTable.getNumVariables()
             self._handle = splinter._call(splinter._getHandle().polynomial_regression_init, dataTable._getHandle(), listToCArrayOfInts(degree), len(degree))
 
         self._numVariables = splinter._call(splinter._getHandle().function_get_num_variables, self._handle)

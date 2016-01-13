@@ -13,25 +13,33 @@ sys.path.append(path.dirname(path.dirname(path.dirname(path.abspath(__file__))))
 
 ##### Start of the example #####
 import splinter
+import pandas as pd
 
 # Must be done if splinter was unable to locate the shared library by itself
-splinter.load("/home/anders/SPLINTER/build/debug/libsplinter-2-0.so")
+splinter.load("/home/anders/SPLINTER/build/release/libsplinter-2-0.so")
 
 
-def f(x):
-    return x[0]*x[1]
+def f(x0, x1):
+    import math
+    return x1 * (x0 - math.log(x0))
 
-# Create a DataTable and populate it with samples
-d = splinter.DataTable()
-for i in range(10):
-    for j in range(10):
-        d.addSample([i,j], f([i,j]))
+# Create a Pandas DataFrame and populate it with samples
+d = []
+for x0 in range(1, 10):
+    for x1 in range(1, 10):
+        d.append([x0, x1, f(x0, x1)])
+df = pd.DataFrame(data=d, columns=["x0", "x1", "f(x0, x1)"])
 
 # Create a RadialBasisFunction of type Thin plate spline
-rbf = splinter.RadialBasisFunction(d, splinter.RBFType.THIN_PLATE_SPLINE)
+rbf = splinter.RadialBasisFunction(df.values, splinter.RBFType.THIN_PLATE_SPLINE)
 
-print("Jacobian at [3.2,3.2]: " + str(rbf.evalJacobian([3.2,3.2])))
-print("Hessian at [3.2,3.2]: " + str(rbf.evalHessian([3.2,3.2])))
+print("Jacobian at [3.2, 3.2]: " + str(rbf.evalJacobian([3.2, 3.2])))
+
+# evalHessian is not implemented for RadialBasisFunction, expecting error:
+try:
+    print("Hessian at [3.2, 3.2]: " + str(rbf.evalHessian([3.2, 3.2])))
+except Exception as e:
+    print(e)
 
 # Save the rbf to test.rbf
 # The file ending doesn't matter
@@ -40,7 +48,7 @@ rbf.save("test.rbf")
 # Create RadialBasisFunction from saved RadialBasisFunction
 rbf2 = splinter.RadialBasisFunction("test.rbf")
 
-print("Original RadialBasisFunction at [2.1,2.9]: " + str(rbf.eval([2.1,2.9])))
-print("Loaded RadialBasisFunction at [2.1,2.9]: " + str(rbf2.eval([2.1,2.9])))
+print("Original RadialBasisFunction at [2.1,2.9]: " + str(rbf.eval([2.1, 2.9])))
+print("Loaded RadialBasisFunction at [2.1,2.9]: " + str(rbf2.eval([2.1, 2.9])))
 
 remove("test.rbf")

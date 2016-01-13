@@ -13,18 +13,30 @@ sys.path.append(path.dirname(path.dirname(path.dirname(path.abspath(__file__))))
 
 ##### Start of the example #####
 import splinter
+import numpy as np
+import pandas as pd
 
 splinter.load("/home/anders/SPLINTER/build/release/libsplinter-2-0.so")
 
 
-d = splinter.DataTable()
+#d = splinter.DataTable()
+# data = np.array([])
+# for x0 in range(10):
+#     for x1 in range(10):
+#         data = np.append(data, [x0, x1, x0*x1])
+#
+# data = data.reshape([-1, 3])
+# for row in data:
+#     pass#print(row)
 
+data = []
 for x0 in range(10):
     for x1 in range(10):
-        d.addSample([x0, x1], x0*x1)
+        data.append([x0, x1, x0*x1])
 
-print(d.getNumVariables())
-builder = splinter.BSplineBuilder(d)
+df = pd.DataFrame(data=data, columns=["x0", "x1", "f(x0, x1)"])
+
+builder = splinter.BSplineBuilder(df.values)
 
 
 builder.degree([splinter.BSplineBuilder.Degree.LINEAR, splinter.BSplineBuilder.Degree.QUARTIC])
@@ -39,4 +51,4 @@ bspline = builder.build()
 
 for x0 in range(10):
     for x1 in range(10):
-        pass#print(str(bspline.eval([x0, x1])) + " ?= " + str(x0*x1))
+        print(str(bspline.eval([x0, x1])) + " ?= " + str(x0*x1))
