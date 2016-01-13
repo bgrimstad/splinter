@@ -12,6 +12,7 @@
 
 #include "datatable.h"
 #include "bspline.h"
+#include "builder.h"
 
 namespace SPLINTER
 {
@@ -42,7 +43,8 @@ enum class BSpline::KnotSpacing
 };
 
 // B-spline builder class
-class SPLINTER_API BSpline::Builder
+// For some reason full namespace qualification is needed here (SPLINTER::)
+class SPLINTER_API BSpline::Builder : public SPLINTER::Builder<BSpline>
 {
 public:
     Builder(const DataTable &data);
@@ -88,17 +90,8 @@ public:
         return *this;
     }
 
-    Builder& lambda(double lambda)
-    {
-        if (lambda < 0)
-            throw Exception("BSpline::Builder::lambda: Lambda must be non-negative.");
-
-        _lambda = lambda;
-        return *this;
-    }
-
     // Build B-spline
-    BSpline build() const;
+    BSpline build() const override;
 
 private:
     Builder();
