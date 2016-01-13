@@ -49,6 +49,8 @@ builder.setLambda(math.pi)
 bspline = builder.build()
 
 
-for x0 in range(10):
-    for x1 in range(10):
+for i in range(19):
+    for j in range(19):
+        x0 = (i * 9.)/19.
+        x1 = (j * 9.)/19.
         print(str(bspline.eval([x0, x1])) + " ?= " + str(x0*x1))
