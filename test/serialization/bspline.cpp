@@ -15,7 +15,10 @@
 using namespace SPLINTER;
 
 
-TEST_CASE("BSpline can be saved and loaded", "[serialization][bspline]")
+#define COMMON_TAGS "[serialization][bspline]"
+
+
+TEST_CASE("BSpline can be saved and loaded", COMMON_TAGS)
 {
     unsigned int dim = 2;
     auto func = getTestFunction(dim, 1);

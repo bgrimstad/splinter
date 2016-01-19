@@ -12,7 +12,7 @@
 
 #include "datatable.h"
 #include "bspline.h"
-#include "builder.h"
+#include "builderbase.h"
 
 namespace SPLINTER
 {
@@ -43,8 +43,7 @@ enum class BSpline::KnotSpacing
 };
 
 // B-spline builder class
-// For some reason full namespace qualification is needed here (SPLINTER::)
-class SPLINTER_API BSpline::Builder : public SPLINTER::Builder<BSpline>
+class SPLINTER_API BSpline::Builder : public BuilderBase<BSpline>
 {
 public:
     Builder(const DataTable &data);
@@ -135,7 +134,6 @@ private:
     std::vector<double> extractUniqueSorted(const std::vector<double> &values) const;
 
     // Member variables
-    DataTable _data;
     std::vector<unsigned int> _degrees;
     std::vector<unsigned int> _numBasisFunctions;
     KnotSpacing _knotSpacing;
@@ -145,4 +143,4 @@ private:
 
 } // namespace SPLINTER
 
-#endif //SPLINTER_BSPLINEBUILDER_H
+#endif // SPLINTER_BSPLINEBUILDER_H

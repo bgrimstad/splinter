@@ -28,121 +28,6 @@ RBFNetwork::RBFNetwork(const std::string &fileName)
     load(fileName);
 }
 
-RBFNetwork::RBFNetwork(const DataTable &samples, RBFType type)
-    : RBFNetwork(samples, type, false)
-{
-}
-
-RBFNetwork::RBFNetwork(const DataTable &samples, RBFType type, bool normalized)
-    : LinearFunction(samples.getNumVariables(), DenseVector::Zero(samples.getNumSamples())),
-      samples(samples),
-      normalized(normalized),
-      precondition(false),
-      type(type)
-{
-    if (type == RBFType::THIN_PLATE_SPLINE)
-    {
-        fn = std::shared_ptr<RBF>(new ThinPlateSpline());
-    }
-    else if (type == RBFType::MULTIQUADRIC)
-    {
-        fn = std::shared_ptr<RBF>(new Multiquadric());
-    }
-    else if (type == RBFType::INVERSE_QUADRIC)
-    {
-        fn = std::shared_ptr<RBF>(new InverseQuadric());
-    }
-    else if (type == RBFType::INVERSE_MULTIQUADRIC)
-    {
-        fn = std::shared_ptr<RBF>(new InverseMultiquadric());
-    }
-    else if (type == RBFType::GAUSSIAN)
-    {
-        fn = std::shared_ptr<RBF>(new Gaussian());
-    }
-    else
-    {
-        fn = std::shared_ptr<RBF>(new ThinPlateSpline());
-    }
-
-    /* Want to solve the linear system A*w = b,
-     * where w is the vector of weights.
-     * NOTE: the system is dense and by default badly conditioned.
-     * It should be solved by a specialized solver such as GMRES
-     * with preconditioning (e.g. ACBF) as in Matlab.
-     * NOTE: Consider trying the Łukaszyk–Karmowski metric (for two variables)
-     */
-    unsigned int numSamples = samples.getNumSamples();
-    DenseMatrix A; A.setZero(numSamples, numSamples);
-    DenseVector b; b.setZero(numSamples);
-
-    int i=0;
-    for (auto it1 = samples.cbegin(); it1 != samples.cend(); ++it1, ++i)
-    {
-        double sum = 0;
-        int j=0;
-        for (auto it2 = samples.cbegin(); it2 != samples.cend(); ++it2, ++j)
-        {
-            double val = fn->eval(dist(*it1, *it2));
-            if (val != 0)
-            {
-                //A.insert(i,j) = val;
-                A(i,j) = val;
-                sum += val;
-            }
-        }
-
-        double y = it1->getY();
-        if (normalized) b(i) = sum*y;
-        else b(i) = y;
-    }
-
-    if (precondition)
-    {
-        // Calcualte precondition matrix P
-        DenseMatrix P = computePreconditionMatrix();
-
-        // Preconditioned A and b
-        DenseMatrix Ap = P*A;
-        DenseMatrix bp = P*b;
-
-        A = Ap;
-        b = bp;
-    }
-
-    #ifndef NDEBUG
-    std::cout << "Computing RBF weights using dense solver." << std::endl;
-    #endif // NDEBUG
-
-    // SVD analysis
-    Eigen::JacobiSVD<DenseMatrix> svd(A, Eigen::ComputeThinU | Eigen::ComputeThinV);
-    auto svals = svd.singularValues();
-    double svalmax = svals(0);
-    double svalmin = svals(svals.rows()-1);
-    double rcondnum = (svalmax <= 0.0 || svalmin <= 0.0) ? 0.0 : svalmin/svalmax;
-
-    #ifndef NDEBUG
-    std::cout << "The reciprocal of the condition number is: " << rcondnum << std::endl;
-    std::cout << "Largest/smallest singular value: " << svalmax << " / " << svalmin << std::endl;
-    #endif // NDEBUG
-
-    // Solve for coefficients/weights
-    coefficients = svd.solve(b);
-
-    #ifndef NDEBUG
-    // Compute error. If it is used later on, move this statement above the NDEBUG
-    double err = (A * coefficients - b).norm() / b.norm();
-    std::cout << "Error: " << std::setprecision(10) << err << std::endl;
-    #endif // NDEBUG
-
-//    // Alternative solver
-//    DenseQR s;
-//    bool success = s.solve(A,b,coefficients);
-//    assert(success);
-
-    // NOTE: Tried using experimental GMRES solver in Eigen, but it did not work very well.
-}
-
 DenseVector RBFNetwork::evalBasis(DenseVector x) const
 {
     checkInput(x);
@@ -205,15 +90,6 @@ DenseMatrix RBFNetwork::evalJacobian(DenseVector x) const
             jac(i) = sumw_d;
     }
     return jac;
-}
-
-/*
- * Calculate precondition matrix
- * TODO: implement
- */
-DenseMatrix RBFNetwork::computePreconditionMatrix() const
-{
-    return DenseMatrix::Zero(samples.getNumSamples(), samples.getNumSamples());
 }
 
 void RBFNetwork::save(const std::string &fileName) const

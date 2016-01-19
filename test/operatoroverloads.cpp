@@ -144,7 +144,6 @@ bool operator==(const RBFNetwork &lhs, const RBFNetwork &rhs)
             && lhs.coefficients == rhs.coefficients
             && lhs.samples == rhs.samples
             && lhs.normalized == rhs.normalized
-            && lhs.precondition == rhs.precondition
             && lhs.getNumVariables() == rhs.getNumVariables();
 }
 

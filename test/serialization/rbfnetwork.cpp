@@ -10,12 +10,16 @@
 #include <Catch.h>
 #include <datatable.h>
 #include "rbfnetwork.h"
+#include "rbfbuilder.h"
 #include "testingutilities.h"
 
 using namespace SPLINTER;
 
 
-TEST_CASE("RadialBasisFunction can be saved and loaded", "[serialization][rbf][radialbasisfunction]")
+#define COMMON_TAGS "[serialization][rbf][radialbasisfunction]"
+
+
+TEST_CASE("RadialBasisFunction can be saved and loaded", COMMON_TAGS)
 {
     unsigned int dim = 2;
     auto func = getTestFunction(dim, 1);
@@ -26,7 +30,7 @@ TEST_CASE("RadialBasisFunction can be saved and loaded", "[serialization][rbf][r
     const char *fileName = "test.rbf";
 
     SECTION("Gaussian") {
-        RBFNetwork rbf(table, RBFType::GAUSSIAN);
+        RBFNetwork rbf = RBFNetwork::Builder(table).type(RBFType::GAUSSIAN).build();
 
         rbf.save(fileName);
         RBFNetwork loadedRBF(fileName);
@@ -35,7 +39,7 @@ TEST_CASE("RadialBasisFunction can be saved and loaded", "[serialization][rbf][r
     }
 
     SECTION("Inverse multiquadric") {
-        RBFNetwork rbf(table, RBFType::INVERSE_MULTIQUADRIC);
+        RBFNetwork rbf = RBFNetwork::Builder(table).type(RBFType::INVERSE_MULTIQUADRIC).build();
 
         rbf.save(fileName);
         RBFNetwork loadedRBF(fileName);
@@ -44,7 +48,7 @@ TEST_CASE("RadialBasisFunction can be saved and loaded", "[serialization][rbf][r
     }
 
     SECTION("Inverse quadric") {
-        RBFNetwork rbf(table, RBFType::INVERSE_QUADRIC);
+        RBFNetwork rbf = RBFNetwork::Builder(table).type(RBFType::INVERSE_QUADRIC).build();
 
         rbf.save(fileName);
         RBFNetwork loadedRBF(fileName);
@@ -53,7 +57,7 @@ TEST_CASE("RadialBasisFunction can be saved and loaded", "[serialization][rbf][r
     }
 
     SECTION("Multiquadric") {
-        RBFNetwork rbf(table, RBFType::MULTIQUADRIC);
+        RBFNetwork rbf = RBFNetwork::Builder(table).type(RBFType::MULTIQUADRIC).build();
 
         rbf.save(fileName);
         RBFNetwork loadedRBF(fileName);
@@ -62,7 +66,7 @@ TEST_CASE("RadialBasisFunction can be saved and loaded", "[serialization][rbf][r
     }
 
     SECTION("Thin plate spline") {
-        RBFNetwork rbf(table, RBFType::THIN_PLATE_SPLINE);
+        RBFNetwork rbf = RBFNetwork::Builder(table).type(RBFType::THIN_PLATE_SPLINE).build();
 
         rbf.save(fileName);
         RBFNetwork loadedRBF(fileName);

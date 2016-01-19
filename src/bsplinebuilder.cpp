@@ -7,6 +7,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
+#include "builderbase.h"
 #include "bsplinebuilder.h"
 #include "mykroneckerproduct.h"
 #include "unsupported/Eigen/KroneckerProduct"
@@ -19,12 +20,13 @@ namespace SPLINTER
 {
 // Default constructor
 BSpline::Builder::Builder(const DataTable &data)
-        : _data(data),
-          _degrees(getBSplineDegrees(data.getNumVariables(), Degree::CUBIC)),
-          _numBasisFunctions(std::vector<unsigned int>(data.getNumVariables(), 0)),
-          _knotSpacing(KnotSpacing::SAMPLE),
-          _smoothing(Smoothing::NONE),
-          _lambda(0.1)
+        :
+        BuilderBase(data),
+        _degrees(getBSplineDegrees(data.getNumVariables(), Degree::CUBIC)),
+        _numBasisFunctions(std::vector<unsigned int>(data.getNumVariables(), 0)),
+        _knotSpacing(KnotSpacing::SAMPLE),
+        _smoothing(Smoothing::NONE),
+        _lambda(0.1)
 {
 }
 

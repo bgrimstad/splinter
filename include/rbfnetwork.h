@@ -10,8 +10,8 @@
 #ifndef SPLINTER_RBFNETWORK_H
 #define SPLINTER_RBFNETWORK_H
 
-#include "definitions.h"
 #include "datatable.h"
+#include "definitions.h"
 #include "linearfunction.h"
 #include "rbf.h"
 #include "memory"
@@ -28,10 +28,13 @@ namespace SPLINTER
 class SPLINTER_API RBFNetwork : public LinearFunction<DenseVector, DenseMatrix>
 {
 public:
+    class Builder;
+
+    /*
+     * Construct RBFNetwork from file
+     */
     RBFNetwork(const char *filename);
     RBFNetwork(const std::string &filename);
-    RBFNetwork(const DataTable &samples, RBFType type);
-    RBFNetwork(const DataTable &samples, RBFType type, bool normalized);
 
     virtual RBFNetwork* clone() const { return new RBFNetwork(*this); }
 
@@ -50,14 +53,14 @@ public:
     std::string getDescription() const override;
 
 private:
+    RBFNetwork() : LinearFunction(1, DenseVector::Zero(1)) {}
+
     DataTable samples;
-    bool normalized, precondition;
+    bool normalized;
 
     // Store the type so we can reconstruct the object when deserializing
     RBFType type;
     std::shared_ptr<RBF> fn;
-
-    DenseMatrix computePreconditionMatrix() const;
 
     void load(const std::string &fileName) override;
 

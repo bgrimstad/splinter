@@ -10,12 +10,16 @@
 #include <Catch.h>
 #include <datatable.h>
 #include "polynomial.h"
+#include "polynomialbuilder.h"
 #include "testingutilities.h"
 
 using namespace SPLINTER;
 
 
-TEST_CASE("Polynomial can be saved and loaded", "[serialization][polynomialregression]")
+#define COMMON_TAGS "[serialization][polynomial]"
+
+
+TEST_CASE("Polynomial can be saved and loaded", COMMON_TAGS)
 {
     unsigned int dim = 2;
     auto func = getTestFunction(dim, 1);
@@ -27,7 +31,7 @@ TEST_CASE("Polynomial can be saved and loaded", "[serialization][polynomialregre
 
     SECTION("Polynomial of degree 1")
     {
-        Polynomial polyfit(table, 1);
+        Polynomial polyfit = Polynomial::Builder(table).degree(1).build();
 
         polyfit.save(fileName);
         Polynomial loadedPolyfit(fileName);
@@ -35,8 +39,8 @@ TEST_CASE("Polynomial can be saved and loaded", "[serialization][polynomialregre
         REQUIRE(polyfit == loadedPolyfit);
     }
 
-    SECTION("Polynomial of degree 5") {
-        Polynomial polyfit(table, 4);
+    SECTION("Polynomial of degree 4") {
+        Polynomial polyfit = Polynomial::Builder(table).degree(4).build();
 
         polyfit.save(fileName);
         Polynomial loadedPolyfit(fileName);
@@ -51,7 +55,7 @@ TEST_CASE("Polynomial can be saved and loaded", "[serialization][polynomialregre
             for (unsigned int i = 0; i < dim; i++)
                 degrees.at(i) = i + 1;
 
-            Polynomial polyfit(table, degrees);
+            Polynomial polyfit = Polynomial::Builder(table).degree(degrees).build();
 
             polyfit.save(fileName);
             Polynomial loadedPolyfit(fileName);
@@ -63,7 +67,7 @@ TEST_CASE("Polynomial can be saved and loaded", "[serialization][polynomialregre
     remove(fileName);
 }
 
-TEST_CASE("Polynomial can be saved and loaded (2)", "[serialization][polynomial]")
+TEST_CASE("Polynomial can be saved and loaded (2)", COMMON_TAGS)
 {
     unsigned int dim = 3;
     std::vector<unsigned int> degrees = {1,2,3};

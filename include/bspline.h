@@ -10,7 +10,6 @@
 #ifndef SPLINTER_BSPLINE_H
 #define SPLINTER_BSPLINE_H
 
-#include "datatable.h"
 #include "linearfunction.h"
 #include "bsplinebasis.h"
 
@@ -23,6 +22,15 @@ namespace SPLINTER
 class SPLINTER_API BSpline : public LinearFunction<SparseVector, SparseMatrix>
 {
 public:
+    /**
+     * Builder class for construction by regression
+     * Implemented in BSplineBuilder.*
+     */
+    class Builder;
+    enum class Degree;
+    enum class Smoothing;
+    enum class KnotSpacing;
+
     BSpline(unsigned int numVariables);
 
     /**
@@ -37,15 +45,6 @@ public:
      */
     BSpline(const char *fileName);
     BSpline(const std::string &fileName);
-
-    /**
-     * Builder class for construction by regression
-     * Implemented in BSplineBuilder.*
-     */
-    class Builder;
-    enum class Degree;
-    enum class Smoothing;
-    enum class KnotSpacing;
 
     virtual BSpline* clone() const { return new BSpline(*this); }
 

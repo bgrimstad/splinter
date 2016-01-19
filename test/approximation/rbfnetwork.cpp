@@ -11,6 +11,8 @@
 #include <testingutilities.h>
 #include "rbfnetwork.h"
 #include <testfunction.h>
+#include "rbfbuilder.h"
+#include <iostream>
 
 using namespace SPLINTER;
 
@@ -33,7 +35,8 @@ TEST_CASE("Gaussian RadialBasisFunction function" COMMON_TEXT, COMMON_TAGS "[RBF
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Function *) new RBFNetwork(table, RBFType::GAUSSIAN);
+                                 RBFNetwork network = RBFNetwork::Builder(table).type(RBFType::GAUSSIAN).build();
+                                 return new RBFNetwork(network);
                              },
                              400,  // Number of points to sample at
                              1337, // Number of points to test against
@@ -52,7 +55,8 @@ TEST_CASE("Gaussian RadialBasisFunction jacobian" COMMON_TEXT, COMMON_TAGS "[RBF
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Function *) new RBFNetwork(table, RBFType::GAUSSIAN);
+                                 RBFNetwork network = RBFNetwork::Builder(table).type(RBFType::GAUSSIAN).build();
+                                 return new RBFNetwork(network);
                              },
                              200,  // Number of points to sample at
                              999, // Number of points to test against
@@ -90,7 +94,8 @@ TEST_CASE("Inverse Multiquadric RadialBasisFunction function" COMMON_TEXT, COMMO
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Function *) new RBFNetwork(table, RBFType::INVERSE_MULTIQUADRIC);
+                                 RBFNetwork network = RBFNetwork::Builder(table).type(RBFType::INVERSE_MULTIQUADRIC).build();
+                                 return new RBFNetwork(network);
                              },
                              300,  // Number of points to sample at
                              1337, // Number of points to test against
@@ -109,7 +114,8 @@ TEST_CASE("Inverse Multiquadric RadialBasisFunction jacobian" COMMON_TEXT, COMMO
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Function *) new RBFNetwork(table, RBFType::INVERSE_MULTIQUADRIC);
+                                 RBFNetwork network = RBFNetwork::Builder(table).type(RBFType::INVERSE_MULTIQUADRIC).build();
+                                 return new RBFNetwork(network);
                              },
                              200,  // Number of points to sample at
                              999, // Number of points to test against
@@ -147,7 +153,8 @@ TEST_CASE("Inverse Quadric RadialBasisFunction function" COMMON_TEXT, COMMON_TAG
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Function *) new RBFNetwork(table, RBFType::INVERSE_QUADRIC);
+                                 RBFNetwork network = RBFNetwork::Builder(table).type(RBFType::INVERSE_QUADRIC).build();
+                                 return new RBFNetwork(network);
                              },
                              350,  // Number of points to sample at
                              1337, // Number of points to test against
@@ -166,7 +173,8 @@ TEST_CASE("Inverse Quadric RadialBasisFunction jacobian" COMMON_TEXT, COMMON_TAG
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Function *) new RBFNetwork(table, RBFType::INVERSE_QUADRIC);
+                                 RBFNetwork network = RBFNetwork::Builder(table).type(RBFType::INVERSE_QUADRIC).build();
+                                 return new RBFNetwork(network);
                              },
                              200,  // Number of points to sample at
                              999, // Number of points to test against
@@ -204,7 +212,8 @@ TEST_CASE("Multiquadric RadialBasisFunction function" COMMON_TEXT, COMMON_TAGS "
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Function *) new RBFNetwork(table, RBFType::MULTIQUADRIC);
+                                 RBFNetwork network = RBFNetwork::Builder(table).type(RBFType::MULTIQUADRIC).build();
+                                 return new RBFNetwork(network);
                              },
                              300,  // Number of points to sample at
                              1337, // Number of points to test against
@@ -223,7 +232,8 @@ TEST_CASE("Multiquadric RadialBasisFunction jacobian" COMMON_TEXT, COMMON_TAGS "
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Function *) new RBFNetwork(table, RBFType::MULTIQUADRIC);
+                                 RBFNetwork network = RBFNetwork::Builder(table).type(RBFType::MULTIQUADRIC).build();
+                                 return new RBFNetwork(network);
                              },
                              200,  // Number of points to sample at
                              999, // Number of points to test against
@@ -261,7 +271,8 @@ TEST_CASE("Thin plate spline RadialBasisFunction function" COMMON_TEXT, COMMON_T
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Function *) new RBFNetwork(table, RBFType::THIN_PLATE_SPLINE);
+                                 RBFNetwork network = RBFNetwork::Builder(table).type(RBFType::THIN_PLATE_SPLINE).build();
+                                 return new RBFNetwork(network);
                              },
                              300,  // Number of points to sample at
                              1337, // Number of points to test against
@@ -280,7 +291,8 @@ TEST_CASE("Thin plate spline RadialBasisFunction jacobian" COMMON_TEXT, COMMON_T
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 return (Function *) new RBFNetwork(table, RBFType::THIN_PLATE_SPLINE);
+                                 RBFNetwork network = RBFNetwork::Builder(table).type(RBFType::THIN_PLATE_SPLINE).build();
+                                 return new RBFNetwork(network);
                              },
                              200,  // Number of points to sample at
                              999, // Number of points to test against

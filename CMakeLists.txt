@@ -144,10 +144,11 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/Catch)
 
 # These are the sources we need for compilation of the library
 set(SRC_LIST
-    include/bsplinebuilder.h
+    include/builderbase.h
     include/bspline.h
     include/bsplinebasis.h
     include/bsplinebasis1d.h
+    include/bsplinebuilder.h
     include/cinterface.h
     include/datapoint.h
     include/datatable.h
@@ -157,17 +158,20 @@ set(SRC_LIST
     include/linearsolvers.h
     include/mykroneckerproduct.h
     include/polynomial.h
+    include/polynomialbuilder.h
     include/polynomial2.h
-    include/rbfnetwork.h
+    include/polynomial2builder.h
     include/rbf.h
+    include/rbfbuilder.h
+    include/rbfnetwork.h
     include/serializer.h
     include/utilities.h
     include/ols.h
     include/saveable.h
-    src/bsplinebuilder.cpp
     src/bspline.cpp
     src/bsplinebasis.cpp
     src/bsplinebasis1d.cpp
+    src/bsplinebuilder.cpp
     src/cinterface.cpp
     src/datapoint.cpp
     src/datatable.cpp
@@ -175,7 +179,10 @@ set(SRC_LIST
     src/linearfunction.cpp
     src/mykroneckerproduct.cpp
     src/polynomial.cpp
+    src/polynomialbuilder.cpp
     src/polynomial2.cpp
+    src/polynomial2builder.cpp
+    src/rbfbuilder.cpp
     src/rbfnetwork.cpp
     src/serializer.cpp
     src/utilities.cpp

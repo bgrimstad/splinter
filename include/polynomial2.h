@@ -11,7 +11,7 @@
 #define SPLINTER_POLYNOMIAL2_H
 
 #include <linearfunction.h>
-#include <datatable.h>
+#include "datatable.h"
 
 namespace SPLINTER
 {
@@ -27,9 +27,14 @@ namespace SPLINTER
 class SPLINTER_API Polynomial2 : public LinearFunction<DenseVector, DenseMatrix>
 {
 public:
+    class Builder;
+
     Polynomial2(DenseMatrix powers);
     Polynomial2(DenseMatrix powers, DenseVector coefficients);
-    Polynomial2(const DataTable &data, DenseMatrix powers);
+
+    /*
+     * Construct Polynomial2 from file
+     */
     Polynomial2(const char *fileName);
     Polynomial2(const std::string &fileName);
 

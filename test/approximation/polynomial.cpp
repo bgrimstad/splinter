@@ -11,11 +11,13 @@
 #include <testingutilities.h>
 #include <polynomial.h>
 #include <polynomial2.h>
+#include <polynomialbuilder.h>
 #include <testfunctions.h>
 #include <testfunction.h>
 #include <cmath>
 #include "utilities.h"
 #include <iostream>
+#include "polynomial2builder.h"
 
 using namespace SPLINTER;
 
@@ -44,7 +46,8 @@ TEST_CASE("Polynomial function" COMMON_TEXT, COMMON_TAGS "[function-value]")
         CHECK_NOTHROW(compareFunctionValue(testFunc,
                                            [degree](const DataTable &table)
                                            {
-                                                return (Function *) new Polynomial(table, degree);
+                                               Polynomial poly = Polynomial::Builder(table).degree(degree).build();
+                                               return new Polynomial(poly);
                                            },
                                            300,  // Number of points to sample at
                                            1337, // Number of points to test against
@@ -73,7 +76,8 @@ TEST_CASE("Polynomial jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian]")
         CHECK_NOTHROW(compareJacobianValue(testFunc,
                                            [degree](const DataTable &table)
                                            {
-                                                return (Function *) new Polynomial(table, degree);
+                                               Polynomial poly = Polynomial::Builder(table).degree(degree).build();
+                                               return new Polynomial(poly);
                                            },
                                            300,  // Number of points to sample at
                                            1337, // Number of points to test against
@@ -128,8 +132,9 @@ TEST_CASE("Polynomial implementations" COMMON_TEXT, COMMON_TAGS "[function-value
            0, 2,
            3, 3;
 
-    Polynomial poly(dt, deg);
-    Polynomial2 poly2(dt, pow);
+    Polynomial poly = Polynomial::Builder(dt).degree(deg).build();
+    Polynomial2 poly2 = Polynomial2::Builder(dt).powers(pow).build();
+//    Polynomial2 poly2(dt, pow);
 
     std::cout << "First coefficients" << std::endl;
     std::cout << poly.getCoefficients() << std::endl;

@@ -15,7 +15,10 @@
 using namespace SPLINTER;
 
 
-TEST_CASE("DenseMatrix are serialized and deserialized correctly", "[serialization][eigen][densematrix]")
+#define COMMON_TAGS "[serialization][eigen]"
+
+
+TEST_CASE("DenseMatrix are serialized and deserialized correctly", COMMON_TAGS "[densematrix]")
 {
     size_t numRows = 200, numCols = 333;
 
@@ -38,7 +41,7 @@ TEST_CASE("DenseMatrix are serialized and deserialized correctly", "[serializati
     remove(fileName);
 }
 
-TEST_CASE("DenseVector are serialized and deserialized correctly", "[serialization][eigen][densevector]")
+TEST_CASE("DenseVector are serialized and deserialized correctly", COMMON_TAGS "[densevector]")
 {
     size_t numRows = 500;
     DenseVector denseVector = 1000 * DenseVector::Random(numRows);
@@ -60,7 +63,7 @@ TEST_CASE("DenseVector are serialized and deserialized correctly", "[serializati
     remove(fileName);
 }
 
-TEST_CASE("SparseMatrix are serialized and deserialized correctly", "[serialization][eigen][sparsematrix]")
+TEST_CASE("SparseMatrix are serialized and deserialized correctly", COMMON_TAGS "[sparsematrix]")
 {
     size_t numRows = 200, numCols = 333;
 
@@ -85,7 +88,7 @@ TEST_CASE("SparseMatrix are serialized and deserialized correctly", "[serializat
     remove(fileName);
 }
 
-TEST_CASE("SparseVector are serialized and deserialized correctly", "[serialization][eigen][sparsevector]")
+TEST_CASE("SparseVector are serialized and deserialized correctly", COMMON_TAGS "[sparsevector]")
 {
     size_t numRows = 500;
 

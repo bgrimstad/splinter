@@ -12,7 +12,9 @@
 #include <bspline.h>
 #include <bsplinebuilder.h>
 #include "rbfnetwork.h"
+#include <rbfbuilder.h>
 #include <polynomial.h>
+#include <polynomialbuilder.h>
 #include "definitions.h"
 #include <set>
 #include <iostream>
@@ -81,18 +83,38 @@ static BSpline::Builder *get_bspline_builder(obj_ptr bspline_builder_ptr)
  * Convert from standard C array to DenseVector.
  *
  * @param x C array to convert from.
- * @pararm x_dim The size of x.
+ * @param x_dim The size of x.
  * @return DenseVector with the same data as x.
  */
-static DenseVector get_densevector(double *x, size_t x_dim)
+template <class NUMERICAL_TYPE>
+static DenseVector get_densevector(NUMERICAL_TYPE *x, size_t x_dim)
 {
     DenseVector xvec(x_dim);
     for (size_t i = 0; i < x_dim; i++)
     {
-        xvec(i) = x[i];
+        xvec(i) = (double) x[i];
     }
 
     return xvec;
+}
+
+/**
+ * Convert from DenseVector to a vector of NUMERICAL_TYPE.
+ * It must be possible to cast from double to NUMERICAL_TYPE.
+ *
+ * @param x DenseVector to convert from.
+ * @return Vector with the same data as x.
+ */
+template <class NUMERICAL_TYPE>
+static std::vector<NUMERICAL_TYPE> get_vector(DenseVector x)
+{
+    auto vector = std::vector<NUMERICAL_TYPE>(x.size());
+    for (size_t i = 0; i < x.size(); ++i)
+    {
+        vector.at(i) = (NUMERICAL_TYPE) x(i);
+    }
+
+    return vector;
 }
 
 /**
@@ -341,7 +363,9 @@ obj_ptr rbf_init(obj_ptr datatable_ptr, int type_index, int normalized)
 
         try
         {
-            rbf = (obj_ptr) new RBFNetwork(*table, type, norm);
+            RBFNetwork temp = RBFNetwork::Builder(*table).type(type).normalized(norm).build();
+            rbf = (obj_ptr) new RBFNetwork(temp);
+//            rbf = (obj_ptr) new RBFNetwork(*table, type, norm);
             functions.insert(rbf);
         }
         catch(const Exception &e)
@@ -386,7 +410,9 @@ obj_ptr polynomial_regression_init(obj_ptr datatable_ptr, int *degrees, int degr
 
         try
         {
-            polyfit = (obj_ptr) new Polynomial(*table, degreeVec);
+            Polynomial temp = Polynomial::Builder(*table).degree(degreeVec).build();
+            polyfit = (obj_ptr) new Polynomial(temp);
+//            polyfit = (obj_ptr) new Polynomial(*table, degreeVec);
             functions.insert(polyfit);
         }
         catch(const Exception &e)
@@ -556,7 +582,7 @@ double *eval_row_major(obj_ptr function, double *x, int x_len)
             retVal = (double *) malloc(sizeof(double) * num_points);
             for (size_t i = 0; i < num_points; ++i)
             {
-                auto xvec = get_densevector(x, num_variables);
+                auto xvec = get_densevector<double>(x, num_variables);
                 retVal[i] = func->eval(xvec);
                 x += num_variables;
             }
@@ -585,7 +611,7 @@ double *eval_jacobian_row_major(obj_ptr function, double *x, int x_len)
             retVal = (double *) malloc(sizeof(double) * num_variables * num_points);
             for (size_t i = 0; i < num_points; ++i)
             {
-                auto xvec = get_densevector(x, num_variables);
+                auto xvec = get_densevector<double>(x, num_variables);
                 DenseMatrix jacobian = func->evalJacobian(xvec);
 
                 /* Copy jacobian from stack to heap */
@@ -617,7 +643,7 @@ double *eval_hessian_row_major(obj_ptr function, double *x, int x_len)
             retVal = (double *) malloc(sizeof(double) * num_variables * num_variables * num_points);
             for (size_t i = 0; i < num_points; ++i)
             {
-                auto xvec = get_densevector(x, num_variables);
+                auto xvec = get_densevector<double>(x, num_variables);
                 DenseMatrix hessian = func->evalHessian(xvec);
 
                 /* Copy hessian from stack to heap */

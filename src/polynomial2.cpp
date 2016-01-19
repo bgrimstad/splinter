@@ -27,15 +27,6 @@ Polynomial2::Polynomial2(DenseMatrix powers, DenseVector coefficients)
 {
 }
 
-Polynomial2::Polynomial2(const DataTable &data, DenseMatrix powers)
-    : Polynomial2(powers)
-{
-    if (getNumCoefficients() > data.getNumSamples())
-        throw Exception("Polynomial::Polynomial: Insufficient number of samples!");
-
-    setCoefficients(computeCoefficients(*this, data));
-}
-
 Polynomial2::Polynomial2(const char *fileName)
         : Polynomial2(std::string(fileName))
 {

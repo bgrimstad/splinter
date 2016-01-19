@@ -117,7 +117,6 @@ size_t Serializer::get_size(const RBFNetwork &obj)
 {
     return get_size(obj.samples)
            + get_size(obj.normalized)
-           + get_size(obj.precondition)
            + get_size(obj.numVariables)
            + get_size(obj.type)
            + get_size(obj.coefficients);
@@ -208,7 +207,6 @@ void Serializer::_serialize(const RBFNetwork &obj)
 {
     _serialize(obj.samples);
     _serialize(obj.normalized);
-    _serialize(obj.precondition);
     _serialize(obj.numVariables);
     _serialize(obj.type);
     _serialize(obj.coefficients);
@@ -301,7 +299,6 @@ void Serializer::deserialize(RBFNetwork &obj)
 {
     deserialize(obj.samples);
     deserialize(obj.normalized);
-    deserialize(obj.precondition);
     deserialize(obj.numVariables);
     deserialize(obj.type);
     if (obj.type == RBFType::THIN_PLATE_SPLINE)

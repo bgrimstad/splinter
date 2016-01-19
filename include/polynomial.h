@@ -11,7 +11,7 @@
 #define SPLINTER_POLYNOMIAL_H
 
 #include <linearfunction.h>
-#include <datatable.h>
+#include "datatable.h"
 
 namespace SPLINTER
 {
@@ -19,11 +19,13 @@ namespace SPLINTER
 class SPLINTER_API Polynomial : public LinearFunction<DenseVector, DenseMatrix>
 {
 public:
-    Polynomial(unsigned int numVariables, unsigned int degree);
-    Polynomial(std::vector<unsigned int> degrees);
+    class Builder;
+
     Polynomial(std::vector<unsigned int> degrees, DenseVector coefficients);
-    Polynomial(const DataTable &data, std::vector<unsigned int> degrees);
-    Polynomial(const DataTable &data, unsigned int degree);
+
+    /*
+     * Construct Polynomial from file
+     */
     Polynomial(const char *fileName);
     Polynomial(const std::string &fileName);
 
@@ -41,8 +43,6 @@ private:
     std::vector<unsigned int> degrees;
 
     DenseVector evalDifferentiatedMonomials(DenseVector x, unsigned int var) const;
-
-    unsigned int computeNumBasisFunctions(std::vector<unsigned int> degrees) const;
 
     void load(const std::string &fileName) override;
 

@@ -7,8 +7,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#ifndef SPLINTER_BUILDER_H
-#define SPLINTER_BUILDER_H
+#ifndef SPLINTER_BUILDERBASE_H
+#define SPLINTER_BUILDERBASE_H
+
+#include "datatable.h"
+#include <iostream>
 
 namespace SPLINTER
 {
@@ -18,15 +21,19 @@ namespace SPLINTER
  * Used for building Functions
  */
 template <class T>
-class Builder
+class BuilderBase
 {
 public:
-    Builder() : _lambda(0.0) {}
-    virtual ~Builder() {};
+    BuilderBase(const DataTable &data)
+        :
+        _data(data),
+        _lambda(0.0)
+    {}
+    virtual ~BuilderBase() {};
 
     virtual T build() const = 0;
 
-    Builder<T> &lambda(double lambda)
+    BuilderBase<T> &lambda(double lambda)
     {
         if (lambda < 0)
         {
@@ -37,10 +44,14 @@ public:
         return *this;
     }
 
-private:
+protected:
+    DataTable _data;
     double _lambda;
+
+private:
+    BuilderBase();
 };
 
 } // namespace SPLINTER
 
-#endif // SPLINTER_BUILDER_H
+#endif // SPLINTER_BUILDERBASE_H
