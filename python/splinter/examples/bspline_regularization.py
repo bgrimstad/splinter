@@ -31,19 +31,21 @@ for i in range(11):
     y[i] = f1(i)
 d1 = list(zip(x, y))
 
-# Linear B-spline that interpolates the data
+# Cubic B-spline that interpolates the data (note that NONE is the default smoothing setting)
 b1 = splinter.BSplineBuilder(d1)\
-    .degree(splinter.BSplineBuilder.Degree.LINEAR)\
+    .smoothing(splinter.BSplineBuilder.Smoothing.NONE)\
     .build()
 
-# Quadratic B-spline with regularization
+# Cubic B-spline with regularization
 b2 = splinter.BSplineBuilder(d1)\
-    .degree(splinter.BSplineBuilder.Degree.QUADRATIC)\
+    .setLambda(0.1)\
+    .smoothing(splinter.BSplineBuilder.Smoothing.REGULARIZATION)\
     .build()
 
 # Cubic P-spline
 b3 = splinter.BSplineBuilder(d1)\
-    .degree(splinter.BSplineBuilder.Degree.CUBIC)\
+    .smoothing(splinter.BSplineBuilder.Smoothing.PSPLINE)\
+    .setLambda(0.1)\
     .build()
 
 n = 1000
@@ -60,8 +62,8 @@ for i in range(n):
 
 
 plt.plot(x, y, '*', label='Data points')
-plt.plot(xd, yd1, label='Linear B-spline')
-plt.plot(xd, yd2, '--', label='Quadratic B-spline')
-plt.plot(xd, yd3, '-.', label='Cubic B-spline')
+plt.plot(xd, yd1, label='Interpolating B-spline')
+plt.plot(xd, yd2, '--', label='Regularized B-spline')
+plt.plot(xd, yd3, '-.', label='P-spline')
 plt.legend(loc='upper left')
 plt.show()
