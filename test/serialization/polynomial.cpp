@@ -31,7 +31,11 @@ TEST_CASE("Polynomial can be saved and loaded", COMMON_TAGS)
 
     SECTION("Polynomial of degree 1")
     {
-        Polynomial polyfit = Polynomial::Builder(table).degree(1).build();
+        DenseMatrix powers(3, dim);
+        powers << 1, 0,
+            0, 1,
+            1, 1;
+        Polynomial polyfit = Polynomial::Builder(table).powers(powers).build();
 
         polyfit.save(fileName);
         Polynomial loadedPolyfit(fileName);
@@ -39,8 +43,13 @@ TEST_CASE("Polynomial can be saved and loaded", COMMON_TAGS)
         REQUIRE(polyfit == loadedPolyfit);
     }
 
-    SECTION("Polynomial of degree 4") {
-        Polynomial polyfit = Polynomial::Builder(table).degree(4).build();
+    SECTION("Polynomial of degree 2") {
+        DenseMatrix powers(4, dim);
+        powers << 1, 0,
+            0, 1,
+            0, 3,
+            2, 0;
+        Polynomial polyfit = Polynomial::Builder(table).powers(powers).build();
 
         polyfit.save(fileName);
         Polynomial loadedPolyfit(fileName);
@@ -49,13 +58,21 @@ TEST_CASE("Polynomial can be saved and loaded", COMMON_TAGS)
     }
 
     if (dim > 1) {
-        SECTION("Polynomial of differing degrees in each dimension")
+        SECTION("Polynomial with many terms")
         {
-            auto degrees = std::vector<unsigned int>(dim);
-            for (unsigned int i = 0; i < dim; i++)
-                degrees.at(i) = i + 1;
+            int maxPower = 6;
+            DenseMatrix powers(maxPower*maxPower, dim);
 
-            Polynomial polyfit = Polynomial::Builder(table).degree(degrees).build();
+            for (int i = 0; i < maxPower; ++i)
+            {
+                for (int j = 0; j < maxPower; ++j)
+                {
+                    powers(i*maxPower + j, 0) = i;
+                    powers(i*maxPower + j, 1) = j;
+                }
+            }
+
+            Polynomial polyfit = Polynomial::Builder(table).powers(powers).build();
 
             polyfit.save(fileName);
             Polynomial loadedPolyfit(fileName);
@@ -70,15 +87,18 @@ TEST_CASE("Polynomial can be saved and loaded", COMMON_TAGS)
 TEST_CASE("Polynomial can be saved and loaded (2)", COMMON_TAGS)
 {
     unsigned int dim = 3;
-    std::vector<unsigned int> degrees = {1,2,3};
+    DenseMatrix powers(3, dim);
+    powers << 1, 2, 3,
+        0, 1, 3,
+        3, 0, 0;
     DenseVector coeffs = DenseVector::Ones(24);
     coeffs(5) = 6; coeffs(10) = 11; coeffs(15) = 16; coeffs(20) = 21;
 
     const char *fileName = "test.polynomial";
 
-    SECTION("Polynomial of degrees (1,2,3)")
+    SECTION("Polynomial of powers (1,2,3, 0,1,3, 3,0,0)")
     {
-        Polynomial poly(degrees, coeffs);
+        Polynomial poly(powers, coeffs);
         poly.save(fileName);
         Polynomial loadedPoly(fileName);
 

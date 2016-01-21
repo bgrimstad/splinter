@@ -48,6 +48,15 @@ class SPLINTER_API BSpline::Builder : public BuilderBase_CRTP<BSpline>
 public:
     Builder(const DataTable &data);
 
+    Builder& lambda(double lambda)
+    {
+        if (lambda < 0)
+            throw Exception("BSpline::Builder::lambda: Lambda must be non-negative.");
+
+        _lambda = lambda;
+        return *this;
+    }
+
     // Set build options
     Builder& degree(Degree degree)
     {

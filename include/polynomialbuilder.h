@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#ifndef SPLINTER_POLYNOMIAL2BUILDER_H
-#define SPLINTER_POLYNOMIAL2BUILDER_H
+#ifndef SPLINTER_POLYNOMIALBUILDER_H
+#define SPLINTER_POLYNOMIALBUILDER_H
 
 #include "builderbase.h"
 #include "polynomial.h"
@@ -53,4 +53,4 @@ private:
 
 } // namespace SPLINTER
 
-#endif // SPLINTER_POLYNOMIAL2BUILDER_H
+#endif // SPLINTER_POLYNOMIALBUILDER_H

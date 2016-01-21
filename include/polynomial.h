@@ -24,19 +24,19 @@ namespace SPLINTER
  * The polynomial can be written as:
  * poly(x) = sum_i (c_i * prod_j (x_j^P_ij))
  */
-class SPLINTER_API Polynomial2 : public LinearFunction<DenseVector, DenseMatrix>
+class SPLINTER_API Polynomial : public LinearFunction<DenseVector, DenseMatrix>
 {
 public:
     class Builder;
 
-    Polynomial2(DenseMatrix powers);
-    Polynomial2(DenseMatrix powers, DenseVector coefficients);
+    Polynomial(DenseMatrix powers);
+    Polynomial(DenseMatrix powers, DenseVector coefficients);
 
     /*
-     * Construct Polynomial2 from file
+     * Construct Polynomial from file
      */
-    Polynomial2(const char *fileName);
-    Polynomial2(const std::string &fileName);
+    Polynomial(const char *fileName);
+    Polynomial(const std::string &fileName);
 
     DenseVector evalBasis(DenseVector x) const override;
 
@@ -49,7 +49,7 @@ public:
     std::string getDescription() const override;
 
 private:
-    Polynomial2();
+    Polynomial();
 
     DenseMatrix powers;
 
@@ -58,7 +58,7 @@ private:
     void load(const std::string &fileName) override;
 
     friend class Serializer;
-    friend bool operator==(const Polynomial2 &lhs, const Polynomial2 &rhs);
+    friend bool operator==(const Polynomial &lhs, const Polynomial &rhs);
 };
 
 } // namespace SPLINTER

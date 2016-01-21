@@ -22,7 +22,7 @@ public:
     TestFunction(std::function<double (const std::vector<double> &)> f, size_t numVariables,
                  std::string functionString);
     TestFunction(std::function<double (const std::vector<double> &)> f, size_t numVariables,
-                 std::string functionString, std::vector<double> &degrees);
+                 std::string functionString, DenseMatrix powers);
 
     virtual ~TestFunction();
 
@@ -37,10 +37,16 @@ public:
     inline std::string getFunctionStr() const { return functionString; }
 
     inline bool isConstDegree() const { return constDegree; }
-    inline std::vector<double> getConstDegree() const { return constDegreeVal; }
+
+    // Returns the maximum degree of each dimension
     std::vector<unsigned int> getConstDegreeInt() const;
 
     double getMaxDegree() const;
+
+    DenseMatrix getPowers() const
+    {
+        return powers;
+    }
 
     void save(const std::string &fileName) const override {}
 
@@ -49,7 +55,7 @@ private:
     std::string functionString;
 
     bool constDegree;
-    std::vector<double> constDegreeVal;
+    DenseMatrix powers;
 
     std::function<double (const std::vector<double> &)> f;
 

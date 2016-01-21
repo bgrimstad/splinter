@@ -52,8 +52,17 @@ def CArrayToList(CArray, size):
 
 
 # http://stackoverflow.com/questions/952914/making-a-flat-list-out-of-list-of-lists-in-python
+#def flattenList(l):
+#    return [item for sublist in l for item in sublist]
+
 def flattenList(l):
-    return [item for sublist in l for item in sublist]
+    result = []
+    for item in l:
+        if isinstance(item, list):
+            result += flattenList(item)
+        else:
+            result.append(item)
+    return result
 
 
 def getArchitecture():

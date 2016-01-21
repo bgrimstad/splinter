@@ -16,23 +16,23 @@ namespace SPLINTER
 {
 
 // Initialize coefficients to zero
-Polynomial2::Polynomial2(DenseMatrix powers)
-    : Polynomial2(powers, DenseVector::Zero(powers.rows()))
+Polynomial::Polynomial(DenseMatrix powers)
+    : Polynomial(powers, DenseVector::Zero(powers.rows()))
 {
 }
 
-Polynomial2::Polynomial2(DenseMatrix powers, DenseVector coefficients)
+Polynomial::Polynomial(DenseMatrix powers, DenseVector coefficients)
     : LinearFunction<DenseVector, DenseMatrix>(powers.cols(), coefficients),
       powers(powers)
 {
 }
 
-Polynomial2::Polynomial2(const char *fileName)
-        : Polynomial2(std::string(fileName))
+Polynomial::Polynomial(const char *fileName)
+        : Polynomial(std::string(fileName))
 {
 }
 
-Polynomial2::Polynomial2(const std::string &fileName)
+Polynomial::Polynomial(const std::string &fileName)
         : LinearFunction(1, DenseVector::Zero(1))
 {
     load(fileName);
@@ -41,7 +41,7 @@ Polynomial2::Polynomial2(const std::string &fileName)
 /**
  * Evaluate monomials
  */
-DenseVector Polynomial2::evalBasis(DenseVector x) const
+DenseVector Polynomial::evalBasis(DenseVector x) const
 {
     DenseVector basis = DenseVector::Zero(powers.rows());
 
@@ -62,7 +62,7 @@ DenseVector Polynomial2::evalBasis(DenseVector x) const
     return basis;
 }
 
-DenseMatrix Polynomial2::evalBasisJacobian(DenseVector x) const
+DenseMatrix Polynomial::evalBasisJacobian(DenseVector x) const
 {
     DenseMatrix jac = DenseMatrix::Zero(getNumCoefficients(), numVariables);
 
@@ -72,7 +72,7 @@ DenseMatrix Polynomial2::evalBasisJacobian(DenseVector x) const
     return jac;
 }
 
-DenseVector Polynomial2::evalDifferentiatedMonomials(DenseVector x, unsigned int var) const
+DenseVector Polynomial::evalDifferentiatedMonomials(DenseVector x, unsigned int var) const
 {
     if (var >= numVariables)
         throw Exception("Polynomial::evalDifferentiatedMonomials: invalid variable.");
@@ -106,7 +106,7 @@ DenseVector Polynomial2::evalDifferentiatedMonomials(DenseVector x, unsigned int
     return dBasis;
 }
 
-unsigned int Polynomial2::getDegree() const
+unsigned int Polynomial::getDegree() const
 {
     unsigned int maxDeg = 0;
 
@@ -123,20 +123,20 @@ unsigned int Polynomial2::getDegree() const
     return maxDeg;
 }
 
-void Polynomial2::save(const std::string &fileName) const
+void Polynomial::save(const std::string &fileName) const
 {
     Serializer s;
     s.serialize(*this);
     s.saveToFile(fileName);
 }
 
-void Polynomial2::load(const std::string &fileName)
+void Polynomial::load(const std::string &fileName)
 {
     Serializer s(fileName);
     s.deserialize(*this);
 }
 
-std::string Polynomial2::getDescription() const
+std::string Polynomial::getDescription() const
 {
     std::string description("Polynomial = ");
 

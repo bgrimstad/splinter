@@ -8,6 +8,9 @@
 */
 
 #include "cinterface/cinterface.h"
+#include "cinterface/utilities.h"
+
+using namespace SPLINTER;
 
 extern "C"
 {
@@ -121,7 +124,7 @@ double *splinter_function_eval_col_major(splinter_obj_ptr function, double *x, i
                 return nullptr; // Pass on the error message set by get_row_major
             }
 
-            retVal = eval_row_major(func, row_major, x_len);
+            retVal = splinter_function_eval_row_major(func, row_major, x_len);
         }
         catch(const Exception &e)
         {
@@ -149,7 +152,7 @@ double *splinter_function_eval_jacobian_col_major(splinter_obj_ptr function, dou
                 return nullptr; // Pass on the error message set by get_row_major
             }
 
-            retVal = eval_jacobian_row_major(func, row_major, x_len);
+            retVal = splinter_function_eval_jacobian_row_major(func, row_major, x_len);
         }
         catch(const Exception &e)
         {
@@ -177,7 +180,7 @@ double *splinter_function_eval_hessian_col_major(splinter_obj_ptr function, doub
                 return nullptr; // Pass on the error message set by get_row_major
             }
 
-            retVal = eval_hessian_row_major(func, row_major, x_len);
+            retVal = splinter_function_eval_hessian_row_major(func, row_major, x_len);
         }
         catch(const Exception &e)
         {
@@ -217,7 +220,7 @@ void splinter_function_save(splinter_obj_ptr function, const char *filename)
     }
 }
 
-void splinter_function_delete(obj_ptr function)
+void splinter_function_delete(splinter_obj_ptr function)
 {
     auto func = get_function(function);
 

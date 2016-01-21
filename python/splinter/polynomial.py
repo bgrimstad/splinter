@@ -11,16 +11,16 @@ from .function import Function
 from .utilities import *
 
 
-class BSpline(Function):
+class Polynomial(Function):
     def __init__(self, handleOrFileName):
-        super(BSpline, self).__init__()
+        super(Polynomial, self).__init__()
 
-        # If string we load the BSpline from the file
+        # If string we load the Polynomial from the file
         if isString(handleOrFileName):
             fileName = getCString(handleOrFileName)
-            self._handle = splinter._call(splinter._getHandle().splinter_bspline_load_init, fileName)
+            self._handle = splinter._call(splinter._getHandle().splinter_polynomial_load_init, fileName)
 
-        # Else, the argument is the handle to the internal BSpline object
+        # Else, the argument is the handle to the internal Polynomial object
         else:
             self._handle = handleOrFileName
 

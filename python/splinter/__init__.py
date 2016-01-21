@@ -9,8 +9,10 @@
 from .datatable import DataTable
 from .bspline import BSpline
 from .bsplinebuilder import BSplineBuilder
-from .radialbasisfunction import RadialBasisFunction, RBFType
-from .polynomialregression import PolynomialRegression
+from .rbfnetwork import RBFNetwork
+from .rbfnetworkbuilder import RBFNetworkBuilder
+from .polynomial import Polynomial
+from .polynomialbuilder import PolynomialBuilder
 
 from .splinter import *
 try:
@@ -18,7 +20,16 @@ try:
 except Exception as e:
     print(e)
 
-__all__ = ["splinter", "datatable", "bspline", "bsplinebuilder", "radialbasisfunction", "polynomialregression"]
+__all__ = [
+    "splinter",
+    "datatable",
+    "bspline",
+    "bsplinebuilder",
+    "rbfnetwork",
+    "rbfnetworkbuilder",
+    "polynomial",
+    "polynomialbuilder"
+]
 
 # splinter.DataTable = datatable.DataTable
 # splinter.BSpline = bspline.BSpline

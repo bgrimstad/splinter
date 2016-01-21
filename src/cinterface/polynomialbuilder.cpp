@@ -8,8 +8,8 @@
 */
 
 #include <cinterface/builder.h>
-#include "polynomial.h"
 #include "polynomialbuilder.h"
+#include "polynomial.h"
 #include "cinterface/cinterface.h"
 #include "cinterface/utilities.h"
 
@@ -24,7 +24,7 @@ splinter_obj_ptr splinter_polynomial_builder_init(splinter_obj_ptr datatable_ptr
 
     try
     {
-        DataTable *dataTable = get_datatable(datatable_ptr);
+        auto dataTable = get_datatable(datatable_ptr);
         polynomial_builder_ptr = new Polynomial::Builder(*dataTable);
         builders.insert(polynomial_builder_ptr);
     }
@@ -36,13 +36,20 @@ splinter_obj_ptr splinter_polynomial_builder_init(splinter_obj_ptr datatable_ptr
     return polynomial_builder_ptr;
 }
 
-void splinter_polynomial_builder_set_degree(splinter_obj_ptr polynomial_builder_ptr, unsigned int *degrees, int n)
+void splinter_polynomial_builder_set_powers(splinter_obj_ptr polynomial_builder_ptr, int *powers, int n)
 {
     auto builder = get_builder<Polynomial>(polynomial_builder_ptr);
-    if(builder != nullptr)
+    if (builder != nullptr)
     {
-        auto _degrees = get_vector(degrees, n);
-        builder->degree(_degrees);
+        size_t dim = builder->getNumVariables();
+        size_t num_terms = n / dim;
+        DenseMatrix _powers(num_terms, dim);
+        for (int i = 0; i < n; ++i)
+        {
+            // Intentional integer division
+            _powers(i/2, i%2) = powers[i];
+        }
+        builder->powers(_powers);
     }
 }
 

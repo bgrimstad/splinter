@@ -27,6 +27,15 @@ public:
         _precondition(false)
     {}
 
+    Builder& lambda(double lambda)
+    {
+        if (lambda < 0)
+            throw Exception("RBFNetwork::Builder::lambda: Lambda must be non-negative.");
+
+        _lambda = lambda;
+        return *this;
+    }
+
     // Set build options
     Builder& type(RBFType type)
     {

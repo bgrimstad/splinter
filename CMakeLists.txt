@@ -149,6 +149,7 @@ set(CINTERFACE_SRC_LIST
     src/cinterface/bsplinebuilder.cpp
     src/cinterface/cinterface.cpp
     src/cinterface/datatable.cpp
+    src/cinterface/function.cpp
     src/cinterface/polynomial.cpp
     src/cinterface/polynomialbuilder.cpp
     src/cinterface/rbfnetwork.cpp
@@ -172,8 +173,6 @@ set(SRC_LIST
     include/mykroneckerproduct.h
     include/polynomial.h
     include/polynomialbuilder.h
-    include/polynomial2.h
-    include/polynomial2builder.h
     include/rbf.h
     include/rbfnetworkbuilder.h
     include/rbfnetwork.h
@@ -192,8 +191,6 @@ set(SRC_LIST
     src/mykroneckerproduct.cpp
     src/polynomial.cpp
     src/polynomialbuilder.cpp
-    src/polynomial2.cpp
-    src/polynomial2builder.cpp
     src/rbfnetworkbuilder.cpp
     src/rbfnetwork.cpp
     src/serializer.cpp

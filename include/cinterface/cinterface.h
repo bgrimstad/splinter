@@ -272,7 +272,7 @@ SPLINTER_API void splinter_rbfnetwork_builder_delete(splinter_obj_ptr rbfnetwork
  * @param filename The file to load the Polynomial from.
  * @return Pointer to the loaded Polynomial.
  */
-SPLINTER_API splinter_obj_ptr splinter_polynomial_regression_load_init(const char *filename);
+SPLINTER_API splinter_obj_ptr splinter_polynomial_load_init(const char *filename);
 
 /**
  * Create a new Polynomial::Builder.
@@ -283,13 +283,15 @@ SPLINTER_API splinter_obj_ptr splinter_polynomial_regression_load_init(const cha
 SPLINTER_API splinter_obj_ptr splinter_polynomial_builder_init(splinter_obj_ptr datatable_ptr);
 
 /**
- * Set the degree of the Polynomial.
+ * Set the powers of the Polynomial.
  *
- * @param polynomial_builder_ptr The Builder to set the degree for.
- * @param degrees Array of unsigned ints where int i is the degree in dimension i.
- * @param n The size of degrees (MUST equal the number of dimensions in the datatable in the Builder!).
+ * @param polynomial_builder_ptr The Builder to set the powers for.
+ * @param degrees Flattened matrix of ints with number of terms rows and numVariables columns.
+ * Number at i,j is the power of variable j in term i.
+ * @param n The size of degrees (must be a multiple of the number of variables (dimensions)).
+ * @param dim Dimension of the Builder.
  */
-SPLINTER_API void splinter_polynomial_builder_set_degree(splinter_obj_ptr polynomial_builder_ptr, unsigned int *degrees, int n);
+SPLINTER_API void splinter_polynomial_builder_set_powers(splinter_obj_ptr polynomial_builder_ptr, int *powers, int n);
 
 /**
  * Set the lambda of the Builder.

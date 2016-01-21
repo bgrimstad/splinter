@@ -16,7 +16,7 @@ using namespace SPLINTER;
 extern "C"
 {
 
-splinter_obj_ptr splinter_polynomial_regression_load_init(const char *filename)
+splinter_obj_ptr splinter_polynomial_load_init(const char *filename)
 {
     splinter_obj_ptr polyfit = nullptr;
 

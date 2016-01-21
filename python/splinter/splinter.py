@@ -72,89 +72,124 @@ def __init():
     c_double_p = POINTER(c_double)
     handle_type = c_void_p
 
-    _getHandle().get_error.restype = c_int
-    _getHandle().get_error.argtypes = []
+    _getHandle().splinter_get_error.restype = c_int
+    _getHandle().splinter_get_error.argtypes = []
 
-    _getHandle().get_error_string.restype = c_char_p
-    _getHandle().get_error_string.argtypes = []
+    _getHandle().splinter_get_error_string.restype = c_char_p
+    _getHandle().splinter_get_error_string.argtypes = []
 
-    _getHandle().datatable_init.restype = handle_type
-    _getHandle().datatable_init.argtypes = []
 
-    _getHandle().datatable_load_init.restype = handle_type
-    _getHandle().datatable_load_init.argtypes = [c_char_p]
+    _getHandle().splinter_datatable_init.restype = handle_type
+    _getHandle().splinter_datatable_init.argtypes = []
 
-    _getHandle().datatable_add_samples_row_major.restype = None
-    _getHandle().datatable_add_samples_row_major.argtypes = [handle_type, c_double_p, c_int, c_int]
+    _getHandle().splinter_datatable_load_init.restype = handle_type
+    _getHandle().splinter_datatable_load_init.argtypes = [c_char_p]
 
-    _getHandle().datatable_get_num_variables.restype = c_int
-    _getHandle().datatable_get_num_variables.argtypes = [handle_type]
+    _getHandle().splinter_datatable_add_samples_row_major.restype = None
+    _getHandle().splinter_datatable_add_samples_row_major.argtypes = [handle_type, c_double_p, c_int, c_int]
 
-    _getHandle().datatable_get_num_samples.restype = c_int
-    _getHandle().datatable_get_num_samples.argtypes = [handle_type]
+    _getHandle().splinter_datatable_get_num_variables.restype = c_int
+    _getHandle().splinter_datatable_get_num_variables.argtypes = [handle_type]
 
-    _getHandle().datatable_save.restype = None
-    _getHandle().datatable_save.argtypes = [handle_type, c_char_p]
+    _getHandle().splinter_datatable_get_num_samples.restype = c_int
+    _getHandle().splinter_datatable_get_num_samples.argtypes = [handle_type]
 
-    _getHandle().datatable_delete.restype = None
-    _getHandle().datatable_delete.argtypes = [handle_type]
+    _getHandle().splinter_datatable_save.restype = None
+    _getHandle().splinter_datatable_save.argtypes = [handle_type, c_char_p]
 
-    _getHandle().bspline_load_init.restype = handle_type
-    _getHandle().bspline_load_init.argtypes = [c_char_p]
+    _getHandle().splinter_datatable_delete.restype = None
+    _getHandle().splinter_datatable_delete.argtypes = [handle_type]
 
-    _getHandle().rbf_init.restype = handle_type
-    _getHandle().rbf_init.argtypes = [handle_type, c_int, c_int]
 
-    _getHandle().rbf_load_init.restype = handle_type
-    _getHandle().rbf_load_init.argtypes = [c_char_p]
+    _getHandle().splinter_bspline_load_init.restype = handle_type
+    _getHandle().splinter_bspline_load_init.argtypes = [c_char_p]
 
-    _getHandle().polynomial_regression_init.restype = handle_type
-    _getHandle().polynomial_regression_init.argtypes = [handle_type, c_int_p, c_int]
+    _getHandle().splinter_bspline_builder_init.restype = handle_type
+    _getHandle().splinter_bspline_builder_init.argtypes = [handle_type]
 
-    _getHandle().polynomial_regression_load_init.restype = handle_type
-    _getHandle().polynomial_regression_load_init.argtypes = [c_char_p]
+    _getHandle().splinter_bspline_builder_set_degree.restype = None
+    _getHandle().splinter_bspline_builder_set_degree.argtypes = [handle_type, c_int_p, c_int]
 
-    _getHandle().bspline_builder_init.restype = handle_type
-    _getHandle().bspline_builder_init.argtypes = [handle_type]
+    _getHandle().splinter_bspline_builder_set_num_basis_functions.restype = None
+    _getHandle().splinter_bspline_builder_set_num_basis_functions.argtypes = [handle_type, c_int_p, c_int]
 
-    _getHandle().bspline_builder_set_degree.restype = None
-    _getHandle().bspline_builder_set_degree.argtypes = [handle_type, c_int_p, c_int]
+    _getHandle().splinter_bspline_builder_set_knot_spacing.restype = None
+    _getHandle().splinter_bspline_builder_set_knot_spacing.argtypes = [handle_type, c_int]
 
-    _getHandle().bspline_builder_set_num_basis_functions.restype = None
-    _getHandle().bspline_builder_set_num_basis_functions.argtypes = [handle_type, c_int_p, c_int]
+    _getHandle().splinter_bspline_builder_set_smoothing.restype = None
+    _getHandle().splinter_bspline_builder_set_smoothing.argtypes = [handle_type, c_int]
 
-    _getHandle().bspline_builder_set_knot_spacing.restype = None
-    _getHandle().bspline_builder_set_knot_spacing.argtypes = [handle_type, c_int]
+    _getHandle().splinter_bspline_builder_set_lambda.restype = None
+    _getHandle().splinter_bspline_builder_set_lambda.argtypes = [handle_type, c_double]
 
-    _getHandle().bspline_builder_set_smoothing.restype = None
-    _getHandle().bspline_builder_set_smoothing.argtypes = [handle_type, c_int]
+    _getHandle().splinter_bspline_builder_build.restype = handle_type
+    _getHandle().splinter_bspline_builder_build.argtypes = [handle_type]
 
-    _getHandle().bspline_builder_set_lambda.restype = None
-    _getHandle().bspline_builder_set_lambda.argtypes = [handle_type, c_double]
+    _getHandle().splinter_bspline_builder_delete.restype = None
+    _getHandle().splinter_bspline_builder_delete.argtypes = [handle_type]
 
-    _getHandle().bspline_builder_build.restype = handle_type
-    _getHandle().bspline_builder_build.argtypes = [handle_type]
 
-    _getHandle().bspline_builder_delete.restype = None
-    _getHandle().bspline_builder_delete.argtypes = [handle_type]
+    _getHandle().splinter_rbfnetwork_load_init.restype = handle_type
+    _getHandle().splinter_rbfnetwork_load_init.argtypes = [c_char_p]
 
-    _getHandle().eval_row_major.restype = c_double_p
-    _getHandle().eval_row_major.argtypes = [handle_type, c_double_p, c_int]
+    _getHandle().splinter_rbfnetwork_builder_init.restype = handle_type
+    _getHandle().splinter_rbfnetwork_builder_init.argtypes = [handle_type]
 
-    _getHandle().eval_jacobian_row_major.restype = c_double_p
-    _getHandle().eval_jacobian_row_major.argtypes = [handle_type, c_double_p, c_int]
+    _getHandle().splinter_rbfnetwork_builder_set_type.restype = None
+    _getHandle().splinter_rbfnetwork_builder_set_type.argtypes = [handle_type, c_int]
 
-    _getHandle().eval_hessian_row_major.restype = c_double_p
-    _getHandle().eval_hessian_row_major.argtypes = [handle_type, c_double_p, c_int]
+    _getHandle().splinter_rbfnetwork_builder_set_normalized.restype = None
+    _getHandle().splinter_rbfnetwork_builder_set_normalized.argtypes = [handle_type, c_int]
 
-    _getHandle().function_get_num_variables.restype = c_int
-    _getHandle().function_get_num_variables.argtypes = [handle_type]
+    _getHandle().splinter_rbfnetwork_builder_set_precondition.restype = None
+    _getHandle().splinter_rbfnetwork_builder_set_precondition.argtypes = [handle_type, c_int]
 
-    _getHandle().function_save.restype = None
-    _getHandle().function_save.argtypes = [handle_type, c_char_p]
+    _getHandle().splinter_rbfnetwork_builder_set_lambda.restype = None
+    _getHandle().splinter_rbfnetwork_builder_set_lambda.argtypes = [handle_type, c_double]
 
-    _getHandle().function_delete.restype = None
-    _getHandle().function_delete.argtypes = [handle_type]
+    _getHandle().splinter_rbfnetwork_builder_build.restype = handle_type
+    _getHandle().splinter_rbfnetwork_builder_build.argtypes = [handle_type]
+
+    _getHandle().splinter_rbfnetwork_builder_delete.restype = None
+    _getHandle().splinter_rbfnetwork_builder_delete.argtypes = [handle_type]
+
+
+    _getHandle().splinter_polynomial_load_init.restype = handle_type
+    _getHandle().splinter_polynomial_load_init.argtypes = [c_char_p]
+
+    _getHandle().splinter_polynomial_builder_init.restype = handle_type
+    _getHandle().splinter_polynomial_builder_init.argtypes = [handle_type]
+
+    _getHandle().splinter_polynomial_builder_set_powers.restype = None
+    _getHandle().splinter_polynomial_builder_set_powers.argtypes = [handle_type, c_int_p, c_int]
+
+    _getHandle().splinter_polynomial_builder_set_lambda.restype = None
+    _getHandle().splinter_polynomial_builder_set_lambda.argtypes = [handle_type, c_double]
+
+    _getHandle().splinter_polynomial_builder_build.restype = handle_type
+    _getHandle().splinter_polynomial_builder_build.argtypes = [handle_type]
+
+    _getHandle().splinter_polynomial_builder_delete.restype = None
+    _getHandle().splinter_polynomial_builder_delete.argtypes = [handle_type]
+
+
+    _getHandle().splinter_function_eval_row_major.restype = c_double_p
+    _getHandle().splinter_function_eval_row_major.argtypes = [handle_type, c_double_p, c_int]
+
+    _getHandle().splinter_function_eval_jacobian_row_major.restype = c_double_p
+    _getHandle().splinter_function_eval_jacobian_row_major.argtypes = [handle_type, c_double_p, c_int]
+
+    _getHandle().splinter_function_eval_hessian_row_major.restype = c_double_p
+    _getHandle().splinter_function_eval_hessian_row_major.argtypes = [handle_type, c_double_p, c_int]
+
+    _getHandle().splinter_function_get_num_variables.restype = c_int
+    _getHandle().splinter_function_get_num_variables.argtypes = [handle_type]
+
+    _getHandle().splinter_function_save.restype = None
+    _getHandle().splinter_function_save.argtypes = [handle_type, c_char_p]
+
+    _getHandle().splinter_function_delete.restype = None
+    _getHandle().splinter_function_delete.argtypes = [handle_type]
 
 
 # Try to locate SPLINTER relative to this script
@@ -214,9 +249,9 @@ def __locateSplinter():
 def _call(function, *args):
     res = function(*args)
 
-    if _getHandle().get_error():
+    if _getHandle().splinter_get_error():
         # TODO: Sometimes the string is correct, sometimes not. Investigate.
-        errorMsg = getPyString(_getHandle().get_error_string())
+        errorMsg = getPyString(_getHandle().splinter_get_error_string())
         raise Exception(errorMsg)
 
     return res

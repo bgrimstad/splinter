@@ -126,7 +126,7 @@ size_t Serializer::get_size(const Polynomial &obj)
 {
     return get_size(obj.numVariables)
             + get_size(obj.coefficients)
-            + get_size(obj.degrees);
+            + get_size(obj.powers);
 }
 
 size_t Serializer::get_size(const DenseMatrix &obj)
@@ -216,7 +216,7 @@ void Serializer::_serialize(const Polynomial &obj)
 {
     _serialize(obj.numVariables);
     _serialize(obj.coefficients);
-    _serialize(obj.degrees);
+    _serialize(obj.powers);
 }
 
 void Serializer::_serialize(const DenseMatrix &obj)
@@ -332,7 +332,7 @@ void Serializer::deserialize(Polynomial &obj)
 {
     deserialize(obj.numVariables);
     deserialize(obj.coefficients);
-    deserialize(obj.degrees);
+    deserialize(obj.powers);
 }
 
 void Serializer::deserialize(DenseMatrix &obj)

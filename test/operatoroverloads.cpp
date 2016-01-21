@@ -152,7 +152,7 @@ bool operator==(const Polynomial &lhs, const Polynomial &rhs)
     return
             lhs.numVariables == rhs.numVariables
             && lhs.coefficients == rhs.coefficients
-            && lhs.degrees == rhs.degrees;
+            && lhs.powers == rhs.powers;
 }
 
 /*

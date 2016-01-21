@@ -16,7 +16,7 @@ using namespace SPLINTER;
 extern "C"
 {
 
-splinter_obj_ptr splinter_rbf_load_init(const char *filename)
+splinter_obj_ptr splinter_rbfnetwork_load_init(const char *filename)
 {
     splinter_obj_ptr rbf = nullptr;
 

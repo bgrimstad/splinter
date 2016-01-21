@@ -30,31 +30,29 @@ for i in range(10):
         d[idx] = [i, j, f([i, j])]
         idx += 1
 
-# Create a PolynomialRegression of degree 1 in all dimensions
-# You can also specify the degree of all dimensions by providing a list of numbers
-# (preferably ints, as they will get casted to that anyway)
-# The list has to be of length equal to the number of dimensions (the number returned by DataTable.getNumVariables())
-# Ex: poly = splinter.PolynomialRegression(d, [1,2])
-# Will make a PolynomialRegression of degree 1 in dimension 1, and degree 2 in dimension 2.
-poly = splinter.PolynomialRegression(d, 1)
+# powers should be a matrix with the number of terms rows and number of variables columns
+# If you want a Polynomial of the form f(x, y) = c1*x**2*y + c2*x*y**2, then powers should be [[2, 1], [1, 2]]
+# This is because the first term is of degree 2 in x, degree 1 in y. The second term is of degree 1 in x, degree 2 in y.
+powers = [1, 1]
+poly = splinter.PolynomialBuilder(d).powers(powers).build()
 
 print("Jacobian at [3.2,3.2]: " + str(poly.evalJacobian([3.2,3.2])))
 
-# evalHessian is not implemented for PolynomialRegression, expecting error:
+# evalHessian is not implemented for Polynomial, expecting error:
 try:
     print("Hessian at [3.2,3.2]: " + str(poly.evalHessian([3.2,3.2])))
 except Exception as e:
     print(e)
 
 
-# Save the PolynomialRegression to test.poly
+# Save the Polynomial to test.poly
 # The file ending doesn't matter
 poly.save("test.poly")
 
-# Create PolynomialRegression from saved PolynomialRegression
-poly2 = splinter.PolynomialRegression("test.poly")
+# Create Polynomial from saved Polynomial
+poly2 = splinter.Polynomial("test.poly")
 
-print("Original PolynomialRegression at [2.1,2.9]: " + str(poly.eval([2.1,2.9])))
-print("Loaded PolynomialRegression at [2.1,2.9]: " + str(poly2.eval([2.1,2.9])))
+print("Original Polynomial at [2.1,2.9]: " + str(poly.eval([2.1,2.9])))
+print("Loaded Polynomial at [2.1,2.9]: " + str(poly2.eval([2.1,2.9])))
 
 remove("test.poly")

@@ -43,13 +43,9 @@ public:
 
     virtual T build() const = 0;
 
-    BuilderBase_CRTP<T>& lambda(double lambda)
+    int getNumVariables() const
     {
-        if (lambda < 0)
-            throw Exception("BuilderBase::lambda: Lambda must be non-negative.");
-
-        _lambda = lambda;
-        return *this;
+        return _data.getNumVariables();
     }
 
 protected:

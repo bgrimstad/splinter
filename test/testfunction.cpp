@@ -20,17 +20,17 @@ TestFunction::TestFunction(std::function<double (const std::vector<double> &)> f
         : Function(numVariables),
           functionString(functionString),
           constDegree(false),
-          constDegreeVal(std::vector<double>(numVariables, 0.0)),
+          powers(DenseMatrix::Zero(0, 0)),
           f(f)
 {
 }
 
 TestFunction::TestFunction(std::function<double (const std::vector<double> &)> f, size_t numVariables,
-                           std::string functionString,  std::vector<double> &degrees)
+                           std::string functionString,  DenseMatrix powers)
         : Function(numVariables),
           functionString(functionString),
           constDegree(true),
-          constDegreeVal(degrees),
+          powers(powers),
           f(f)
 {
 }
@@ -48,9 +48,10 @@ std::vector<unsigned int> TestFunction::getConstDegreeInt() const
 {
     auto intDegrees = std::vector<unsigned int>(numVariables, 0);
 
-    for (size_t i = 0; i < constDegreeVal.size(); ++i)
+    auto maxCoeffs = powers.rowwise().maxCoeff();
+    for (size_t i = 0; i < numVariables; ++i)
     {
-        intDegrees.at(i) = (unsigned int) std::ceil(constDegreeVal.at(i));
+        intDegrees.at(i) = (unsigned int) std::ceil(maxCoeffs(i));
     }
 
     return intDegrees;
@@ -59,7 +60,7 @@ std::vector<unsigned int> TestFunction::getConstDegreeInt() const
 double TestFunction::getMaxDegree() const
 {
     double maxDegree = 0.0;
-    for (auto deg : constDegreeVal)
+    for (auto deg : getConstDegreeInt())
     {
         if (deg > maxDegree)
         {

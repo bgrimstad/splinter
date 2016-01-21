@@ -30,12 +30,12 @@ for x0 in range(1, 10):
         d.append([x0, x1, f(x0, x1)])
 df = pd.DataFrame(data=d, columns=["x0", "x1", "f(x0, x1)"])
 
-# Create a RadialBasisFunction of type Thin plate spline
-rbf = splinter.RadialBasisFunction(df.values, splinter.RBFType.THIN_PLATE_SPLINE)
+# Create a RBFNetwork of type Thin plate spline
+rbf = splinter.RBFNetworkBuilder(df.values).build()
 
 print("Jacobian at [3.2, 3.2]: " + str(rbf.evalJacobian([3.2, 3.2])))
 
-# evalHessian is not implemented for RadialBasisFunction, expecting error:
+# evalHessian is not implemented for RBFNetwork, expecting error:
 try:
     print("Hessian at [3.2, 3.2]: " + str(rbf.evalHessian([3.2, 3.2])))
 except Exception as e:
@@ -45,10 +45,10 @@ except Exception as e:
 # The file ending doesn't matter
 rbf.save("test.rbf")
 
-# Create RadialBasisFunction from saved RadialBasisFunction
-rbf2 = splinter.RadialBasisFunction("test.rbf")
+# Create RBFNetwork from saved RBFNetwork
+rbf2 = splinter.RBFNetwork("test.rbf")
 
-print("Original RadialBasisFunction at [2.1,2.9]: " + str(rbf.eval([2.1, 2.9])))
-print("Loaded RadialBasisFunction at [2.1,2.9]: " + str(rbf2.eval([2.1, 2.9])))
+print("Original RBFNetwork at [2.1,2.9]: " + str(rbf.eval([2.1, 2.9])))
+print("Loaded RBFNetwork at [2.1,2.9]: " + str(rbf2.eval([2.1, 2.9])))
 
 remove("test.rbf")

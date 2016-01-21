@@ -19,10 +19,10 @@ class DataTable:
         self.__samples = []
 
         if isString(fileNameOrData):
-            self.__handle = splinter._call(splinter._getHandle().datatable_load_init, getCString(fileNameOrData))
-            self.__xDim = splinter._call(splinter._getHandle().datatable_get_num_variables, self.__handle)
+            self.__handle = splinter._call(splinter._getHandle().splinter_datatable_load_init, getCString(fileNameOrData))
+            self.__xDim = splinter._call(splinter._getHandle().splinter_datatable_get_num_variables, self.__handle)
         else:
-            self.__handle = splinter._call(splinter._getHandle().datatable_init)
+            self.__handle = splinter._call(splinter._getHandle().splinter_datatable_init)
 
             # If fileNameOrData is not a string and not none, we expect it to be an iterable with rows of data,
             # where the last column in each row is y and the first n-1 columns is x.
@@ -50,11 +50,11 @@ class DataTable:
 
     def getNumSamples(self):
         self.__transfer()
-        return splinter._call(splinter._getHandle().datatable_get_num_samples, self.__handle)
+        return splinter._call(splinter._getHandle().splinter_datatable_get_num_samples, self.__handle)
 
     def save(self, fileName):
         self.__transfer()
-        splinter._call(splinter._getHandle().datatable_save, self.__handle, getCString(fileName))
+        splinter._call(splinter._getHandle().splinter_datatable_save, self.__handle, getCString(fileName))
 
 
     # Methods below are internal use only
@@ -66,7 +66,7 @@ class DataTable:
         #	print(str(self.__samples[i*(self.__xDim+1)]) + "," + str(self.__samples[i*(self.__xDim+1)+1]) + " = " + str(self.__samples[i*(self.__xDim+1)+2]))
 
         if self.__numSamples > 0:
-            splinter._call(splinter._getHandle().datatable_add_samples_row_major, self.__handle, (c_double * len(self.__samples))(*self.__samples), self.__numSamples, self.__xDim)
+            splinter._call(splinter._getHandle().splinter_datatable_add_samples_row_major, self.__handle, (c_double * len(self.__samples))(*self.__samples), self.__numSamples, self.__xDim)
 
         self.__samples = []
         self.__numSamples = 0
