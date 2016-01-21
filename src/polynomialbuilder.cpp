@@ -15,25 +15,16 @@ namespace SPLINTER
 
 Polynomial Polynomial::Builder::build() const
 {
-    Polynomial poly(_degrees, DenseVector::Zero(computeNumBasisFunctions(_degrees)));
+    Polynomial poly(_powers);
 
     if (poly.getNumCoefficients() > _data.getNumSamples())
         throw Exception("Polynomial::Builder::build: Insufficient number of samples!");
 
     poly.numVariables = _data.getNumVariables();
     poly.coefficients = computeCoefficients(poly, _data);
-    poly.degrees = _degrees;
+    poly.powers = _powers;
 
     return poly;
-}
-
-unsigned int Polynomial::Builder::computeNumBasisFunctions(std::vector<unsigned int> degrees) const
-{
-    unsigned int numMonomials = 1;
-    for (auto deg : degrees)
-        numMonomials *= (deg+1);
-
-    return numMonomials;
 }
 
 } // namespace SPLINTER

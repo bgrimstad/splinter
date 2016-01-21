@@ -10,22 +10,29 @@
 #include "polynomial.h"
 #include <serializer.h>
 #include "mykroneckerproduct.h"
+#include <ols.h>
 
 namespace SPLINTER
 {
 
-Polynomial::Polynomial(std::vector<unsigned int> degrees, DenseVector coefficients)
-    : LinearFunction<DenseVector, DenseMatrix>(degrees.size(), coefficients),
-      degrees(degrees)
+// Initialize coefficients to zero
+Polynomial2::Polynomial2(DenseMatrix powers)
+    : Polynomial2(powers, DenseVector::Zero(powers.rows()))
 {
 }
 
-Polynomial::Polynomial(const char *fileName)
-        : Polynomial(std::string(fileName))
+Polynomial2::Polynomial2(DenseMatrix powers, DenseVector coefficients)
+    : LinearFunction<DenseVector, DenseMatrix>(powers.cols(), coefficients),
+      powers(powers)
 {
 }
 
-Polynomial::Polynomial(const std::string &fileName)
+Polynomial2::Polynomial2(const char *fileName)
+        : Polynomial2(std::string(fileName))
+{
+}
+
+Polynomial2::Polynomial2(const std::string &fileName)
         : LinearFunction(1, DenseVector::Zero(1))
 {
     load(fileName);
@@ -34,29 +41,28 @@ Polynomial::Polynomial(const std::string &fileName)
 /**
  * Evaluate monomials
  */
-DenseVector Polynomial::evalBasis(DenseVector x) const
+DenseVector Polynomial2::evalBasis(DenseVector x) const
 {
-    std::vector<DenseVector> powers;
+    DenseVector basis = DenseVector::Zero(powers.rows());
 
-    for (unsigned int i = 0; i < numVariables; ++i)
+    checkInput(x);
+
+    for (unsigned int i = 0; i < powers.rows(); ++i)
     {
-        unsigned int deg = degrees.at(i);
-        DenseVector powi = DenseVector::Zero(deg+1);
-        for (unsigned int j = 0; j <= deg; ++j)
-            powi(j) = std::pow(x(i), j);
-        powers.push_back(powi);
+        double monomial = 1;
+        for (unsigned int j = 0; j < powers.cols(); ++j)
+        {
+            // Round power to integer
+            unsigned int pow = (unsigned int)powers(i, j);
+            monomial *= std::pow(x(j), pow);
+        }
+        basis(i) = monomial;
     }
 
-    // Kronecker product of monovariable power basis
-    DenseVector monomials = kroneckerProductVectors(powers);
-
-    if (monomials.rows() != getNumCoefficients())
-        throw Exception("Polynomial::evalMonomials: monomials.rows() != numCoefficients.");
-
-    return monomials;
+    return basis;
 }
 
-DenseMatrix Polynomial::evalBasisJacobian(DenseVector x) const
+DenseMatrix Polynomial2::evalBasisJacobian(DenseVector x) const
 {
     DenseMatrix jac = DenseMatrix::Zero(getNumCoefficients(), numVariables);
 
@@ -66,82 +72,91 @@ DenseMatrix Polynomial::evalBasisJacobian(DenseVector x) const
     return jac;
 }
 
-DenseVector Polynomial::evalDifferentiatedMonomials(DenseVector x, unsigned int var) const
+DenseVector Polynomial2::evalDifferentiatedMonomials(DenseVector x, unsigned int var) const
 {
     if (var >= numVariables)
         throw Exception("Polynomial::evalDifferentiatedMonomials: invalid variable.");
 
-    std::vector<DenseVector> powers;
+    DenseVector dBasis = DenseVector::Zero(powers.rows());
 
-    for (unsigned int i = 0; i < numVariables; ++i)
+    checkInput(x);
+
+    for (unsigned int i = 0; i < powers.rows(); ++i)
     {
-        unsigned int deg = degrees.at(i);
-        DenseVector powi = DenseVector::Zero(deg+1);
-
-        if (var == i)
+        double monomial = 1;
+        for (unsigned int j = 0; j < powers.cols(); ++j)
         {
-            // Differentiate wrt. x(i)
-            for (unsigned int j = 1; j <= deg; ++j)
-                powi(j) = j*std::pow(x(i), j-1);
-        }
-        else
-        {
-            for (unsigned int j = 0; j <= deg; ++j)
-                powi(j) = std::pow(x(i), j);
-        }
+            unsigned int pow = (unsigned int)powers(i, j);
 
-        powers.push_back(powi);
+            if (var == j)
+            {
+                if (pow == 0)
+                    monomial = 0;
+                else
+                    monomial *= pow*std::pow(x(j), pow-1);
+            }
+            else
+            {
+                monomial *= std::pow(x(j), pow);
+            }
+        }
+        dBasis(i) = monomial;
     }
 
-    // Kronecker product of monovariable power basis
-    DenseVector monomials = kroneckerProductVectors(powers);
-
-    if (monomials.rows() != getNumCoefficients())
-        throw Exception("Polynomial::evalMonomials: monomials.rows() != numCoefficients.");
-
-    return monomials;
+    return dBasis;
 }
 
-void Polynomial::save(const std::string &fileName) const
+unsigned int Polynomial2::getDegree() const
+{
+    unsigned int maxDeg = 0;
+
+    for (unsigned int i = 0; i < powers.rows(); ++i)
+    {
+        unsigned int deg = 0;
+        for (unsigned int j = 0; j < powers.cols(); ++j)
+        {
+            deg += powers(i, j);
+        }
+        if (deg > maxDeg)
+            maxDeg = deg;
+    }
+    return maxDeg;
+}
+
+void Polynomial2::save(const std::string &fileName) const
 {
     Serializer s;
     s.serialize(*this);
     s.saveToFile(fileName);
 }
 
-void Polynomial::load(const std::string &fileName)
+void Polynomial2::load(const std::string &fileName)
 {
     Serializer s(fileName);
     s.deserialize(*this);
 }
 
-std::string Polynomial::getDescription() const
+std::string Polynomial2::getDescription() const
 {
-    std::string description("Polynomial of degree");
+    std::string description("Polynomial = ");
 
-    // See if all degrees are the same.
-    bool equal = true;
-    for (size_t i = 1; i < degrees.size(); ++i)
+    for (unsigned int i = 0; i < powers.rows(); ++i)
     {
-        equal = equal && (degrees.at(i) == degrees.at(i-1));
-    }
-
-    if (equal)
-    {
-        description.append(" ");
-        description.append(std::to_string(degrees.at(0)));
-    }
-    else
-    {
-        description.append("s (");
-        for (size_t i = 0; i < degrees.size(); ++i) {
-            description.append(std::to_string(degrees.at(i)));
-            if (i + 1 < degrees.size())
-            {
-                description.append(", ");
-            }
-        }
+        description.append(" + (");
+        description.append(std::to_string(coefficients(i)));
         description.append(")");
+        for (unsigned int j = 0; j < powers.cols(); ++j)
+        {
+            unsigned int pow = powers(i, j);
+            if (pow > 0)
+            {
+                description.append("*x(");
+                description.append(std::to_string(j));
+                description.append(")^");
+                description.append(std::to_string(pow));
+            }
+
+        }
     }
 
     return description;
