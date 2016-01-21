@@ -18,11 +18,11 @@
 namespace SPLINTER
 {
 
-class SPLINTER_API Polynomial::Builder : public BuilderBase<Polynomial>
+class SPLINTER_API Polynomial::Builder : public BuilderBase_CRTP<Polynomial>
 {
 public:
     Builder(const DataTable &data) :
-            BuilderBase(data),
+            BuilderBase_CRTP(data),
             _degrees(std::vector<unsigned int>(_data.getNumVariables(), 0))
     {}
 

@@ -21,7 +21,7 @@ namespace SPLINTER
 // Default constructor
 BSpline::Builder::Builder(const DataTable &data)
         :
-        BuilderBase(data),
+        BuilderBase_CRTP(data),
         _degrees(getBSplineDegrees(data.getNumVariables(), Degree::CUBIC)),
         _numBasisFunctions(std::vector<unsigned int>(data.getNumVariables(), 0)),
         _knotSpacing(KnotSpacing::SAMPLE),

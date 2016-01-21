@@ -17,12 +17,12 @@
 namespace SPLINTER
 {
 
-class SPLINTER_API Polynomial2::Builder : public BuilderBase<Polynomial2>
+class SPLINTER_API Polynomial2::Builder : public BuilderBase_CRTP<Polynomial2>
 {
 public:
     Builder(const DataTable &table)
             :
-            BuilderBase(table),
+            BuilderBase_CRTP(table),
             _powers(DenseMatrix::Zero(0, 0))
     {}
 

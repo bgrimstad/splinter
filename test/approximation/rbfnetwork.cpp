@@ -11,7 +11,7 @@
 #include <testingutilities.h>
 #include "rbfnetwork.h"
 #include <testfunction.h>
-#include "rbfbuilder.h"
+#include "rbfnetworkbuilder.h"
 #include <iostream>
 
 using namespace SPLINTER;

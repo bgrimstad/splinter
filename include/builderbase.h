@@ -10,6 +10,7 @@
 #ifndef SPLINTER_BUILDERBASE_H
 #define SPLINTER_BUILDERBASE_H
 
+#include "function.h"
 #include "datatable.h"
 #include <iostream>
 
@@ -18,22 +19,32 @@ namespace SPLINTER
 
 /**
  * Pure abstract builder base class.
- * Used for building Functions
+ * Used for building Functions.
+ * Using the Curiously recurring template pattern.
  */
 template <class T>
-class BuilderBase
+class BuilderBase_CRTP
 {
 public:
-    BuilderBase(const DataTable &data)
+    BuilderBase_CRTP(const DataTable &data)
         :
         _data(data),
         _lambda(0.0)
     {}
-    virtual ~BuilderBase() {};
+    virtual ~BuilderBase_CRTP() {};
+
+    /*
+     * Used by the C interface.
+     * Uses polymorphism so we need to be able to get a pointer.
+     */
+    virtual Function *build_ptr() const
+    {
+        return new T(build());
+    }
 
     virtual T build() const = 0;
 
-    BuilderBase<T> &lambda(double lambda)
+    BuilderBase_CRTP<T> &lambda(double lambda)
     {
         if (lambda < 0)
         {
@@ -49,7 +60,7 @@ protected:
     double _lambda;
 
 private:
-    BuilderBase();
+    BuilderBase_CRTP();
 };
 
 } // namespace SPLINTER

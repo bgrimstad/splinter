@@ -43,7 +43,7 @@ enum class BSpline::KnotSpacing
 };
 
 // B-spline builder class
-class SPLINTER_API BSpline::Builder : public BuilderBase<BSpline>
+class SPLINTER_API BSpline::Builder : public BuilderBase_CRTP<BSpline>
 {
 public:
     Builder(const DataTable &data);

@@ -22,7 +22,7 @@ namespace SPLINTER
  * where m equals the number of terms (monomials), and n equals the number of variables.
  * Coefficients are given by a vector of n real numbers.
  * The polynomial can be written as:
- * poly(x) = sum_i (c_i * prod_j x_j^P_ij)
+ * poly(x) = sum_i (c_i * prod_j (x_j^P_ij))
  */
 class SPLINTER_API Polynomial2 : public LinearFunction<DenseVector, DenseMatrix>
 {

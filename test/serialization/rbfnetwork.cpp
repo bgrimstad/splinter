@@ -10,7 +10,7 @@
 #include <Catch.h>
 #include <datatable.h>
 #include "rbfnetwork.h"
-#include "rbfbuilder.h"
+#include "rbfnetworkbuilder.h"
 #include "testingutilities.h"
 
 using namespace SPLINTER;

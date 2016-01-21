@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#ifndef SPLINTER_RBFBUILDER_H
-#define SPLINTER_RBFBUILDER_H
+#ifndef SPLINTER_RBFNETWORKBUILDER_H
+#define SPLINTER_RBFNETWORKBUILDER_H
 
 #include "builderbase.h"
 #include "rbfnetwork.h"
@@ -16,12 +16,12 @@
 namespace SPLINTER
 {
 
-class SPLINTER_API RBFNetwork::Builder : public BuilderBase<RBFNetwork>
+class SPLINTER_API RBFNetwork::Builder : public BuilderBase_CRTP<RBFNetwork>
 {
 public:
     Builder(const DataTable &data)
         :
-        BuilderBase(data),
+        BuilderBase_CRTP(data),
         _type(RBFType::THIN_PLATE_SPLINE),
         _normalized(false),
         _precondition(false)
@@ -61,4 +61,4 @@ private:
 
 } // namespace SPLINTER
 
-#endif // SPLINTER_RBFBUILDER_H
+#endif // SPLINTER_RBFNETWORKBUILDER_H

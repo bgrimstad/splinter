@@ -142,14 +142,27 @@ include_directories(${EIGEN_DIRECTORY})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/test)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/Catch)
 
+set(CINTERFACE_SRC_LIST
+    include/cinterface/cinterface.h
+    include/cinterface/utilities.h
+    src/cinterface/bspline.cpp
+    src/cinterface/bsplinebuilder.cpp
+    src/cinterface/cinterface.cpp
+    src/cinterface/datatable.cpp
+    src/cinterface/polynomial.cpp
+    src/cinterface/polynomialbuilder.cpp
+    src/cinterface/rbfnetwork.cpp
+    src/cinterface/rbfnetworkbuilder.cpp
+    src/cinterface/utilities.cpp
+)
 # These are the sources we need for compilation of the library
 set(SRC_LIST
+    ${CINTERFACE_SRC_LIST}
     include/builderbase.h
     include/bspline.h
     include/bsplinebasis.h
     include/bsplinebasis1d.h
     include/bsplinebuilder.h
-    include/cinterface.h
     include/datapoint.h
     include/datatable.h
     include/function.h
@@ -162,7 +175,7 @@ set(SRC_LIST
     include/polynomial2.h
     include/polynomial2builder.h
     include/rbf.h
-    include/rbfbuilder.h
+    include/rbfnetworkbuilder.h
     include/rbfnetwork.h
     include/serializer.h
     include/utilities.h
@@ -172,7 +185,6 @@ set(SRC_LIST
     src/bsplinebasis.cpp
     src/bsplinebasis1d.cpp
     src/bsplinebuilder.cpp
-    src/cinterface.cpp
     src/datapoint.cpp
     src/datatable.cpp
     src/function.cpp
@@ -182,7 +194,7 @@ set(SRC_LIST
     src/polynomialbuilder.cpp
     src/polynomial2.cpp
     src/polynomial2builder.cpp
-    src/rbfbuilder.cpp
+    src/rbfnetworkbuilder.cpp
     src/rbfnetwork.cpp
     src/serializer.cpp
     src/utilities.cpp
@@ -243,7 +255,7 @@ install(
 # Version file (used for deducing the name of the binary when loading it)
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/splinter-matlab/version ${VERSION})
 install(
-        FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/cinterface.h
+        FILES include/cinterface/cinterface.h
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-matlab/include
 )
 install(
@@ -266,7 +278,7 @@ install(
 # Version file (used for deducing the name of the binary when loading it)
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/splinter-python/version ${VERSION})
 install(
-        FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/cinterface.h
+        FILES include/cinterface/cinterface.h
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-python/include
 )
 install(
