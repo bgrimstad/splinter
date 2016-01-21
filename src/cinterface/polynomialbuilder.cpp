@@ -18,6 +18,24 @@ using namespace SPLINTER;
 extern "C"
 {
 
+splinter_obj_ptr splinter_polynomial_builder_init(splinter_obj_ptr datatable_ptr)
+{
+    splinter_obj_ptr polynomial_builder_ptr = nullptr;
+
+    try
+    {
+        DataTable *dataTable = get_datatable(datatable_ptr);
+        polynomial_builder_ptr = new Polynomial::Builder(*dataTable);
+        builders.insert(polynomial_builder_ptr);
+    }
+    catch (const Exception &e)
+    {
+        set_error_string(e.what());
+    }
+
+    return polynomial_builder_ptr;
+}
+
 void splinter_polynomial_builder_set_degree(splinter_obj_ptr polynomial_builder_ptr, unsigned int *degrees, int n)
 {
     auto builder = get_builder<Polynomial>(polynomial_builder_ptr);

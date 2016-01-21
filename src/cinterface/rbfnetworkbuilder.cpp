@@ -18,6 +18,24 @@ using namespace SPLINTER;
 extern "C"
 {
 
+splinter_obj_ptr splinter_rbfnetwork_builder_init(splinter_obj_ptr datatable_ptr)
+{
+    splinter_obj_ptr rbfnetwork_builder_ptr = nullptr;
+
+    try
+    {
+        DataTable *dataTable = get_datatable(datatable_ptr);
+        rbfnetwork_builder_ptr = new RBFNetwork::Builder(*dataTable);
+        builders.insert(rbfnetwork_builder_ptr);
+    }
+    catch (const Exception &e)
+    {
+        set_error_string(e.what());
+    }
+
+    return rbfnetwork_builder_ptr;
+}
+
 void splinter_rbfnetwork_builder_set_type(splinter_obj_ptr rbfnetwork_builder_ptr, int type_index)
 {
     RBFType type;

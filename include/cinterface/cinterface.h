@@ -126,9 +126,9 @@ SPLINTER_API void splinter_datatable_delete(splinter_obj_ptr datatable_ptr);
 SPLINTER_API splinter_obj_ptr splinter_bspline_load_init(const char *filename);
 
 /**
- * Create a new BSplineBuilder.
+ * Create a new BSpline::Builder.
  *
- * @param datatable_ptr The datatable to create the BSplineBuilder from.
+ * @param datatable_ptr The datatable to create the BSpline::Builder from.
  * @return Pointer to the created BSplineBuilder.
  */
 SPLINTER_API splinter_obj_ptr splinter_bspline_builder_init(splinter_obj_ptr datatable_ptr);
@@ -203,6 +203,14 @@ SPLINTER_API void splinter_bspline_builder_delete(splinter_obj_ptr bspline_build
 SPLINTER_API splinter_obj_ptr splinter_rbfnetwork_load_init(const char *filename);
 
 /**
+ * Create a new RBFNetwork::Builder.
+ *
+ * @param datatable_ptr The datatable to create the RBFNetwork::Builder from.
+ * @return Pointer to the created RBFNetwork::Builder.
+ */
+SPLINTER_API splinter_obj_ptr splinter_rbfnetwork_builder_init(splinter_obj_ptr datatable_ptr);
+
+/**
  * Set the type of RBF to use.
  *
  * @param rbfnetwork_builder_ptr The Builder to set the type of.
@@ -265,6 +273,14 @@ SPLINTER_API void splinter_rbfnetwork_builder_delete(splinter_obj_ptr rbfnetwork
  * @return Pointer to the loaded Polynomial.
  */
 SPLINTER_API splinter_obj_ptr splinter_polynomial_regression_load_init(const char *filename);
+
+/**
+ * Create a new Polynomial::Builder.
+ *
+ * @param datatable_ptr The datatable to create the Polynomial::Builder from.
+ * @return Pointer to the created Polynomial::Builder.
+ */
+SPLINTER_API splinter_obj_ptr splinter_polynomial_builder_init(splinter_obj_ptr datatable_ptr);
 
 /**
  * Set the degree of the Polynomial.
