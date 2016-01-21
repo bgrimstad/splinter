@@ -3,7 +3,7 @@ SPLINTER (SPLine INTERpolation) is a library for *multivariate function approxim
 
 - [tensor product B-splines](docs/bspline.md)
 - [radial basis function networks](docs/rbfnetwork.md)
-- [polynomial regression](docs/basic_usage.md)
+- [polynomial regression](docs/polynomial_regression.md)
 - k-nearest neighbour (to be added in the next minor release)
 
 A shared feature of these methods is that they are based on models that are linear in the coefficients. The models differ in which type of basis functions that is used. For example, the B-spline uses piecewise polynomial basis functions while the radial basis function network may use various radial basis functions. The coefficients in these models are computed using ordinary least squares (OLS), possibly with Tikhonov regularization (regularization is partially supported today). The name of the library, SPLINTER, originates from the tensor product B-spline implementation, which was the first of the methods to be implemented.
