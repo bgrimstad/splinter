@@ -25,20 +25,17 @@ class BuilderBase
 {
 public:
     BuilderBase(const DataTable &data)
-        :
-        _data(data),
-        _lambda(0.0)
+        : _data(data),
+          _lambda(0.0)
     {}
     virtual ~BuilderBase() {};
 
     virtual T build() const = 0;
 
-    BuilderBase<T> &lambda(double lambda)
+    BuilderBase<T>& lambda(double lambda)
     {
         if (lambda < 0)
-        {
-            throw Exception("Builder::lambda: Lambda must be non-negative.");
-        }
+            throw Exception("BuilderBase::lambda: Lambda must be non-negative.");
 
         _lambda = lambda;
         return *this;
