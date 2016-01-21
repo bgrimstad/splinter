@@ -9,7 +9,10 @@ b = splinter.BSplineBuilder(data)\
     .degree(splinter.BSplineBuilder.Degree.QUADRATIC)\
     .build()
 ```
-In this example the B-spline is built from a dataset called data, usually assumed to contain data points on a regular grid. Note that SPLINTER do accept datasets of points not lying on a regular grid, but the behavior is then experimental and currently not advised. 
+In this example the B-spline is built from a dataset called `data`, usually assumed to contain data points on a regular grid. Note that SPLINTER do accept datasets of points not lying on a regular grid, but the behavior is then experimental and currently not advised.
+
+![Comparison of a linear, quadratic and cubic B-spline](../assets/bspline_degrees.png)
+Figure: Comparison of a linear, quadratic and cubic B-spline. The linear B-spline is continuous, the quadratic B-spline is continuously differentiable, and the cubic B-spline has a continous second order derivative.
 
 The user may create a penalized B-spline (P-spline) that smooths the data instead of interpolating it. The construction of a P-spline is more computationally demanding than the B-spline - a large least-square problem must be solved - bringing the practical limit on the number of samples down to about 10 000. The following Python example shows the construction of a P-spline with the smoothing parameter (lambda) set to 0.1.
 ```
@@ -26,3 +29,6 @@ b = splinter.BSplineBuilder(data)\
     .setLambda(0.1)\
     .build()
 ```
+
+![Comparison of an interpolating B-spline, regularized B-spline, and P-spline](../assets/bspline_regularization.png)
+Figure: Comparison of an interpolating B-spline, regularized B-spline, and a smoothed B-spline (P-spline). All B-splines are cubic (have basis functions of degree 3).
