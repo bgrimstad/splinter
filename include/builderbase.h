@@ -27,9 +27,8 @@ class BuilderBase_CRTP
 {
 public:
     BuilderBase_CRTP(const DataTable &data)
-        :
-        _data(data),
-        _lambda(0.0)
+        : _data(data),
+         _lambda(0.0)
     {}
     virtual ~BuilderBase_CRTP() {};
 
@@ -44,12 +43,10 @@ public:
 
     virtual T build() const = 0;
 
-    BuilderBase_CRTP<T> &lambda(double lambda)
+    BuilderBase_CRTP<T>& lambda(double lambda)
     {
         if (lambda < 0)
-        {
-            throw Exception("Builder::lambda: Lambda must be non-negative.");
-        }
+            throw Exception("BuilderBase::lambda: Lambda must be non-negative.");
 
         _lambda = lambda;
         return *this;
