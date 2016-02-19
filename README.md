@@ -30,7 +30,7 @@ The current goals with the library are:
 
 1. To make the library more accessible by improving the interfaces and documentation
 2. To improve the current code via testing
-3. To implement new function approximation methods such as Kriging and k-nearest neighbors regression
+3. To implement new B-spline features
 
 The simplest way to contribute to SPLINTER is to use it and give us feedback on the experience. If you would like to contribute by coding, you can get started by picking a suitable issue from the [list of issues](https://github.com/bgrimstad/splinter/issues). The issues are labeled with the type of work (`Bug`, `Docs`, `Enhancement`, `New feature`, `Refactoring`, `Tests`) and level of difficulty (`Beginner`, `Intermediate`, `Advanced`). Some issues are also labeled as `Critical`, which means that they deserve our attention and prioritization.
 
