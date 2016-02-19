@@ -12,7 +12,6 @@
 
 #include "datatable.h"
 #include "function.h"
-#include "builderbase.h"
 #include "cinterface.h"
 
 namespace SPLINTER

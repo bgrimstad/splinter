@@ -155,7 +155,6 @@ set(CINTERFACE_SRC_LIST
 # These are the sources we need for compilation of the library
 set(SRC_LIST
     ${CINTERFACE_SRC_LIST}
-    include/builderbase.h
     include/bspline.h
     include/bsplinebasis.h
     include/bsplinebasis1d.h
