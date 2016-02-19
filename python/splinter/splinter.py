@@ -129,50 +129,6 @@ def __init():
     _getHandle().splinter_bspline_builder_delete.argtypes = [handle_type]
 
 
-    _getHandle().splinter_rbfnetwork_load_init.restype = handle_type
-    _getHandle().splinter_rbfnetwork_load_init.argtypes = [c_char_p]
-
-    _getHandle().splinter_rbfnetwork_builder_init.restype = handle_type
-    _getHandle().splinter_rbfnetwork_builder_init.argtypes = [handle_type]
-
-    _getHandle().splinter_rbfnetwork_builder_set_type.restype = None
-    _getHandle().splinter_rbfnetwork_builder_set_type.argtypes = [handle_type, c_int]
-
-    _getHandle().splinter_rbfnetwork_builder_set_normalized.restype = None
-    _getHandle().splinter_rbfnetwork_builder_set_normalized.argtypes = [handle_type, c_int]
-
-    _getHandle().splinter_rbfnetwork_builder_set_precondition.restype = None
-    _getHandle().splinter_rbfnetwork_builder_set_precondition.argtypes = [handle_type, c_int]
-
-    _getHandle().splinter_rbfnetwork_builder_set_lambda.restype = None
-    _getHandle().splinter_rbfnetwork_builder_set_lambda.argtypes = [handle_type, c_double]
-
-    _getHandle().splinter_rbfnetwork_builder_build.restype = handle_type
-    _getHandle().splinter_rbfnetwork_builder_build.argtypes = [handle_type]
-
-    _getHandle().splinter_rbfnetwork_builder_delete.restype = None
-    _getHandle().splinter_rbfnetwork_builder_delete.argtypes = [handle_type]
-
-
-    _getHandle().splinter_polynomial_load_init.restype = handle_type
-    _getHandle().splinter_polynomial_load_init.argtypes = [c_char_p]
-
-    _getHandle().splinter_polynomial_builder_init.restype = handle_type
-    _getHandle().splinter_polynomial_builder_init.argtypes = [handle_type]
-
-    _getHandle().splinter_polynomial_builder_set_powers.restype = None
-    _getHandle().splinter_polynomial_builder_set_powers.argtypes = [handle_type, c_int_p, c_int]
-
-    _getHandle().splinter_polynomial_builder_set_lambda.restype = None
-    _getHandle().splinter_polynomial_builder_set_lambda.argtypes = [handle_type, c_double]
-
-    _getHandle().splinter_polynomial_builder_build.restype = handle_type
-    _getHandle().splinter_polynomial_builder_build.argtypes = [handle_type]
-
-    _getHandle().splinter_polynomial_builder_delete.restype = None
-    _getHandle().splinter_polynomial_builder_delete.argtypes = [handle_type]
-
-
     _getHandle().splinter_function_eval_row_major.restype = c_double_p
     _getHandle().splinter_function_eval_row_major.argtypes = [handle_type, c_double_p, c_int]
 

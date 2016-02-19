@@ -150,10 +150,6 @@ set(CINTERFACE_SRC_LIST
     src/cinterface/cinterface.cpp
     src/cinterface/datatable.cpp
     src/cinterface/function.cpp
-    src/cinterface/polynomial.cpp
-    src/cinterface/polynomialbuilder.cpp
-    src/cinterface/rbfnetwork.cpp
-    src/cinterface/rbfnetworkbuilder.cpp
     src/cinterface/utilities.cpp
 )
 # These are the sources we need for compilation of the library
@@ -171,11 +167,6 @@ set(SRC_LIST
     include/definitions.h
     include/linearsolvers.h
     include/mykroneckerproduct.h
-    include/polynomial.h
-    include/polynomialbuilder.h
-    include/rbf.h
-    include/rbfnetworkbuilder.h
-    include/rbfnetwork.h
     include/serializer.h
     include/utilities.h
     include/ols.h
@@ -189,10 +180,6 @@ set(SRC_LIST
     src/function.cpp
     src/linearfunction.cpp
     src/mykroneckerproduct.cpp
-    src/polynomial.cpp
-    src/polynomialbuilder.cpp
-    src/rbfnetworkbuilder.cpp
-    src/rbfnetwork.cpp
     src/serializer.cpp
     src/utilities.cpp
     src/ols.cpp
@@ -202,15 +189,11 @@ set(TEST_SRC_LIST
     test/main.cpp
     test/approximation/bspline.cpp
     test/approximation/pspline.cpp
-    test/approximation/rbfnetwork.cpp
-    test/approximation/polynomial.cpp
     test/general/bspline.cpp
     test/general/datatable.cpp
     test/general/utilities.cpp
     test/serialization/datatable.cpp
     test/serialization/bspline.cpp
-    test/serialization/rbfnetwork.cpp
-    test/serialization/polynomial.cpp
     test/operatoroverloads.h
     test/operatoroverloads.cpp
     test/testfunction.h

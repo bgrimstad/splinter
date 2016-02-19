@@ -13,11 +13,9 @@
 #include <definitions.h>
 #include <vector>
 #include <set>
-#include "datapoint.h"
+#include <datapoint.h>
 #include <datatable.h>
 #include <bspline.h>
-#include <polynomial.h>
-#include "rbfnetwork.h"
 
 
 /*
@@ -49,9 +47,6 @@ bool operator==(const DataPoint &lhs, const DataPoint &rhs);
 bool operator==(const BSpline &lhs, const BSpline &rhs);
 bool operator==(const BSplineBasis &lhs, const BSplineBasis &rhs);
 bool operator==(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs);
-bool operator==(const Polynomial &lhs, const Polynomial &rhs);
-bool operator==(const RBFNetwork &lhs, const RBFNetwork &rhs);
-
 
 template <class T>
 bool operator==(const std::vector<T> &lhs, const std::vector<T> &rhs)

@@ -15,8 +15,6 @@
 #include <bspline.h>
 #include <bsplinebasis.h>
 #include <bsplinebasis1d.h>
-#include "rbfnetwork.h"
-#include <polynomial.h>
 
 namespace SPLINTER
 {
@@ -113,22 +111,6 @@ size_t Serializer::get_size(const BSplineBasis1D &obj)
            + get_size(obj.targetNumBasisfunctions);
 }
 
-size_t Serializer::get_size(const RBFNetwork &obj)
-{
-    return get_size(obj.samples)
-           + get_size(obj.normalized)
-           + get_size(obj.numVariables)
-           + get_size(obj.type)
-           + get_size(obj.coefficients);
-}
-
-size_t Serializer::get_size(const Polynomial &obj)
-{
-    return get_size(obj.numVariables)
-            + get_size(obj.coefficients)
-            + get_size(obj.powers);
-}
-
 size_t Serializer::get_size(const DenseMatrix &obj)
 {
     size_t size = sizeof(obj.rows());
@@ -201,22 +183,6 @@ void Serializer::_serialize(const BSplineBasis1D &obj)
     _serialize(obj.degree);
     _serialize(obj.knots);
     _serialize(obj.targetNumBasisfunctions);
-}
-
-void Serializer::_serialize(const RBFNetwork &obj)
-{
-    _serialize(obj.samples);
-    _serialize(obj.normalized);
-    _serialize(obj.numVariables);
-    _serialize(obj.type);
-    _serialize(obj.coefficients);
-}
-
-void Serializer::_serialize(const Polynomial &obj)
-{
-    _serialize(obj.numVariables);
-    _serialize(obj.coefficients);
-    _serialize(obj.powers);
 }
 
 void Serializer::_serialize(const DenseMatrix &obj)
@@ -293,46 +259,6 @@ void Serializer::deserialize(BSplineBasis1D &obj)
     deserialize(obj.degree);
     deserialize(obj.knots);
     deserialize(obj.targetNumBasisfunctions);
-}
-
-void Serializer::deserialize(RBFNetwork &obj)
-{
-    deserialize(obj.samples);
-    deserialize(obj.normalized);
-    deserialize(obj.numVariables);
-    deserialize(obj.type);
-    if (obj.type == RBFType::THIN_PLATE_SPLINE)
-    {
-        obj.fn = std::shared_ptr<RBF>(new ThinPlateSpline());
-    }
-    else if (obj.type == RBFType::MULTIQUADRIC)
-    {
-        obj.fn = std::shared_ptr<RBF>(new Multiquadric());
-    }
-    else if (obj.type == RBFType::INVERSE_QUADRIC)
-    {
-        obj.fn = std::shared_ptr<RBF>(new InverseQuadric());
-    }
-    else if (obj.type == RBFType::INVERSE_MULTIQUADRIC)
-    {
-        obj.fn = std::shared_ptr<RBF>(new InverseMultiquadric());
-    }
-    else if (obj.type == RBFType::GAUSSIAN)
-    {
-        obj.fn = std::shared_ptr<RBF>(new Gaussian());
-    }
-    else
-    {
-        obj.fn = std::shared_ptr<RBF>(new ThinPlateSpline());
-    }
-    deserialize(obj.coefficients);
-}
-
-void Serializer::deserialize(Polynomial &obj)
-{
-    deserialize(obj.numVariables);
-    deserialize(obj.coefficients);
-    deserialize(obj.powers);
 }
 
 void Serializer::deserialize(DenseMatrix &obj)

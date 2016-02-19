@@ -66,7 +66,7 @@ bool DataPoint::operator<(const DataPoint &rhs) const
 double dist(const std::vector<double> x, const std::vector<double> y)
 {
     if (x.size() != y.size())
-        throw Exception("RBFNetwork::dist: Cannot measure distance between two points of different dimension");
+        throw Exception("DataPoint::dist: Cannot measure distance between two points of different dimension");
     double sum = 0.0;
     for (unsigned int i=0; i<x.size(); i++)
         sum += (x.at(i)-y.at(i))*(x.at(i)-y.at(i));

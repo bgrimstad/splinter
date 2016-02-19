@@ -137,24 +137,6 @@ bool operator==(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs)
             && lhs.targetNumBasisfunctions == rhs.targetNumBasisfunctions;
 }
 
-bool operator==(const RBFNetwork &lhs, const RBFNetwork &rhs)
-{
-    return
-            lhs.type == rhs.type
-            && lhs.coefficients == rhs.coefficients
-            && lhs.samples == rhs.samples
-            && lhs.normalized == rhs.normalized
-            && lhs.getNumVariables() == rhs.getNumVariables();
-}
-
-bool operator==(const Polynomial &lhs, const Polynomial &rhs)
-{
-    return
-            lhs.numVariables == rhs.numVariables
-            && lhs.coefficients == rhs.coefficients
-            && lhs.powers == rhs.powers;
-}
-
 /*
  * Comparison operators (!=)
  */
