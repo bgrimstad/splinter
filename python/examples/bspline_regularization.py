@@ -14,7 +14,8 @@ from os import sys, path, remove
 sys.path.append(path.dirname(path.dirname(path.dirname(path.abspath(__file__)))))
 
 # Load SPLINTER
-splinter.load("/home/bjarne/Code/C++/splinter/splinter/build/Release/libsplinter-2-0.so")
+# splinter.load("/home/bjarne/Code/C++/splinter/splinter/build/Release/libsplinter-2-0.so")
+splinter.load("/home/bjarne/Code/C++/splinter4/splinter/bin/Release/libsplinter-2-0.so")
 
 
 # Example with one variable

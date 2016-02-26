@@ -10,7 +10,8 @@ from .datatable import DataTable
 from .bspline import BSpline
 from .bsplinebuilder import BSplineBuilder
 
-from .splinter import *
+from .splinter import load
+
 try:
     load()
 except Exception as e:
@@ -25,5 +26,5 @@ __all__ = [
 
 # splinter.DataTable = datatable.DataTable
 # splinter.BSpline = bspline.BSpline
-# splinter.BSplineBuilder = bsplinebuilder.BSplineBuilder
+splinter.BSplineBuilder = bsplinebuilder.BSplineBuilder
 # splinter.PSpline = pspline.PSpline
