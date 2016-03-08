@@ -168,7 +168,6 @@ set(SRC_LIST
     include/mykroneckerproduct.h
     include/serializer.h
     include/utilities.h
-    include/ols.h
     include/saveable.h
     src/bspline.cpp
     src/bsplinebasis.cpp
@@ -181,7 +180,6 @@ set(SRC_LIST
     src/mykroneckerproduct.cpp
     src/serializer.cpp
     src/utilities.cpp
-    src/ols.cpp
 )
 set(TEST_SRC_LIST
     ${SRC_LIST}
