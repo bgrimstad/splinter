@@ -32,20 +32,23 @@ BSplineBasis1D::BSplineBasis1D(const std::vector<double> &knots, unsigned int de
         throw Exception("BSplineBasis1D::BSplineBasis1D: Knot vector is not regular.");
 }
 
-SparseVector BSplineBasis1D::evaluate(double x) const
+SparseVector BSplineBasis1D::eval(double x) const
 {
-    SparseVector basisvalues(getNumBasisFunctions());
+    SparseVector values(getNumBasisFunctions());
+
+    if (!insideSupport(x))
+        return values;
 
     supportHack(x);
 
     std::vector<int> indexSupported = indexSupportedBasisfunctions(x);
 
-    basisvalues.reserve(indexSupported.size());
+    values.reserve(indexSupported.size());
 
-    // Iterate through the nonzero basisfunctions and store functionvalues
+    // Evaluate nonzero basis functions
     for (auto it = indexSupported.begin(); it != indexSupported.end(); ++it)
     {
-        basisvalues.insert(*it) = deBoorCox(x, *it, degree);
+        values.insert(*it) = deBoorCox(x, *it, degree);
     }
 
     // Alternative evaluation using basis matrix
@@ -62,10 +65,10 @@ SparseVector BSplineBasis1D::evaluate(double x) const
 //    assert(basisvalues2.rows() == 1);
 //    assert(basisvalues2.cols() == basisDegree + 1);
 
-    return basisvalues;
+    return values;
 }
 
-SparseVector BSplineBasis1D::evaluateDerivative(double x, int r) const
+SparseVector BSplineBasis1D::evalDerivative(double x, int r) const
 {
     // Evaluate rth derivative of basis functions at x
     // Returns vector [D^(r)B_(u-p,p)(x) ... D^(r)B_(u,p)(x)]
@@ -106,7 +109,7 @@ SparseVector BSplineBasis1D::evaluateDerivative(double x, int r) const
     B = B*factorial;
 
     if (B.cols() != p+1)
-        throw Exception("BSplineBasis1D::evaluateDerivative: Wrong number of columns of B matrix.");
+        throw Exception("BSplineBasis1D::evalDerivative: Wrong number of columns of B matrix.");
 
     // From row vector to extended column vector
     SparseVector DB(getNumBasisFunctions());
@@ -122,7 +125,7 @@ SparseVector BSplineBasis1D::evaluateDerivative(double x, int r) const
 }
 
 // Old implementation of first derivative of basis functions
-SparseVector BSplineBasis1D::evaluateFirstDerivative(double x) const
+SparseVector BSplineBasis1D::evalFirstDerivative(double x) const
 {
     SparseVector values(getNumBasisFunctions());
 
@@ -170,8 +173,8 @@ SparseMatrix BSplineBasis1D::buildBasisMatrix(double x, unsigned int u, unsigned
 
     unsigned int rows = k;
     unsigned int cols = k+1;
-    SparseMatrix R(rows,cols);
-    R.reserve(Eigen::VectorXi::Constant(cols,2));
+    SparseMatrix R(rows, cols);
+    R.reserve(Eigen::VectorXi::Constant(cols, 2));
 
     for (unsigned int i = 0; i < rows; i++)
     {
@@ -215,13 +218,9 @@ double BSplineBasis1D::deBoorCox(double x, int i, int k) const
     if (k == 0)
     {
         if (inHalfopenInterval(x, knots.at(i), knots.at(i+1)))
-        {
             return 1;
-        }
         else
-        {
             return 0;
-        }
     }
     else
     {
@@ -240,9 +239,7 @@ double BSplineBasis1D::deBoorCox(double x, int i, int k) const
 double BSplineBasis1D::deBoorCoxCoeff(double x, double x_min, double x_max) const
 {
     if (x_min < x_max && x_min <= x && x <= x_max)
-    {
         return (x - x_min)/(x_max - x_min);
-    }
     return 0;
 }
 
@@ -439,11 +436,9 @@ SparseMatrix BSplineBasis1D::buildKnotInsertionMatrix(const std::vector<double> 
 }
 
 /*
- * The B-spline domain is the half-open domain
- * [ knots.first(), knots.end() ).
- * The hack checks if x is at the right boundary
- * (x = knots.end()), and if so, subtracts a small
- * number from x, moving x into the half-open domain.
+ * The B-spline domain is the half-open domain [ knots.first(), knots.end() ).
+ * The hack checks if x is at the right boundary (if x = knots.end()), if so,
+ * a small number is subtracted from x, moving x into the half-open domain.
  */
 void BSplineBasis1D::supportHack(double &x) const
 {
@@ -452,8 +447,8 @@ void BSplineBasis1D::supportHack(double &x) const
 }
 
 /*
- * Finds index i such that knots.at(i) <= x < knots.at(i+1)
- * Returns false if x is outside support
+ * Finds index i such that knots.at(i) <= x < knots.at(i+1).
+ * Returns false if x is outside support.
  */
 int BSplineBasis1D::indexHalfopenInterval(double x) const
 {

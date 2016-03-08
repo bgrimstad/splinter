@@ -22,9 +22,9 @@ public:
     BSplineBasis1D(const std::vector<double> &knots, unsigned int degree);
 
     // Evaluation of basis functions
-    SparseVector evaluate(double x) const;
-    SparseVector evaluateDerivative(double x, int r) const;
-    SparseVector evaluateFirstDerivative(double x) const; // Depricated
+    SparseVector eval(double x) const;
+    SparseVector evalDerivative(double x, int r) const;
+    SparseVector evalFirstDerivative(double x) const; // Depricated
 
     // Knot vector related
     SparseMatrix refineKnots();
