@@ -82,7 +82,7 @@ DenseVector BSpline::Builder::computeBSplineCoefficients(const BSpline& bspline)
     DenseVector w;
 
     int numEquations = A.rows();
-    int maxNumEquations = pow(2, 10);
+    int maxNumEquations = 1000;
 
     bool solveAsDense = (numEquations < maxNumEquations);
 
@@ -185,7 +185,7 @@ DenseVector BSpline::Builder::computeBSplineCoefficientsRegularized(const BSplin
     DenseVector w;
 
     int numEquations = A.rows();
-    int maxNumEquations = pow(2, 10);
+    int maxNumEquations = 1000;
 
     bool solveAsDense = (numEquations < maxNumEquations);
 
@@ -267,7 +267,7 @@ DenseMatrix BSpline::Builder::computePSplineCoefficients(const BSpline &bspline)
     DenseVector Cy;
 
     int numEquations = L.rows();
-    int maxNumEquations = pow(2,10);
+    int maxNumEquations = 1000;
 
     bool solveAsDense = (numEquations < maxNumEquations);
 
