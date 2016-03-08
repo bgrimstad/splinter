@@ -1,7 +1,7 @@
 ##SPLINTER
 SPLINTER (SPLine INTERpolation) is a library for *multivariate function approximation with splines*. The library can be used for function approximation, regression, data smoothing, data reduction, and much more. Spline approximations are represented by a powerful C++ implementation of the [tensor product B-spline](docs/bspline.md).
 
-The B-spline is built from piecewise polynomial basis functions and offers a high flexibility and smoothness. The B-spline can be fitted using ordinary least squares (OLS), possibly with Tikhonov regularization (regularization is partially supported today). The library also offers construction of penalized splines (P-splines).
+The B-spline is built from piecewise polynomial basis functions and offers a high flexibility and smoothness. The B-spline can be fitted using ordinary least squares (OLS), possibly with regularization. The library also offers construction of penalized splines (P-splines).
 
 ![Illustration of a B-spline](assets/bspline.png)
 Figure: Illustration of a bicubic B-spline generated with the SPLINTER library.
