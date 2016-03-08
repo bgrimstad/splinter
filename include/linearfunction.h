@@ -31,30 +31,8 @@ class SPLINTER_API LinearFunction : public Function
 public:
     virtual ~LinearFunction() {}
 
-    // Avoid name hiding
-    using Function::eval;
-    using Function::evalJacobian;
-    using Function::evalHessian;
 
-    /**
-     * Returns the function value at x
-     */
-    virtual double eval(DenseVector x) const override
-    {
-        checkInput(x);
-        // NOTE: casting to DenseVector to allow accessing as res(0)
-        DenseVector res = coefficients.transpose()*evalBasis(x);
-        return res(0);
-    }
 
-    /**
-     * Returns the (1 x numVariables) Jacobian evaluated at x
-     */
-    virtual DenseMatrix evalJacobian(DenseVector x) const override
-    {
-        checkInput(x);
-        return coefficients.transpose()*evalBasisJacobian(x);
-    }
 
     /**
      * Returns the (numVariables x numVariables) Hessian evaluated at x
@@ -75,20 +53,6 @@ public:
      */
     virtual Mat evalBasisJacobian(DenseVector x) const = 0;
 
-    DenseVector getCoefficients()
-    {
-        return coefficients;
-    }
-
-    virtual void setCoefficients(const DenseVector &coefficients)
-    {
-        this->coefficients = coefficients;
-    }
-
-    unsigned int getNumCoefficients() const
-    {
-        return coefficients.size();
-    }
 
 protected:
     LinearFunction(unsigned int numVariables, DenseVector coefficients)
@@ -96,7 +60,6 @@ protected:
               coefficients(coefficients)
     {}
 
-    DenseVector coefficients;
 
     friend class Serializer;
 

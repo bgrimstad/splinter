@@ -162,7 +162,6 @@ set(SRC_LIST
     include/datapoint.h
     include/datatable.h
     include/function.h
-    include/linearfunction.h
     include/definitions.h
     include/linearsolvers.h
     include/mykroneckerproduct.h
@@ -176,7 +175,6 @@ set(SRC_LIST
     src/datapoint.cpp
     src/datatable.cpp
     src/function.cpp
-    src/linearfunction.cpp
     src/mykroneckerproduct.cpp
     src/serializer.cpp
     src/utilities.cpp

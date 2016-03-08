@@ -20,19 +20,20 @@ namespace SPLINTER
 {
 
 BSpline::BSpline()
-    : LinearFunction<SparseVector, SparseMatrix>(1, DenseVector::Zero(1))
+    : Function(1)
 {}
 
 BSpline::BSpline(unsigned int numVariables)
-    : LinearFunction<SparseVector, SparseMatrix>(numVariables, DenseVector::Zero(1))
+    : Function(numVariables)
 {}
 
 /*
  * Constructors for multivariate B-spline using explicit data
  */
 BSpline::BSpline(std::vector<std::vector<double>> knotVectors, std::vector<unsigned int> basisDegrees)
-    : LinearFunction<SparseVector, SparseMatrix>(knotVectors.size(), DenseVector::Zero(1)),
+    : Function(knotVectors.size()),
       basis(BSplineBasis(knotVectors, basisDegrees)),
+      coefficients(DenseVector::Zero(1)),
       knotaverages(computeKnotAverages())
 {
     // Initialize coefficients to ones
@@ -47,8 +48,9 @@ BSpline::BSpline(std::vector<double> coefficients, std::vector<std::vector<doubl
 }
 
 BSpline::BSpline(DenseVector coefficients, std::vector<std::vector<double>> knotVectors, std::vector<unsigned int> basisDegrees)
-    : LinearFunction<SparseVector, SparseMatrix>(knotVectors.size(), coefficients),
+    : Function(knotVectors.size()),
       basis(BSplineBasis(knotVectors, basisDegrees)),
+      coefficients(coefficients),
       knotaverages(computeKnotAverages())
 {
     setCoefficients(coefficients);
@@ -65,7 +67,7 @@ BSpline::BSpline(const char *fileName)
 }
 
 BSpline::BSpline(const std::string &fileName)
-    : LinearFunction<SparseVector, SparseMatrix>(1, DenseVector::Zero(1))
+    : Function(1)
 {
     load(fileName);
 }

@@ -10,7 +10,7 @@
 #ifndef SPLINTER_BSPLINE_H
 #define SPLINTER_BSPLINE_H
 
-#include "linearfunction.h"
+#include "function.h"
 #include "bsplinebasis.h"
 
 namespace SPLINTER
@@ -19,7 +19,7 @@ namespace SPLINTER
 /**
  * Class that implements the multivariate tensor product B-spline
  */
-class SPLINTER_API BSpline : public LinearFunction<SparseVector, SparseMatrix>
+class SPLINTER_API BSpline : public Function
 {
 public:
     /**
@@ -48,32 +48,83 @@ public:
 
     virtual BSpline* clone() const { return new BSpline(*this); }
 
-    // Evaluation of B-spline
+    /**
+     * Evaluation of B-spline
+     */
+
+    // Avoid name hiding
+    using Function::eval;
+    using Function::evalJacobian;
+    using Function::evalHessian;
+
+    /**
+     * Returns the function value at x
+     */
+    double eval(DenseVector x) const override
+    {
+        checkInput(x);
+        // NOTE: casting to DenseVector to allow accessing as res(0)
+        DenseVector res = coefficients.transpose()*evalBasis(x);
+        return res(0);
+    }
+
+    /**
+     * Returns the (1 x numVariables) Jacobian evaluated at x
+     */
+    virtual DenseMatrix evalJacobian(DenseVector x) const override
+    {
+        checkInput(x);
+        return coefficients.transpose()*evalBasisJacobian(x);
+    }
+
     //double eval(DenseVector x) const override;
     //DenseMatrix evalJacobian(DenseVector x) const override;
     DenseMatrix evalHessian(DenseVector x) const override;
 
     // Evaluation of B-spline basis functions
-    SparseVector evalBasis(DenseVector x) const override;
-    SparseMatrix evalBasisJacobian(DenseVector x) const override;
+    SparseVector evalBasis(DenseVector x) const;
+    SparseMatrix evalBasisJacobian(DenseVector x) const;
 
-    // Getters
-    unsigned int getNumControlPoints() const { return coefficients.size(); }
+    /**
+     * Getters
+     */
+    DenseVector getCoefficients()
+    {
+        return coefficients;
+    }
+
+    unsigned int getNumCoefficients() const
+    {
+        return coefficients.size();
+    }
+
+    unsigned int getNumControlPoints() const
+    {
+        return coefficients.size();
+    }
+
     std::vector<unsigned int> getNumBasisFunctionsPerVariable() const;
-    unsigned int getNumBasisFunctions() const { return basis.getNumBasisFunctions(); }
+
+    unsigned int getNumBasisFunctions() const
+    {
+        return basis.getNumBasisFunctions();
+    }
+
+    DenseMatrix getControlPoints() const;
     std::vector< std::vector<double>> getKnotVectors() const;
     std::vector<unsigned int> getBasisDegrees() const;
     std::vector<double> getDomainUpperBound() const;
     std::vector<double> getDomainLowerBound() const;
 
-    // Control point related
-    DenseMatrix getControlPoints() const;
-    void updateControlPoints(const DenseMatrix &A);
-    void setCoefficients(const DenseVector &coefficients) override;
+    /**
+     * Setters
+     */
+    void setCoefficients(const DenseVector &coefficients);
     void setControlPoints(const DenseMatrix &controlPoints);
     void checkControlPoints() const;
 
     // B-spline operations
+    void updateControlPoints(const DenseMatrix &A);
     void reduceDomain(std::vector<double> lb, std::vector<double> ub, bool doRegularizeKnotVectors = true);
 
     // Perform global knot refinement
@@ -100,6 +151,7 @@ protected:
      * The control point matrix is P = (knotaverages, coefficients) in R^(m x n),
      * where m = numBasisFunctions and n = numVariables + 1. Each row in P is a control point.
      */
+    DenseVector coefficients;
     DenseMatrix knotaverages;
 
     // Control point computations
