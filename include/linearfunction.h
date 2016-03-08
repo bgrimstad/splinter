@@ -31,6 +31,11 @@ class SPLINTER_API LinearFunction : public Function
 public:
     virtual ~LinearFunction() {}
 
+    // Avoid name hiding
+    using Function::eval;
+    using Function::evalJacobian;
+    using Function::evalHessian;
+
     /**
      * Returns the function value at x
      */

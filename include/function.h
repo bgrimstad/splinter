@@ -41,7 +41,7 @@ public:
     /**
      * Returns the function value at x
      */
-    virtual double eval(const std::vector<double> &x) const;
+    double eval(const std::vector<double> &x) const;
 
     /**
      * Returns the (1 x numVariables) Jacobian evaluated at x
@@ -51,7 +51,7 @@ public:
     /**
      * Returns the (1 x numVariables) Jacobian evaluated at x
      */
-    virtual std::vector<double> evalJacobian(const std::vector<double> &x) const;
+    std::vector<double> evalJacobian(const std::vector<double> &x) const;
 
     /**
      * Returns the (numVariables x numVariables) Hessian evaluated at x
@@ -61,7 +61,7 @@ public:
     /**
      * Returns the (numVariables x numVariables) Hessian evaluated at x
      */
-    virtual std::vector<std::vector<double>> evalHessian(const std::vector<double> &x) const;
+    std::vector<std::vector<double>> evalHessian(const std::vector<double> &x) const;
 
     /**
      * Get the dimension
