@@ -17,3 +17,13 @@ build/
 *.pspline
 *.poly
 *.datatable
+
+# Auxiliary, temporary and log files related to LaTeX
+docs/**/*.aux
+docs/**/*.log
+docs/**/*.out
+docs/**/*.toc
+docs/**/*.gz
+docs/**/*.bbl
+docs/**/*.blg
+docs/**/*.*~

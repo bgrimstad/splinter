@@ -1,0 +1,55 @@
+\documentclass[11pt,a4paper,USenglish]{article}
+\usepackage{babel}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{subcaption}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{listings}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{keyword}{rgb}{0.5,0.5,0}
+\definecolor{type}{rgb}{0.5,0,0.5}
+\definecolor{string}{rgb}{0,0.5,0}
+\definecolor{number}{rgb}{0,0,0.5}
+\definecolor{member}{rgb}{0.5,0,0}
+\definecolor{comment}{rgb}{0,0.5,0}
+
+\lstset{language=C++,
+	basicstyle=\ttfamily\footnotesize,
+	keywordstyle=\color{keyword},
+	numberstyle=\color{number},
+	commentstyle=\color{comment},
+	stringstyle=\color{string},
+	breaklines=true,
+	tabsize=4,
+	showstringspaces=false,
+}
+
+%\newcommand{\class}[1]{{\color{type} \texttt{#1}}}
+%\newcommand{\keyword}[1]{{\color{keyword} \texttt{#1}}}
+%\newcommand{\member}[1]{{\color{member} \texttt{#1}}}
+\newcommand{\splinter}{\textsc{SPLINTER}}
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
+\begin{document}
+
+\include{titlepage}
+
+\tableofcontents
+
+\include{introduction}
+%\include{installation}
+%\include{interfacing}
+%\include{formulation}
+%\include{solvers}
+%\include{examples}
+
+\appendix
+
+%\clearpage
+
+\bibliography{references.bib}{}
+\bibliographystyle{plain}
+
+\end{document}
