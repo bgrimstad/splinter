@@ -1,11 +1,7 @@
 ##SPLINTER
-SPLINTER (SPLine INTERpolation) is a library for *multivariate function approximation* implemented in C++. The library can be used for function approximation, regression, data smoothing, data reduction, and much more. The library contains the following approximation methods:
+SPLINTER (SPLine INTERpolation) is a library for *multivariate function approximation with splines*. The library can be used for function approximation, regression, data smoothing, data reduction, and much more. Spline approximations are represented by a powerful C++ implementation of the [tensor product B-spline](docs/bspline.md).
 
-- [tensor product B-splines](docs/bspline.md)
-- [radial basis function networks](docs/rbfnetwork.md)
-- [polynomial regression](docs/polynomial_regression.md)
-
-A shared feature of these methods is that they are based on models that are linear in the coefficients. The models differ in which type of basis functions that is used. For example, the B-spline uses piecewise polynomial basis functions while the radial basis function network may use various radial basis functions. The coefficients in these models are computed using ordinary least squares (OLS), possibly with Tikhonov regularization (regularization is partially supported today). The name of the library, SPLINTER, originates from the tensor product B-spline implementation, which was the first of the methods to be implemented.
+The B-spline is built from piecewise polynomial basis functions and offers a high flexibility and smoothness. The B-spline can be fitted using ordinary least squares (OLS), possibly with Tikhonov regularization (regularization is partially supported today). The library also offers construction of penalized splines (P-splines).
 
 ![Illustration of a B-spline](assets/bspline.png)
 Figure: Illustration of a bicubic B-spline generated with the SPLINTER library.
@@ -24,7 +20,7 @@ By making SPLINTER publicly available we hope to help anyone looking for a multi
 }
 ```
 ###Contributing
-Everyone is welcome to use and contribute to SPLINTER. We believe that collective effort over time is the only way to create a great library: one that makes multivariate function approximation more accessible to the programming community.
+Everyone is welcome to use and contribute to SPLINTER. We believe that collective effort over time is the only way to create a great library: one that makes multivariate function approximation with splines more accessible to practitioners and researchers.
 
 The current goals with the library are:
 
