@@ -433,11 +433,6 @@ int BSplineBasis::supportedPrInterval() const
 
 bool BSplineBasis::insideSupport(DenseVector &x) const
 {
-    if (x.size() != numVariables)
-    {
-        return false;
-    }
-
     for (unsigned int dim = 0; dim < numVariables; dim++)
     {
         if (!bases.at(dim).insideSupport(x(dim)))

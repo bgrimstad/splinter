@@ -57,28 +57,9 @@ public:
     using Function::evalJacobian;
     using Function::evalHessian;
 
-    /**
-     * Returns the function value at x
-     */
-    double eval(DenseVector x) const override
-    {
-        checkInput(x);
-        // NOTE: casting to DenseVector to allow accessing as res(0)
-        DenseVector res = coefficients.transpose()*evalBasis(x);
-        return res(0);
-    }
-
-    /**
-     * Returns the (1 x numVariables) Jacobian evaluated at x
-     */
-    virtual DenseMatrix evalJacobian(DenseVector x) const override
-    {
-        checkInput(x);
-        return coefficients.transpose()*evalBasisJacobian(x);
-    }
-
-    //double eval(DenseVector x) const override;
-    //DenseMatrix evalJacobian(DenseVector x) const override;
+    // Evaluation of B-spline
+    double eval(DenseVector x) const override;
+    DenseMatrix evalJacobian(DenseVector x) const override;
     DenseMatrix evalHessian(DenseVector x) const override;
 
     // Evaluation of B-spline basis functions

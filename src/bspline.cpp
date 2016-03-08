@@ -72,32 +72,25 @@ BSpline::BSpline(const std::string &fileName)
     load(fileName);
 }
 
-//double BSpline::eval(DenseVector x) const
-//{
-//	if (!pointInDomain(x))
-//	{
-//        // NOTE: Consider returning 0 rather than of throwing an exception
-//		throw Exception("BSpline::eval: Evaluation at point outside domain.");
-//	}
-//
-//	SparseVector tensorvalues = basis.eval(x);
-//	DenseVector y = coefficients.transpose()*tensorvalues;
-//	return y(0);
-//}
+/**
+ * Returns the function value at x
+ */
+double BSpline::eval(DenseVector x) const
+{
+    checkInput(x);
+    // NOTE: casting to DenseVector to allow accessing as res(0)
+    DenseVector res = coefficients.transpose()*evalBasis(x);
+    return res(0);
+}
 
-//DenseMatrix BSpline::evalJacobian(DenseVector x) const
-//{
-//    if (!pointInDomain(x))
-//    {
-//        throw Exception("BSpline::evalJacobian: Evaluation at point outside domain.");
-//    }
-//
-//    //SparseMatrix Bi = basis.evalBasisJacobian(x);       // Sparse Jacobian implementation
-//    //SparseMatrix Bi = basis.evalBasisJacobian2(x);  // Sparse Jacobian implementation
-//    DenseMatrix Bi = basis.evalBasisJacobianOld(x);  // Old Jacobian implementation
-//
-//    return coefficients.transpose()*Bi;
-//}
+/**
+ * Returns the (1 x numVariables) Jacobian evaluated at x
+ */
+DenseMatrix BSpline::evalJacobian(DenseVector x) const
+{
+    checkInput(x);
+    return coefficients.transpose()*evalBasisJacobian(x);
+}
 
 /*
  * Returns the Hessian evaluated at x.
@@ -106,10 +99,12 @@ BSpline::BSpline(const std::string &fileName)
  */
 DenseMatrix BSpline::evalHessian(DenseVector x) const
 {
+    checkInput(x);
+
+    #ifndef NDEBUG
     if (!pointInDomain(x))
-    {        
         throw Exception("BSpline::evalHessian: Evaluation at point outside domain.");
-    }
+    #endif // NDEBUG
 
     DenseMatrix H;
     H.setZero(1,1);
@@ -129,16 +124,20 @@ DenseMatrix BSpline::evalHessian(DenseVector x) const
 // Evaluation of B-spline basis functions
 SparseVector BSpline::evalBasis(DenseVector x) const
 {
+    #ifndef NDEBUG
     if (!pointInDomain(x))
         throw Exception("BSpline::evalBasis: Evaluation at point outside domain.");
+    #endif // NDEBUG
 
     return basis.eval(x);
 }
 
 SparseMatrix BSpline::evalBasisJacobian(DenseVector x) const
 {
+    #ifndef NDEBUG
     if (!pointInDomain(x))
         throw Exception("BSpline::evalBasisJacobian: Evaluation at point outside domain.");
+    #endif // NDEBUG
 
     //SparseMatrix Bi = basis.evalBasisJacobian(x);       // Sparse Jacobian implementation
     //SparseMatrix Bi = basis.evalBasisJacobian2(x);  // Sparse Jacobian implementation
