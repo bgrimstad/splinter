@@ -199,7 +199,8 @@ set(TEST_SRC_LIST
     test/testingutilities.cpp
     test/bsplinetestingutilities.h
     test/bsplinetestingutilities.cpp
-    test/serialization/eigentypes.cpp)
+    test/serialization/eigentypes.cpp
+    test/unit/bsplinebasis1d.cpp)
 
 set(SHARED_LIBRARY ${PROJECT_NAME_LOWER}-${VERSION})
 set(STATIC_LIBRARY ${PROJECT_NAME_LOWER}-static-${VERSION})
