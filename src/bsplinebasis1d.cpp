@@ -7,7 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include "bsplinebasis1d.h"
+#include <bsplinebasis1d.h>
+#include <knots.h>
 #include <algorithm>
 #include <utilities.h>
 #include <iostream>
@@ -287,7 +288,7 @@ SparseMatrix BSplineBasis1D::refineKnots()
     if (!isKnotVectorRegular(refinedKnots, degree))
         throw Exception("BSplineBasis1D::refineKnots: New knot vector is not regular!");
 
-    if (!isRefinement(knots, refinedKnots))
+    if (!isKnotVectorRefinement(knots, refinedKnots))
         throw Exception("BSplineBasis1D::refineKnots: New knot vector is not a proper refinement!");
 
     // Return knot insertion matrix
@@ -349,7 +350,7 @@ SparseMatrix BSplineBasis1D::refineKnotsLocally(double x)
     if (!isKnotVectorRegular(refinedKnots, degree))
         throw Exception("BSplineBasis1D::refineKnotsLocally: New knot vector is not regular!");
 
-    if (!isRefinement(knots, refinedKnots))
+    if (!isKnotVectorRefinement(knots, refinedKnots))
         throw Exception("BSplineBasis1D::refineKnotsLocally: New knot vector is not a proper refinement!");
 
     // Build knot insertion matrix
@@ -385,7 +386,7 @@ SparseMatrix BSplineBasis1D::decomposeToBezierForm()
     if (!isKnotVectorRegular(refinedKnots, degree))
         throw Exception("BSplineBasis1D::refineKnots: New knot vector is not regular!");
 
-    if (!isRefinement(knots, refinedKnots))
+    if (!isKnotVectorRefinement(knots, refinedKnots))
         throw Exception("BSplineBasis1D::refineKnots: New knot vector is not a proper refinement!");
 
     // Return knot insertion matrix
@@ -402,7 +403,7 @@ SparseMatrix BSplineBasis1D::buildKnotInsertionMatrix(const std::vector<double> 
     if (!isKnotVectorRegular(refinedKnots, degree))
         throw Exception("BSplineBasis1D::buildKnotInsertionMatrix: New knot vector is not regular!");
 
-    if (!isRefinement(knots, refinedKnots))
+    if (!isKnotVectorRefinement(knots, refinedKnots))
         throw Exception("BSplineBasis1D::buildKnotInsertionMatrix: New knot vector is not a proper refinement!");
 
     std::vector<double> knotsAug = refinedKnots;
@@ -599,68 +600,6 @@ unsigned int BSplineBasis1D::indexLongestInterval(const std::vector<double> &vec
         }
     }
     return index;
-}
-
-bool BSplineBasis1D::isKnotVectorRegular(const std::vector<double> &knots, unsigned int degree) const
-{
-    // Check size
-    if (knots.size() < 2 * (degree + 1))
-        return false;
-
-    // Check first knots
-    if (std::count(knots.begin(), knots.begin() + degree + 1, knots.front()) != degree + 1)
-        return false;
-
-    // Check last knots
-    if (std::count(knots.end() - degree - 1, knots.end(), knots.back()) != degree + 1)
-        return false;
-
-    // Check order
-    if (!std::is_sorted(knots.begin(), knots.end()))
-        return false;
-
-    // Check multiplicity of knots
-    for (std::vector<double>::const_iterator it = knots.begin(); it != knots.end(); ++it)
-    {
-        if (count(knots.begin(), knots.end(), *it) > degree + 1)
-            return false;
-    }
-
-    return true;
-}
-
-bool BSplineBasis1D::isKnotVectorClamped(const std::vector<double> &knots, unsigned int degree) const
-{
-    // Check multiplicity of first knot
-    if (std::count(knots.begin(), knots.begin() + degree + 1, knots.front()) != degree + 1)
-        return false;
-
-    // Check multiplicity of last knot
-    if (std::count(knots.end() - degree - 1, knots.end(), knots.back()) != degree + 1)
-        return false;
-
-    return true;
-}
-
-bool BSplineBasis1D::isRefinement(const std::vector<double> &knots, const std::vector<double> &refinedKnots) const
-{
-    // Check size
-    if (refinedKnots.size() < knots.size())
-        return false;
-
-    // Check that each element in knots occurs at least as many times in refinedKnots
-    for (std::vector<double>::const_iterator it = knots.begin() ; it != knots.end(); ++it)
-    {
-        int m_tau = count(knots.begin(), knots.end(), *it);
-        int m_t = count(refinedKnots.begin(), refinedKnots.end(), *it);
-        if (m_t < m_tau) return false;
-    }
-
-    // Check that range is not changed
-    if (knots.front() != refinedKnots.front()) return false;
-    if (knots.back() != refinedKnots.back()) return false;
-
-    return true;
 }
 
 } // namespace SPLINTER

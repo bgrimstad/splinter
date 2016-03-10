@@ -72,11 +72,6 @@ private:
     // Helper functions
     bool inHalfopenInterval(double x, double x_min, double x_max) const;
 
-    // Knot vector related
-    bool isKnotVectorRegular(const std::vector<double> &knots, unsigned int degree) const;
-    bool isKnotVectorClamped(const std::vector<double> &knots, unsigned int degree) const;
-    bool isRefinement(const std::vector<double> &knots, const std::vector<double> &refinedKnots) const;
-
     // Member variables
     unsigned int degree;
     std::vector<double> knots;
