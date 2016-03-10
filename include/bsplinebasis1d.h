@@ -73,9 +73,9 @@ private:
     bool inHalfopenInterval(double x, double x_min, double x_max) const;
 
     // Knot vector related
-    bool isKnotVectorRegular() const;
-    bool isKnotVectorRegular(const std::vector<double> &vec) const;
-    bool isRefinement(const std::vector<double> &refinedKnots) const;
+    bool isKnotVectorRegular(const std::vector<double> &knots, unsigned int degree) const;
+    bool isKnotVectorClamped(const std::vector<double> &knots, unsigned int degree) const;
+    bool isRefinement(const std::vector<double> &knots, const std::vector<double> &refinedKnots) const;
 
     // Member variables
     unsigned int degree;
