@@ -127,12 +127,12 @@ bool domainReductionTest(BSpline &bs, const BSpline &bs_orig)
         auto lb2 = lb;
         auto ub2 = ub; ub2.at(index) = split;
         BSpline bs2(bs);
-        bs2.reduceDomain(lb2, ub2);
+        bs2.reduceSupport(lb2, ub2);
 
         auto lb3 = lb; lb3.at(index) = split;
         auto ub3 = ub;
         BSpline bs3(bs);
-        bs3.reduceDomain(lb3, ub3);
+        bs3.reduceSupport(lb3, ub3);
 
         return (domainReductionTest(bs2, bs_orig) && domainReductionTest(bs3, bs_orig));
     }
@@ -222,7 +222,7 @@ bool runRecursiveDomainReductionTest()
 //
 //    cout << "Reducing domain" << endl;
 //    //timer.start();
-//    bs.reduceDomain(lb2,ub2);
+//    bs.reduceSupport(lb2,ub2);
 //    //timer.stop();
 //    // Old insertion method: 538, 536
 //    // New insertion method: > 25000!

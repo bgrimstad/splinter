@@ -228,10 +228,10 @@ bool BSpline::pointInDomain(DenseVector x) const
     return basis.insideSupport(x);
 }
 
-void BSpline::reduceDomain(std::vector<double> lb, std::vector<double> ub, bool doRegularizeKnotVectors)
+void BSpline::reduceSupport(std::vector<double> lb, std::vector<double> ub, bool doRegularizeKnotVectors)
 {
     if (lb.size() != numVariables || ub.size() != numVariables)
-        throw Exception("BSpline::reduceDomain: Inconsistent vector sizes!");
+        throw Exception("BSpline::reduceSupport: Inconsistent vector sizes!");
 
     std::vector<double> sl = basis.getSupportLowerBound();
     std::vector<double> su = basis.getSupportUpperBound();
@@ -240,11 +240,11 @@ void BSpline::reduceDomain(std::vector<double> lb, std::vector<double> ub, bool 
     {
         // Check if new domain is empty
         if (ub.at(dim) <= lb.at(dim) || lb.at(dim) >= su.at(dim) || ub.at(dim) <= sl.at(dim))
-            throw Exception("BSpline::reduceDomain: Cannot reduce B-spline domain to empty set!");
+            throw Exception("BSpline::reduceSupport: Cannot reduce B-spline domain to empty set!");
 
         // Check if new domain is a strict subset
         if (su.at(dim) < ub.at(dim) || sl.at(dim) > lb.at(dim))
-            throw Exception("BSpline::reduceDomain: Cannot expand B-spline domain!");
+            throw Exception("BSpline::reduceSupport: Cannot expand B-spline domain!");
 
         // Tightest possible
         sl.at(dim) = lb.at(dim);
@@ -259,7 +259,7 @@ void BSpline::reduceDomain(std::vector<double> lb, std::vector<double> ub, bool 
     // Remove knots and control points that are unsupported with the new bounds
     if (!removeUnsupportedBasisFunctions(sl, su))
     {
-        throw Exception("BSpline::reduceDomain: Failed to remove unsupported basis functions!");
+        throw Exception("BSpline::reduceSupport: Failed to remove unsupported basis functions!");
     }
 }
 

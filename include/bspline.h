@@ -104,9 +104,11 @@ public:
     void setControlPoints(const DenseMatrix &controlPoints);
     void checkControlPoints() const;
 
-    // B-spline operations
+    // Linear transformation of control points (B-spline has affine invariance)
     void updateControlPoints(const DenseMatrix &A);
-    void reduceDomain(std::vector<double> lb, std::vector<double> ub, bool doRegularizeKnotVectors = true);
+
+    // Reduce support of B-spline
+    void reduceSupport(std::vector<double> lb, std::vector<double> ub, bool doRegularizeKnotVectors = true);
 
     // Perform global knot refinement
     void globalKnotRefinement(); // All knots in one shabang
@@ -117,6 +119,7 @@ public:
     // Decompose B-spline to Bezier form
     void decomposeToBezierForm();
 
+    // Insert a knot with a given multiplicity
     void insertKnots(double tau, unsigned int dim, unsigned int multiplicity = 1); // TODO: move back to private after testing
 
     void save(const std::string &fileName) const override;
