@@ -71,8 +71,8 @@ class DataTable:
         self.__samples = []
         self.__numSamples = 0
 
-    # Getter for the datatable for use by Function
-    # Will make sure all samples are transferred to the back end before returning the handle to a Function
+    # Getter for the datatable for use by BSpline
+    # Will make sure all samples are transferred to the back end before returning the handle to a BSpline
     def _getHandle(self):
         self.__transfer()
         return self.__handle

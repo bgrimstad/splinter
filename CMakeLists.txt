@@ -149,7 +149,6 @@ set(CINTERFACE_SRC_LIST
     src/cinterface/bsplinebuilder.cpp
     src/cinterface/cinterface.cpp
     src/cinterface/datatable.cpp
-    src/cinterface/function.cpp
     src/cinterface/utilities.cpp
 )
 # These are the sources we need for compilation of the library

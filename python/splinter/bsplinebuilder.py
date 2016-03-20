@@ -34,16 +34,22 @@ class BSplineBuilder:
         def isValid(value):
             return value in range(3)
 
-    def __init__(self, data):
+    def __init__(self, data, degree=Degree.CUBIC, smoothing=Smoothing.NONE, knotSpacing=KnotSpacing.SAMPLE):
         self._handle = None  # Handle for referencing the c side of this object
         self._datatable = DataTable(data)
-        self._degrees = [BSplineBuilder.Degree.CUBIC] * self._datatable.getNumVariables()
         self._numBasisFunctions = [10**3] * self._datatable.getNumVariables()
-        self._knotSpacing = BSplineBuilder.KnotSpacing.SAMPLE
-        self._smoothing = BSplineBuilder.Smoothing.NONE
-        self._lambda = 0.1
+
+        self._degrees = None
+        self._numBasisFunctions = None
+        self._knotSpacing = None
+        self._smoothing = None
+        self._lambda = None
 
         self._handle = splinter._call(splinter._getHandle().splinter_bspline_builder_init, self._datatable._getHandle())
+        self.degree(degree)
+        self.smoothing(smoothing)
+        self.knotSpacing(knotSpacing)
+        self.setLambda(0.1)
 
     def degree(self, degrees):
         # If the value is a single number, make it a list of numVariables length

@@ -118,14 +118,6 @@ SPLINTER_API void splinter_datatable_delete(splinter_obj_ptr datatable_ptr);
 
 
 /**
- * Load a BSpline from file.
- *
- * @param filename The file to load the BSpline from.
- * @return Pointer to the loaded BSpline.
- */
-SPLINTER_API splinter_obj_ptr splinter_bspline_load_init(const char *filename);
-
-/**
  * Create a new BSpline::Builder.
  *
  * @param datatable_ptr The datatable to create the BSpline::Builder from.
@@ -195,95 +187,148 @@ SPLINTER_API void splinter_bspline_builder_delete(splinter_obj_ptr bspline_build
 
 
 /**
- * Evaluate a function in one or more points. Can "batch evaluate" several points by storing the points consecutively in
+ * Load a BSpline from file.
+ *
+ * @param filename The file to load the BSpline from.
+ * @return Pointer to the loaded BSpline.
+ */
+SPLINTER_API splinter_obj_ptr splinter_bspline_load_init(const char *filename);
+
+/**
+ * Get the sizes of the knot vectors that are returned by splinter_bspline_get_knot_vectors
+ *
+ * @param bspline_ptr Pointer to the BSpline
+ * @return Array of splinter_bspline_get_num_variables length
+ */
+SPLINTER_API int *splinter_bspline_get_knot_vector_sizes(splinter_obj_ptr bspline_ptr);
+
+/**
+ * Get the knot vectors of the BSpline
+ * Two-dimensional matrix where the rows are the knot vectors
+ * There are splinter_bspline_get_num_variables knot vectors
+ * The sizes of the knot vectors are given by splinter_bspline_get_knot_vector_sizes
+ *
+ * @param bspline_ptr Pointer to the BSpline
+ * @return Row major array of size stated above
+ */
+SPLINTER_API double *splinter_bspline_get_knot_vectors(splinter_obj_ptr bspline_ptr);
+
+/**
+ * Get the number of coefficients of the BSpline
+ *
+ * @param bspline_ptr Pointer to the BSpline
+ */
+SPLINTER_API int splinter_bspline_get_num_coefficients(splinter_obj_ptr bspline_ptr);
+
+/**
+ * Get the coefficients of the BSpline
+ *
+ * @param bspline_ptr Pointer to the BSpline
+ * @return Array of doubles of splinter_get_num_coefficients length
+ */
+SPLINTER_API double *splinter_bspline_get_coefficients(splinter_obj_ptr bspline_ptr);
+
+/**
+ * Get the control points of the BSpline
+ * Returns a two-dimensional matrix with
+ * splinter_bspline_get_num_coefficients rows (NOTE *coefficients*, not *control*)
+ * and splinter_bspline_get_num_variables+1 columns
+ *
+ * @param bspline_ptr Pointer to the BSpline
+ * @return Row major flattened array of the control points
+ */
+SPLINTER_API double *splinter_bspline_get_control_points(splinter_obj_ptr bspline_ptr);
+
+/**
+ * Evaluate a BSpline in one or more points. Can "batch evaluate" several points by storing the points consecutively in
  * x in row major order. If function is a two-dimensional function you can evaluate the function in x0 = [0, 1] and
  * x1 = [2, 3] in one function call by having x point to the start of an array of four doubles: 0 1 2 3, and x_len = 4.
  * This function will then return an array of 2 doubles, the first being the result of evaluating the function in [0, 1],
  * and the second being the result of evaluating the function in [2, 3].
  *
- * @param function Pointer to the function to evaluate.
+ * @param bspline_ptr Pointer to the BSpline to evaluate.
  * @param x Array of doubles. Is of x_len length.
  * @param x_len Length of x.
  * @return Array of results corresponding to the points in x.
  */
-SPLINTER_API double *splinter_function_eval_row_major(splinter_obj_ptr function, double *x, int x_len);
+SPLINTER_API double *splinter_bspline_eval_row_major(splinter_obj_ptr bspline_ptr, double *x, int x_len);
 
 /**
- * Evaluate the jacobian of a function in one or more points.
+ * Evaluate the jacobian of a BSpline in one or more points.
  * @see eval_row_major() for further explanation of the behaviour.
  *
- * @param function Pointer to the function to evaluate.
+ * @param bspline_ptr Pointer to the BSpline to evaluate.
  * @param x Array of doubles. Is of x_len length.
  * @param x_len Length of x.
  * @return Flattened array of array of results corresponding to the points in x.
  */
-SPLINTER_API double *splinter_function_eval_jacobian_row_major(splinter_obj_ptr function, double *x, int x_len);
+SPLINTER_API double *splinter_bspline_eval_jacobian_row_major(splinter_obj_ptr bspline_ptr, double *x, int x_len);
 
 /**
- * Evaluate the hessian of a function in one or more points.
+ * Evaluate the hessian of a BSpline in one or more points.
  * @see eval_row_major() for further explanation of the behaviour.
  *
- * @param function Pointer to the function to evaluate.
+ * @param bspline_ptr Pointer to the BSpline to evaluate.
  * @param x Array of doubles. Is of x_len length.
  * @param x_len Length of x.
  * @return Flattened array of array of array of results corresponding to the points in x.
  */
-SPLINTER_API double *splinter_function_eval_hessian_row_major(splinter_obj_ptr function, double *x, int x_len);
+SPLINTER_API double *splinter_bspline_eval_hessian_row_major(splinter_obj_ptr bspline_ptr, double *x, int x_len);
 
 /**
- * Evaluate the a function in one or more points that are stored in column major order.
+ * Evaluate the a BSpline in one or more points that are stored in column major order.
  * @see eval_row_major() for further explanation of the behaviour.
  *
- * @param function Pointer to the function to evaluate.
+ * @param bspline_ptr Pointer to the BSpline to evaluate.
  * @param x Array of doubles. Is of x_len length.
  * @param x_len Length of x.
  * @return Array of results.
  */
-SPLINTER_API double *splinter_function_eval_col_major(splinter_obj_ptr function, double *x, int x_len);
+SPLINTER_API double *splinter_bspline_eval_col_major(splinter_obj_ptr bspline_ptr, double *x, int x_len);
 
 /**
- * Evaluate the jacobian of a function in one or more points that are stored in column major order.
+ * Evaluate the jacobian of a BSpline in one or more points that are stored in column major order.
  * @see eval_row_major() for further explanation of the behaviour.
  *
- * @param function Pointer to the function to evaluate.
+ * @param bspline_ptr Pointer to the BSpline to evaluate.
  * @param x Array of doubles. Is of x_len length.
  * @param x_len Length of x.
  * @return Flattened array of array of results corresponding to the points in x. Stored in ROW major order.
  */
-SPLINTER_API double *splinter_function_eval_jacobian_col_major(splinter_obj_ptr function, double *x, int x_len);
+SPLINTER_API double *splinter_bspline_eval_jacobian_col_major(splinter_obj_ptr bspline_ptr, double *x, int x_len);
 
 /**
- * Evaluate the hessian of a function in one or more points that are stored in column major order.
+ * Evaluate the hessian of a BSpline in one or more points that are stored in column major order.
  * @see eval_row_major() for further explanation of the behaviour.
  *
- * @param function Pointer to the function to evaluate.
+ * @param bspline_ptr Pointer to the BSpline to evaluate.
  * @param x Array of doubles. Is of x_len length.
  * @param x_len Length of x.
  * @return Flattened array of array of array of results corresponding to the points in x. Stored in ROW major order.
  */
-SPLINTER_API double *splinter_function_eval_hessian_col_major(splinter_obj_ptr function, double *x, int x_len);
+SPLINTER_API double *splinter_bspline_eval_hessian_col_major(splinter_obj_ptr bspline_ptr, double *x, int x_len);
 
 /**
- * Get the number of variables (dimension) of a Function.
+ * Get the number of variables (dimension) of a BSpline.
  *
- * @param function Pointer to the Function.
+ * @param bspline_ptr Pointer to the BSpline.
  */
-SPLINTER_API int splinter_function_get_num_variables(splinter_obj_ptr function);
+SPLINTER_API int splinter_bspline_get_num_variables(splinter_obj_ptr bspline_ptr);
 
 /**
- * Save a Function to file.
+ * Save a BSpline to file.
  *
- * @param function Pointer to the Function.
- * @param filename File to save the Function to (will be overwritten!).
+ * @param bspline_ptr Pointer to the BSpline.
+ * @param filename File to save the BSpline to (will be overwritten!).
  */
-SPLINTER_API void splinter_function_save(splinter_obj_ptr function, const char *filename);
+SPLINTER_API void splinter_bspline_save(splinter_obj_ptr bspline_ptr, const char *filename);
 
 /**
- * Free the memory used by a Function.
+ * Free the memory used by a BSpline.
  *
- * @param function Pointer to the Function.
+ * @param bspline_ptr Pointer to the BSpline.
  */
-SPLINTER_API void splinter_function_delete(splinter_obj_ptr function);
+SPLINTER_API void splinter_bspline_delete(splinter_obj_ptr bspline_ptr);
 
 #ifdef __cplusplus
     }
