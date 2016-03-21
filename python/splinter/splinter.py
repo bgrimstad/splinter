@@ -101,9 +101,6 @@ def __init():
     _getHandle().splinter_datatable_delete.argtypes = [handle_type]
 
 
-    _getHandle().splinter_bspline_load_init.restype = handle_type
-    _getHandle().splinter_bspline_load_init.argtypes = [c_char_p]
-
     _getHandle().splinter_bspline_builder_init.restype = handle_type
     _getHandle().splinter_bspline_builder_init.argtypes = [handle_type]
 
@@ -128,24 +125,41 @@ def __init():
     _getHandle().splinter_bspline_builder_delete.restype = None
     _getHandle().splinter_bspline_builder_delete.argtypes = [handle_type]
 
+    _getHandle().splinter_bspline_load_init.restype = handle_type
+    _getHandle().splinter_bspline_load_init.argtypes = [c_char_p]
 
-    _getHandle().splinter_function_eval_row_major.restype = c_double_p
-    _getHandle().splinter_function_eval_row_major.argtypes = [handle_type, c_double_p, c_int]
+    _getHandle().splinter_bspline_get_knot_vector_sizes.restype = c_int_p
+    _getHandle().splinter_bspline_get_knot_vector_sizes.argtypes = [handle_type]
 
-    _getHandle().splinter_function_eval_jacobian_row_major.restype = c_double_p
-    _getHandle().splinter_function_eval_jacobian_row_major.argtypes = [handle_type, c_double_p, c_int]
+    _getHandle().splinter_bspline_get_knot_vectors.restype = c_double_p
+    _getHandle().splinter_bspline_get_knot_vectors.argtypes = [handle_type]
 
-    _getHandle().splinter_function_eval_hessian_row_major.restype = c_double_p
-    _getHandle().splinter_function_eval_hessian_row_major.argtypes = [handle_type, c_double_p, c_int]
+    _getHandle().splinter_bspline_get_num_coefficients.restype = c_int
+    _getHandle().splinter_bspline_get_num_coefficients.argtypes = [handle_type]
 
-    _getHandle().splinter_function_get_num_variables.restype = c_int
-    _getHandle().splinter_function_get_num_variables.argtypes = [handle_type]
+    _getHandle().splinter_bspline_get_coefficients.restype = c_double_p
+    _getHandle().splinter_bspline_get_coefficients.argtypes = [handle_type]
 
-    _getHandle().splinter_function_save.restype = None
-    _getHandle().splinter_function_save.argtypes = [handle_type, c_char_p]
+    _getHandle().splinter_bspline_get_control_points.restype = c_double_p
+    _getHandle().splinter_bspline_get_control_points.argtypes = [handle_type]
 
-    _getHandle().splinter_function_delete.restype = None
-    _getHandle().splinter_function_delete.argtypes = [handle_type]
+    _getHandle().splinter_bspline_eval_row_major.restype = c_double_p
+    _getHandle().splinter_bspline_eval_row_major.argtypes = [handle_type, c_double_p, c_int]
+
+    _getHandle().splinter_bspline_eval_jacobian_row_major.restype = c_double_p
+    _getHandle().splinter_bspline_eval_jacobian_row_major.argtypes = [handle_type, c_double_p, c_int]
+
+    _getHandle().splinter_bspline_eval_hessian_row_major.restype = c_double_p
+    _getHandle().splinter_bspline_eval_hessian_row_major.argtypes = [handle_type, c_double_p, c_int]
+
+    _getHandle().splinter_bspline_get_num_variables.restype = c_int
+    _getHandle().splinter_bspline_get_num_variables.argtypes = [handle_type]
+
+    _getHandle().splinter_bspline_save.restype = None
+    _getHandle().splinter_bspline_save.argtypes = [handle_type, c_char_p]
+
+    _getHandle().splinter_bspline_delete.restype = None
+    _getHandle().splinter_bspline_delete.argtypes = [handle_type]
 
 
 # Try to locate SPLINTER relative to this script

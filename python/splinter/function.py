@@ -26,7 +26,7 @@ class Function:
             x = flattenList(x)
 
         numPoints = len(x) // self._numVariables
-        res = splinter._call(splinter._getHandle().splinter_function_eval_row_major, self._handle, (c_double * len(x))(*x), len(x))
+        res = splinter._call(splinter._getHandle().splinter_bspline_eval_row_major, self._handle, (c_double * len(x))(*x), len(x))
 
         return CArrayToList(res, numPoints)
 
@@ -41,7 +41,7 @@ class Function:
             x = flattenList(x)
 
         numPoints = len(x) // self._numVariables
-        jac = splinter._call(splinter._getHandle().splinter_function_eval_jacobian_row_major, self._handle, (c_double * len(x))(*x), len(x))
+        jac = splinter._call(splinter._getHandle().splinter_bspline_eval_jacobian_row_major, self._handle, (c_double * len(x))(*x), len(x))
 
         # Convert from ctypes array to Python list of lists
         # jacobians is a list of the jacobians in all evaluated points
@@ -63,7 +63,7 @@ class Function:
             x = flattenList(x)
 
         numPoints = len(x) // self._numVariables
-        hes = splinter._call(splinter._getHandle().splinter_function_eval_hessian_row_major, self._handle, (c_double * len(x))(*x), len(x))
+        hes = splinter._call(splinter._getHandle().splinter_bspline_eval_hessian_row_major, self._handle, (c_double * len(x))(*x), len(x))
 
         # Convert from ctypes array to Python list of list of lists
         # hessians is a list of the hessians in all points
@@ -77,12 +77,12 @@ class Function:
         return hessians
 
     def getNumVariables(self):
-        return splinter._call(splinter._getHandle().splinter_function_get_num_variables, self._handle)
+        return splinter._call(splinter._getHandle().splinter_bspline_get_num_variables, self._handle)
 
     def save(self, fileName):
-        splinter._call(splinter._getHandle().splinter_function_save, self._handle, getCString(fileName))
+        splinter._call(splinter._getHandle().splinter_bspline_save, self._handle, getCString(fileName))
 
     def __del__(self):
         if self._handle is not None:
-            splinter._call(splinter._getHandle().splinter_function_delete, self._handle)
+            splinter._call(splinter._getHandle().splinter_bspline_delete, self._handle)
         self._handle = None

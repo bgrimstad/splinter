@@ -13,6 +13,7 @@
 #include "datatable.h"
 #include "function.h"
 #include "cinterface.h"
+#include "bspline.h"
 
 namespace SPLINTER
 {
@@ -21,8 +22,8 @@ namespace SPLINTER
 // All extern variables are defined in cinterface/utilities.cpp
 // Keep a list of objects so we avoid performing operations on objects that don't exist
 extern std::set<splinter_obj_ptr> dataTables;
-extern std::set<splinter_obj_ptr> functions;
-extern std::set<splinter_obj_ptr> builders;
+extern std::set<splinter_obj_ptr> bsplines;
+extern std::set<splinter_obj_ptr> bspline_builders;
 
 extern int splinter_last_func_call_error; // Tracks the success of the last function call
 extern const char *splinter_error_string; // Error string (if the last function call resulted in an error)
@@ -32,22 +33,11 @@ void set_error_string(const char *new_error_string);
 /* Check for existence of datatable_ptr, then cast splinter_obj_ptr to a DataTable * */
 DataTable *get_datatable(splinter_obj_ptr datatable_ptr);
 
-/* Check for existence of function_ptr, then cast splinter_obj_ptr to a Function * */
-Function *get_function(splinter_obj_ptr function_ptr);
+/* Check for existence of bspline_ptr, then cast splinter_obj_ptr to a BSpline * */
+BSpline *get_bspline(splinter_obj_ptr bspline_ptr);
 
-/* Check for existence of builder_ptr, then cast builder_ptr to a T::Builder * */
-template <typename T>
-typename T::Builder *get_builder(splinter_obj_ptr builder_ptr)
-{
-    if (builders.count(builder_ptr) > 0)
-    {
-        return static_cast<typename T::Builder *>(builder_ptr);
-    }
-
-    set_error_string(std::string("Invalid reference to ").append(typeid(T).name()).append("::Builder: Maybe it has been deleted?").c_str());
-
-    return nullptr;
-}
+/* Check for existence of bspline_builder_ptr, then cast splinter_obj_ptr to a BSpline::Builder * */
+BSpline::Builder *get_builder(splinter_obj_ptr bspline_builder_ptr);
 
 /**
  * Convert from column major to row major with point_dim number of columns.
