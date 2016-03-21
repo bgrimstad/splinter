@@ -330,6 +330,9 @@ SPLINTER_API void splinter_bspline_save(splinter_obj_ptr bspline_ptr, const char
  */
 SPLINTER_API void splinter_bspline_delete(splinter_obj_ptr bspline_ptr);
 
+
+SPLINTER_API void splinter_bspline_decompose_to_bezier_form(splinter_obj_ptr bspline_ptr);
+
 #ifdef __cplusplus
     }
 #endif

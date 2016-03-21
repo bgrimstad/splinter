@@ -408,4 +408,21 @@ void splinter_bspline_delete(splinter_obj_ptr bspline_ptr)
     }
 }
 
+void splinter_bspline_decompose_to_bezier_form(splinter_obj_ptr bspline_ptr)
+{
+    auto bspline = get_bspline(bspline_ptr);
+    int *sizes = nullptr;
+    if (bspline != nullptr)
+    {
+        try
+        {
+            bspline->decomposeToBezierForm();
+        }
+        catch (const Exception &e)
+        {
+            set_error_string(e.what());
+        }
+    }
+}
+
 } // extern "C"

@@ -10,7 +10,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from os import sys, path, remove
-sys.path.append(path.dirname(path.dirname(path.dirname(path.abspath(__file__)))))
+sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
 
 ##### Start of the example #####

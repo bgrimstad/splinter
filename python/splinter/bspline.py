@@ -78,3 +78,10 @@ class BSpline(Function):
             start += numCols
 
         return controlPoints
+
+    def decomposeToBezierForm(self):
+        """
+        Insert knots until all knots have multiplicity degree + 1. This ensures that the polynomial pieces are not
+        overlapping.
+        """
+        splinter._call(splinter._getHandle().splinter_bspline_decompose_to_bezier_form, self._handle)

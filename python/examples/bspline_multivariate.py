@@ -5,7 +5,6 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-import splinter
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -14,12 +13,13 @@ from matplotlib.ticker import LinearLocator, FormatStrFormatter
 from os import sys, path, remove
 
 
-
 # Add the SPLINTER directory to the search path, so we can include it
-sys.path.append(path.dirname(path.dirname(path.dirname(path.abspath(__file__)))))
+sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+
+import splinter
 
 # Load SPLINTER
-splinter.load("/home/bjarne/Code/C++/splinter/splinter/build/Release/libsplinter-2-0.so")
+splinter.load("/home/bjarne/Code/C++/splinter4/splinter/bin/Release/libsplinter-2-0.so")
 
 
 # Example with two variables
