@@ -29,8 +29,8 @@ enum class BSpline::Degree
 enum class BSpline::Smoothing
 {
     NONE,           // No smoothing
-    REGULARIZATION, // Regularization term lambda*c^2 is added to OLS objective
-    PSPLINE         // Smoothing term lambda*Delta(c,2) is added to OLS objective
+    REGULARIZATION, // Regularization term alpha*c^2 is added to OLS objective
+    PSPLINE         // Smoothing term alpha*Delta(c,2) is added to OLS objective
 };
 
 // B-spline knot spacing
@@ -47,12 +47,12 @@ class SPLINTER_API BSpline::Builder
 public:
     Builder(const DataTable &data);
 
-    Builder& lambda(double lambda)
+    Builder& alpha(double alpha)
     {
-        if (lambda < 0)
-            throw Exception("BSpline::Builder::lambda: Lambda must be non-negative.");
+        if (alpha < 0)
+            throw Exception("BSpline::Builder::alpha: alpha must be non-negative.");
 
-        _lambda = lambda;
+        _alpha = alpha;
         return *this;
     }
 
@@ -147,7 +147,7 @@ private:
     std::vector<unsigned int> _numBasisFunctions;
     KnotSpacing _knotSpacing;
     Smoothing _smoothing;
-    double _lambda;
+    double _alpha;
 };
 
 } // namespace SPLINTER

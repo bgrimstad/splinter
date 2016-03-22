@@ -34,7 +34,7 @@ class BSplineBuilder:
         def isValid(value):
             return value in range(3)
 
-    def __init__(self, data, degree=Degree.CUBIC, smoothing=Smoothing.NONE, knotSpacing=KnotSpacing.SAMPLE):
+    def __init__(self, data, degree=Degree.CUBIC, smoothing=Smoothing.NONE, alpha=0.1, knotSpacing=KnotSpacing.SAMPLE):
         self._handle = None  # Handle for referencing the c side of this object
         self._datatable = DataTable(data)
         self._numBasisFunctions = [10**3] * self._datatable.getNumVariables()
@@ -43,13 +43,13 @@ class BSplineBuilder:
         self._numBasisFunctions = None
         self._knotSpacing = None
         self._smoothing = None
-        self._lambda = None
+        self._alpha = None
 
         self._handle = splinter._call(splinter._getHandle().splinter_bspline_builder_init, self._datatable._getHandle())
         self.degree(degree)
         self.smoothing(smoothing)
         self.knotSpacing(knotSpacing)
-        self.setLambda(0.1)
+        self.setAlpha(alpha)
 
     def degree(self, degrees):
         # If the value is a single number, make it a list of numVariables length
@@ -103,13 +103,13 @@ class BSplineBuilder:
         splinter._call(splinter._getHandle().splinter_bspline_builder_set_smoothing, self._handle, self._smoothing)
         return self
 
-    def setLambda(self, newLambda):
-        if newLambda < 0:
-            raise ValueError("BSplineBuilder:lambda: Lambda must be non-negative.")
+    def setAlpha(self, newAlpha):
+        if newAlpha < 0:
+            raise ValueError("BSplineBuilder:setAlpha: alpha must be non-negative.")
 
-        self._lambda = newLambda
+        self._alpha = newAlpha
 
-        splinter._call(splinter._getHandle().splinter_bspline_builder_set_lambda, self._handle, self._lambda)
+        splinter._call(splinter._getHandle().splinter_bspline_builder_set_alpha, self._handle, self._alpha)
         return self
 
     # Returns a handle to the created internal BSpline object

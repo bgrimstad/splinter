@@ -16,11 +16,11 @@ classdef PSpline < Approximant
     methods
         % Constructor. Creates an instance of the PSpline class in the
         % library, using the samples in dataTable.
-        % lambda is the smoothing parameter, usually a small number
-        % default: 0.03
-        function obj = PSpline(dataTableOrFilename, lambda)
-            if(~exist('lambda', 'var'))
-                lambda = 0.03;
+        % alpha is the smoothing parameter, usually a small number
+        % default: 0.1
+        function obj = PSpline(dataTableOrFilename, alpha)
+            if(~exist('alpha', 'var'))
+                alpha = 0.1;
             end
             
             % Set to -1 so we don't try to delete the library instance in case type is invalid
@@ -33,7 +33,7 @@ classdef PSpline < Approximant
             else
                 dataTable = dataTableOrFilename;
                 
-                obj.Handle = Splinter.getInstance().call(obj.Constructor_function, dataTable.get_handle(), lambda);
+                obj.Handle = Splinter.getInstance().call(obj.Constructor_function, dataTable.get_handle(), alpha);
             end
         end
     end

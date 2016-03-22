@@ -116,8 +116,8 @@ def __init():
     _getHandle().splinter_bspline_builder_set_smoothing.restype = None
     _getHandle().splinter_bspline_builder_set_smoothing.argtypes = [handle_type, c_int]
 
-    _getHandle().splinter_bspline_builder_set_lambda.restype = None
-    _getHandle().splinter_bspline_builder_set_lambda.argtypes = [handle_type, c_double]
+    _getHandle().splinter_bspline_builder_set_alpha.restype = None
+    _getHandle().splinter_bspline_builder_set_alpha.argtypes = [handle_type, c_double]
 
     _getHandle().splinter_bspline_builder_build.restype = handle_type
     _getHandle().splinter_bspline_builder_build.argtypes = [handle_type]

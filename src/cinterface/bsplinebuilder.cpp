@@ -104,7 +104,7 @@ void splinter_bspline_builder_set_smoothing(splinter_obj_ptr bspline_builder_ptr
     }
 }
 
-void splinter_bspline_builder_set_lambda(splinter_obj_ptr bspline_builder_ptr, double lambda)
+void splinter_bspline_builder_set_alpha(splinter_obj_ptr bspline_builder_ptr, double alpha)
 {
     auto builder = get_builder(bspline_builder_ptr);
     if (builder == nullptr)
@@ -113,7 +113,7 @@ void splinter_bspline_builder_set_lambda(splinter_obj_ptr bspline_builder_ptr, d
         return;
     }
 
-    builder->lambda(lambda);
+    builder->alpha(alpha);
 }
 
 splinter_obj_ptr splinter_bspline_builder_build(splinter_obj_ptr bspline_builder_ptr)

@@ -160,12 +160,12 @@ SPLINTER_API void splinter_bspline_builder_set_knot_spacing(splinter_obj_ptr bsp
 SPLINTER_API void splinter_bspline_builder_set_smoothing(splinter_obj_ptr bspline_builder_ptr, int smoothing);
 
 /**
- * Set the lambda of the Builder.
+ * Set the alpha of the Builder.
  *
- * @param bspline_builder_ptr The Builder to set the lambda of.
- * @param lambda The new lambda to use (must be non-negative).
+ * @param bspline_builder_ptr The Builder to set the alpha of.
+ * @param alpha The new alpha to use (must be non-negative).
  */
-SPLINTER_API void splinter_bspline_builder_set_lambda(splinter_obj_ptr bspline_builder_ptr, double lambda);
+SPLINTER_API void splinter_bspline_builder_set_alpha(splinter_obj_ptr bspline_builder_ptr, double alpha);
 
 /**
  * Build the BSpline with the parameters of the Builder.

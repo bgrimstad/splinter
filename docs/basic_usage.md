@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
     BSpline pspline = BSpline::Builder(samples)
             .degree(BSpline::Degree::CUBIC)
             .smoothing(BSpline::Smoothing::PSPLINE)
-            .lambda(0.03)
+            .alpha(0.03)
             .build();
 
     /* Evaluate the approximants at x = (1,1)

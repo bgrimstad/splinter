@@ -25,7 +25,7 @@ BSpline::Builder::Builder(const DataTable &data)
         _numBasisFunctions(std::vector<unsigned int>(data.getNumVariables(), 0)),
         _knotSpacing(KnotSpacing::SAMPLE),
         _smoothing(Smoothing::NONE),
-        _lambda(0.1)
+        _alpha(0.1)
 {
 }
 
@@ -164,14 +164,14 @@ DenseVector BSpline::Builder::controlPointEquationRHS() const
 
 /*
  * Computing B-spline coefficients with a regularization term
- * ||Bc-y||^2 + lambda*c^T*c
+ * ||Bc-y||^2 + alpha*c^T*c
  * where c are the coefficients, B is the B-spline basis matrix, y is the sample values,
- * and lambda is the regularization factor
+ * and alpha is the regularization factor
  *
  * NOTE: This corresponds to a Tikhonov regularization (or ridge regression) with the identity matrix.
  * See: https://en.wikipedia.org/wiki/Tikhonov_regularization
  *
- * NOTE2: consider changing regularization factor to (lambda/numSample)
+ * NOTE2: consider changing regularization factor to (alpha/numSample)
  */
 DenseVector BSpline::Builder::computeBSplineCoefficientsRegularized(const BSpline& bspline) const
 {
@@ -179,7 +179,7 @@ DenseVector BSpline::Builder::computeBSplineCoefficientsRegularized(const BSplin
     DenseVector b2 = controlPointEquationRHS();
     SparseMatrix I(A2.cols(), A2.cols());
     I.setIdentity();
-    SparseMatrix A = A2.transpose()*A2 + _lambda*I;
+    SparseMatrix A = A2.transpose()*A2 + _alpha * I;
     DenseVector b = A2.transpose()*b2;
 
     DenseVector w;
@@ -256,7 +256,7 @@ DenseMatrix BSpline::Builder::computePSplineCoefficients(const BSpline &bspline)
     SparseMatrix D = getSecondOrderFiniteDifferenceMatrix(bspline);
 
     // Left-hand side matrix
-    L = B.transpose()*W*B + _lambda*D.transpose()*D;
+    L = B.transpose()*W*B + _alpha * D.transpose() * D;
 
     // Compute right-hand side matrices
     DenseVector By = controlPointEquationRHS();

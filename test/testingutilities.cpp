@@ -888,7 +888,7 @@ void _checkNorm(DenseMatrix normValues, int row, size_t numPoints, double one_ep
     CHECK(withinThreshold);
 }
 
-// Must use std::function because a capturing lambda cannot be converted to a function pointer
+// Must use std::function because a capturing alpha cannot be converted to a function pointer
 void testApproximation(std::vector<TestFunction *> funcs,
                        std::function<Function *(const DataTable &table)> approx_gen_func,
                        TestType type, size_t numSamplePoints, size_t numEvalPoints,
