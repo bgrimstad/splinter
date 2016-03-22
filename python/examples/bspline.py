@@ -24,40 +24,25 @@ splinter.load("/home/bjarne/Code/C++/splinter4/splinter/bin/Release/libsplinter-
 def f1(x):
     return -1. + 2*x + 0.1*(x**2) + 10*np.random.rand(1)[0]
 
-x = [0.]*11
-y = [0.]*11
-for i in range(11):
-    x[i] = i
-    y[i] = f1(i)
+x = np.arange(0, 11, 1)
+y = np.zeros((len(x),))
+for i in range(len(x)):
+    y[i] = f1(x[i])
 d1 = list(zip(x, y))
 
 # Linear B-spline that interpolates the data
-b1 = splinter.BSplineBuilder(d1)\
-    .degree(splinter.BSplineBuilder.Degree.LINEAR)\
-    .build()
+b1 = splinter.BSplineBuilder(d1, degree=1).build()
 
-# Quadratic B-spline with regularization
-b2 = splinter.BSplineBuilder(d1)\
-    .degree(splinter.BSplineBuilder.Degree.QUADRATIC)\
-    .build()
+# Quadratic B-spline that interpolates the data
+b2 = splinter.BSplineBuilder(d1, degree=2).build()
 
-# Cubic P-spline
-b3 = splinter.BSplineBuilder(d1)\
-    .degree(splinter.BSplineBuilder.Degree.CUBIC)\
-    .build()
+# Cubic P-spline that interpolates the data
+b3 = splinter.BSplineBuilder(d1, degree=3).build()
 
-n = 1000
-xd = [0.]*n
-yd1 = [0.]*n
-yd2 = [0.]*n
-yd3 = [0.]*n
-for i in range(n):
-    val = i/100.
-    xd[i] = val
-    yd1[i] = b1.eval([val])
-    yd2[i] = b2.eval([val])
-    yd3[i] = b3.eval([val])
-
+xd = np.arange(0, 10, .01)
+yd1 = b1.eval(list(xd))
+yd2 = b2.eval(list(xd))
+yd3 = b3.eval(list(xd))
 
 plt.plot(x, y, '*', label='Data points')
 plt.plot(xd, yd1, label='Linear B-spline')

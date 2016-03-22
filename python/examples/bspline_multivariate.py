@@ -41,10 +41,7 @@ for i in range(len(x)):
         data.append([xij, yij, zij])
 
 # Cubic B-spline
-bspline = splinter.BSplineBuilder(data)\
-    .degree([splinter.BSplineBuilder.Degree.LINEAR, splinter.BSplineBuilder.Degree.CUBIC])\
-    .smoothing(splinter.BSplineBuilder.Smoothing.NONE)\
-    .build()
+bspline = splinter.BSplineBuilder(data, degree=[1, 3], smoothing=splinter.BSplineBuilder.Smoothing.NONE).build()
 
 Zbs = Z
 
