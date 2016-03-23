@@ -79,6 +79,15 @@ class BSpline(Function):
 
         return controlPoints
 
+    def getBasisDegrees(self):
+        """
+        :return List with the basis degrees of the BSpline
+        """
+        num_vars = splinter._call(splinter._getHandle().splinter_bspline_get_num_variables, self._handle)
+        basis_degrees = splinter._call(splinter._getHandle().splinter_bspline_get_basis_degrees, self._handle)
+
+        return CArrayToList(basis_degrees, num_vars)
+
     def decomposeToBezierForm(self):
         """
         Insert knots until all knots have multiplicity degree + 1. This ensures that the polynomial pieces are not

@@ -143,6 +143,9 @@ def __init():
     _getHandle().splinter_bspline_get_control_points.restype = c_double_p
     _getHandle().splinter_bspline_get_control_points.argtypes = [handle_type]
 
+    _getHandle().splinter_bspline_get_basis_degrees.restype = c_int_p
+    _getHandle().splinter_bspline_get_basis_degrees.argtypes = [handle_type]
+
     _getHandle().splinter_bspline_eval_row_major.restype = c_double_p
     _getHandle().splinter_bspline_eval_row_major.argtypes = [handle_type, c_double_p, c_int]
 

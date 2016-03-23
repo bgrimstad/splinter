@@ -240,6 +240,15 @@ SPLINTER_API double *splinter_bspline_get_coefficients(splinter_obj_ptr bspline_
 SPLINTER_API double *splinter_bspline_get_control_points(splinter_obj_ptr bspline_ptr);
 
 /**
+ * Get the basis degrees of the BSpline
+ * Returns an array of size splinter_bspline_get_num_variables
+ *
+ * @param bspline_ptr Pointer to the BSpline
+ * @return Array of basis degrees
+ */
+SPLINTER_API int *splinter_bspline_get_basis_degrees(splinter_obj_ptr bspline_ptr);
+
+/**
  * Evaluate a BSpline in one or more points. Can "batch evaluate" several points by storing the points consecutively in
  * x in row major order. If function is a two-dimensional function you can evaluate the function in x0 = [0, 1] and
  * x1 = [2, 3] in one function call by having x point to the start of an array of four doubles: 0 1 2 3, and x_len = 4.

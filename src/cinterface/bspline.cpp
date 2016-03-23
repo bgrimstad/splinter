@@ -192,6 +192,38 @@ double *splinter_bspline_get_control_points(splinter_obj_ptr bspline_ptr)
     return control_points_as_array;
 }
 
+int *splinter_bspline_get_basis_degrees(splinter_obj_ptr bspline_ptr)
+{
+    auto bspline = get_bspline(bspline_ptr);
+    int *basis_degrees_as_array = nullptr;
+    if (bspline != nullptr)
+    {
+        try
+        {
+            auto basis_degrees = bspline->getBasisDegrees();
+
+            basis_degrees_as_array = (int *) malloc(basis_degrees.size() * sizeof (int));
+
+            if (basis_degrees_as_array != nullptr)
+            {
+                for (int i = 0; i < basis_degrees.size(); ++i)
+                {
+                    basis_degrees_as_array[i] = basis_degrees[i];
+                }
+            }
+            else
+            {
+                set_error_string("Unable to allocate memory!");
+            }
+        }
+        catch (const Exception &e)
+        {
+            set_error_string(e.what());
+        }
+    }
+    return basis_degrees_as_array;
+}
+
 double *splinter_bspline_eval_row_major(splinter_obj_ptr bspline_ptr, double *x, int x_len)
 {
     double *retVal = nullptr;
