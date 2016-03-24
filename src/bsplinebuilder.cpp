@@ -23,7 +23,7 @@ BSpline::Builder::Builder(const DataTable &data)
         _data(data),
         _degrees(getBSplineDegrees(data.getNumVariables(), 3)),
         _numBasisFunctions(std::vector<unsigned int>(data.getNumVariables(), 0)),
-        _knotSpacing(KnotSpacing::AS_SAMPLED_CLAMPED),
+        _knotSpacing(KnotSpacing::AS_SAMPLED),
         _smoothing(Smoothing::NONE),
         _alpha(0.1)
 {
@@ -338,7 +338,7 @@ std::vector<double> BSpline::Builder::computeKnotVector(const std::vector<double
 {
     switch (_knotSpacing)
     {
-        case KnotSpacing::AS_SAMPLED_CLAMPED:
+        case KnotSpacing::AS_SAMPLED:
             return knotVectorMovingAverage(values, degree);
         case KnotSpacing::EQUIDISTANT:
             return knotVectorEquidistant(values, degree, numBasisFunctions);
