@@ -16,42 +16,41 @@ sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 import splinter
 
 # Only for dev purposes
-splinter.load("/home/bjarne/Code/C++/splinter4/splinter/bin/Release/libsplinter-2-0.so")
+splinter.load("/home/bjarne/Code/C++/splinter4/splinter/bin/Release/libsplinter-3-0.so")
 
 
 # Example with two variables
 def f(x):
     return x[0]*x[1]
 
-x = np.arange(-5, 5, 0.25)
-y = np.arange(-5, 5, 0.25)
-X, Y = np.meshgrid(x, y)
-Z = np.sqrt(X**2)
-Z = np.sqrt(X**2 + Y**2)
+x1 = np.arange(-5, 5, 0.25)
+x2 = np.arange(-5, 5, 0.25)
+X1, X2 = np.meshgrid(x1, x2)
+Y = np.sqrt(X1 ** 2 + X2 ** 2)
 
 data = []
-for i in range(len(x)):
-    for j in range(len(y)):
-        xij = X[i, j]
-        yij = Y[i, j]
-        zij = Z[i, j]
+for i in range(len(x1)):
+    for j in range(len(x2)):
+        xij = X1[j, i]
+        yij = X2[j, i]
+        zij = Y[i, j]
         data.append([xij, yij, zij])
 
 # Cubic B-spline
 bspline = splinter.BSplineBuilder(data, degree=[1, 3], smoothing=splinter.BSplineBuilder.Smoothing.NONE).build()
 
-Zbs = Z
+Zbs = Y
 
-for i in range(len(x)):
-    for j in range(len(y)):
-        xij = X[i, j]
-        yij = Y[i, j]
+for i in range(len(x1)):
+    for j in range(len(x2)):
+        xij = X1[i, j]
+        yij = X2[i, j]
         Zbs[i, j] = bspline.eval([xij, yij])[0]
 
 # Plot f
 fig = plt.figure()
 ax = fig.gca(projection='3d')
-surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap=cm.coolwarm,
+surf = ax.plot_surface(X1, X2, Y, rstride=1, cstride=1, cmap=cm.coolwarm,
                        linewidth=0, antialiased=False)
 # ax.set_zlim(-1.01, 1.01)
 
@@ -62,7 +61,7 @@ fig.colorbar(surf, shrink=0.5, aspect=5)
 # Plot b-spline
 fig = plt.figure()
 ax = fig.gca(projection='3d')
-surf = ax.plot_surface(X, Y, Zbs, rstride=1, cstride=1, cmap=cm.coolwarm,
+surf = ax.plot_surface(X1, X2, Zbs, rstride=1, cstride=1, cmap=cm.coolwarm,
                        linewidth=0, antialiased=False)
 # ax.set_zlim(-1.01, 1.01)
 

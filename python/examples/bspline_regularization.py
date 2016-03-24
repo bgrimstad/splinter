@@ -13,7 +13,7 @@ sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 import splinter
 
 # Only for dev purposes
-splinter.load("/home/bjarne/Code/C++/splinter4/splinter/bin/Release/libsplinter-2-0.so")
+splinter.load("/home/bjarne/Code/C++/splinter4/splinter/bin/Release/libsplinter-3-0.so")
 
 
 # Example with one variable
