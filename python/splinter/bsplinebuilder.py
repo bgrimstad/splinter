@@ -15,7 +15,7 @@ from .datatable import DataTable
 class BSplineBuilder:
 
     class Smoothing:
-        NONE, REGULARIZATION, PSPLINE = range(3)
+        NONE, IDENTITY, PSPLINE = range(3)
 
         @staticmethod
         def isValid(value):

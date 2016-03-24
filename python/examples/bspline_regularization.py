@@ -31,7 +31,7 @@ d1 = list(zip(x, y))
 b1 = splinter.BSplineBuilder(d1, smoothing=splinter.BSplineBuilder.Smoothing.NONE).build()
 
 # Cubic B-spline with regularization
-b2 = splinter.BSplineBuilder(d1, smoothing=splinter.BSplineBuilder.Smoothing.REGULARIZATION, alpha=0.1).build()
+b2 = splinter.BSplineBuilder(d1, smoothing=splinter.BSplineBuilder.Smoothing.IDENTITY, alpha=0.1).build()
 
 # Cubic P-spline
 b3 = splinter.BSplineBuilder(d1, smoothing=splinter.BSplineBuilder.Smoothing.PSPLINE, alpha=0.1).build()
