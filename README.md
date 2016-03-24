@@ -35,7 +35,8 @@ A standards compliant C++11 compiler.
 
 ###Guides
 * [Basic usage](docs/basic_usage.md)
+* [C++ interface](docs/cpp_interface.md)
+* [MatLab interface](docs/matlab_interface.md)
+* [Python interface](docs/python_interface.md)
+* [C interface](docs/c_interface.md)
 * [Compilation](docs/compile.md)
-* [MatLab interface](docs/MATLAB.md)
-* [Python interface](docs/python.md)
-* [C interface](docs/C.md)
