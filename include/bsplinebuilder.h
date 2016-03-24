@@ -26,18 +26,15 @@ enum class BSpline::Smoothing
 
 // B-spline knot spacing
 /*
- * To be changed to:
- * AS_SAMPLED               // Place knots close to sample points. Not clamped.
- * AS_SAMPLED_CLAMPED       // Place knots close to sample points. With clamps (p+1 repeats on each side). Default.
- * EQUIDISTANT              // Equidistant knots, not clamped
- * EQUIDISTANT_CLAMPED      // Equidistant knots with clamps (p+1 repeats on each side)
- * EXPERIMENTAL             // For testing
+ * To be added:
+ * AS_SAMPLED_NOT_CLAMPED   // Place knots close to sample points. Without clamps.
+ * EQUIDISTANT_NOT_CLAMPED  // Equidistant knots without clamps.
  */
 enum class BSpline::KnotSpacing
 {
-    AS_SAMPLED,     // Knot spacing mimicking sample spacing (moving average). With clamps (p+1 repeats on each side).
-    EQUIDISTANT,    // Equidistant knots
-    EXPERIMENTAL    // Experimental knot spacing (needs more testing)
+    AS_SAMPLED,     // Mimic spacing of sample points (moving average). With clamps (p+1 multiplicity of end knots).
+    EQUIDISTANT,    // Equidistant knots. With clamps (p+1 multiplicity of end knots).
+    EXPERIMENTAL    // Experimental knot spacing (for testing purposes).
 };
 
 // B-spline builder class
