@@ -22,13 +22,13 @@ class BSplineBuilder:
             return value in range(3)
 
     class KnotSpacing:
-        SAMPLE, EQUIDISTANT, EXPERIMENTAL = range(3)
+        AS_SAMPLED, EQUIDISTANT, EXPERIMENTAL = range(3)
 
         @staticmethod
         def isValid(value):
             return value in range(3)
 
-    def __init__(self, data, degree=3, smoothing=Smoothing.NONE, alpha=0.1, knotSpacing=KnotSpacing.SAMPLE):
+    def __init__(self, data, degree=3, smoothing=Smoothing.NONE, alpha=0.1, knotSpacing=KnotSpacing.AS_SAMPLED):
         self._handle = None  # Handle for referencing the c side of this object
         self._datatable = DataTable(data)
         self._numBasisFunctions = [10**3] * self._datatable.getNumVariables()
