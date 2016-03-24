@@ -174,7 +174,7 @@ def __init():
 # Try to locate SPLINTER relative to this script
 # Assumes the Python interface of splinter has the following directory structure:
 # splinter/
-# - version.txt
+# - version
 # - function.py
 # - *.py
 # - lib/
@@ -193,7 +193,7 @@ def __locateSplinter():
     # Go two folders up (yes, two is correct, because the first dirname gives us the directory this file resides in).
     splinterPythonMainDir = os.path.dirname(os.path.dirname(os.path.dirname(fullPath)))
 
-    # Locate version.txt. If we cannot find it then we won't be able to find splinter either
+    # Locate version file. If we cannot find it then we won't be able to find splinter either
     versionFile = os.path.join(splinterPythonMainDir, "version")
     if not os.path.exists(versionFile):
         return None

@@ -89,8 +89,8 @@ fi
 
 BUILD_ROOT=$SPLINTER_DIR/build
 
-# Read the SPLINTER version from version.txt
-SPLINTER_VERSION=$(cat $SPLINTER_DIR/version.txt)
+# Read the SPLINTER version from version file
+SPLINTER_VERSION=$(cat $SPLINTER_DIR/version)
 
 # Check that we can find CMake
 if [[ $(which cmake) == "" ]]; then
@@ -116,7 +116,7 @@ function update_compiler_version {
 	echo $COMPILER_VERSION > "$BUILD_ROOT/$OS/$COMPILER/compiler_version"
 }
 
-function copy_header_files {	
+function copy_header_files {
 	cp -r $SPLINTER_DIR/include $BUILD_ROOT/$OS/$COMPILER/
 	cp -r $SPLINTER_DIR/thirdparty/Eigen/Eigen $BUILD_ROOT/$OS/$COMPILER/include
 	cp -r $SPLINTER_DIR/thirdparty/Eigen/unsupported $BUILD_ROOT/$OS/$COMPILER/include
