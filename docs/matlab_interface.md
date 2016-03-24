@@ -33,8 +33,6 @@ You can then start using the library by making a DataTable and populate it with 
 When you are done populating the DataTable you can create an Approximant of your choosing:
 - BSpline
 - PSpline
-- RadialBasisFunction
-- PolynomialRegression
 
 All these derive from the Approximant base class, and their usage mainly differ in the signature of the constructor.
 
