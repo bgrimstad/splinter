@@ -5,11 +5,9 @@ The B-spline may approximate any sampled multivariate function. The user may con
 
 The following Python example shows how to build a quadratic B-spline:
 ```
-b = splinter.BSplineBuilder(data)\
-    .degree(splinter.BSplineBuilder.Degree.QUADRATIC)\
-    .build()
+bspline = splinter.BSplineBuilder(data, degree=2).build()
 ```
-In this example the B-spline is built from a dataset called `data`, usually assumed to contain data points on a regular grid. Note that SPLINTER do accept datasets of points not lying on a regular grid, but the behavior is then experimental and currently not advised.
+In this example the B-spline `bspline` is built from a dataset called `data`, usually assumed to contain data points on a regular grid. Note that SPLINTER do accept datasets of points not lying on a regular grid, but the behavior is then experimental and currently not advised.
 
 ![Comparison of a linear, quadratic and cubic B-spline](../assets/bspline_degrees.png)
 
@@ -17,18 +15,12 @@ Figure: Comparison of a linear, quadratic and cubic B-spline. The linear B-splin
 
 The user may create a penalized B-spline (P-spline) that smooths the data instead of interpolating it. The construction of a P-spline is more computationally demanding than the B-spline - a large least-square problem must be solved - bringing the practical limit on the number of samples down to about 10 000. The following Python example shows the construction of a P-spline with the smoothing parameter (alpha) set to 0.1.
 ```
-b = splinter.BSplineBuilder(data)\
-    .smoothing(splinter.BSplineBuilder.Smoothing.PSPLINE)\
-    .setAlpha(0.1)\
-    .build()
+bspline = splinter.BSplineBuilder(data, smoothing=splinter.BSplineBuilder.Smoothing.PSPLINE, alpha=0.1).build()
 ```
 
 An alternative to the P-spline, that also may reduce the variation in the B-spline is to use [Tikhonov regularization](http://en.wikipedia.org/wiki/Tikhonov_regularization). A quadratic penalty on the coefficients is then added to the OLS objective function. Regularization may be used to decrease the effect of overfitting. Currently, SPLINTER uses an identity matrix as the Tikhonov matrix. The smoothing parameter (alpha) can be set as shown in the following Python example where a cubic B-spline is built.
 ```
-b = splinter.BSplineBuilder(data)\
-    .smoothing(splinter.BSplineBuilder.Smoothing.REGULARIZATION)\
-    .setAlpha(0.1)\
-    .build()
+b = splinter.BSplineBuilder(data, smoothing=splinter.BSplineBuilder.Smoothing.REGULARIZATION, alpha=0.1).build()
 ```
 
 ![Comparison of an interpolating B-spline, regularized B-spline, and P-spline](../assets/bspline_regularization.png) 
