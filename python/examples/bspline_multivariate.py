@@ -16,7 +16,8 @@ sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 import splinter
 
 # Only for dev purposes
-splinter.load("/home/bjarne/Code/C++/splinter4/splinter/bin/Release/libsplinter-3-0.so")
+# splinter.load("/home/bjarne/Code/C++/splinter4/splinter/bin/Release/libsplinter-3-0.so")
+splinter.load("/home/anders/SPLINTER/build/debug/libsplinter-3-0.so")
 
 
 # Example with two variables
@@ -73,8 +74,8 @@ fig.colorbar(surf, shrink=0.5, aspect=5)
 
 plt.show()
 
-print("Jacobian at [3.2,3.2] and [1.0, 1.0]: " + str(bspline.evalJacobian([[3.2, 3.2], [1.0, 1.0]])))
-print("Hessian at [3.2,3.2] and [1.0, 1.0]: " + str(bspline.evalHessian([[3.2, 3.2], [1.0, 1.0]])))
+print("Jacobian at [3.2,3.2] and [1.0, 1.0]: " + str(bspline.eval_jacobian([[3.2, 3.2], [1.0, 1.0]])))
+print("Hessian at [3.2,3.2] and [1.0, 1.0]: " + str(bspline.eval_hessian([[3.2, 3.2], [1.0, 1.0]])))
 
 # Save the bspline to test.bspline
 # The file ending doesn't matter

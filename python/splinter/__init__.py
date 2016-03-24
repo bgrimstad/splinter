@@ -24,7 +24,4 @@ __all__ = [
     "bsplinebuilder"
 ]
 
-# splinter.DataTable = datatable.DataTable
-# splinter.BSpline = bspline.BSpline
 splinter.BSplineBuilder = bsplinebuilder.BSplineBuilder
-# splinter.PSpline = pspline.PSpline

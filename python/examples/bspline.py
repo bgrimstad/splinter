@@ -5,7 +5,6 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-
 # Add the SPLINTER directory to the search path, so we can include it
 import numpy as np
 import matplotlib.pyplot as plt
@@ -14,7 +13,8 @@ sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 import splinter
 
 # Only for dev purposes
-splinter.load("/home/bjarne/Code/C++/splinter4/splinter/bin/Release/libsplinter-3-0.so")
+# splinter.load("/home/bjarne/Code/C++/splinter4/splinter/bin/Release/libsplinter-3-0.so")
+splinter.load("/home/anders/SPLINTER/build/debug/libsplinter-3-0.so")
 
 
 # Example with one variable
@@ -40,10 +40,10 @@ b2 = splinter.BSplineBuilder(d1, degree=2).build()
 b3 = splinter.BSplineBuilder(d1, degree=3).build()
 
 xd = np.arange(0, 10, .01)
-yd0 = b0.eval(list(xd))
-yd1 = b1.eval(list(xd))
-yd2 = b2.eval(list(xd))
-yd3 = b3.eval(list(xd))
+yd0 = b0.eval(xd)
+yd1 = b1.eval(xd)
+yd2 = b2.eval(xd)
+yd3 = b3.eval(xd)
 
 plt.plot(x, y, '*', label='Data points')
 plt.plot(xd, yd0, label='Piecewise constant B-spline')

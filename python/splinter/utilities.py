@@ -16,38 +16,38 @@ def out(text, newLine=True):
         print("")
 
 
-def isPython3():
+def is_python3():
     return sys.version_info[0] == 3
 
 
-def getCString(pyString):
-    if isPython3():
-        return c_char_p(pyString.encode("UTF-8"))
+def get_c_string(py_string):
+    if is_python3():
+        return c_char_p(py_string.encode("UTF-8"))
     else:
-        return c_char_p(pyString)
+        return c_char_p(py_string)
 
 
-def getPyString(CString):
-    return str(CString)
+def get_py_string(c_string):
+    return str(c_string)
 
 
-def isString(pyString):
-    if isPython3():
-        return isinstance(pyString, str)
+def is_string(py_string):
+    if is_python3():
+        return isinstance(py_string, str)
     else:
-        return isinstance(pyString, basestring)
+        return isinstance(py_string, basestring)
 
 
-def listToCArrayOfDoubles(pyList):
-    return (c_double * len(pyList))(*pyList)
+def list_to_c_array_of_doubles(py_list):
+    return (c_double * len(py_list))(*py_list)
 
 
-def listToCArrayOfInts(pyList):
-    intList = [int(x) for x in pyList]
-    return (c_int * len(intList))(*intList)
+def list_to_c_array_of_of_ints(py_list):
+    int_list = [int(x) for x in py_list]
+    return (c_int * len(int_list))(*int_list)
 
 
-def CArrayToList(CArray, size):
+def c_array_to_list(CArray, size):
     return [CArray[i] for i in range(size)]
 
 
@@ -55,17 +55,17 @@ def CArrayToList(CArray, size):
 #def flattenList(l):
 #    return [item for sublist in l for item in sublist]
 
-def flattenList(l):
+def flatten_list(l):
     result = []
     for item in l:
         if isinstance(item, list):
-            result += flattenList(item)
+            result += flatten_list(item)
         else:
             result.append(item)
     return result
 
 
-def getArchitecture():
+def get_architecture():
     arch = "x86"
     if sizeof(c_void_p) == 8:
         arch = "x86-64"

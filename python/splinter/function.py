@@ -8,51 +8,65 @@
 
 from . import splinter
 from .utilities import *
+import pandas as pd
+import numpy as np
 
 
 class Function:
     def __init__(self):
         self._handle = None
-        self._numVariables = None
+        self._num_variables = None
 
     def eval(self, x):
-        if not isinstance(x, list):
-            x = [x]
+        x = self._transform_input(x)
 
-        # See if x is on the form [[x0,x1],[x2,x3]]
-        # if not we assume it to be on the form
-        # [x0, x1, x2, x3]
-        if isinstance(x[0], list):
-            x = flattenList(x)
+        num_points = len(x) // self._num_variables
+        res = splinter._call(splinter._get_handle().splinter_bspline_eval_row_major, self._handle, (c_double * len(x))(*x), len(x))
 
-        numPoints = len(x) // self._numVariables
-        res = splinter._call(splinter._getHandle().splinter_bspline_eval_row_major, self._handle, (c_double * len(x))(*x), len(x))
+        return c_array_to_list(res, num_points)
 
-        return CArrayToList(res, numPoints)
+    def eval_jacobian(self, x):
+        x = self._transform_input(x)
 
-    def evalJacobian(self, x):
-        if not isinstance(x, list):
-            x = [x]
-
-        # See if x is on the form [[x0,x1],[x2,x3]]
-        # if not we assume it to be on the form
-        # [x0, x1, x2, x3]
-        if isinstance(x[0], list):
-            x = flattenList(x)
-
-        numPoints = len(x) // self._numVariables
-        jac = splinter._call(splinter._getHandle().splinter_bspline_eval_jacobian_row_major, self._handle, (c_double * len(x))(*x), len(x))
+        num_points = len(x) // self._num_variables
+        jac = splinter._call(splinter._get_handle().splinter_bspline_eval_jacobian_row_major, self._handle, (c_double * len(x))(*x), len(x))
 
         # Convert from ctypes array to Python list of lists
         # jacobians is a list of the jacobians in all evaluated points
         jacobians = []
-        for i in range(numPoints):
+        for i in range(num_points):
             jacobians.append([])
-            for j in range(self._numVariables):
-                jacobians[i].append(jac[i*self._numVariables + j])
+            for j in range(self._num_variables):
+                jacobians[i].append(jac[i * self._num_variables + j])
         return jacobians
 
-    def evalHessian(self, x):
+    def eval_hessian(self, x):
+        x = self._transform_input(x)
+
+        num_points = len(x) // self._num_variables
+        hes = splinter._call(splinter._get_handle().splinter_bspline_eval_hessian_row_major, self._handle, (c_double * len(x))(*x), len(x))
+
+        # Convert from ctypes array to Python list of list of lists
+        # hessians is a list of the hessians in all points
+        hessians = []
+        for i in range(num_points):
+            hessians.append([])
+            for j in range(self._num_variables):
+                hessians[i].append([])
+                for k in range(self._num_variables):
+                    hessians[i][j].append(hes[i * self._num_variables * self._num_variables + j * self._num_variables + k])
+        return hessians
+
+    def get_num_variables(self):
+        return splinter._call(splinter._get_handle().splinter_bspline_get_num_variables, self._handle)
+
+    def save(self, filename):
+        splinter._call(splinter._get_handle().splinter_bspline_save, self._handle, get_c_string(filename))
+
+    def _transform_input(self, x):
+        if isinstance(x, np.ndarray):
+            x = x.tolist()
+
         if not isinstance(x, list):
             x = [x]
 
@@ -60,29 +74,12 @@ class Function:
         # if not we assume it to be on the form
         # [x0, x1, x2, x3]
         if isinstance(x[0], list):
-            x = flattenList(x)
+            x = flatten_list(x)
 
-        numPoints = len(x) // self._numVariables
-        hes = splinter._call(splinter._getHandle().splinter_bspline_eval_hessian_row_major, self._handle, (c_double * len(x))(*x), len(x))
+        return x
 
-        # Convert from ctypes array to Python list of list of lists
-        # hessians is a list of the hessians in all points
-        hessians = []
-        for i in range(numPoints):
-            hessians.append([])
-            for j in range(self._numVariables):
-                hessians[i].append([])
-                for k in range(self._numVariables):
-                    hessians[i][j].append(hes[i*self._numVariables*self._numVariables + j*self._numVariables + k])
-        return hessians
-
-    def getNumVariables(self):
-        return splinter._call(splinter._getHandle().splinter_bspline_get_num_variables, self._handle)
-
-    def save(self, fileName):
-        splinter._call(splinter._getHandle().splinter_bspline_save, self._handle, getCString(fileName))
 
     def __del__(self):
         if self._handle is not None:
-            splinter._call(splinter._getHandle().splinter_bspline_delete, self._handle)
+            splinter._call(splinter._get_handle().splinter_bspline_delete, self._handle)
         self._handle = None
