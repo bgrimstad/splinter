@@ -28,7 +28,6 @@ BSplineBasis1D::BSplineBasis1D(const std::vector<double> &knots, unsigned int de
 //    if (degree <= 0)
 //        throw Exception("BSplineBasis1D::BSplineBasis1D: Cannot create B-spline basis functions of degree <= 0.");
 
-    // NOTE: this exception is too strict (multiple start and end knots should not be required)
     if (!isKnotVectorRegular(knots, degree))
         throw Exception("BSplineBasis1D::BSplineBasis1D: Knot vector is not regular.");
 }
