@@ -9,6 +9,7 @@
 
 #include "testfunctions.h"
 #include "testfunction.h"
+#include <iostream>
 
 #define MAKE_TESTFUNCTION(FUNC, NUMVARIABLES, PRETTY_STRING) new TestFunction([](const std::vector<double> &x) { return FUNC; }, NUMVARIABLES, PRETTY_STRING)
 #define MAKE_CONSTDEGREE_TESTFUNCTION(FUNC, NUMVARIABLES, PRETTY_STRING, DEGREES) new TestFunction([](const std::vector<double> &x) { return FUNC; }, NUMVARIABLES, PRETTY_STRING, DEGREES)

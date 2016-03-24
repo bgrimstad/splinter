@@ -51,11 +51,11 @@ public:
     void save(const std::string &fileName) const override {}
 
 
+    DenseMatrix powers;
 private:
     std::string functionString;
 
     bool constDegree;
-    DenseMatrix powers;
 
     std::function<double (const std::vector<double> &)> f;
 

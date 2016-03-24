@@ -46,10 +46,10 @@ double TestFunction::eval(DenseVector x) const
 
 std::vector<unsigned int> TestFunction::getConstDegreeInt() const
 {
-    auto intDegrees = std::vector<unsigned int>(numVariables, 0);
+    auto intDegrees = std::vector<unsigned int>(powers.rows(), 0);
 
     auto maxCoeffs = powers.rowwise().maxCoeff();
-    for (size_t i = 0; i < numVariables; ++i)
+    for (size_t i = 0; i < powers.rows(); ++i)
     {
         intDegrees.at(i) = (unsigned int) std::ceil(maxCoeffs(i));
     }
