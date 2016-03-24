@@ -39,38 +39,31 @@ You can then start using the library by making a DataTable and populate it with 
 ```python
 import splinter
 
-def f(x, y):
-    return x**2*y + y**3
+# Example with one variable
+def f1(x):
+    return -1. + 2*x + 0.1*(x**2) + 10*np.random.rand(1)[0]
 
-d = splinter.DataTable()
+x = np.arange(0, 11, 1)
+y = np.zeros((len(x),))
+for i in range(len(x)):
+    y[i] = f1(x[i])
+data = list(zip(x, y))
 
-for i in range(10):
-    for j in range(10):
-        d.addSample([i,j], f(i,j))
+# Build cubic B-spline that interpolates the data
+bspline = splinter.BSplineBuilder(data, degree=3).build()
 
-bspline = splinter.BSpline(d, 3) # Make a BSpline of degree 3 in all dimensions
-
-# Evaluate one point:
-approxVal = bspline.eval([0.5,0.5])
-
-# Evaluate three points:
-approxVal = bspline.eval([0.3,0.2, 0.4,0.2, 7.8,7.9])
-# or, equivalent:
-approxVal = bspline.eval([[0.3,0.2], [0.4,0.2], [7.8,7.9]])
+# Evaluate the B-spline
+xd = np.arange(0, 10, .01)
+yd = bspline.eval(xd)
 
 # Save BSpline to file for loading it later:
 bspline.save("myfile.myextension")
 
 # Load BSpline from file:
 loadedBSpline = splinter.BSpline("myfile.myextension")
-
 ```
-Notice that if you are going to evaluate the approximant in more than one point, it is preferred to call eval once, instead of n times. This is because you then only make a call to the binary one time, instead of n times.
+Notice that if you are going to evaluate the approximant in more than one point, it is preferred to call eval once, instead of n times.
 
-When you are done populating the DataTable you can create an Approximant of your choosing:
-- BSpline
-- PSpline
-
-All these derive from the Approximant base class, and their usage mainly differ in the signature of the constructor.
+More examples can be found in the directory `/python/examples`.
 
 Please consult the documentation for the C++ version of the library if you still have unanswered questions after reading this document.
