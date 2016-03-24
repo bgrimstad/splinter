@@ -19,9 +19,9 @@ namespace SPLINTER
 // B-spline smoothing
 enum class BSpline::Smoothing
 {
-    NONE,           // No smoothing
-    REGULARIZATION, // Regularization term alpha*c^2 is added to OLS objective
-    PSPLINE         // Smoothing term alpha*Delta(c,2) is added to OLS objective
+    NONE,       // No smoothing
+    IDENTITY,   // Regularization term alpha*c'*I*c is added to OLS objective
+    PSPLINE     // Smoothing term alpha*Delta(c,2) is added to OLS objective
 };
 
 // B-spline knot spacing
@@ -35,9 +35,9 @@ enum class BSpline::Smoothing
  */
 enum class BSpline::KnotSpacing
 {
-    SAMPLE,         // Knot spacing mimicking sample spacing (moving average)
-    EQUIDISTANT,    // Equidistant knots
-    EXPERIMENTAL    // Experimental knot spacing (needs more testing)
+    AS_SAMPLED_CLAMPED, // Knot spacing mimicking sample spacing (moving average). With clamps (p+1 repeats on each side).
+    EQUIDISTANT,        // Equidistant knots
+    EXPERIMENTAL        // Experimental knot spacing (needs more testing)
 };
 
 // B-spline builder class
@@ -113,12 +113,9 @@ private:
     // Control point computations
     DenseVector computeCoefficients(const BSpline &bspline) const;
     DenseVector computeBSplineCoefficients(const BSpline &bspline) const;
-    DenseVector computeBSplineCoefficientsRegularized(const BSpline &bspline) const;
     SparseMatrix computeBasisFunctionMatrix(const BSpline &bspline) const;
     DenseVector controlPointEquationRHS() const;
-
     // P-spline control point calculation
-    DenseMatrix computePSplineCoefficients(const BSpline &bspline) const;
     SparseMatrix getSecondOrderFiniteDifferenceMatrix(const BSpline &bspline) const;
 
     // Computing knots

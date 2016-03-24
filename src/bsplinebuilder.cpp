@@ -23,7 +23,7 @@ BSpline::Builder::Builder(const DataTable &data)
         _data(data),
         _degrees(getBSplineDegrees(data.getNumVariables(), 3)),
         _numBasisFunctions(std::vector<unsigned int>(data.getNumVariables(), 0)),
-        _knotSpacing(KnotSpacing::SAMPLE),
+        _knotSpacing(KnotSpacing::AS_SAMPLED_CLAMPED),
         _smoothing(Smoothing::NONE),
         _alpha(0.1)
 {
@@ -52,69 +52,115 @@ BSpline BSpline::Builder::build() const
     return bspline;
 }
 
+/*
+ * Find coefficients of B-spline by solving:
+ * min ||A*x - b||^2 + alpha*||R||^2,
+ * where
+ * A = mxn matrix of n basis functions evaluated at m sample points,
+ * b = vector of m sample points y-values (or x-values when calculating knot averages),
+ * x = B-spline coefficients (or knot averages),
+ * R = Regularization matrix,
+ * alpha = regularization parameter.
+ */
 DenseVector BSpline::Builder::computeCoefficients(const BSpline& bspline) const
 {
-    switch (_smoothing)
-    {
-        case Smoothing::NONE:
-            return computeBSplineCoefficients(bspline);
-        case Smoothing::REGULARIZATION:
-            return computeBSplineCoefficientsRegularized(bspline);
-        case Smoothing::PSPLINE:
-            return computePSplineCoefficients(bspline);
-        default:
-            return computeBSplineCoefficients(bspline);
-    }
-}
-
-/*
- * Setup and solve equations Ac = b,
- * A = basis functions at sample x-values,
- * b = sample y-values when calculating control coefficients,
- * b = sample x-values when calculating knot averages
- * c = control coefficients or knot averages.
- */
-DenseVector BSpline::Builder::computeBSplineCoefficients(const BSpline& bspline) const
-{
-    SparseMatrix A = computeBasisFunctionMatrix(bspline);
+    SparseMatrix B = computeBasisFunctionMatrix(bspline);
+    SparseMatrix A = B;
     DenseVector b = controlPointEquationRHS();
 
-    DenseVector w;
+    if (_smoothing == Smoothing::IDENTITY)
+    {
+        /*
+         * Computing B-spline coefficients with a regularization term
+         * ||Ax-b||^2 + alpha*x^T*x
+         *
+         * NOTE: This corresponds to a Tikhonov regularization (or ridge regression) with the Identity matrix.
+         * See: https://en.wikipedia.org/wiki/Tikhonov_regularization
+         *
+         * NOTE2: consider changing regularization factor to (alpha/numSample)
+         */
+        SparseMatrix Bt = B.transpose();
+        A = Bt*B;
+        b = Bt*b;
+
+        auto I = SparseMatrix(A.cols(), A.cols());
+        I.setIdentity();
+        A += _alpha*I;
+    }
+    else if (_smoothing == Smoothing::PSPLINE)
+    {
+        /*
+         * The P-Spline is a smooting B-spline which relaxes the interpolation constraints on the control points to allow
+         * smoother spline curves. It minimizes an objective which penalizes both deviation from sample points (to lower bias)
+         * and the magnitude of second derivatives (to lower variance).
+         *
+         * Setup and solve equations Ax = b,
+         * A = B'*W*B + l*D'*D
+         * b = B'*W*y
+         * x = control coefficients or knot averages.
+         * B = basis functions at sample x-values,
+         * W = weighting matrix for interpolating specific points
+         * D = second-order finite difference matrix
+         * l = penalizing parameter (increase for more smoothing)
+         * y = sample y-values when calculating control coefficients,
+         * y = sample x-values when calculating knot averages
+         */
+
+        // Assuming regular grid
+        unsigned int numSamples = _data.getNumSamples();
+
+        SparseMatrix Bt = B.transpose();
+
+        // Weight matrix
+        SparseMatrix W;
+        W.resize(numSamples, numSamples);
+        W.setIdentity();
+
+        // Second order finite difference matrix
+        SparseMatrix D = getSecondOrderFiniteDifferenceMatrix(bspline);
+
+        // Left-hand side matrix
+        A = Bt*W*B + _alpha*D.transpose()*D;
+
+        // Compute right-hand side matrices
+        b = Bt*W*b;
+    }
+
+    DenseVector x;
 
     int numEquations = A.rows();
-    int maxNumEquations = 1000;
-
+    int maxNumEquations = 100;
     bool solveAsDense = (numEquations < maxNumEquations);
 
-    // TODO: compute only coefficients (knot averages not needed)
     if (!solveAsDense)
     {
-        #ifndef NDEBUG
-        std::cout << "Computing B-spline control points using sparse solver." << std::endl;
-        #endif // NDEBUG
+#ifndef NDEBUG
+        std::cout << "BSpline::Builder::computeBSplineCoefficients: Computing B-spline control points using sparse solver." << std::endl;
+#endif // NDEBUG
 
         SparseLU<> s;
         //bool successfulSolve = (s.solve(A,Bx,Cx) && s.solve(A,By,Cy));
 
-        solveAsDense = !s.solve(A,b,w);
+        solveAsDense = !s.solve(A, b, x);
     }
 
     if (solveAsDense)
     {
-        #ifndef NDEBUG
-        std::cout << "Computing B-spline control points using dense solver." << std::endl;
-        #endif // NDEBUG
+#ifndef NDEBUG
+        std::cout << "BSpline::Builder::computeBSplineCoefficients: Computing B-spline control points using dense solver." << std::endl;
+#endif // NDEBUG
 
         DenseMatrix Ad = A.toDense();
         DenseQR<DenseVector> s;
+        // DenseSVD<DenseVector> s;
         //bool successfulSolve = (s.solve(Ad,Bx,Cx) && s.solve(Ad,By,Cy));
-        if (!s.solve(Ad,b,w))
+        if (!s.solve(Ad, b, x))
         {
-            throw Exception("BSpline::computeControlPoints: Failed to solve for B-spline coefficients.");
+            throw Exception("BSpline::Builder::computeBSplineCoefficients: Failed to solve for B-spline coefficients.");
         }
     }
 
-    return w;
+    return x;
 }
 
 SparseMatrix BSpline::Builder::computeBasisFunctionMatrix(const BSpline &bspline) const
@@ -160,146 +206,6 @@ DenseVector BSpline::Builder::controlPointEquationRHS() const
         B(i) = it->getY();
 
     return B;
-}
-
-/*
- * Computing B-spline coefficients with a regularization term
- * ||Bc-y||^2 + alpha*c^T*c
- * where c are the coefficients, B is the B-spline basis matrix, y is the sample values,
- * and alpha is the regularization factor
- *
- * NOTE: This corresponds to a Tikhonov regularization (or ridge regression) with the identity matrix.
- * See: https://en.wikipedia.org/wiki/Tikhonov_regularization
- *
- * NOTE2: consider changing regularization factor to (alpha/numSample)
- */
-DenseVector BSpline::Builder::computeBSplineCoefficientsRegularized(const BSpline& bspline) const
-{
-    SparseMatrix A2 = computeBasisFunctionMatrix(bspline);
-    DenseVector b2 = controlPointEquationRHS();
-    SparseMatrix I(A2.cols(), A2.cols());
-    I.setIdentity();
-    SparseMatrix A = A2.transpose()*A2 + _alpha * I;
-    DenseVector b = A2.transpose()*b2;
-
-    DenseVector w;
-
-    int numEquations = A.rows();
-    int maxNumEquations = 1000;
-
-    bool solveAsDense = (numEquations < maxNumEquations);
-
-    // TODO: compute only coefficients (knot averages not needed)
-    if (!solveAsDense)
-    {
-        #ifndef NDEBUG
-        std::cout << "Computing B-spline control points using sparse solver." << std::endl;
-        #endif // NDEBUG
-
-        SparseLU<> s;
-        //bool successfulSolve = (s.solve(A,Bx,Cx) && s.solve(A,By,Cy));
-
-        solveAsDense = !s.solve(A,b,w);
-    }
-
-    if (solveAsDense)
-    {
-        #ifndef NDEBUG
-        std::cout << "Computing B-spline control points using dense solver." << std::endl;
-        #endif // NDEBUG
-
-        DenseMatrix Ad = A.toDense();
-        DenseQR<DenseVector> s;
-        //bool successfulSolve = (s.solve(Ad,Bx,Cx) && s.solve(Ad,By,Cy));
-        if (!s.solve(Ad,b,w))
-        {
-            throw Exception("BSpline::computeControlPoints: Failed to solve for B-spline coefficients.");
-        }
-    }
-
-    return w;
-}
-
-/*
-* The P-Spline is a smooting B-spline which relaxes the interpolation constraints on the control points to allow
-* smoother spline curves. It minimizes an objective which penalizes both deviation from sample points (for
-* interpolation) and the magnitude of second derivatives (for smoothing).
-*/
-DenseMatrix BSpline::Builder::computePSplineCoefficients(const BSpline &bspline) const
-{
-    // Assuming regular grid
-    unsigned int numSamples = _data.getNumSamples();
-
-    /*
-     * Setup and solve equations Lc = R,
-     * L = B'*W*B + l*D'*D
-     * R = B'*W*y
-     * c = control coefficients or knot averages.
-     * B = basis functions at sample x-values,
-     * W = weighting matrix for interpolating specific points
-     * D = second-order finite difference matrix
-     * l = penalizing parameter (increase for more smoothing)
-     * y = sample y-values when calculating control coefficients,
-     * y = sample x-values when calculating knot averages
-     */
-
-    SparseMatrix L, W;
-
-    // Weight matrix
-    W.resize(numSamples, numSamples);
-    W.setIdentity();
-
-    // Basis function matrix
-    SparseMatrix B = computeBasisFunctionMatrix(bspline);
-
-    // Second order finite difference matrix
-    SparseMatrix D = getSecondOrderFiniteDifferenceMatrix(bspline);
-
-    // Left-hand side matrix
-    L = B.transpose()*W*B + _alpha * D.transpose() * D;
-
-    // Compute right-hand side matrices
-    DenseVector By = controlPointEquationRHS();
-    //Rx = B.transpose()*W*Bx;
-    DenseVector Ry = B.transpose()*W*By;
-
-    // Vector to store the resulting coefficients
-    DenseVector Cy;
-
-    int numEquations = L.rows();
-    int maxNumEquations = 1000;
-
-    bool solveAsDense = (numEquations < maxNumEquations);
-
-    if (!solveAsDense)
-    {
-        #ifndef NDEBUG
-        std::cout << "Computing B-spline control points using sparse solver." << std::endl;
-        #endif // NDEBUG
-
-        SparseLU<> s;
-        bool successfulSolve = s.solve(L,Ry,Cy);
-
-        solveAsDense = !successfulSolve;
-    }
-
-    if (solveAsDense)
-    {
-        #ifndef NDEBUG
-        std::cout << "Computing B-spline control points using dense solver." << std::endl;
-        #endif // NDEBUG
-
-        DenseMatrix Ld = L.toDense();
-        DenseQR<DenseVector> s;
-        bool successfulSolve = s.solve(Ld, Ry, Cy);
-
-        if (!successfulSolve)
-        {
-            throw Exception("PSpline::computeControlPoints: Failed to solve for B-spline coefficients.");
-        }
-    }
-
-    return Cy;
 }
 
 /*
@@ -432,7 +338,7 @@ std::vector<double> BSpline::Builder::computeKnotVector(const std::vector<double
 {
     switch (_knotSpacing)
     {
-        case KnotSpacing::SAMPLE:
+        case KnotSpacing::AS_SAMPLED_CLAMPED:
             return knotVectorMovingAverage(values, degree);
         case KnotSpacing::EQUIDISTANT:
             return knotVectorEquidistant(values, degree, numBasisFunctions);

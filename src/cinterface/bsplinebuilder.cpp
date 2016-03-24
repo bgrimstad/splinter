@@ -66,7 +66,7 @@ void splinter_bspline_builder_set_knot_spacing(splinter_obj_ptr bspline_builder_
         switch (knot_spacing)
         {
             case 0:
-                builder->knotSpacing(BSpline::KnotSpacing::SAMPLE);
+                builder->knotSpacing(BSpline::KnotSpacing::AS_SAMPLED_CLAMPED);
                 break;
             case 1:
                 builder->knotSpacing(BSpline::KnotSpacing::EQUIDISTANT);
@@ -92,7 +92,7 @@ void splinter_bspline_builder_set_smoothing(splinter_obj_ptr bspline_builder_ptr
                 builder->smoothing(BSpline::Smoothing::NONE);
                 break;
             case 1:
-                builder->smoothing(BSpline::Smoothing::REGULARIZATION);
+                builder->smoothing(BSpline::Smoothing::IDENTITY);
                 break;
             case 2:
                 builder->smoothing(BSpline::Smoothing::PSPLINE);

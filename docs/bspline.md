@@ -20,7 +20,7 @@ bspline = splinter.BSplineBuilder(data, smoothing=splinter.BSplineBuilder.Smooth
 
 An alternative to the P-spline, that also may reduce the variation in the B-spline is to use [Tikhonov regularization](http://en.wikipedia.org/wiki/Tikhonov_regularization). A quadratic penalty on the coefficients is then added to the OLS objective function. Regularization may be used to decrease the effect of overfitting. Currently, SPLINTER uses an identity matrix as the Tikhonov matrix. The smoothing parameter (alpha) can be set as shown in the following Python example where a cubic B-spline is built.
 ```
-bspline = splinter.BSplineBuilder(data, smoothing=splinter.BSplineBuilder.Smoothing.REGULARIZATION, alpha=0.1).build()
+bspline = splinter.BSplineBuilder(data, smoothing=splinter.BSplineBuilder.Smoothing.IDENTITY, alpha=0.1).build()
 ```
 
 ![Comparison of an interpolating B-spline, regularized B-spline, and P-spline](../assets/bspline_regularization.png) 
