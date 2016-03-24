@@ -9,8 +9,8 @@ project(SPLINTER CXX)
 cmake_minimum_required(VERSION 2.8)
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
 
-# Read the SPLINTER version from version.txt
-file(STRINGS "version.txt" VERSION)
+# Read the SPLINTER version from version file
+file(STRINGS "version" VERSION)
 
 # Default configuration values
 set(DEFAULT_BUILD_TYPE "Release")
