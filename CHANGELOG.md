@@ -1,5 +1,19 @@
 ## Changelog
 
+#### Version 3.0
+- Removed class for polynomial regression (PolynomialRegression).
+- Removed class for radial basis function approximation (RBFApproximant)
+- Updated MATLAB and Python examples
+- Added a new builder class for B-splines (BSpline::Builder)
+- Changed default architecture to x86-64
+- Added support for equidistant knot vectors (still experimental)
+- Added support for selecting the number of basis functions when constructing a B-spline
+- Added support for building splines with a regularization term (as an alternative to the P-spline)
+- Replaced all assertions with exceptions
+- Reworked MATLAB, Python, and C interfaces
+- Changed to Eigen version 3.2.8
+- Updated documentation
+
 #### Version 2.0
 - Automatic knot vector selection using moving average
 - Added PolynomialRegression (including MatLab interface)
