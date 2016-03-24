@@ -27,7 +27,6 @@ public:
      * Implemented in BSplineBuilder.*
      */
     class Builder;
-    enum class Degree;
     enum class Smoothing;
     enum class KnotSpacing;
 

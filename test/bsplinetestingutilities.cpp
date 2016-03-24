@@ -46,9 +46,9 @@ bool testKnotInsertion()
     DataTable samples = sampleTestFunction();
 
     // Build B-splines that interpolate the samples
-    BSpline bspline1 = BSpline::Builder(samples).degree(BSpline::Degree::LINEAR).build();
-    BSpline bspline2 = BSpline::Builder(samples).degree(BSpline::Degree::QUADRATIC).build();
-    BSpline bspline3 = BSpline::Builder(samples).degree(BSpline::Degree::CUBIC).build();
+    BSpline bspline1 = BSpline::Builder(samples).degree(1).build();
+    BSpline bspline2 = BSpline::Builder(samples).degree(2).build();
+    BSpline bspline3 = BSpline::Builder(samples).degree(3).build();
 
     BSpline bspline1_copy(bspline1);
     BSpline bspline2_copy(bspline2);
@@ -146,10 +146,10 @@ bool runRecursiveDomainReductionTest()
     DataTable samples = sampleTestFunction();
 
     // Build B-splines that interpolate the samples
-    BSpline bspline1 = BSpline::Builder(samples).degree(BSpline::Degree::LINEAR).build();
-    BSpline bspline2 = BSpline::Builder(samples).degree(BSpline::Degree::QUADRATIC).build();
-    BSpline bspline3 = BSpline::Builder(samples).degree(BSpline::Degree::CUBIC).build();
-    BSpline bspline4 = BSpline::Builder(samples).degree(BSpline::Degree::QUARTIC).build();
+    BSpline bspline1 = BSpline::Builder(samples).degree(1).build();
+    BSpline bspline2 = BSpline::Builder(samples).degree(2).build();
+    BSpline bspline3 = BSpline::Builder(samples).degree(3).build();
+    BSpline bspline4 = BSpline::Builder(samples).degree(4).build();
 
     if (!domainReductionTest(bspline1, bspline1))
         return false;

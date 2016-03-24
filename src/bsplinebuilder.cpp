@@ -21,7 +21,7 @@ namespace SPLINTER
 BSpline::Builder::Builder(const DataTable &data)
         :
         _data(data),
-        _degrees(getBSplineDegrees(data.getNumVariables(), Degree::CUBIC)),
+        _degrees(getBSplineDegrees(data.getNumVariables(), 3)),
         _numBasisFunctions(std::vector<unsigned int>(data.getNumVariables(), 0)),
         _knotSpacing(KnotSpacing::SAMPLE),
         _smoothing(Smoothing::NONE),

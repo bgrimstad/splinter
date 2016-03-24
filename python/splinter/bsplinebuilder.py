@@ -53,7 +53,7 @@ class BSplineBuilder:
         if len(degrees) != self._datatable.getNumVariables():
             raise ValueError("BSplineBuilder:degree: Inconsistent number of degrees.")
 
-        valid_degrees = range(1, 5)
+        valid_degrees = range(1, 6)
         for deg in degrees:
             if deg not in valid_degrees:
                 raise ValueError("BSplineBuilder:degree: Invalid degree: " + str(deg))

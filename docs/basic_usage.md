@@ -55,12 +55,12 @@ int main(int argc, char *argv[])
     }
 
     // Build B-splines that interpolate the samples
-    BSpline bspline1 = BSpline::Builder(samples).degree(BSpline::Degree::LINEAR).build();
-    BSpline bspline3 = BSpline::Builder(samples).degree(BSpline::Degree::CUBIC).build();
+    BSpline bspline1 = BSpline::Builder(samples).degree(1).build();
+    BSpline bspline3 = BSpline::Builder(samples).degree(3).build();
 
     // Build penalized B-spline (P-spline) that smooths the samples
     BSpline pspline = BSpline::Builder(samples)
-            .degree(BSpline::Degree::CUBIC)
+            .degree(3)
             .smoothing(BSpline::Smoothing::PSPLINE)
             .alpha(0.03)
             .build();

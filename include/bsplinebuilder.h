@@ -16,15 +16,6 @@
 namespace SPLINTER
 {
 
-// B-spline degrees
-enum class BSpline::Degree
-{
-    LINEAR,     // Linear basis functions in each variable
-    QUADRATIC,  // Quadratic basis functions in each variable
-    CUBIC,      // Cubic basis functions in each variable
-    QUARTIC     // Quartic basis functions in each variable
-};
-
 // B-spline smoothing
 enum class BSpline::Smoothing
 {
@@ -34,6 +25,14 @@ enum class BSpline::Smoothing
 };
 
 // B-spline knot spacing
+/*
+ * To be changed to:
+ * AS_SAMPLED               // Place knots close to sample points. Not clamped.
+ * AS_SAMPLED_CLAMPED       // Place knots close to sample points. With clamps (p+1 repeats on each side). Default.
+ * EQUIDISTANT              // Equidistant knots, not clamped
+ * EQUIDISTANT_CLAMPED      // Equidistant knots with clamps (p+1 repeats on each side)
+ * EXPERIMENTAL             // For testing
+ */
 enum class BSpline::KnotSpacing
 {
     SAMPLE,         // Knot spacing mimicking sample spacing (moving average)
@@ -57,7 +56,8 @@ public:
     }
 
     // Set build options
-    Builder& degree(Degree degree)
+
+    Builder& degree(unsigned int degree)
     {
         _degrees = getBSplineDegrees(_data.getNumVariables(), degree);
         return *this;
@@ -103,21 +103,11 @@ public:
 private:
     Builder();
 
-    std::vector<unsigned int> getBSplineDegrees(unsigned int numVariables, Degree degree)
+    std::vector<unsigned int> getBSplineDegrees(unsigned int numVariables, unsigned int degree)
     {
-        switch (degree)
-        {
-            case Degree::LINEAR:
-                return std::vector<unsigned int>(numVariables, 1);
-            case Degree::QUADRATIC:
-                return std::vector<unsigned int>(numVariables, 2);
-            case Degree::CUBIC:
-                return std::vector<unsigned int>(numVariables, 3);
-            case Degree::QUARTIC:
-                return std::vector<unsigned int>(numVariables, 4);
-            default:
-                return std::vector<unsigned int>(numVariables, 3);
-        }
+        if (degree < 1 || degree > 5)
+            throw Exception("BSpline::Builder: Only degrees in range [1, 5] are supported.");
+        return std::vector<unsigned int>(numVariables, degree);
     }
 
     // Control point computations
