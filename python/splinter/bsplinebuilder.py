@@ -13,12 +13,6 @@ from .datatable import DataTable
 
 
 class BSplineBuilder:
-    class Degree:
-        LINEAR, QUADRATIC, CUBIC, QUARTIC = range(1, 5)
-
-        @staticmethod
-        def isValid(value):
-            return value in range(1, 5)
 
     class Smoothing:
         NONE, REGULARIZATION, PSPLINE = range(3)
@@ -34,7 +28,7 @@ class BSplineBuilder:
         def isValid(value):
             return value in range(3)
 
-    def __init__(self, data, degree=Degree.CUBIC, smoothing=Smoothing.NONE, alpha=0.1, knotSpacing=KnotSpacing.SAMPLE):
+    def __init__(self, data, degree=3, smoothing=Smoothing.NONE, alpha=0.1, knotSpacing=KnotSpacing.SAMPLE):
         self._handle = None  # Handle for referencing the c side of this object
         self._datatable = DataTable(data)
         self._numBasisFunctions = [10**3] * self._datatable.getNumVariables()
@@ -59,9 +53,10 @@ class BSplineBuilder:
         if len(degrees) != self._datatable.getNumVariables():
             raise ValueError("BSplineBuilder:degree: Inconsistent number of degrees.")
 
-        for degree in degrees:
-            if not BSplineBuilder.Degree.isValid(degree):
-                raise ValueError("BSplineBuilder:degree: Invalid degree: " + str(degree))
+        valid_degrees = range(1, 5)
+        for deg in degrees:
+            if deg not in valid_degrees:
+                raise ValueError("BSplineBuilder:degree: Invalid degree: " + str(deg))
 
         self._degrees = degrees
 
@@ -95,7 +90,7 @@ class BSplineBuilder:
         return self
 
     def smoothing(self, smoothing):
-        if not BSplineBuilder.KnotSpacing.isValid(smoothing):
+        if not BSplineBuilder.Smoothing.isValid(smoothing):
             raise ValueError("BSplineBuilder::smoothing: Invalid smoothing: " + str(smoothing))
 
         self._smoothing = smoothing
