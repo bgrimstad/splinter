@@ -5,17 +5,14 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+# Add the SPLINTER directory to the search path, so we can include it
 import numpy as np
 import matplotlib.pyplot as plt
 from os import sys, path, remove
-
-# Add the SPLINTER directory to the search path, so we can include it
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-
 import splinter
 
-# Load SPLINTER
-# splinter.load("/home/bjarne/Code/C++/splinter/splinter/build/Release/libsplinter-2-0.so")
+# Only for dev purposes
 splinter.load("/home/bjarne/Code/C++/splinter4/splinter/bin/Release/libsplinter-2-0.so")
 
 

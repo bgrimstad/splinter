@@ -11,13 +11,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from os import sys, path, remove
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-
-
-##### Start of the example #####
 import splinter
 
+# Only for dev purposes
 splinter.load("/home/bjarne/Code/C++/splinter4/splinter/bin/Release/libsplinter-2-0.so")
-#splinter.load("/home/anders/SPLINTER/build/debug/libsplinter-2-0.so")
 
 
 # Example with one variable
@@ -30,6 +27,9 @@ for i in range(len(x)):
     y[i] = f1(x[i])
 d1 = list(zip(x, y))
 
+# Piecewise constant B-spline that interpolates the data
+b0 = splinter.BSplineBuilder(d1, degree=0).build()
+
 # Linear B-spline that interpolates the data
 b1 = splinter.BSplineBuilder(d1, degree=1).build()
 
@@ -40,11 +40,13 @@ b2 = splinter.BSplineBuilder(d1, degree=2).build()
 b3 = splinter.BSplineBuilder(d1, degree=3).build()
 
 xd = np.arange(0, 10, .01)
+yd0 = b0.eval(list(xd))
 yd1 = b1.eval(list(xd))
 yd2 = b2.eval(list(xd))
 yd3 = b3.eval(list(xd))
 
 plt.plot(x, y, '*', label='Data points')
+plt.plot(xd, yd0, label='Piecewise constant B-spline')
 plt.plot(xd, yd1, label='Linear B-spline')
 plt.plot(xd, yd2, '--', label='Quadratic B-spline')
 plt.plot(xd, yd3, '-.', label='Cubic B-spline')
