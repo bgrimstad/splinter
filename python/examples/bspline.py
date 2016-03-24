@@ -36,7 +36,7 @@ b1 = splinter.BSplineBuilder(d1, degree=1).build()
 # Quadratic B-spline that interpolates the data
 b2 = splinter.BSplineBuilder(d1, degree=2).build()
 
-# Cubic P-spline that interpolates the data
+# Cubic B-spline that interpolates the data
 b3 = splinter.BSplineBuilder(d1, degree=3).build()
 
 xd = np.arange(0, 10, .01)

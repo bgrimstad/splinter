@@ -6,77 +6,31 @@ The workflow to construct an approximation is simple: sample a function and cons
 ![Possible workflow with SPLINTER.](../assets/workflow.png)
 Figure: A possible workflow for building approximations with SPLINTER.
 
-The header files and classes intended for the end user of this library are:
-[DataTable](../include/datatable.h), [BSpline](../include/bspline.h), [BSplineBuilder](../include/bsplinebuilder.h).
+##B-splines
+The [tensor product B-spline](http://en.wikipedia.org/wiki/B-spline) is a powerful tool for multivariable function interpolation and data smoothing. It is constructed from B-spline basis functions, which are piecewise polynomial functions with a high degree of smoothness.
 
-This is a simple example demonstrating the use of SPLINTER.
+The B-spline may approximate any sampled multivariate function. The user may construct a linear (degree 1), quadratic (degree 2), cubic (degree 3) or higher degree B-spline that smoothes or interpolates the data. The B-spline is constructed from the samples by solving a linear system. On a modern desktop computer the practical limit on the number of samples is about 100 000 when constructing a B-spline. This translates to a practical limit of 5-6 variables. Evaluation time, however, is independent of the number of samples due to the local support property of B-splines. That is, only samples neighbouring the evaluation point affect the B-spline value. Evaluation do however scale with the degree and number of variables of the B-spline.
 
-Remember to compile with a C++11 compatible compiler! That means you probably have to add a flag when compiling.
-
-```c++
-#include <iostream>
-#include "datatable.h"
-
-using std::cout;
-using std::endl;
-
-using namespace SPLINTER;
-
-// Six-hump camelback function
-double f(DenseVector x)
-{
-    assert(x.rows() == 2);
-    return (4 - 2.1*x(0)*x(0)
-            + (1/3.)*x(0)*x(0)*x(0)*x(0))*x(0)*x(0)
-           + x(0)*x(1)
-           + (-4 + 4*x(1)*x(1))*x(1)*x(1);
-}
-
-int main(int argc, char *argv[])
-{
-    // Create new DataTable to manage samples
-    DataTable samples;
-
-    // Sample the function
-    DenseVector x(2);
-    double y;
-    for(int i = 0; i < 20; i++)
-    {
-        for(int j = 0; j < 20; j++)
-        {
-            // Sample function at x
-            x(0) = i*0.1;
-            x(1) = j*0.1;
-            y = f(x);
-
-            // Store sample
-            samples.addSample(x,y);
-        }
-    }
-
-    // Build B-splines that interpolate the samples
-    BSpline bspline1 = BSpline::Builder(samples).degree(1).build();
-    BSpline bspline3 = BSpline::Builder(samples).degree(3).build();
-
-    // Build penalized B-spline (P-spline) that smooths the samples
-    BSpline pspline = BSpline::Builder(samples)
-            .degree(3)
-            .smoothing(BSpline::Smoothing::PSPLINE)
-            .alpha(0.03)
-            .build();
-
-    /* Evaluate the approximants at x = (1,1)
-     * Note that the error will be 0 at that point (except for the P-spline, which may introduce an error
-     * in favor of a smooth approximation) because it is a point we sampled at.
-     */
-    x(0) = 1; x(1) = 1;
-    cout << "-----------------------------------------------------" << endl;
-    cout << "Function at x:                 " << f(x)               << endl;
-    cout << "Linear B-spline at x:          " << bspline1.eval(x)   << endl;
-    cout << "Cubic B-spline at x:           " << bspline3.eval(x)   << endl;
-    cout << "P-spline at x:                 " << pspline.eval(x)    << endl;
-    cout << "-----------------------------------------------------" << endl;
-
-    return 0;
-}
+The following Python example shows how to build a quadratic B-spline:
 ```
+bspline = splinter.BSplineBuilder(data, degree=2).build()
+```
+In this example the B-spline `bspline` is built from a dataset called `data`, usually assumed to contain data points on a regular grid. Note that SPLINTER do accept datasets of points not lying on a regular grid, but the behavior is then experimental and currently not advised.
+
+![Comparison of a linear, quadratic and cubic B-spline](../assets/bspline_degrees.png)
+
+Figure: Comparison of a linear, quadratic and cubic B-spline. The linear B-spline is continuous, the quadratic B-spline is continuously differentiable, and the cubic B-spline has a continous second order derivative.
+
+The user may create a penalized B-spline (P-spline) that smooths the data instead of interpolating it. The construction of a P-spline is more computationally demanding than the B-spline - a large least-square problem must be solved - bringing the practical limit on the number of samples down to about 10 000. The following Python example shows the construction of a P-spline with the smoothing parameter (alpha) set to 0.1.
+```
+bspline = splinter.BSplineBuilder(data, smoothing=splinter.BSplineBuilder.Smoothing.PSPLINE, alpha=0.1).build()
+```
+
+An alternative to the P-spline, that also may reduce the variation in the B-spline is to use [Tikhonov regularization](http://en.wikipedia.org/wiki/Tikhonov_regularization). A quadratic penalty on the coefficients is then added to the OLS objective function. Regularization may be used to decrease the effect of overfitting. Currently, SPLINTER uses an identity matrix as the Tikhonov matrix. The smoothing parameter (alpha) can be set as shown in the following Python example where a cubic B-spline is built.
+```
+bspline = splinter.BSplineBuilder(data, smoothing=splinter.BSplineBuilder.Smoothing.IDENTITY, alpha=0.1).build()
+```
+
+![Comparison of an interpolating B-spline, regularized B-spline, and P-spline](../assets/bspline_regularization.png)
+
+Figure: Comparison of an interpolating B-spline, regularized B-spline, and a smoothed B-spline (P-spline). All B-splines are cubic (have basis functions of degree 3).

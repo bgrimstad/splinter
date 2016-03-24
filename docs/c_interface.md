@@ -1,7 +1,5 @@
 ##C interface
-As part of making the MatLab and Python interface we have also made a C interface to the library. The MatLab and Python interfaces make all their calls through this interface, but you can still use it if you want to.
-The function names are subject to change (and probably will, because we want to camelCase the function names), and the interface currently pollutes your namespace quite a bit.
-If you do want to use it, however, note that almost all functions emulate object oriented languages by taking a splinter_obj_ptr as the first argument, and then the rest of the arguments after that.
+As part of making the MATLAB and Python interface we have also made a C interface to the library. The MATLAB and Python interfaces make all their calls through this interface, but you can still use it if you want to. The function names are subject to change (and probably will, because we want to camelCase the function names), and the interface currently pollutes your namespace quite a bit. If you do want to use it, however, note that almost all functions emulate object oriented languages by taking a splinter_obj_ptr as the first argument, and then the rest of the arguments after that.
 splinter_obj_ptr is currently defined as
 ```c
 typedef void *splinter_obj_ptr;
