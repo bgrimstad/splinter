@@ -10,6 +10,7 @@
 #include "cinterface/cinterface.h"
 #include "cinterface/utilities.h"
 #include "datatable.h"
+//#include <fstream>
 
 using namespace SPLINTER;
 
@@ -50,6 +51,7 @@ void splinter_datatable_add_samples_row_major(splinter_obj_ptr datatable_ptr, do
     {
         try
         {
+//            std::ofstream out("test.txt");
             DenseVector vec(x_dim);
             for (int i = 0; i < n_samples; ++i)
             {
@@ -59,15 +61,15 @@ void splinter_datatable_add_samples_row_major(splinter_obj_ptr datatable_ptr, do
                     vec(offset) = x[sample_start + offset];
                 }
 
-//            std::cout << "Adding sample: (";
-//            for(int l = 0; l < vec.size(); l++)
-//            {
-//                if(l != 0)
-//                    std::cout << ",";
-//                std::cout << vec(l);
-//            }
-//            std::cout << ") = ";
-//            std::cout << x[sample_start + x_dim] << std::endl;
+//                out << "Adding sample: (";
+//                for(int l = 0; l < vec.size(); l++)
+//                {
+//                    if(l != 0)
+//                        out << ",";
+//                    out << vec(l);
+//                }
+//                out << ") = ";
+//                out  << x[sample_start + x_dim] << std::endl;
 
                 dataTable->addSample(vec, x[sample_start + x_dim]);
             }
@@ -79,32 +81,33 @@ void splinter_datatable_add_samples_row_major(splinter_obj_ptr datatable_ptr, do
     }
 }
 
-void splinter_datatable_add_samples_col_major(splinter_obj_ptr datatable_ptr, double *x, int n_samples, int x_dim, int size)
+void splinter_datatable_add_samples_col_major(splinter_obj_ptr datatable_ptr, double *x, int n_samples, int x_dim)
 {
     auto dataTable = get_datatable(datatable_ptr);
     if (dataTable != nullptr)
     {
         try
         {
+//            std::ofstream out("test.txt");
             DenseVector vec(x_dim);
             for (int i = 0; i < n_samples; ++i)
             {
                 for (int j = 0; j < x_dim; ++j)
                 {
-                    vec(j) = x[i + j * size];
+                    vec(j) = x[i + j * n_samples];
                 }
 
-//            std::cout << "Adding sample: (";
-//            for(int l = 0; l < vec.size(); l++)
-//            {
-//                if(l != 0)
-//                    std::cout << ",";
-//                std::cout << vec(l);
-//            }
-//            std::cout << ") = ";
-//            std::cout << x[i + x_dim * size] << std::endl;
+//                out << "Adding sample: (";
+//                for(int l = 0; l < vec.size(); l++)
+//                {
+//                    if(l != 0)
+//                        out << ",";
+//                    out << vec(l);
+//                }
+//                out << ") = ";
+//                out  << x[i + x_dim * n_samples] << std::endl;
 
-                dataTable->addSample(vec, x[i + x_dim * size]);
+                dataTable->addSample(vec, x[i + x_dim * n_samples]);
             }
         }
         catch(const Exception &e)

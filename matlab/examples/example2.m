@@ -5,6 +5,9 @@
 % License, v. 2.0. If a copy of the MPL was not distributed with this
 % file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+% Load SPLINTER (make sure you have SPLINTER in your PATH before this call)
+setup()
+
 % B-spline regression of noisy sine function
 close all
 
@@ -12,33 +15,27 @@ close all
 myfunc = @(x) sin(x) + normrnd(0, 0.5);
 
 % Coarse grid for with sample points
-N = 1000;
+N = 10;
 xstart = 0;
 xend = 4*pi;
-x = linspace(xstart,xend,N);
-y = zeros(1,N);
+x = linspace(xstart,xend,N)';
+y = zeros(N,1);
 for i = 1:N
     y(i) = myfunc(x(i));
 end
 
 % Fine grid for plotting and evaluation of errors
-Nd = N;
+Nd = 1000;
 xd = linspace(xstart,xend,Nd);
 yd = zeros(Nd,1);
 for i = 1:Nd
     yd(i) = myfunc(xd(i));
 end
 
-% Sample function
-d = DataTable;
-for i = 1:N
-  d.add_sample(x(i), y(i));
-end
-
 % Build approximations
-approx1 = BSpline(d, BSplineType.Linear);
-approx2 = BSpline(d, BSplineType.Quadratic);
-approx3 = BSpline(d, BSplineType.Cubic);
+bspline1 = BSplineBuilder(x, y, 1).build();
+bspline2 = BSplineBuilder(x, y, 2).build();
+bspline3 = BSplineBuilder(x, y, 3).build();
 
 % Evaluate approximations
 yad1 = zeros(Nd,1);
@@ -47,14 +44,14 @@ yad3 = zeros(Nd,1);
 % error1 = approx1;
 
 for i = 1:Nd
-    yad1(i) = approx1.eval(xd(i));
-    yad2(i) = approx2.eval(xd(i));
-    yad3(i) = approx3.eval(xd(i));
+    yad1(i) = bspline1.eval(xd(i));
+    yad2(i) = bspline2.eval(xd(i));
+    yad3(i) = bspline3.eval(xd(i));
 end
 
 % Plot sample points and approximations
 figure
-plot(x,y,'.k')
+plot(x,y,'*k')
 hold on
 plot(xd,yad1,'--k')
 plot(xd,yad2,'-.k')

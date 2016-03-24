@@ -6,23 +6,25 @@
 % file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 function setup()
-    %splinter_path = '/home/anders/SPLINTER/build/release/splinter-matlab';
     p = mfilename('fullpath');
-    [upperPath, deepestFolder, ~] = fileparts(p);
-    [upperPath, deepestFolder, ~] = fileparts(upperPath);
-    splinter_path = upperPath;
+    [upper_path, ~, ~] = fileparts(p);
+    [upper_path, ~, ~] = fileparts(upper_path);
+    splinter_path = upper_path;
+    
+    % development / debug use
+    %splinter_path = '/home/anders/SPLINTER/build/debug/splinter-matlab';
     
     % Read version file. Name of library file depends on the version.
-    versionFile = fullfile(splinter_path, 'version');
-    versionFileId = fopen(versionFile, 'r');
-    version = fscanf(versionFileId, '%d-%d');
-    fclose(versionFileId);
+    version_file = fullfile(splinter_path, 'version');
+    version_file_id = fopen(version_file, 'r');
+    version = fscanf(version_file_id, '%d-%d');
+    fclose(version_file_id);
     
-    majorVersion = version(1);
-    minorVersion = version(2);
+    major_version = version(1);
+    minor_version = version(2);
 
-    % Add the directory containing the MatLab interface of SPLINTER to the
-    % search path that MatLab searches through to find .m files.
+    % Add the directory containing the MATLAB interface of SPLINTER to the
+    % search path that MATLAB searches through to find .m files.
     addpath(fullfile(splinter_path, 'matlab'));
 
     windows = ispc();
@@ -36,27 +38,26 @@ function setup()
     end
 
     % Header file is at the same location no matter the OS
-    headerFile = fullfile(splinter_path, 'include', 'cinterface.h');
+    header_file = fullfile(splinter_path, 'include', 'cinterface.h');
 
-    libBaseName = strcat('splinter-', int2str(majorVersion));
-    libBaseName = strcat(libBaseName, '-');
-    libBaseName = strcat(libBaseName, int2str(minorVersion));
+    lib_base_name = strcat('splinter-', int2str(major_version));
+    lib_base_name = strcat(lib_base_name, '-');
+    lib_base_name = strcat(lib_base_name, int2str(minor_version));
     
     if(windows)
-        libFileDir = fullfile(splinter_path, 'lib', 'windows', arch);
-        libFile = fullfile(libFileDir, strcat(libBaseName, '.dll'));
+        lib_file_dir = fullfile(splinter_path, 'lib', 'windows', arch);
+        lib_file = fullfile(lib_file_dir, strcat(lib_base_name, '.dll'));
     elseif(linux)
-        libFileDir = fullfile(splinter_path, 'lib', 'linux', arch);
-        libFile = fullfile(libFileDir, strcat('lib', strcat(libBaseName), '.so'));
+        lib_file_dir = fullfile(splinter_path, 'lib', 'linux', arch);
+        lib_file = fullfile(lib_file_dir, strcat('lib', strcat(lib_base_name), '.so'));
     elseif(mac)
-        libFileDir = fullfile(splinter_path, 'lib', 'osx', arch);
-        libFile = fullfile(libFileDir, strcat('lib', strcat(libBaseName), '.so'));
+        lib_file_dir = fullfile(splinter_path, 'lib', 'osx', arch);
+        lib_file = fullfile(lib_file_dir, strcat('lib', strcat(lib_base_name), '.so'));
     else
-        libFileDir = fullfile(splinter_path, 'lib', 'linux', arch);
-        libFile = fullfile(libFileDir, strcat('lib', strcat(libBaseName), '.so'));
+        lib_file_dir = fullfile(splinter_path, 'lib', 'linux', arch);
+        lib_file = fullfile(lib_file_dir, strcat('lib', strcat(lib_base_name), '.so'));
     end
 
     % The Splinter class is implemented as a Singleton
-    s = Splinter.getInstance();
-    s.load(libFile, headerFile);
+    Splinter.get_instance().load(lib_file, header_file);
 end

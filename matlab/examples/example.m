@@ -5,6 +5,9 @@
 % License, v. 2.0. If a copy of the MPL was not distributed with this
 % file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+% Load SPLINTER (make sure you have SPLINTER in your PATH before this call)
+setup()
+
 % Example where the Rosenbrock function is approximated
 close all
 
@@ -35,18 +38,22 @@ zlim([0,3000]);
 view(210, 30);
 
 % Sample function
-d = DataTable;
+xs = zeros(length(x)*length(y), 2);
+ys = zeros(length(x)*length(y), 1);
+i = 1;
 for xi = x
    for yi = y
-      d.add_sample([xi yi], rosenbrock(xi,yi));
+      xs(i,:) = [xi yi];
+      ys(i) = rosenbrock(xi, yi);
+      i = i + 1;
    end
 end
 
 % Build approximations
-approximator1 = BSpline(d, BSplineType.Linear);
-approximator2 = BSpline(d, BSplineType.Quadratic);
-approximator3 = BSpline(d, BSplineType.Cubic);
-approximator4 = BSpline(d, BSplineType.Quartic);
+bspline1 = BSplineBuilder(xs, ys, 1).build();
+bspline2 = BSplineBuilder(xs, ys, 2).build();
+bspline3 = BSplineBuilder(xs, ys, 3).build();
+bspline4 = BSplineBuilder(xs, ys, 4).build();
 
 % Evaluate approximations and compute errors
 approx1 = zeros(Nd,Nd);
@@ -67,13 +74,13 @@ for xi = xd
     for yi = yd
         exact = rosenbrock(xi,yi);
         
-        approx1(i,j) = approximator1.eval([xi yi]);
+        approx1(i,j) = bspline1.eval([xi yi]);
         error1(i,j) = (approx1(i,j) - exact);
-        approx2(i,j) = approximator2.eval([xi yi]);
+        approx2(i,j) = bspline2.eval([xi yi]);
         error2(i,j) = (approx2(i,j) - exact);
-        approx3(i,j) = approximator3.eval([xi yi]);
+        approx3(i,j) = bspline3.eval([xi yi]);
         error3(i,j) = (approx3(i,j) - exact);
-        approx4(i,j) = approximator4.eval([xi yi]);
+        approx4(i,j) = bspline4.eval([xi yi]);
         error4(i,j) = (approx4(i,j) - exact);
         
         j = j+1;
@@ -138,7 +145,7 @@ disp('Max error with linear spline:');
 abserror1 = max(max(abs(error1)));
 abserror1
 
-disp('Max error with cubic spline:');
+disp('Max error with quadratic spline:');
 abserror2 = max(max(abs(error2)));
 abserror2
 
@@ -146,7 +153,7 @@ disp('Max error with cubic spline:');
 abserror3 = max(max(abs(error3)));
 abserror3
 
-disp('Max error with cubic spline:');
+disp('Max error with quartic spline:');
 abserror4 = max(max(abs(error4)));
 abserror4
 
@@ -157,7 +164,7 @@ disp('Max relative error with linear spline:');
 relerror1 = abserror1/rangef;
 relerror1
 
-disp('Max relative error with cubic spline:');
+disp('Max relative error with quadratic spline:');
 relerror2 = max(max(abs(error2)))/rangef;
 relerror2
 
@@ -165,6 +172,6 @@ disp('Max relative error with cubic spline:');
 relerror3 = max(max(abs(error3)))/rangef;
 relerror3
 
-disp('Max relative error with cubic spline:');
+disp('Max relative error with quartic spline:');
 relerror4 = max(max(abs(error4)))/rangef;
 relerror4

@@ -78,9 +78,8 @@ SPLINTER_API void splinter_datatable_add_samples_row_major(splinter_obj_ptr data
  * @param x Pointer to the start of the samples.
  * @param n_samples Number of samples to add.
  * @param x_dim The dimension of each point (that is, the sample size - 1).
- * @param size The size of each sample (that is, x_dim + 1)
  */
-SPLINTER_API void splinter_datatable_add_samples_col_major(splinter_obj_ptr datatable_ptr, double *x, int n_samples, int x_dim, int size);
+SPLINTER_API void splinter_datatable_add_samples_col_major(splinter_obj_ptr datatable_ptr, double *x, int n_samples, int x_dim);
 
 /**
  * Get the number of variables (dimension of the samples) in the datatable.

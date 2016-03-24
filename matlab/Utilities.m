@@ -12,30 +12,36 @@ classdef Utilities
         % data as MatLab, so be careful not to modify it in C (unless you
         % know what you're doing, in which case you wouldn't have bothered
         % about this warning anyway).
-        function r = matrixToCArray(mat)
-            libP = libpointer('doublePtr', mat);
-            reshape(libP, 1, numel(mat));
-            r = libP;
+        function r = matrix_to_c_array(mat)
+            lib_p = libpointer('doublePtr', mat);
+            reshape(lib_p, 1, numel(mat));
+            r = lib_p;
         end
         
-        % Returns a MatLab matrix of size numRowsxnumCols with the data
-        % from the C array of doubles cArray.
+        function r = matrix_to_c_uint_array(mat)
+            lib_p = libpointer('uint32Ptr', mat);
+            reshape(lib_p, 1, numel(mat));
+            r = lib_p;
+        end
+        
+        % Returns a MatLab matrix of size num_rows x num_cols with the data
+        % from the C array of doubles c_array.
         % The underlying data is probably the same as is the case with
         % matrixToCArray, but we have not researched it, so don't take our
         % word for it.
-        function r = cArrayToMatrix(cArray, numRows, numCols)
-            reshape(cArray, numRows, numCols);
-            r = cArray.value;
+        function r = c_array_to_matrix(c_array, num_rows, num_cols)
+            reshape(c_array, num_rows, num_cols);
+            r = c_array.value;
         end
         
-        % Returns a MatLab matrix of size numRowsxnumColsxnumPages with the
-        % data from the C array of doubles cArray.
+        % Returns a MatLab matrix of size num_rows x num_cols x num_pages
+        % with the data from the C array of doubles c_array.
         % The underlying data is probably the same as is the case with
         % matrixToCArray, but we have not researched it, so don't take our
         % word for it.
-        function r = cArrayTo3dMatrix(cArray, numRows, numCols, numPages)
-            reshape(cArray, numRows, numCols*numPages);
-            r = reshape(cArray.value, numRows, numCols, numPages);
+        function r = c_array_to_3d_matrix(c_array, num_rows, num_cols, num_pages)
+            reshape(c_array, num_rows, num_cols*num_pages);
+            r = reshape(c_array.value, num_rows, num_cols, num_pages);
         end
     end
 end
