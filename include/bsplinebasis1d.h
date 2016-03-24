@@ -66,7 +66,10 @@ private:
     // Builds basis matrix for alternative evaluation of basis functions
     SparseMatrix buildBasisMatrix(double x, unsigned int u, unsigned int k, bool diff = false) const;
 
-    // Builds knot insertion matrix
+    /*
+     * Builds knot insertion matrix
+     * Implements Oslo Algorithm 1 from Lyche and Moerken (2011). Spline methods draft.
+     */
     SparseMatrix buildKnotInsertionMatrix(const std::vector<double> &refinedKnots) const;
 
     // Helper functions
