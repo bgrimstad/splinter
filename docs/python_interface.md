@@ -70,8 +70,6 @@ Notice that if you are going to evaluate the approximant in more than one point,
 When you are done populating the DataTable you can create an Approximant of your choosing:
 - BSpline
 - PSpline
-- RadialBasisFunction
-- PolynomialRegression
 
 All these derive from the Approximant base class, and their usage mainly differ in the signature of the constructor.
 

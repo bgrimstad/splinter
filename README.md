@@ -1,7 +1,7 @@
 ##SPLINTER
 SPLINTER (SPLine INTERpolation) is a library for *multivariate function approximation with splines*. The library can be used for function approximation, regression, data smoothing, data reduction, and much more. Spline approximations are represented by a powerful C++ implementation of the [tensor product B-spline](docs/bspline.md).
 
-The B-spline is built from piecewise polynomial basis functions and offers a high flexibility and smoothness. The B-spline can be fitted using ordinary least squares (OLS), possibly with regularization. The library also offers construction of penalized splines (P-splines).
+The B-spline consists of piecewise polynomial basis functions, offering a high flexibility and smoothness. The B-spline can be fitted to data using ordinary least squares (OLS), possibly with regularization. The library also offers construction of penalized splines (P-splines).
 
 ![Illustration of a B-spline](assets/bspline.png)
 Figure: Illustration of a bicubic B-spline generated with the SPLINTER library.
@@ -12,7 +12,7 @@ SPLINTER is the result of several years of development towards a fast and genera
 By making SPLINTER publicly available we hope to help anyone looking for a multivariate function approximation library. In return, we expect nothing but your suggestions, improvements, and feature requests. If you use SPLINTER in a scientific work we kindly ask you to cite it. You can cite it as shown in the bibtex entry below (remember to update the date accessed).
 ```
 @misc{SPLINTER,
-  title={{SPLINTER: a library for multivariate function approximation}},
+  title={{SPLINTER: a library for multivariate function approximation with splines}},
   author={Bjarne Grimstad and others},
   howpublished={\url{http://github.com/bgrimstad/splinter}},
   year={2015},
@@ -25,8 +25,8 @@ Everyone is welcome to use and contribute to SPLINTER. We believe that collectiv
 The current goals with the library are:
 
 1. To make the library more accessible by improving the interfaces and documentation
-2. To improve the current code via testing
-3. To implement new B-spline features
+2. To implement new features
+3. To improve the current code via testing
 
 The simplest way to contribute to SPLINTER is to use it and give us feedback on the experience. If you would like to contribute by coding, you can get started by picking a suitable issue from the [list of issues](https://github.com/bgrimstad/splinter/issues). The issues are labeled with the type of work (`Bug`, `Docs`, `Enhancement`, `New feature`, `Refactoring`, `Tests`) and level of difficulty (`Beginner`, `Intermediate`, `Advanced`). Some issues are also labeled as `Critical`, which means that they deserve our attention and prioritization.
 
@@ -35,7 +35,8 @@ A standards compliant C++11 compiler.
 
 ###Guides
 * [Basic usage](docs/basic_usage.md)
+* [C++ interface](docs/cpp_interface.md)
+* [MatLab interface](docs/matlab_interface.md)
+* [Python interface](docs/python_interface.md)
+* [C interface](docs/c_interface.md)
 * [Compilation](docs/compile.md)
-* [MatLab interface](docs/MATLAB.md)
-* [Python interface](docs/python.md)
-* [C interface](docs/C.md)
