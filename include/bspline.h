@@ -118,8 +118,8 @@ public:
     // Decompose B-spline to Bezier form
     void decomposeToBezierForm();
 
-    // Insert a knot with a given multiplicity
-    void insertKnots(double tau, unsigned int dim, unsigned int multiplicity = 1); // TODO: move back to private after testing
+    // Insert a knot until desired knot multiplicity is obtained
+    void insertKnots(double tau, unsigned int dim, unsigned int multiplicity = 1);
 
     void save(const std::string &fileName) const override;
 

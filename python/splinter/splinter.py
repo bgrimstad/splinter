@@ -164,6 +164,12 @@ def __init():
     _getHandle().splinter_bspline_delete.restype = None
     _getHandle().splinter_bspline_delete.argtypes = [handle_type]
 
+    _getHandle().splinter_bspline_insert_knots.restype = None
+    _getHandle().splinter_bspline_insert_knots.argtypes = [handle_type, c_double, c_int, c_int]
+
+    _getHandle().splinter_bspline_decompose_to_bezier_form.restype = None
+    _getHandle().splinter_bspline_decompose_to_bezier_form.argtypes = [handle_type]
+
 
 # Try to locate SPLINTER relative to this script
 # Assumes the Python interface of splinter has the following directory structure:

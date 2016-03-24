@@ -88,6 +88,13 @@ class BSpline(Function):
 
         return CArrayToList(basis_degrees, num_vars)
 
+    def insertKnots(self, val, dim, multiplicity=1):
+        """
+        Insert knot at 'val' to knot vector for variable 'dim'. The knot is inserted until a knot multiplicity of
+        'multiplicity' is obtained.
+        """
+        splinter._call(splinter._getHandle().splinter_bspline_insert_knots, self._handle, val, dim, multiplicity)
+
     def decomposeToBezierForm(self):
         """
         Insert knots until all knots have multiplicity degree + 1. This ensures that the polynomial pieces are not

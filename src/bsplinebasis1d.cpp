@@ -25,8 +25,8 @@ BSplineBasis1D::BSplineBasis1D(const std::vector<double> &knots, unsigned int de
       knots(knots),
       targetNumBasisfunctions((degree+1)+2*degree+1) // Minimum p+1
 {
-    if (degree <= 0)
-        throw Exception("BSplineBasis1D::BSplineBasis1D: Cannot create B-spline basis functions of degree <= 0.");
+//    if (degree <= 0)
+//        throw Exception("BSplineBasis1D::BSplineBasis1D: Cannot create B-spline basis functions of degree <= 0.");
 
     // NOTE: this exception is too strict (multiple start and end knots should not be required)
     if (!isKnotVectorRegular(knots, degree))
@@ -410,36 +410,37 @@ SparseMatrix BSplineBasis1D::buildKnotInsertionMatrix(const std::vector<double> 
     unsigned int n = knots.size() - degree - 1;
     unsigned int m = knotsAug.size() - degree - 1;
 
-    SparseMatrix A(m,n);
+    SparseMatrix A(m, n);
     //A.resize(m,n);
-    A.reserve(Eigen::VectorXi::Constant(n,degree+1));
+    A.reserve(Eigen::VectorXi::Constant(n, degree + 1));
 
     // Build A row-by-row
     for (unsigned int i = 0; i < m; i++)
     {
         int u = indexHalfopenInterval(knotsAug.at(i));
 
-        // Assuming that p > 0
         SparseMatrix R(1,1);
         R.insert(0,0) = 1;
+
+        // For p > 0
         for (unsigned int j = 1; j <= degree; j++)
         {
-            SparseMatrix Ri = buildBasisMatrix(knotsAug.at(i+j), u, j);
+            SparseMatrix Ri = buildBasisMatrix(knotsAug.at(i + j), u, j);
             R = R*Ri;
         }
 
         // Size check
-        if (R.rows() != 1 || R.cols() != (int)degree+1)
+        if (R.rows() != 1 || R.cols() != (int)degree + 1)
         {
             throw Exception("BSplineBasis1D::buildKnotInsertionMatrix: Incorrect matrix dimensions!");
         }
 
         // Insert row values
-        int j = u-degree; // First insertion index
+        int j = u - degree; // First insertion index
         for (int k = 0; k < R.outerSize(); ++k)
-        for (SparseMatrix::InnerIterator it(R,k); it; ++it)
+        for (SparseMatrix::InnerIterator it(R, k); it; ++it)
         {
-            A.insert(i,j+it.col()) = it.value();
+            A.insert(i, j + it.col()) = it.value();
         }
     }
 

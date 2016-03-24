@@ -339,6 +339,16 @@ SPLINTER_API void splinter_bspline_save(splinter_obj_ptr bspline_ptr, const char
  */
 SPLINTER_API void splinter_bspline_delete(splinter_obj_ptr bspline_ptr);
 
+/**
+ * Insert knots at tau of multiplicity 'multiplicity' to knot vector in variable 'dim'. The B-spline is geometrically
+ * unaltered by the knot insertion.
+ *
+ * @param bspline_ptr Pointer to the BSpline to evaluate.
+ * @param tau Knot to insert
+ * @param dim Knot vector to insert knots
+ * @param multiplicity Desired multiplicity of knot
+ */
+SPLINTER_API void splinter_bspline_insert_knots(splinter_obj_ptr bspline_ptr, double tau, unsigned int dim, unsigned int multiplicity);
 
 SPLINTER_API void splinter_bspline_decompose_to_bezier_form(splinter_obj_ptr bspline_ptr);
 

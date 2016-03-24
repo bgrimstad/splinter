@@ -440,6 +440,22 @@ void splinter_bspline_delete(splinter_obj_ptr bspline_ptr)
     }
 }
 
+void splinter_bspline_insert_knots(splinter_obj_ptr bspline_ptr, double tau, unsigned int dim, unsigned int multiplicity)
+{
+    auto bspline = get_bspline(bspline_ptr);
+    if (bspline != nullptr)
+    {
+        try
+        {
+            bspline->insertKnots(tau, dim, multiplicity);
+        }
+        catch (const Exception &e)
+        {
+            set_error_string(e.what());
+        }
+    }
+}
+
 void splinter_bspline_decompose_to_bezier_form(splinter_obj_ptr bspline_ptr)
 {
     auto bspline = get_bspline(bspline_ptr);

@@ -105,8 +105,8 @@ private:
 
     std::vector<unsigned int> getBSplineDegrees(unsigned int numVariables, unsigned int degree)
     {
-        if (degree < 1 || degree > 5)
-            throw Exception("BSpline::Builder: Only degrees in range [1, 5] are supported.");
+        if (degree > 5)
+            throw Exception("BSpline::Builder: Only degrees in range [0, 5] are supported.");
         return std::vector<unsigned int>(numVariables, degree);
     }
 
