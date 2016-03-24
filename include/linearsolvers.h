@@ -24,16 +24,16 @@ public:
     bool solve(const lhs &A, const rhs &b, rhs &x) const
     {
         if (!consistentData(A, b))
-        {
             throw Exception("LinearSolver::solve: Inconsistent matrix dimensions!");
-        }
 
         bool success = doSolve(A, b, x);
 
-        if (!(success && validSolution(A, b, x)))
-        {
+        if (!success)
             throw Exception("LinearSolver::solve: Solver did not converge to acceptable tolerance!");
-        }
+
+        if (!validSolution(A, b, x))
+            throw Exception("LinearSolver::solve: Invalid solution!");
+
         return true;
     }
 
@@ -57,6 +57,18 @@ private:
     }
 };
 
+template<class rhs = DenseVector>
+class DenseSVD : public LinearSolver<DenseMatrix, rhs>
+{
+private:
+    bool doSolve(const DenseMatrix &A, const rhs &b, rhs &x) const
+    {
+        // Solve linear system
+        Eigen::JacobiSVD<DenseMatrix> svd(A, Eigen::ComputeThinU | Eigen::ComputeThinV);
+        x = svd.solve(b);
+        return true;
+    }
+};
 
 template<class rhs = DenseVector>
 class DenseQR : public LinearSolver<DenseMatrix, rhs>
@@ -68,12 +80,13 @@ private:
 
         // Solve linear system
         Eigen::ColPivHouseholderQR<DenseMatrix> qr(A);
-        // Note: qr.info() always returns true
+
         if (qr.info() == Eigen::Success)
         {
             x = qr.solve(b);
 
-            return true;
+            // Note: qr.info() always returns true
+            return qr.info() == Eigen::Success;
         }
         return false;
     }
