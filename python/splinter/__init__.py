@@ -6,23 +6,22 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
-__all__ = ["splinter", "datatable", "bspline", "pspline", "radialbasisfunction", "polynomialregression"]
-
 from .datatable import DataTable
 from .bspline import BSpline
-from .pspline import PSpline
-from .radialbasisfunction import RadialBasisFunction, RBFType
-from .polynomialregression import PolynomialRegression
+from .bsplinebuilder import BSplineBuilder
 
-splinter.DataTable = datatable.DataTable
-splinter.BSpline = bspline.BSpline
-splinter.PSpline = pspline.PSpline
-splinter.RadialBasisFunction = radialbasisfunction.RadialBasisFunction
-splinter.RBFType = radialbasisfunction.RBFType
-splinter.PolynomialRegression = polynomialregression.PolynomialRegression
+from .splinter import load
 
-from .splinter import *
 try:
-	load()
+    load()
 except Exception as e:
-	print(e)
+    print(e)
+
+__all__ = [
+    "splinter",
+    "datatable",
+    "bspline",
+    "bsplinebuilder"
+]
+
+splinter.BSplineBuilder = bsplinebuilder.BSplineBuilder

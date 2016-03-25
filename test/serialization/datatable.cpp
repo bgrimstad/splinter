@@ -14,7 +14,10 @@
 using namespace SPLINTER;
 
 
-TEST_CASE("DataTable can be saved and loaded", "[serialization][datatable]")
+#define COMMON_TAGS "[serialization][datatable]"
+
+
+TEST_CASE("DataTable can be saved and loaded", COMMON_TAGS)
 {
     DataTable table;
     const char *fileName = "test.datatable";

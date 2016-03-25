@@ -11,14 +11,18 @@
 #define SPLINTER_FUNCTION_H
 
 #include "definitions.h"
+#include "saveable.h"
 
 namespace SPLINTER
 {
 
 /*
  * Interface for functions
+ * All functions working with standard C++11 types are defined in terms of their Eigen counterparts.
+ * Default implementations of jacobian and hessian evaluation is using central difference.
+ * TODO: Remove current requirement that all functions must implement save and load!
  */
-class SPLINTER_API Function
+class SPLINTER_API Function : public Saveable
 {
 public:
     Function()
@@ -32,12 +36,12 @@ public:
     /**
      * Returns the function value at x
      */
-    virtual double eval(DenseVector x) const;
+    virtual double eval(DenseVector x) const = 0;
 
     /**
      * Returns the function value at x
      */
-    virtual double eval(const std::vector<double> &x) const;
+    double eval(const std::vector<double> &x) const;
 
     /**
      * Returns the (1 x numVariables) Jacobian evaluated at x
@@ -47,7 +51,7 @@ public:
     /**
      * Returns the (1 x numVariables) Jacobian evaluated at x
      */
-    virtual std::vector<double> evalJacobian(const std::vector<double> &x) const;
+    std::vector<double> evalJacobian(const std::vector<double> &x) const;
 
     /**
      * Returns the (numVariables x numVariables) Hessian evaluated at x
@@ -57,7 +61,7 @@ public:
     /**
      * Returns the (numVariables x numVariables) Hessian evaluated at x
      */
-    virtual std::vector<std::vector<double>> evalHessian(const std::vector<double> &x) const;
+    std::vector<std::vector<double>> evalHessian(const std::vector<double> &x) const;
 
     /**
      * Get the dimension
@@ -65,6 +69,14 @@ public:
     inline unsigned int getNumVariables() const
     {
         return numVariables;
+    }
+
+    /**
+     * Check input
+     */
+    void checkInput(DenseVector x) const {
+        if (x.size() != numVariables)
+            throw Exception("Function::checkInput: Wrong dimension on evaluation point x.");
     }
 
     /**
@@ -76,6 +88,14 @@ public:
 
     std::vector<std::vector<double>> secondOrderCentralDifference(const std::vector<double> &x) const;
     DenseMatrix secondOrderCentralDifference(DenseVector x) const;
+
+    /**
+     * Description of function.
+     */
+    virtual std::string getDescription() const
+    {
+        return "";
+    }
 
 protected:
     unsigned int numVariables; // Dimension of domain (size of x)

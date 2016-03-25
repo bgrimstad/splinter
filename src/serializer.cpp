@@ -10,31 +10,27 @@
 #include "serializer.h"
 #include <fstream>
 #include "definitions.h"
-#include <datasample.h>
+#include "datapoint.h"
 #include <datatable.h>
 #include <bspline.h>
 #include <bsplinebasis.h>
 #include <bsplinebasis1d.h>
-#include <bsplineapproximant.h>
-#include <psplineapproximant.h>
-#include <rbfapproximant.h>
-#include <polynomialapproximant.h>
 
-namespace SPLINTER {
-
+namespace SPLINTER
+{
 
 Serializer::Serializer()
 {
     stream = StreamType(0);
 }
 
-Serializer::Serializer(std::string fileName)
+Serializer::Serializer(const std::string &fileName)
 {
     stream = StreamType(0);
     loadFromFile(fileName);
 }
 
-void Serializer::saveToFile(std::string fileName)
+void Serializer::saveToFile(const std::string &fileName)
 {
     std::fstream fs(fileName, std::fstream::out | std::fstream::binary);
 
@@ -42,13 +38,13 @@ void Serializer::saveToFile(std::string fileName)
         fs << byte;
 }
 
-void Serializer::loadFromFile(std::string fileName)
+void Serializer::loadFromFile(const std::string &fileName)
 {
     // Open the file in binary mode at the end
     std::ifstream ifs(fileName, std::ios::binary | std::ios::ate);
 
-    if(!ifs.is_open()) {
-        std::string error_message("Serializer::load_from_file: Unable to open file \"");
+    if (!ifs.is_open()) {
+        std::string error_message("Serializer::loadFromFile: Unable to open file \"");
         error_message.append(fileName);
         error_message.append("\" for deserializing.");
         throw Exception(error_message);
@@ -65,7 +61,7 @@ void Serializer::loadFromFile(std::string fileName)
     // Elements of the vector are guaranteed to be stored in a contiguous array,
     // *result.data() can therefore be treated as an array of the same type as the vector
     ifs.read(result.data(), pos);
-    assert(ifs);
+    //assert(ifs);
 
     stream.clear();
     // Convert from char to uint_8 vector
@@ -75,7 +71,11 @@ void Serializer::loadFromFile(std::string fileName)
     read = stream.cbegin();
 }
 
-size_t Serializer::get_size(const DataSample &obj)
+/*
+ * get_size implementations
+ */
+
+size_t Serializer::get_size(const DataPoint &obj)
 {
     return get_size(obj.x) + get_size(obj.y);
 }
@@ -111,39 +111,44 @@ size_t Serializer::get_size(const BSplineBasis1D &obj)
            + get_size(obj.targetNumBasisfunctions);
 }
 
-size_t Serializer::get_size(const BSplineApproximant &obj)
+size_t Serializer::get_size(const DenseMatrix &obj)
 {
-    return get_size(obj.numVariables)
-           + get_size(obj.bspline);
+    size_t size = sizeof(obj.rows());
+    size += sizeof(obj.cols());
+    size_t numElements = obj.rows() * obj.cols();
+    if (numElements > 0) {
+        size += numElements * sizeof(obj(0,0));
+    }
+    return size;
 }
 
-size_t Serializer::get_size(const PSplineApproximant &obj)
+size_t Serializer::get_size(const DenseVector &obj)
 {
-    return get_size(obj.numVariables)
-           + get_size(obj.bspline)
-           + get_size(obj.lambda);
+    size_t size = sizeof(obj.rows());
+    size_t numElements = obj.rows();
+    if (numElements > 0) {
+        size += numElements * sizeof(obj(0));
+    }
+    return size;
 }
 
-size_t Serializer::get_size(const RBFApproximant &obj)
+size_t Serializer::get_size(const SparseMatrix &obj)
 {
-    return get_size(obj.samples)
-           + get_size(obj.normalized)
-           + get_size(obj.precondition)
-           + get_size(obj.numVariables)
-           + get_size(obj.numSamples)
-           + get_size(obj.type)
-           + get_size(obj.weights);
+    DenseMatrix temp(obj);
+    return get_size(temp);
 }
 
-size_t Serializer::get_size(const PolynomialApproximant &obj)
+size_t Serializer::get_size(const SparseVector &obj)
 {
-    return get_size(obj.numVariables)
-           + get_size(obj.numCoefficients)
-           + get_size(obj.degrees)
-           + get_size(obj.coefficients);
+    DenseVector temp(obj);
+    return get_size(temp);
 }
 
-void Serializer::_serialize(const DataSample &obj)
+/*
+ * _serialize implementations
+ */
+
+void Serializer::_serialize(const DataPoint &obj)
 {
     _serialize(obj.x);
     _serialize(obj.y);
@@ -180,39 +185,46 @@ void Serializer::_serialize(const BSplineBasis1D &obj)
     _serialize(obj.targetNumBasisfunctions);
 }
 
-void Serializer::_serialize(const BSplineApproximant &obj)
+void Serializer::_serialize(const DenseMatrix &obj)
 {
-    _serialize(obj.numVariables);
-    _serialize(obj.bspline);
+    // Store the number of matrix rows and columns first
+    _serialize(obj.rows());
+    _serialize(obj.cols());
+    // Store the matrix elements
+    for (size_t i = 0; i < (size_t) obj.rows(); ++i) {
+        for (size_t j = 0; j < (size_t) obj.cols(); ++j) {
+            _serialize(obj(i,j));
+        }
+    }
 }
 
-void Serializer::_serialize(const PSplineApproximant &obj)
+void Serializer::_serialize(const DenseVector &obj)
 {
-    _serialize(obj.numVariables);
-    _serialize(obj.bspline);
-    _serialize(obj.lambda);
+    // Store the number of vector rows
+    _serialize(obj.rows());
+    // Store the vector elements
+    for (size_t i = 0; i < (size_t) obj.rows(); ++i) {
+        _serialize(obj(i));
+    }
 }
 
-void Serializer::_serialize(const RBFApproximant &obj)
+void Serializer::_serialize(const SparseMatrix &obj)
 {
-    _serialize(obj.samples);
-    _serialize(obj.normalized);
-    _serialize(obj.precondition);
-    _serialize(obj.numVariables);
-    _serialize(obj.numSamples);
-    _serialize(obj.type);
-    _serialize(obj.weights);
+    DenseMatrix temp(obj);
+    _serialize(temp);
 }
 
-void Serializer::_serialize(const PolynomialApproximant &obj)
+void Serializer::_serialize(const SparseVector &obj)
 {
-    _serialize(obj.numVariables);
-    _serialize(obj.numCoefficients);
-    _serialize(obj.degrees);
-    _serialize(obj.coefficients);
+    DenseVector temp(obj);
+    _serialize(temp);
 }
 
-void Serializer::deserialize(DataSample &obj)
+/*
+ * deserialize implementations
+ */
+
+void Serializer::deserialize(DataPoint &obj)
 {
     deserialize(obj.x);
     deserialize(obj.y);
@@ -249,60 +261,48 @@ void Serializer::deserialize(BSplineBasis1D &obj)
     deserialize(obj.targetNumBasisfunctions);
 }
 
-void Serializer::deserialize(BSplineApproximant &obj)
+void Serializer::deserialize(DenseMatrix &obj)
 {
-    deserialize(obj.numVariables);
-    deserialize(obj.bspline);
+    // Retrieve the number of rows
+    size_t rows; deserialize(rows);
+    size_t cols; deserialize(cols);
+
+    obj.resize(rows, cols);
+
+    for (size_t i = 0; i < rows; ++i)
+    {
+        for (size_t j = 0; j < cols; ++j)
+        {
+            deserialize(obj(i, j));
+        }
+    }
 }
 
-void Serializer::deserialize(PSplineApproximant &obj)
+void Serializer::deserialize(DenseVector &obj)
 {
-    deserialize(obj.numVariables);
-    deserialize(obj.bspline);
-    deserialize(obj.lambda);
+    // Retrieve the number of rows
+    size_t rows; deserialize(rows);
+
+    obj.resize(rows);
+
+    for (size_t i = 0; i < rows; ++i)
+    {
+        deserialize(obj(i));
+    }
 }
 
-void Serializer::deserialize(RBFApproximant &obj)
+void Serializer::deserialize(SparseMatrix &obj)
 {
-    deserialize(obj.samples);
-    deserialize(obj.normalized);
-    deserialize(obj.precondition);
-    deserialize(obj.numVariables);
-    deserialize(obj.numSamples);
-    deserialize(obj.type);
-    if (obj.type == RBFType::THIN_PLATE_SPLINE)
-    {
-        obj.fn = std::shared_ptr<RBFTerm>(new ThinPlateSpline());
-    }
-    else if (obj.type == RBFType::MULTIQUADRIC)
-    {
-        obj.fn = std::shared_ptr<RBFTerm>(new Multiquadric());
-    }
-    else if (obj.type == RBFType::INVERSE_QUADRIC)
-    {
-        obj.fn = std::shared_ptr<RBFTerm>(new InverseQuadric());
-    }
-    else if (obj.type == RBFType::INVERSE_MULTIQUADRIC)
-    {
-        obj.fn = std::shared_ptr<RBFTerm>(new InverseMultiquadric());
-    }
-    else if (obj.type == RBFType::GAUSSIAN)
-    {
-        obj.fn = std::shared_ptr<RBFTerm>(new Gaussian());
-    }
-    else
-    {
-        obj.fn = std::shared_ptr<RBFTerm>(new ThinPlateSpline());
-    }
-    deserialize(obj.weights);
+    DenseMatrix temp(obj);
+    deserialize(temp);
+    obj = temp.sparseView();
 }
 
-void Serializer::deserialize(PolynomialApproximant &obj)
+void Serializer::deserialize(SparseVector &obj)
 {
-    deserialize(obj.numVariables);
-    deserialize(obj.numCoefficients);
-    deserialize(obj.degrees);
-    deserialize(obj.coefficients);
+    DenseVector temp(obj);
+    deserialize(temp);
+    obj = temp.sparseView();
 }
 
-}
+} // namespace SPLINTER

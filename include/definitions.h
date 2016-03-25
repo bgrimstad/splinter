@@ -42,7 +42,6 @@ typedef Eigen::SparseVector<double> SparseVector;
 typedef Eigen::MatrixXd DenseMatrix;
 typedef Eigen::SparseMatrix<double> SparseMatrix; // declares a column-major sparse matrix type of double
 
-
 class Exception : public std::exception
 {
 private:

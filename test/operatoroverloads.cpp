@@ -10,6 +10,69 @@
 #include <operatoroverloads.h>
 #include <testingutilities.h>
 
+
+/*
+ * Overload of operators where an Eigen type is one or more of the arguments.
+ * Must be defined in the Eigen namespace for Clang to find the overloads.
+ */
+namespace Eigen
+{
+
+bool operator==(const SPLINTER::SparseMatrix &lhs, const SPLINTER::SparseMatrix &rhs)
+{
+    return SPLINTER::DenseMatrix(lhs) == SPLINTER::DenseMatrix(rhs);
+}
+
+bool operator==(const SPLINTER::SparseVector &lhs, const SPLINTER::SparseVector &rhs)
+{
+    return SPLINTER::DenseVector(lhs) == SPLINTER::DenseVector(rhs);
+}
+
+bool operator==(const SPLINTER::DenseVector &denseVec, const std::vector<double> &vec)
+{
+    return vec == denseVec;
+}
+
+bool operator==(const SPLINTER::DenseMatrix &denseMat, const std::vector<std::vector<double>> &vecVec)
+{
+    return vecVec == denseMat;
+}
+
+bool operator==(const std::vector<double> &vec, const SPLINTER::DenseVector &denseVec)
+{
+    if (vec.size() != (unsigned long) denseVec.size())
+        return false;
+
+    for (size_t i = 0; i < vec.size(); ++i)
+        if (vec.at(i) != denseVec(i))
+            return false;
+
+    return true;
+}
+
+bool operator==(const std::vector<std::vector<double>> &vecVec, const SPLINTER::DenseMatrix &denseMat)
+{
+    size_t matCols = denseMat.cols();
+    if(vecVec.size() != (unsigned long) denseMat.rows())
+    {
+        return false;
+    }
+
+    for (size_t i = 0; i < vecVec.size(); ++i)
+    {
+        if (vecVec.at(i).size() != matCols)
+            return false;
+
+        for (size_t j = 0; j < matCols; ++j)
+            if (vecVec.at(i).at(j) != denseMat(i, j))
+                return false;
+    }
+
+    return true;
+}
+
+}
+
 namespace SPLINTER
 {
 
@@ -31,7 +94,7 @@ bool operator==(const DataTable &lhs, const DataTable &rhs)
             && lhs.getGrid() == rhs.getGrid();
 }
 
-bool operator==(const DataSample &lhs, const DataSample &rhs)
+bool operator==(const DataPoint &lhs, const DataPoint &rhs)
 {
     for (unsigned int i = 0; i < lhs.getDimX(); i++)
     {
@@ -52,7 +115,7 @@ bool operator==(const BSpline &lhs, const BSpline &rhs)
             && lhs.coefficients == rhs.coefficients
             && lhs.knotaverages == rhs.knotaverages
             && lhs.basis == rhs.basis
-            && lhs.getNumBasisFunctions() == rhs.getNumBasisFunctions()
+            && lhs.getNumBasisFunctionsPerVariable() == rhs.getNumBasisFunctionsPerVariable()
             && lhs.getKnotVectors() == rhs.getKnotVectors()
             && lhs.getBasisDegrees() == rhs.getBasisDegrees()
             && lhs.getDomainLowerBound() == rhs.getDomainLowerBound()
@@ -74,83 +137,6 @@ bool operator==(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs)
             && lhs.targetNumBasisfunctions == rhs.targetNumBasisfunctions;
 }
 
-bool operator==(const BSplineApproximant &lhs, const BSplineApproximant &rhs)
-{
-    return
-            lhs.getNumVariables() == rhs.getNumVariables()
-            && lhs.bspline == rhs.bspline;
-}
-
-bool operator==(const PSplineApproximant &lhs, const PSplineApproximant &rhs)
-{
-    return
-            lhs.getNumVariables() == rhs.getNumVariables()
-            && lhs.bspline == rhs.bspline
-            && lhs.lambda == rhs.lambda;
-}
-
-bool operator==(const RBFApproximant &lhs, const RBFApproximant &rhs)
-{
-    return
-            lhs.samples == rhs.samples
-            && lhs.normalized == rhs.normalized
-            && lhs.precondition == rhs.precondition
-            && lhs.numSamples == rhs.numSamples
-            && lhs.getNumVariables() == rhs.getNumVariables();
-}
-
-bool operator==(const PolynomialApproximant &lhs, const PolynomialApproximant &rhs)
-{
-    return
-            lhs.numCoefficients == rhs.numCoefficients
-            && lhs.degrees == rhs.degrees
-            && lhs.coefficients == rhs.coefficients
-            && lhs.getNumVariables() == rhs.getNumVariables();
-}
-
-bool compareVecDenseVec(const DenseVector &denseVec, const std::vector<double> &vec)
-{
-    return compareVecDenseVec(vec, denseVec);
-}
-
-bool compareVecVecDenseMatrix(const DenseMatrix &denseMat, const std::vector<std::vector<double>> &vecVec)
-{
-    return compareVecVecDenseMatrix(vecVec, denseMat);
-}
-
-bool compareVecDenseVec(const std::vector<double> &vec, const DenseVector &denseVec)
-{
-    if (vec.size() != denseVec.size())
-        return false;
-
-    for (size_t i = 0; i < vec.size(); ++i)
-        if (vec.at(i) != denseVec(i))
-            return false;
-
-    return true;
-}
-
-bool compareVecVecDenseMatrix(const std::vector<std::vector<double>> &vecVec, const DenseMatrix &denseMat)
-{
-    size_t matCols = denseMat.cols();
-    if(vecVec.size() != denseMat.rows())
-    {
-        return false;
-    }
-
-    for (size_t i = 0; i < vecVec.size(); ++i)
-    {
-        if (vecVec.at(i).size() != matCols)
-            return false;
-
-        for (size_t j = 0; j < matCols; ++j)
-            if (vecVec.at(i).at(j) != denseMat(i, j))
-                return false;
-    }
-
-    return true;
-}
-
 /*
  * Comparison operators (!=)
  */
@@ -159,7 +145,7 @@ bool operator!=(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs)
     return !(lhs == rhs);
 }
 
-bool operator!=(const DataSample &lhs, const DataSample &rhs)
+bool operator!=(const DataPoint &lhs, const DataPoint &rhs)
 {
 	return !(lhs == rhs);
 }
@@ -167,7 +153,7 @@ bool operator!=(const DataSample &lhs, const DataSample &rhs)
 /*
  * Output stream operator
  */
-std::ostream &operator<<(std::ostream &out, const DataSample &sample) {
+std::ostream &operator<<(std::ostream &out, const DataPoint &sample) {
     out << "(";
     bool firstLoop = true;
     for (auto val : sample.getX()) {

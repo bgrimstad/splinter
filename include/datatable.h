@@ -11,7 +11,7 @@
 #define SPLINTER_DATATABLE_H
 
 #include <set>
-#include "datasample.h"
+#include "datapoint.h"
 
 #include <ostream>
 
@@ -29,12 +29,12 @@ public:
     DataTable(bool allowDuplicates);
     DataTable(bool allowDuplicates, bool allowIncompleteGrid);
     DataTable(const char *fileName);
-    DataTable(const std::string fileName); // Load DataTable from file
+    DataTable(const std::string &fileName); // Load DataTable from file
 
     /*
      * Functions for adding a sample (x,y)
      */
-    void addSample(const DataSample &sample);
+    void addSample(const DataPoint &sample);
     void addSample(double x, double y);
     void addSample(std::vector<double> x, double y);
     void addSample(DenseVector x, double y);
@@ -42,12 +42,12 @@ public:
     /*
      * Getters
      */
-    std::multiset<DataSample>::const_iterator cbegin() const;
-    std::multiset<DataSample>::const_iterator cend() const;
+    std::multiset<DataPoint>::const_iterator cbegin() const;
+    std::multiset<DataPoint>::const_iterator cend() const;
 
     unsigned int getNumVariables() const {return numVariables;}
     unsigned int getNumSamples() const {return samples.size();}
-    const std::multiset<DataSample>& getSamples() const {return samples;}
+    const std::multiset<DataPoint>& getSamples() const {return samples;}
 
     std::vector<std::set<double>> getGrid() const { return grid; }
     std::vector< std::vector<double> > getTableX() const;
@@ -55,7 +55,7 @@ public:
     
     bool isGridComplete() const;
 
-    void save(const std::string fileName) const;
+    void save(const std::string &fileName) const;
 
 private:
     bool allowDuplicates;
@@ -63,19 +63,19 @@ private:
     unsigned int numDuplicates;
     unsigned int numVariables;
 
-    std::multiset<DataSample> samples;
+    std::multiset<DataPoint> samples;
     std::vector< std::set<double> > grid;
 
     void initDataStructures(); // Initialise grid to be a std::vector of xDim std::sets
     unsigned int getNumSamplesRequired() const;
 
-    void recordGridPoint(const DataSample &sample);
+    void recordGridPoint(const DataPoint &sample);
 
     // Used by functions that require the grid to be complete before they start their operation
     // This function prints a message and exits the program if the grid is not complete.
     void gridCompleteGuard() const;
 
-    void load(const std::string fileName);
+    void load(const std::string &fileName);
 
     friend class Serializer;
     friend bool operator==(const DataTable &lhs, const DataTable &rhs);

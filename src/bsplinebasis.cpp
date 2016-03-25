@@ -47,7 +47,7 @@ SparseVector BSplineBasis::eval(const DenseVector &x) const
     std::vector<SparseVector> basisFunctionValues;
 
     for (int var = 0; var < x.size(); var++)
-        basisFunctionValues.push_back(bases.at(var).evaluate(x(var)));
+        basisFunctionValues.push_back(bases.at(var).eval(x(var)));
 
     return kroneckerProductVectors(basisFunctionValues);
 }
@@ -70,12 +70,12 @@ DenseMatrix BSplineBasis::evalBasisJacobianOld(DenseVector &x) const
             if (j == i)
             {
                 // Differentiated basis
-                xi = bases.at(j).evaluateFirstDerivative(x(j));
+                xi = bases.at(j).evalFirstDerivative(x(j));
             }
             else
             {
                 // Normal basis
-                xi = bases.at(j).evaluate(x(j));
+                xi = bases.at(j).eval(x(j));
             }
 
             bi = kroneckerProduct(temp, xi);
@@ -106,12 +106,12 @@ SparseMatrix BSplineBasis::evalBasisJacobian(DenseVector &x) const
             if (j == i)
             {
                 // Differentiated basis
-                values.at(j) = bases.at(j).evaluateDerivative(x(j),1);
+                values.at(j) = bases.at(j).evalDerivative(x(j), 1);
             }
             else
             {
                 // Normal basis
-                values.at(j) = bases.at(j).evaluate(x(j));
+                values.at(j) = bases.at(j).eval(x(j));
             }
         }
 
@@ -143,8 +143,8 @@ SparseMatrix BSplineBasis::evalBasisJacobian2(DenseVector &x) const
 
     for (unsigned int i = 0; i < numVariables; ++i)
     {
-        funcValues[i] = bases.at(i).evaluate(x(i));
-        gradValues[i] = bases.at(i).evaluateFirstDerivative(x(i));
+        funcValues[i] = bases.at(i).eval(x(i));
+        gradValues[i] = bases.at(i).evalFirstDerivative(x(i));
     }
 
     // Calculate partial derivatives
@@ -203,15 +203,15 @@ SparseMatrix BSplineBasis::evalBasisHessian(DenseVector &x) const
                 if (i == j && k == i)
                 {
                     // Diagonal element
-                    Bk = bases.at(k).evaluateDerivative(x(k),2);
+                    Bk = bases.at(k).evalDerivative(x(k), 2);
                 }
                 else if (k == i || k == j)
                 {
-                    Bk = bases.at(k).evaluateDerivative(x(k),1);
+                    Bk = bases.at(k).evalDerivative(x(k), 1);
                 }
                 else
                 {
-                    Bk = bases.at(k).evaluate(x(k));
+                    Bk = bases.at(k).eval(x(k));
                 }
                 Hi = kroneckerProduct(temp, Bk);
             }
@@ -328,8 +328,8 @@ SparseMatrix BSplineBasis::decomposeToBezierForm()
 
 SparseMatrix BSplineBasis::reduceSupport(std::vector<double>& lb, std::vector<double>& ub)
 {
-    assert(lb.size() == ub.size());
-    assert(lb.size() == numVariables);
+    if (lb.size() != ub.size() || lb.size() != numVariables)
+        throw Exception("BSplineBasis::reduceSupport: Incompatible dimension of domain bounds.");
 
     SparseMatrix A(1,1);
     A.insert(0,0) = 1;
@@ -433,11 +433,6 @@ int BSplineBasis::supportedPrInterval() const
 
 bool BSplineBasis::insideSupport(DenseVector &x) const
 {
-    if (x.size() != numVariables)
-    {
-        return false;
-    }
-
     for (unsigned int dim = 0; dim < numVariables; dim++)
     {
         if (!bases.at(dim).insideSupport(x(dim)))

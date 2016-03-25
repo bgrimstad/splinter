@@ -22,7 +22,7 @@ public:
     TestFunction(std::function<double (const std::vector<double> &)> f, size_t numVariables,
                  std::string functionString);
     TestFunction(std::function<double (const std::vector<double> &)> f, size_t numVariables,
-                 std::string functionString, std::vector<double> &degrees);
+                 std::string functionString, DenseMatrix powers);
 
     virtual ~TestFunction();
 
@@ -32,23 +32,34 @@ public:
      * to be hidden. Doing this avoids that "problem" (it is actually a feature).
      */
     using Function::eval;
-    double eval(const std::vector<double> &x) const override;
+    double eval(DenseVector x) const override;
 
     inline std::string getFunctionStr() const { return functionString; }
 
     inline bool isConstDegree() const { return constDegree; }
-    inline std::vector<double> getConstDegree() const { return constDegreeVal; }
+
+    // Returns the maximum degree of each dimension
     std::vector<unsigned int> getConstDegreeInt() const;
 
     double getMaxDegree() const;
 
+    DenseMatrix getPowers() const
+    {
+        return powers;
+    }
+
+    void save(const std::string &fileName) const override {}
+
+
+    DenseMatrix powers;
 private:
     std::string functionString;
 
     bool constDegree;
-    std::vector<double> constDegreeVal;
 
     std::function<double (const std::vector<double> &)> f;
+
+    void load(const std::string &fileName) override {}
 };
 
 } // namespace SPLINTER

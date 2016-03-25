@@ -22,120 +22,39 @@ double Function::eval(const std::vector<double> &x) const
 
 std::vector<double> Function::evalJacobian(const std::vector<double> &x) const
 {
-    return centralDifference(x);
+    auto denseX = vectorToDenseVector(x);
+
+    return denseVectorToVector(evalJacobian(denseX));
 }
 
-/**
- * Returns the second order central difference in x
- */
 std::vector<std::vector<double>> Function::evalHessian(const std::vector<double> &x) const
 {
-    return secondOrderCentralDifference(x);
+    auto denseX = vectorToDenseVector(x);
+
+    return denseMatrixToVectorVector(secondOrderCentralDifference(denseX));
 }
 
 std::vector<double> Function::centralDifference(const std::vector<double> &x) const
 {
-    std::vector<double> dx(x.size());
+    auto denseX = vectorToDenseVector(x);
 
-    double h = 1e-6; // perturbation step size
-    double hForward = 0.5*h;
-    double hBackward = 0.5*h;
+    auto dx = centralDifference(denseX);
 
-    for (size_t i = 0; i < getNumVariables(); ++i)
-    {
-        std::vector<double> xForward(x);
-//        if (xForward(i) + hForward > variables.at(i)->getUpperBound())
-//        {
-//            hForward = 0;
-//        }
-//        else
-//        {
-        xForward.at(i) = xForward.at(i) + hForward;
-//        }
-
-        std::vector<double> xBackward(x);
-//        if (xBackward(i) - hBackward < variables.at(i)->getLowerBound())
-//        {
-//            hBackward = 0;
-//        }
-//        else
-//        {
-        xBackward.at(i) = xBackward.at(i) - hBackward;
-//        }
-
-        double yForward = eval(xForward);
-        double yBackward = eval(xBackward);
-
-        dx.at(i) = (yForward - yBackward)/(hBackward + hForward);
-    }
-
-    return dx;
+    return denseVectorToVector(dx);
 }
 
 std::vector<std::vector<double>> Function::secondOrderCentralDifference(const std::vector<double> &x) const
 {
-    std::vector<std::vector<double>> ddx(getNumVariables());
+    auto denseX = vectorToDenseVector(x);
 
-    double h = 1e-6; // perturbation step size
-    double hForward = 0.5*h;
-    double hBackward = 0.5*h;
+    DenseMatrix ddx = secondOrderCentralDifference(denseX);
 
-    for (size_t i = 0; i < getNumVariables(); ++i)
-    {
-        ddx.at(i) = std::vector<double>(getNumVariables());
-
-        for (size_t j = 0; j < getNumVariables(); ++j)
-        {
-            std::vector<double> x0(x);
-            std::vector<double> x1(x);
-            std::vector<double> x2(x);
-            std::vector<double> x3(x);
-
-            x0.at(i) = x0.at(i) + hForward;
-            x0.at(j) = x0.at(j) + hForward;
-
-            x1.at(i) = x1.at(i) - hBackward;
-            x1.at(j) = x1.at(j) + hForward;
-
-            x2.at(i) = x2.at(i) + hForward;
-            x2.at(j) = x2.at(j) - hBackward;
-
-            x3.at(i) = x3.at(i) - hBackward;
-            x3.at(j) = x3.at(j) - hBackward;
-
-            ddx.at(i).at(j) = (eval(x0) - eval(x1) - eval(x2) + eval(x3)) / (h * h);
-        }
-    }
-
-    return ddx;
-}
-
-DenseMatrix Function::secondOrderCentralDifference(DenseVector x) const
-{
-    auto vec = denseVectorToVector(x);
-
-    auto secondOrderVecVec = secondOrderCentralDifference(vec);
-
-    return vectorVectorToDenseMatrix(secondOrderVecVec);
-}
-
-/**
- * Will be removed from the interface soon
- */
-double Function::eval(DenseVector x) const
-{
-    auto vec = denseVectorToVector(x);
-
-    return eval(vec);
+    return denseMatrixToVectorVector(ddx);
 }
 
 DenseMatrix Function::evalJacobian(DenseVector x) const
 {
-    auto vec = denseVectorToVector(x);
-
-    auto jacobian = evalJacobian(vec);
-
-    return vectorToDenseVector(jacobian);
+    return centralDifference(x);
 }
 
 DenseMatrix Function::evalHessian(DenseVector x) const
@@ -158,24 +77,10 @@ DenseMatrix Function::centralDifference(DenseVector x) const
     for (unsigned int i = 0; i < getNumVariables(); ++i)
     {
         DenseVector xForward(x);
-//        if (xForward(i) + hForward > variables.at(i)->getUpperBound())
-//        {
-//            hForward = 0;
-//        }
-//        else
-//        {
         xForward(i) = xForward(i) + hForward;
-//        }
 
         DenseVector xBackward(x);
-//        if (xBackward(i) - hBackward < variables.at(i)->getLowerBound())
-//        {
-//            hBackward = 0;
-//        }
-//        else
-//        {
         xBackward(i) = xBackward(i) - hBackward;
-//        }
 
         double yForward = eval(xForward);
         double yBackward = eval(xBackward);
@@ -184,6 +89,42 @@ DenseMatrix Function::centralDifference(DenseVector x) const
     }
 
     return dx;
+}
+
+DenseMatrix Function::secondOrderCentralDifference(DenseVector x) const
+{
+    DenseMatrix ddx(getNumVariables(), getNumVariables());
+
+    double h = 1e-6; // perturbation step size
+    double hForward = 0.5*h;
+    double hBackward = 0.5*h;
+
+    for (size_t i = 0; i < getNumVariables(); ++i)
+    {
+        for (size_t j = 0; j < getNumVariables(); ++j)
+        {
+            DenseVector x0(x);
+            DenseVector x1(x);
+            DenseVector x2(x);
+            DenseVector x3(x);
+
+            x0(i) = x0(i) + hForward;
+            x0(j) = x0(j) + hForward;
+
+            x1(i) = x1(i) - hBackward;
+            x1(j) = x1(j) + hForward;
+
+            x2(i) = x2(i) + hForward;
+            x2(j) = x2(j) - hBackward;
+
+            x3(i) = x3(i) - hBackward;
+            x3(j) = x3(j) - hBackward;
+
+            ddx(i, j) = (eval(x0) - eval(x1) - eval(x2) + eval(x3)) / (h * h);
+        }
+    }
+
+    return ddx;
 }
 
 } // namespace SPLINTER

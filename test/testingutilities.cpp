@@ -8,9 +8,11 @@
 */
 
 #include "testingutilities.h"
+#include <utilities.h>
 #include <testfunctions.h>
 #include <Catch.h>
 #include <iostream>
+#include <bsplinebuilder.h>
 
 using namespace std;
 
@@ -225,7 +227,7 @@ bool compareFunctions(const Function &exact, const Function &approx, const std::
 }
 
 void compareFunctionValue(std::vector<TestFunction *> funcs,
-                          std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                          std::function<Function *(const DataTable &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints,
                           double one_eps, double two_eps, double inf_eps)
 {
@@ -235,7 +237,7 @@ void compareFunctionValue(std::vector<TestFunction *> funcs,
     }
 }
 void compareFunctionValue(TestFunction *exact,
-                          std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                          std::function<Function *(const DataTable &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints,
                           double one_eps, double two_eps, double inf_eps)
 {
@@ -246,7 +248,7 @@ void compareFunctionValue(TestFunction *exact,
 
     DataTable table = sample(exact, samplePoints);
 
-    Approximant *approx = approx_gen_func(table);
+    Function *approx = approx_gen_func(table);
 
     INFO("Approximant: " << approx->getDescription());
     INFO("Function: " << exact->getFunctionStr());
@@ -288,7 +290,7 @@ void compareFunctionValue(TestFunction *exact,
 
     // Print out the point with the largest error
     std::string maxErrorPointStr("(");
-    for(size_t i = 0; i < maxErrorPoint.size(); ++i)
+    for(size_t i = 0; i < (size_t) maxErrorPoint.size(); ++i)
     {
         if(i != 0)
         {
@@ -313,7 +315,7 @@ void compareFunctionValue(TestFunction *exact,
 
 /* Compares the jacobian of the approximant to the central difference of the approximant function value */
 void compareJacobianValue(TestFunction *exact,
-                          std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                          std::function<Function *(const DataTable &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints,
                           double one_eps, double two_eps, double inf_eps)
 {
@@ -324,7 +326,7 @@ void compareJacobianValue(TestFunction *exact,
 
     DataTable table = sample(exact, samplePoints);
 
-    Approximant *approx = approx_gen_func(table);
+    Function *approx = approx_gen_func(table);
 
     INFO("Approximant: " << approx->getDescription());
     INFO("Function: " << exact->getFunctionStr());
@@ -354,7 +356,7 @@ void compareJacobianValue(TestFunction *exact,
         DenseMatrix approxValue = approx->evalJacobian(x);
 
         DenseVector error = DenseVector::Zero(exactValue.cols());
-        for(size_t j = 0; j < error.size(); ++j)
+        for (size_t j = 0; j < (size_t) error.size(); ++j)
         {
             error(j) = getError(exactValue(j), approxValue(j));
         }
@@ -363,17 +365,17 @@ void compareJacobianValue(TestFunction *exact,
         twoNormVec(i) = getTwoNorm(error);
         infNormVec(i) = getInfNorm(error);
 
-        if(oneNormVec(i) > maxOneNormError)
+        if (oneNormVec(i) > maxOneNormError)
         {
             maxOneNormError = oneNormVec(i);
             maxOneNormErrorPoint = x;
         }
-        if(twoNormVec(i) > maxTwoNormError)
+        if (twoNormVec(i) > maxTwoNormError)
         {
             maxTwoNormError = twoNormVec(i);
             maxTwoNormErrorPoint = x;
         }
-        if(infNormVec(i) > maxInfNormError)
+        if (infNormVec(i) > maxInfNormError)
         {
             maxInfNormError = infNormVec(i);
             maxInfNormErrorPoint = x;
@@ -394,7 +396,7 @@ void compareJacobianValue(TestFunction *exact,
 
     auto getDenseAsStrOneLine = [](const DenseMatrix &x) {
         std::string denseAsStrOneLine("(");
-        for(size_t i = 0; i < x.size(); ++i)
+        for(size_t i = 0; i < (size_t) x.size(); ++i)
         {
             if(i != 0)
             {
@@ -437,7 +439,7 @@ void compareJacobianValue(TestFunction *exact,
 }
 
 void checkHessianSymmetry(TestFunction *exact,
-                          std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                          std::function<Function *(const DataTable &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints)
 {
     auto dim = exact->getNumVariables();
@@ -447,7 +449,7 @@ void checkHessianSymmetry(TestFunction *exact,
 
     DataTable table = sample(exact, samplePoints);
 
-    Approximant *approx = approx_gen_func(table);
+    Function *approx = approx_gen_func(table);
 
     INFO("Approximant: " << approx->getDescription());
     INFO("Function: " << exact->getFunctionStr());
@@ -467,7 +469,7 @@ void checkHessianSymmetry(TestFunction *exact,
     }
 
     std::string x_str;
-    for(size_t i = 0; i < x.size(); ++i)
+    for(size_t i = 0; i < (size_t) x.size(); ++i)
     {
         if(i != 0)
         {
@@ -546,16 +548,7 @@ DataTable sample(const Function *func, std::vector<std::vector<double>> &points)
     return table;
 }
 
-std::vector<double> linspace(double start, double stop, unsigned int num)
-{
-    std::vector<double> ret;
-    double dx = 0;
-    if (num > 1)
-        dx = (stop - start)/(num-1);
-    for (unsigned int i = 0; i < num; ++i)
-        ret.push_back(start + i*dx);
-    return ret;
-}
+
 
 double sixHumpCamelBack(DenseVector x)
 {
@@ -614,9 +607,9 @@ std::vector<std::vector<double>> linspace(std::vector<double> start, std::vector
 {
     assert(start.size() == end.size() && end.size() == points.size());
 
-    unsigned int nDims = start.size();
-    unsigned int numPoints = 1;
-    for(int i = 0; i < nDims; i++) {
+    size_t nDims = start.size();
+    size_t numPoints = 1;
+    for(size_t i = 0; i < nDims; i++) {
         numPoints *= points.at(i);
     }
 
@@ -638,8 +631,8 @@ std::vector<std::vector<double>> linspace(std::vector<double> start, std::vector
         dx.at(i) = (end.at(i) - start.at(i)) / (points.at(i) - 1);
     }
 
-    unsigned int curDim = 0;
-    unsigned int i = 0;
+    size_t curDim = 0;
+    size_t i = 0;
     // Add the start vector
     result.at(i++) = std::vector<double>(start);
     while(true) {
@@ -720,7 +713,7 @@ std::vector<std::vector<double>> linspace(int dim, unsigned int pointsPerDim)
 std::vector<double> denseToVec(const DenseVector &dense)
 {
     auto vec = std::vector<double>(dense.size());
-    for(int i = 0; i < dense.size(); i++) {
+    for(int i = 0; i < (int) dense.size(); i++) {
         vec.at(i) = dense(i);
     }
 
@@ -730,7 +723,7 @@ std::vector<double> denseToVec(const DenseVector &dense)
 DenseVector vecToDense(const std::vector<double> &vec)
 {
     DenseVector dense(vec.size());
-    for(int i = 0; i < vec.size(); i++) {
+    for(int i = 0; i < (int) vec.size(); i++) {
         dense(i) = vec.at(i);
     }
 
@@ -760,8 +753,8 @@ TestFunction *getTestFunction(int numVariables, int degree)
 std::vector<TestFunction *> getTestFunctionsOfDegree(int degree)
 {
     auto testFuncs = std::vector<TestFunction *>();
-    for(int i = 1; i < testFunctions.size(); ++i) {
-        if(degree < testFunctions.at(i).size()) {
+    for(int i = 1; i < (int) testFunctions.size(); ++i) {
+        if(degree < (int) testFunctions.at(i).size()) {
             testFuncs.push_back(testFunctions.at(i).at(degree));
         }
     }
@@ -776,8 +769,8 @@ std::vector<TestFunction *> getTestFunctionWithNumVariables(int numVariables)
 std::vector<TestFunction *> getPolynomialFunctions()
 {
     auto testFuncs = std::vector<TestFunction *>();
-    for(int i = 1; i < testFunctions.size(); ++i) {
-        for(int j = 0; j < testFunctions.at(i).size(); ++j) {
+    for(int i = 1; i < (int) testFunctions.size(); ++i) {
+        for(int j = 0; j < (int) testFunctions.at(i).size(); ++j) {
             testFuncs.push_back(testFunctions.at(i).at(j));
         }
     }
@@ -895,9 +888,9 @@ void _checkNorm(DenseMatrix normValues, int row, size_t numPoints, double one_ep
     CHECK(withinThreshold);
 }
 
-// Must use std::function because a capturing lambda cannot be converted to a function pointer
+// Must use std::function because a capturing alpha cannot be converted to a function pointer
 void testApproximation(std::vector<TestFunction *> funcs,
-                       std::function<Approximant *(const DataTable &table)> approx_gen_func,
+                       std::function<Function *(const DataTable &table)> approx_gen_func,
                        TestType type, size_t numSamplePoints, size_t numEvalPoints,
                        double one_eps, double two_eps, double inf_eps)
 {
@@ -911,7 +904,7 @@ void testApproximation(std::vector<TestFunction *> funcs,
 
             DataTable table = sample(exact, samplePoints);
 
-            Approximant *approx = approx_gen_func(table);
+            Function *approx = approx_gen_func(table);
 
             INFO("Function: " << exact->getFunctionStr());
             INFO("Approximant: " << approx->getDescription());
@@ -925,7 +918,7 @@ void testApproximation(std::vector<TestFunction *> funcs,
     }
 }
 
-DenseMatrix centralDifference(const Approximant &approx, const DenseVector &x)
+DenseMatrix centralDifference(const Function &approx, const DenseVector &x)
 {
     DenseMatrix dx(1, x.size());
 
@@ -967,13 +960,13 @@ DenseMatrix centralDifference(const Approximant &approx, const DenseVector &x)
 /*
  * Checks that the hessian is symmetric across the diagonal
  */
-bool isSymmetricHessian(const Approximant &approx, const DenseVector &x)
+bool isSymmetricHessian(const Function &approx, const DenseVector &x)
 {
     DenseMatrix hessian = approx.evalHessian(x);
 
-    for(size_t row = 0; row < hessian.rows(); ++row)
+    for(int row = 0; row < (int) hessian.rows(); ++row)
     {
-        for(size_t col = 0; col < hessian.cols(); ++col)
+        for(int col = 0; col < (int) hessian.cols(); ++col)
         {
             if(getError(hessian(row, col), hessian(col, row)) > 1e-9)
             {

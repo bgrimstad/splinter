@@ -41,27 +41,27 @@ DataTable::DataTable(const char *fileName)
 {
 }
 
-DataTable::DataTable(const std::string fileName)
+DataTable::DataTable(const std::string &fileName)
 {
     load(fileName);
 }
 
 void DataTable::addSample(double x, double y)
 {
-    addSample(DataSample(x, y));
+    addSample(DataPoint(x, y));
 }
 
 void DataTable::addSample(std::vector<double> x, double y)
 {
-    addSample(DataSample(x, y));
+    addSample(DataPoint(x, y));
 }
 
 void DataTable::addSample(DenseVector x, double y)
 {
-    addSample(DataSample(x, y));
+    addSample(DataPoint(x, y));
 }
 
-void DataTable::addSample(const DataSample &sample)
+void DataTable::addSample(const DataPoint &sample)
 {
     if (getNumSamples() == 0)
     {
@@ -94,7 +94,7 @@ void DataTable::addSample(const DataSample &sample)
     recordGridPoint(sample);
 }
 
-void DataTable::recordGridPoint(const DataSample &sample)
+void DataTable::recordGridPoint(const DataPoint &sample)
 {
     for (unsigned int i = 0; i < getNumVariables(); i++)
     {
@@ -136,14 +136,14 @@ void DataTable::gridCompleteGuard() const
     }
 }
 
-void DataTable::save(const std::string fileName) const
+void DataTable::save(const std::string &fileName) const
 {
     Serializer s;
     s.serialize(*this);
     s.saveToFile(fileName);
 }
 
-void DataTable::load(const std::string fileName)
+void DataTable::load(const std::string &fileName)
 {
     Serializer s(fileName);
     s.deserialize(*this);
@@ -152,12 +152,12 @@ void DataTable::load(const std::string fileName)
 /*
  * Getters for iterators
  */
-std::multiset<DataSample>::const_iterator DataTable::cbegin() const
+std::multiset<DataPoint>::const_iterator DataTable::cbegin() const
 {
     return samples.cbegin();
 }
 
-std::multiset<DataSample>::const_iterator DataTable::cend() const
+std::multiset<DataPoint>::const_iterator DataTable::cend() const
 {
     return samples.cend();
 }
@@ -198,7 +198,7 @@ std::vector< std::vector<double> > DataTable::getTableX() const
 std::vector<double> DataTable::getVectorY() const
 {
     std::vector<double> y;
-    for (std::multiset<DataSample>::const_iterator it = cbegin(); it != cend(); ++it)
+    for (std::multiset<DataPoint>::const_iterator it = cbegin(); it != cend(); ++it)
     {
         y.push_back(it->getY());
     }

@@ -13,37 +13,40 @@
 #include <definitions.h>
 #include <vector>
 #include <set>
-#include <datasample.h>
+#include <datapoint.h>
 #include <datatable.h>
 #include <bspline.h>
-#include <bsplineapproximant.h>
-#include <psplineapproximant.h>
-#include <polynomialapproximant.h>
-#include <rbfapproximant.h>
+
+
+/*
+ * Overload of operators where an Eigen type is one or more of the arguments.
+ * Must be defined in the Eigen namespace for Clang to find the overloads.
+ */
+namespace Eigen
+{
+
+// Eigen doesn't provide operator== overloads, so we define them ourselves (in terms of their Dense counterparts)
+// Note: SLOW
+bool operator==(const SPLINTER::SparseMatrix &lhs, const SPLINTER::SparseMatrix &rhs);
+bool operator==(const SPLINTER::SparseVector &lhs, const SPLINTER::SparseVector &rhs);
+bool operator==(const std::vector<double> &vec, const SPLINTER::DenseVector &denseVec);
+bool operator==(const std::vector<std::vector<double>> &vecVec, const SPLINTER::DenseMatrix &denseMat);
+bool operator==(const SPLINTER::DenseVector &denseVec, const std::vector<double> &vec);
+bool operator==(const SPLINTER::DenseMatrix &denseMat, const std::vector<std::vector<double>> &vecVec);
+
+}
 
 namespace SPLINTER
 {
 
 /*
- * Comparison operators
+ * Comparison operators (==)
  */
 bool operator==(const DataTable &lhs, const DataTable &rhs);
-bool operator==(const DataSample &lhs, const DataSample &rhs);
+bool operator==(const DataPoint &lhs, const DataPoint &rhs);
 bool operator==(const BSpline &lhs, const BSpline &rhs);
 bool operator==(const BSplineBasis &lhs, const BSplineBasis &rhs);
 bool operator==(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs);
-bool operator!=(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs);
-bool operator==(const BSplineApproximant &lhs, const BSplineApproximant &rhs);
-bool operator==(const PSplineApproximant &lhs, const PSplineApproximant &rhs);
-bool operator==(const PolynomialApproximant &lhs, const PolynomialApproximant &rhs);
-bool operator==(const RBFApproximant &lhs, const RBFApproximant &rhs);
-
-// Note: overloading operator== for std::vector and DenseVector/DenseMatrix makes Clang unable to find the overload
-// Therefore using separate functions for those types
-bool compareVecDenseVec(const std::vector<double> &vec, const DenseVector &denseVec);
-bool compareVecVecDenseMatrix(const std::vector<std::vector<double>> &vecVec, const DenseMatrix &denseMat);
-bool compareVecDenseVec(const DenseVector &denseVec, const std::vector<double> &vec);
-bool compareVecVecDenseMatrix(const DenseMatrix &denseMat, const std::vector<std::vector<double>> &vecVec);
 
 template <class T>
 bool operator==(const std::vector<T> &lhs, const std::vector<T> &rhs)
@@ -84,13 +87,16 @@ bool operator==(const std::multiset<T> &lhs, const std::multiset<T> &rhs)
     return true;
 }
 
-
-bool operator!=(const DataSample &lhs, const DataSample &rhs);
+/*
+ * Comparison operators (!=)
+ */
+bool operator!=(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs);
+bool operator!=(const DataPoint &lhs, const DataPoint &rhs);
 
 /*
  * Output stream operator
  */
-std::ostream &operator<<(std::ostream &out, const DataSample &sample);
+std::ostream &operator<<(std::ostream &out, const DataPoint &sample);
 std::ostream &operator<<(std::ostream &out, const DataTable &table);
 template <class T>
 std::ostream &operator<<(std::ostream &out, const std::vector<T> &obj);

@@ -9,12 +9,12 @@ project(SPLINTER CXX)
 cmake_minimum_required(VERSION 2.8)
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
 
-# Read the SPLINTER version from version.txt
-file(STRINGS "version.txt" VERSION)
+# Read the SPLINTER version from version file
+file(STRINGS "version" VERSION)
 
 # Default configuration values
 set(DEFAULT_BUILD_TYPE "Release")
-set(DEFAULT_ARCH "x86")
+set(DEFAULT_ARCH "x86-64")
 set(DEFAULT_HEADER_INSTALL_DIRECTORY "include")
 set(DEFAULT_LIBRARY_INSTALL_DIRECTORY "lib")
 set(DEFAULT_EIGEN_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/Eigen)
@@ -34,10 +34,17 @@ else()
 endif()
 
 # Detect compiler
-string(COMPARE EQUAL "Clang" ${CMAKE_CXX_COMPILER_ID} CLANG)
-string(COMPARE EQUAL "GNU"   ${CMAKE_CXX_COMPILER_ID} GCC)
-string(COMPARE EQUAL "Intel" ${CMAKE_CXX_COMPILER_ID} INTEL)
-string(COMPARE EQUAL "MSVC"  ${CMAKE_CXX_COMPILER_ID} MSVC)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    set(CLANG 1)
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
+    set(CLANG 1)
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    set(GCC 1)
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+    set(INTEL 1)
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    set(MSVC 1)
+endif()
 
 # Set build type
 if(NOT CMAKE_BUILD_TYPE)
@@ -101,11 +108,14 @@ if(MSVC)
 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Ox")
 
 elseif(GCC OR CLANG)
-        # Treat warning return-type as error to avoid undefined behaviour
-        # when a non-void function does not return a value.
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m${BITNESS} -std=c++11 -Werror=return-type")
-        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wno-long-long")
-#   TODO: Intel flags
+    # Treat warning return-type as error to avoid undefined behaviour
+    # when a non-void function does not return a value.
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m${BITNESS} -std=c++11 -Werror=return-type")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wno-long-long")
+
+elseif(INTEL)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m${BITNESS} -std=c++11")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
 endif()
 
 if(NOT EIGEN_DIRECTORY)
@@ -132,56 +142,54 @@ include_directories(${EIGEN_DIRECTORY})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/test)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/Catch)
 
+set(CINTERFACE_SRC_LIST
+    include/cinterface/cinterface.h
+    include/cinterface/utilities.h
+    src/cinterface/bspline.cpp
+    src/cinterface/bsplinebuilder.cpp
+    src/cinterface/cinterface.cpp
+    src/cinterface/datatable.cpp
+    src/cinterface/utilities.cpp
+)
 # These are the sources we need for compilation of the library
 set(SRC_LIST
-    include/approximant.h
-    include/bsplineapproximant.h
+    ${CINTERFACE_SRC_LIST}
     include/bspline.h
     include/bsplinebasis.h
     include/bsplinebasis1d.h
-    include/cinterface.h
-    include/datasample.h
+    include/knots.h
+    include/bsplinebuilder.h
+    include/datapoint.h
     include/datatable.h
     include/function.h
     include/definitions.h
     include/linearsolvers.h
     include/mykroneckerproduct.h
-    include/polynomialapproximant.h
-    include/psplineapproximant.h
-    include/rbfapproximant.h
-    include/rbfterm.h
     include/serializer.h
     include/utilities.h
-    src/bsplineapproximant.cpp
+    include/saveable.h
     src/bspline.cpp
     src/bsplinebasis.cpp
     src/bsplinebasis1d.cpp
-    src/cinterface.cpp
-    src/datasample.cpp
+    src/knots.cpp
+    src/bsplinebuilder.cpp
+    src/datapoint.cpp
     src/datatable.cpp
     src/function.cpp
     src/mykroneckerproduct.cpp
-    src/polynomialapproximant.cpp
-    src/psplineapproximant.cpp
-    src/rbfapproximant.cpp
     src/serializer.cpp
     src/utilities.cpp
 )
 set(TEST_SRC_LIST
     ${SRC_LIST}
     test/main.cpp
-    test/approximation/bsplineapproximant.cpp
-    test/approximation/psplineapproximant.cpp
-    test/approximation/rbfapproximant.cpp
-    test/approximation/polynomialapproximant.cpp
+    test/approximation/bspline.cpp
+    test/approximation/pspline.cpp
+    test/general/bspline.cpp
     test/general/datatable.cpp
     test/general/utilities.cpp
     test/serialization/datatable.cpp
-    test/serialization/bsplineapproximant.cpp
-    test/serialization/psplineapproximant.cpp
-    test/serialization/rbfapproximant.cpp
-    test/serialization/polynomialapproximant.cpp
-
+    test/serialization/bspline.cpp
     test/operatoroverloads.h
     test/operatoroverloads.cpp
     test/testfunction.h
@@ -190,7 +198,11 @@ set(TEST_SRC_LIST
     test/testfunctions.cpp
     test/testingutilities.h
     test/testingutilities.cpp
-)
+    test/bsplinetestingutilities.h
+    test/bsplinetestingutilities.cpp
+    test/serialization/eigentypes.cpp
+    test/unit/bsplinebasis1d.cpp
+    test/unit/knots.cpp)
 
 set(SHARED_LIBRARY ${PROJECT_NAME_LOWER}-${VERSION})
 set(STATIC_LIBRARY ${PROJECT_NAME_LOWER}-static-${VERSION})
@@ -221,7 +233,7 @@ install(
 # Version file (used for deducing the name of the binary when loading it)
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/splinter-matlab/version ${VERSION})
 install(
-        FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/cinterface.h
+        FILES include/cinterface/cinterface.h
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-matlab/include
 )
 install(
@@ -244,7 +256,7 @@ install(
 # Version file (used for deducing the name of the binary when loading it)
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/splinter-python/version ${VERSION})
 install(
-        FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/cinterface.h
+        FILES include/cinterface/cinterface.h
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-python/include
 )
 install(
