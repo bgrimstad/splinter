@@ -31,8 +31,8 @@ public:
         if (!success)
             throw Exception("LinearSolver::solve: Solver did not converge to acceptable tolerance!");
 
-        if (!validSolution(A, b, x))
-            throw Exception("LinearSolver::solve: Invalid solution!");
+//        if (!validSolution(A, b, x))
+//            throw Exception("LinearSolver::solve: Invalid solution!");
 
         return true;
     }
