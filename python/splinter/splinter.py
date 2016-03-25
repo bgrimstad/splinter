@@ -58,7 +58,7 @@ def _get_handle():
     global __handle
 
     if __handle is None:
-        raise Exception("splinter is not loaded!")
+        raise Exception("SPLINTER is not loaded!")
 
     return __handle
 
