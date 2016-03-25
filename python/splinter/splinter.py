@@ -37,7 +37,7 @@ def load(lib_file = None):
             out("or the file you are trying to load (" + lib_file + ") could not be found.")
             out("For reference your Python is " + str(8*sizeof(c_void_p)) + "bit.")
             out("Here is the error message:")
-            out(e)
+            out(str(e))
             __handle = None
 
 
