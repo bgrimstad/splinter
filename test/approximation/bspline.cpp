@@ -18,18 +18,50 @@ using namespace SPLINTER;
 #define COMMON_TEXT " value approximation test with polynomials"
 
 
-TEST_CASE("Linear BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::linear][function-value]")
+// TESTING LINEAR B-SPLINES
+TEST_CASE("Linear BSpline function" COMMON_TEXT " densely sampled", COMMON_TAGS "[bsplinetype::linear][function-value]")
 {
-    for(auto testFunc : getPolynomialFunctions())
+    for (auto testFunc : getPolynomialFunctions())
     {
-        double one_eps = 0.26;
+        double one_eps = 0.1;
         double two_eps = 0.1;
         double inf_eps = 0.1;
 
         // If the degree of the exact function is less than or equal to the degree
         // of the B-Spline we are using to approximate it, the B-Spline should approximate
         // the function exactly.
-        if(testFunc->isConstDegree() && testFunc->getMaxDegree() <= 1.0)
+        if (testFunc->isConstDegree() && testFunc->getMaxDegree() <= 1.0)
+        {
+            one_eps = 1e-5;
+            two_eps = 1e-5;
+            inf_eps = 1e-5;
+        }
+
+        compareFunctionValue(testFunc,
+                             [](const DataTable &table)
+                             {
+                                 BSpline bs = BSpline::Builder(table).degree(1).build();
+                                 return (Function*) new BSpline(bs);
+                             }
+                ,
+                             5000,  // Number of points to sample at
+                             1337, // Number of points to test against
+                             one_eps, two_eps, inf_eps);
+    }
+}
+
+TEST_CASE("Linear BSpline function" COMMON_TEXT " sampled with medium density", COMMON_TAGS "[bsplinetype::linear][function-value]")
+{
+    for (auto testFunc : getPolynomialFunctions())
+    {
+        double one_eps = 0.25;
+        double two_eps = 0.1;
+        double inf_eps = 0.1;
+
+        // If the degree of the exact function is less than or equal to the degree
+        // of the B-Spline we are using to approximate it, the B-Spline should approximate
+        // the function exactly.
+        if (testFunc->isConstDegree() && testFunc->getMaxDegree() <= 1.0)
         {
             one_eps = 1e-5;
             two_eps = 1e-5;
@@ -49,13 +81,44 @@ TEST_CASE("Linear BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::line
     }
 }
 
+TEST_CASE("Linear BSpline function" COMMON_TEXT " sparsely sampled", COMMON_TAGS "[bsplinetype::linear][function-value]")
+{
+    for (auto testFunc : getPolynomialFunctions())
+    {
+        double one_eps = 0.6;
+        double two_eps = 0.1;
+        double inf_eps = 0.1;
+
+        // If the degree of the exact function is less than or equal to the degree
+        // of the B-Spline we are using to approximate it, the B-Spline should approximate
+        // the function exactly.
+        if (testFunc->isConstDegree() && testFunc->getMaxDegree() <= 1.0)
+        {
+            one_eps = 1e-5;
+            two_eps = 1e-5;
+            inf_eps = 1e-5;
+        }
+
+        compareFunctionValue(testFunc,
+                             [](const DataTable &table)
+                             {
+                                 BSpline bs = BSpline::Builder(table).degree(1).build();
+                                 return (Function*) new BSpline(bs);
+                             }
+                ,
+                             50,  // Number of points to sample at
+                             1337, // Number of points to test against
+                             one_eps, two_eps, inf_eps);
+    }
+}
+
 TEST_CASE("Linear BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::linear][jacobian]")
 {
     double one_eps = 5e-5;
     double two_eps = 5e-5;
     double inf_eps = 5e-5;
 
-    for(auto testFunc : getPolynomialFunctions())
+    for (auto testFunc : getPolynomialFunctions())
     {
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
@@ -71,7 +134,7 @@ TEST_CASE("Linear BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::line
 
 TEST_CASE("Linear BSpline hessian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::linear][hessian]")
 {
-    for(auto testFunc : getPolynomialFunctions())
+    for (auto testFunc : getPolynomialFunctions())
     {
         checkHessianSymmetry(testFunc,
                              [](const DataTable &table)
@@ -84,11 +147,10 @@ TEST_CASE("Linear BSpline hessian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::linea
     }
 }
 
-
-
-TEST_CASE("Quadratic BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::quadratic][function-value]")
+// TESTING QUADRATIC B-SPLINES
+TEST_CASE("Quadratic BSpline function" COMMON_TEXT " densely sampled", COMMON_TAGS "[bsplinetype::quadratic][function-value]")
 {
-    for(auto testFunc : getPolynomialFunctions())
+    for (auto testFunc : getPolynomialFunctions())
     {
         double one_eps = 0.1;
         double two_eps = 0.1;
@@ -97,7 +159,7 @@ TEST_CASE("Quadratic BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::q
         // If the degree of the exact function is less than or equal to the degree
         // of the B-Spline we are using to approximate it, the B-Spline should approximate
         // the function exactly.
-        if(testFunc->isConstDegree() && testFunc->getMaxDegree() <= 2.0)
+        if (testFunc->isConstDegree() && testFunc->getMaxDegree() <= 2.0)
         {
             one_eps = 1e-5;
             two_eps = 1e-5;
@@ -110,7 +172,67 @@ TEST_CASE("Quadratic BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::q
                                  BSpline bs = BSpline::Builder(table).degree(2).build();
                                  return (Function*) new BSpline(bs);
                              },
-                             300,  // Number of points to sample at
+                             5000,  // Number of points to sample at
+                             1337, // Number of points to test against
+                             one_eps, two_eps, inf_eps);
+    }
+}
+
+TEST_CASE("Quadratic BSpline function" COMMON_TEXT " sampled with normal density", COMMON_TAGS "[bsplinetype::quadratic][function-value]")
+{
+    for (auto testFunc : getPolynomialFunctions())
+    {
+        double one_eps = 0.1;
+        double two_eps = 0.1;
+        double inf_eps = 0.1;
+
+        // If the degree of the exact function is less than or equal to the degree
+        // of the B-Spline we are using to approximate it, the B-Spline should approximate
+        // the function exactly.
+        if (testFunc->isConstDegree() && testFunc->getMaxDegree() <= 2.0)
+        {
+            one_eps = 1e-5;
+            two_eps = 1e-5;
+            inf_eps = 1e-5;
+        }
+
+        compareFunctionValue(testFunc,
+                             [](const DataTable &table)
+                             {
+                                 BSpline bs = BSpline::Builder(table).degree(2).build();
+                                 return (Function*) new BSpline(bs);
+                             },
+                             500,  // Number of points to sample at
+                             1337, // Number of points to test against
+                             one_eps, two_eps, inf_eps);
+    }
+}
+
+TEST_CASE("Quadratic BSpline function" COMMON_TEXT " sparsely sampled", COMMON_TAGS "[bsplinetype::quadratic][function-value]")
+{
+    for (auto testFunc : getPolynomialFunctions())
+    {
+        double one_eps = 0.7;
+        double two_eps = 0.1;
+        double inf_eps = 0.1;
+
+        // If the degree of the exact function is less than or equal to the degree
+        // of the B-Spline we are using to approximate it, the B-Spline should approximate
+        // the function exactly.
+        if (testFunc->isConstDegree() && testFunc->getMaxDegree() <= 2.0)
+        {
+            one_eps = 1e-5;
+            two_eps = 1e-5;
+            inf_eps = 1e-5;
+        }
+
+        compareFunctionValue(testFunc,
+                             [](const DataTable &table)
+                             {
+                                 BSpline bs = BSpline::Builder(table).degree(2).build();
+                                 return (Function*) new BSpline(bs);
+                             },
+                             50,  // Number of points to sample at
                              1337, // Number of points to test against
                              one_eps, two_eps, inf_eps);
     }
@@ -122,7 +244,7 @@ TEST_CASE("Quadratic BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::q
     double two_eps = 6e-5;
     double inf_eps = 6e-5;
 
-    for(auto testFunc : getPolynomialFunctions())
+    for (auto testFunc : getPolynomialFunctions())
     {
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
@@ -138,7 +260,7 @@ TEST_CASE("Quadratic BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::q
 
 TEST_CASE("Quadratic BSpline hessian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::quadratic][hessian]")
 {
-    for(auto testFunc : getPolynomialFunctions())
+    for (auto testFunc : getPolynomialFunctions())
     {
         checkHessianSymmetry(testFunc,
                              [](const DataTable &table)
@@ -151,11 +273,10 @@ TEST_CASE("Quadratic BSpline hessian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::qu
     }
 }
 
-
-
-TEST_CASE("Cubic BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::cubic][function-value]")
+// TESTING CUBIC B-SPLINES
+TEST_CASE("Cubic BSpline function" COMMON_TEXT " densely sampled", COMMON_TAGS "[bsplinetype::cubic][function-value]")
 {
-    for(auto testFunc : getPolynomialFunctions())
+    for (auto testFunc : getPolynomialFunctions())
     {
         double one_eps = 0.1;
         double two_eps = 0.1;
@@ -164,7 +285,7 @@ TEST_CASE("Cubic BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::cubic
         // If the degree of the exact function is less than or equal to the degree
         // of the B-Spline we are using to approximate it, the B-Spline should approximate
         // the function exactly.
-        if(testFunc->isConstDegree() && testFunc->getMaxDegree() <= 3.0)
+        if (testFunc->isConstDegree() && testFunc->getMaxDegree() <= 3.0)
         {
             one_eps = 1e-5;
             two_eps = 1e-5;
@@ -177,7 +298,67 @@ TEST_CASE("Cubic BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::cubic
                                  BSpline bs = BSpline::Builder(table).degree(3).build();
                                  return (Function*) new BSpline(bs);
                              },
-                             300,  // Number of points to sample at
+                             5000,  // Number of points to sample at
+                             1337, // Number of points to test against
+                             one_eps, two_eps, inf_eps);
+    }
+}
+
+TEST_CASE("Cubic BSpline function" COMMON_TEXT " sampled with normal density", COMMON_TAGS "[bsplinetype::cubic][function-value]")
+{
+    for (auto testFunc : getPolynomialFunctions())
+    {
+        double one_eps = 0.1;
+        double two_eps = 0.1;
+        double inf_eps = 0.1;
+
+        // If the degree of the exact function is less than or equal to the degree
+        // of the B-Spline we are using to approximate it, the B-Spline should approximate
+        // the function exactly.
+        if (testFunc->isConstDegree() && testFunc->getMaxDegree() <= 3.0)
+        {
+            one_eps = 1e-5;
+            two_eps = 1e-5;
+            inf_eps = 1e-5;
+        }
+
+        compareFunctionValue(testFunc,
+                             [](const DataTable &table)
+                             {
+                                 BSpline bs = BSpline::Builder(table).degree(3).build();
+                                 return (Function*) new BSpline(bs);
+                             },
+                             500,  // Number of points to sample at
+                             1337, // Number of points to test against
+                             one_eps, two_eps, inf_eps);
+    }
+}
+
+TEST_CASE("Cubic BSpline function" COMMON_TEXT " sparsely sampled", COMMON_TAGS "[bsplinetype::cubic][function-value]")
+{
+    for (auto testFunc : getPolynomialFunctions())
+    {
+        double one_eps = 0.2;
+        double two_eps = 0.1;
+        double inf_eps = 0.1;
+
+        // If the degree of the exact function is less than or equal to the degree
+        // of the B-Spline we are using to approximate it, the B-Spline should approximate
+        // the function exactly.
+        if (testFunc->isConstDegree() && testFunc->getMaxDegree() <= 3.0)
+        {
+            one_eps = 1e-5;
+            two_eps = 1e-5;
+            inf_eps = 1e-5;
+        }
+
+        compareFunctionValue(testFunc,
+                             [](const DataTable &table)
+                             {
+                                 BSpline bs = BSpline::Builder(table).degree(3).build();
+                                 return (Function*) new BSpline(bs);
+                             },
+                             80,  // Number of points to sample at
                              1337, // Number of points to test against
                              one_eps, two_eps, inf_eps);
     }
@@ -189,7 +370,7 @@ TEST_CASE("Cubic BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::cubic
     double two_eps = 6e-5;
     double inf_eps = 6e-5;
 
-    for(auto testFunc : getPolynomialFunctions())
+    for (auto testFunc : getPolynomialFunctions())
     {
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
@@ -205,7 +386,7 @@ TEST_CASE("Cubic BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::cubic
 
 TEST_CASE("Cubic BSpline hessian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::cubic][hessian]")
 {
-    for(auto testFunc : getPolynomialFunctions())
+    for (auto testFunc : getPolynomialFunctions())
     {
         checkHessianSymmetry(testFunc,
                              [](const DataTable &table)
@@ -218,11 +399,10 @@ TEST_CASE("Cubic BSpline hessian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::cubic]
     }
 }
 
-
-
-TEST_CASE("Quartic BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::quartic][function-value]")
+// TESTING QUARTIC B-SPLINES
+TEST_CASE("Quartic BSpline function" COMMON_TEXT " densely sampled", COMMON_TAGS "[bsplinetype::quartic][function-value]")
 {
-    for(auto testFunc : getPolynomialFunctions())
+    for (auto testFunc : getPolynomialFunctions())
     {
         double one_eps = 0.1;
         double two_eps = 0.1;
@@ -231,7 +411,7 @@ TEST_CASE("Quartic BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::qua
         // If the degree of the exact function is less than or equal to the degree
         // of the B-Spline we are using to approximate it, the B-Spline should approximate
         // the function exactly.
-        if(testFunc->isConstDegree() && testFunc->getMaxDegree() <= 4.0)
+        if (testFunc->isConstDegree() && testFunc->getMaxDegree() <= 4.0)
         {
             one_eps = 1e-5;
             two_eps = 1e-5;
@@ -244,7 +424,67 @@ TEST_CASE("Quartic BSpline function" COMMON_TEXT, COMMON_TAGS "[bsplinetype::qua
                                  BSpline bs = BSpline::Builder(table).degree(4).build();
                                  return (Function*) new BSpline(bs);
                              },
-                             300,  // Number of points to sample at
+                             5000,  // Number of points to sample at
+                             1337, // Number of points to test against
+                             one_eps, two_eps, inf_eps);
+    }
+}
+
+TEST_CASE("Quartic BSpline function" COMMON_TEXT " sampled with normal density", COMMON_TAGS "[bsplinetype::quartic][function-value]")
+{
+    for (auto testFunc : getPolynomialFunctions())
+    {
+        double one_eps = 0.1;
+        double two_eps = 0.1;
+        double inf_eps = 0.1;
+
+        // If the degree of the exact function is less than or equal to the degree
+        // of the B-Spline we are using to approximate it, the B-Spline should approximate
+        // the function exactly.
+        if (testFunc->isConstDegree() && testFunc->getMaxDegree() <= 4.0)
+        {
+            one_eps = 1e-5;
+            two_eps = 1e-5;
+            inf_eps = 1e-5;
+        }
+
+        compareFunctionValue(testFunc,
+                             [](const DataTable &table)
+                             {
+                                 BSpline bs = BSpline::Builder(table).degree(4).build();
+                                 return (Function*) new BSpline(bs);
+                             },
+                             500,  // Number of points to sample at
+                             1337, // Number of points to test against
+                             one_eps, two_eps, inf_eps);
+    }
+}
+
+TEST_CASE("Quartic BSpline function" COMMON_TEXT " sparsely sampled", COMMON_TAGS "[bsplinetype::quartic][function-value]")
+{
+    for (auto testFunc : getPolynomialFunctions())
+    {
+        double one_eps = 0.1;
+        double two_eps = 0.1;
+        double inf_eps = 0.1;
+
+        // If the degree of the exact function is less than or equal to the degree
+        // of the B-Spline we are using to approximate it, the B-Spline should approximate
+        // the function exactly.
+        if (testFunc->isConstDegree() && testFunc->getMaxDegree() <= 4.0)
+        {
+            one_eps = 1e-5;
+            two_eps = 1e-5;
+            inf_eps = 1e-5;
+        }
+
+        compareFunctionValue(testFunc,
+                             [](const DataTable &table)
+                             {
+                                 BSpline bs = BSpline::Builder(table).degree(4).build();
+                                 return (Function*) new BSpline(bs);
+                             },
+                             200,  // Number of points to sample at
                              1337, // Number of points to test against
                              one_eps, two_eps, inf_eps);
     }
@@ -256,7 +496,7 @@ TEST_CASE("Quartic BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::qua
     double two_eps = 7e-5;
     double inf_eps = 7e-5;
 
-    for(auto testFunc : getPolynomialFunctions())
+    for (auto testFunc : getPolynomialFunctions())
     {
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
@@ -272,7 +512,7 @@ TEST_CASE("Quartic BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::qua
 
 TEST_CASE("Quartic BSpline hessian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::quartic][hessian]")
 {
-    for(auto testFunc : getPolynomialFunctions())
+    for (auto testFunc : getPolynomialFunctions())
     {
         checkHessianSymmetry(testFunc,
                              [](const DataTable &table)
