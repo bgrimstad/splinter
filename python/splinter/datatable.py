@@ -11,23 +11,30 @@ from .utilities import *
 
 
 class DataTable:
-    def __init__(self, filename_or_data=None):
+    def __init__(self, x_or_data, y=None):
         self.__handle = None  # Handle to instance in the library
         self.__x_dim = None
         self.__num_samples = 0  # Number of samples not yet transferred to back end
         self.__samples = []
 
-        if is_string(filename_or_data):
-            self.__handle = splinter._call(splinter._get_handle().splinter_datatable_load_init, get_c_string(filename_or_data))
+        if is_string(x_or_data):
+            self.__handle = splinter._call(splinter._get_handle().splinter_datatable_load_init, get_c_string(x_or_data))
             self.__x_dim = splinter._call(splinter._get_handle().splinter_datatable_get_num_variables, self.__handle)
         else:
             self.__handle = splinter._call(splinter._get_handle().splinter_datatable_init)
 
-            # If fileNameOrData is not a string and not none, we expect it to be an iterable with rows of data,
-            # where the last column in each row is y and the first n-1 columns is x.
-            if filename_or_data is not None:
-                for data_row in filename_or_data:
-                    self.add_sample(list(data_row[:-1]), data_row[-1])
+            if y is None:
+                raise Exception("No y-values supplied.")
+
+            if len(x_or_data) != len(y):
+                raise Exception("x and y must be of the same length!")
+
+            # If x_or_data is not a string, we expect it to be lists of x values which has corresponding y values in 'y'.
+            for idx in range(len(x_or_data)):
+                self.add_sample(x_or_data[idx], y[idx])
+            # if x_or_data is not None:
+            #     for data_row in x_or_data:
+            #         self.add_sample(list(data_row[:-1]), data_row[-1])
 
     # "Public" methods (for use by end user of the library)
     def add_sample(self, x, y):

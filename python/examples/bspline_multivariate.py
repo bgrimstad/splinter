@@ -30,23 +30,26 @@ X1, X2 = np.meshgrid(x1, x2)
 Y = np.sqrt(X1 ** 2 + X2 ** 2)
 
 data = []
+x = []
+y = []
 for i in range(len(x1)):
     for j in range(len(x2)):
-        xij = X1[j, i]
-        yij = X2[j, i]
-        zij = Y[i, j]
-        data.append([xij, yij, zij])
+        x1_ij = X1[j, i]
+        x2_ij = X2[j, i]
+
+        x.append([x1_ij, x2_ij])
+        y.append(Y[i, j])
 
 # Cubic B-spline
-bspline = splinter.BSplineBuilder(data, degree=[1, 3], smoothing=splinter.BSplineBuilder.Smoothing.NONE).build()
+bspline = splinter.BSplineBuilder(x, y, degree=[1, 3], smoothing=splinter.BSplineBuilder.Smoothing.NONE).build()
 
 Zbs = Y
 
 for i in range(len(x1)):
     for j in range(len(x2)):
-        xij = X1[i, j]
-        yij = X2[i, j]
-        Zbs[i, j] = bspline.eval([xij, yij])[0]
+        x1_ij = X1[i, j]
+        x2_ij = X2[i, j]
+        Zbs[i, j] = bspline.eval([x1_ij, x2_ij])[0]
 
 # Plot f
 fig = plt.figure()
@@ -74,17 +77,13 @@ fig.colorbar(surf, shrink=0.5, aspect=5)
 
 plt.show()
 
-print("Jacobian at [3.2,3.2] and [1.0, 1.0]: " + str(bspline.eval_jacobian([[3.2, 3.2], [1.0, 1.0]])))
-print("Hessian at [3.2,3.2] and [1.0, 1.0]: " + str(bspline.eval_hessian([[3.2, 3.2], [1.0, 1.0]])))
+try:
+    # Save the bspline to test.bspline
+    # The file ending doesn't matter
+    bspline.save("test.bspline")
 
-# Save the bspline to test.bspline
-# The file ending doesn't matter
-bspline.save("test.bspline")
+    # Create BSpline from saved BSpline
+    bspline = splinter.BSpline("test.bspline")
 
-# Create BSpline from saved BSpline
-bspline = splinter.BSpline("test.bspline")
-
-print("Original BSpline at [2.1,2.9],[1.0,1.0] and [2.0,2.0]: " + str(bspline.eval([[2.1, 2.9], [1.0, 1.0], [2.0, 2.0]])))
-print("Loaded BSpline at [2.1,2.9],[1.0,1.0] and [2.0,2.0]: " + str(bspline.eval([[2.1, 2.9], [1.0, 1.0], [2.0, 2.0]])))
-
-remove("test.bspline")
+finally:
+    remove("test.bspline")

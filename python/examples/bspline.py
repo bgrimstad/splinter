@@ -25,19 +25,18 @@ x = np.arange(0, 11, 1)
 y = np.zeros((len(x),))
 for i in range(len(x)):
     y[i] = f1(x[i])
-d1 = list(zip(x, y))
 
 # Piecewise constant B-spline that interpolates the data
-b0 = splinter.BSplineBuilder(d1, degree=0).build()
+b0 = splinter.BSplineBuilder(x, y, degree=0).build()
 
 # Linear B-spline that interpolates the data
-b1 = splinter.BSplineBuilder(d1, degree=1).build()
+b1 = splinter.BSplineBuilder(x, y, degree=1).build()
 
 # Quadratic B-spline that interpolates the data
-b2 = splinter.BSplineBuilder(d1, degree=2).build()
+b2 = splinter.BSplineBuilder(x, y, degree=2).build()
 
 # Cubic B-spline that interpolates the data
-b3 = splinter.BSplineBuilder(d1, degree=3).build()
+b3 = splinter.BSplineBuilder(x, y, degree=3).build()
 
 xd = np.arange(0, 10, .01)
 yd0 = b0.eval(xd)

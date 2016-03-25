@@ -28,9 +28,9 @@ class BSplineBuilder:
         def is_valid(value):
             return value in range(3)
 
-    def __init__(self, data, degree=3, smoothing=Smoothing.NONE, alpha=0.1, knot_spacing=KnotSpacing.AS_SAMPLED, num_basis_functions=int(1e6)):
+    def __init__(self, x, y, degree=3, smoothing=Smoothing.NONE, alpha=0.1, knot_spacing=KnotSpacing.AS_SAMPLED, num_basis_functions=int(1e6)):
         self._handle = None  # Handle for referencing the c side of this object
-        self._datatable = DataTable(data)
+        self._datatable = DataTable(x, y)
         self._num_basis_functions = [10 ** 3] * self._datatable.get_num_variables()
 
         self._degrees = None

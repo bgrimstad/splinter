@@ -26,16 +26,15 @@ y = [0.]*11
 for i in range(11):
     x[i] = i
     y[i] = f1(i)
-d1 = list(zip(x, y))
 
 # Cubic B-spline that interpolates the data (note that NONE is the default smoothing setting)
-b1 = splinter.BSplineBuilder(d1, smoothing=splinter.BSplineBuilder.Smoothing.NONE).build()
+b1 = splinter.BSplineBuilder(x, y, smoothing=splinter.BSplineBuilder.Smoothing.NONE).build()
 
 # Cubic B-spline with regularization
-b2 = splinter.BSplineBuilder(d1, smoothing=splinter.BSplineBuilder.Smoothing.IDENTITY, alpha=0.1).build()
+b2 = splinter.BSplineBuilder(x, y, smoothing=splinter.BSplineBuilder.Smoothing.IDENTITY, alpha=0.1).build()
 
 # Cubic P-spline
-b3 = splinter.BSplineBuilder(d1, smoothing=splinter.BSplineBuilder.Smoothing.PSPLINE, alpha=0.1).build()
+b3 = splinter.BSplineBuilder(x, y, smoothing=splinter.BSplineBuilder.Smoothing.PSPLINE, alpha=0.1).build()
 
 n = 1000
 xd = [0.]*n
