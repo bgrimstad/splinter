@@ -257,13 +257,14 @@ function build_windows {
 		if [[ $MINGW_32_BIT != "" ]]; then
 			export PATH="$MINGW_32_BIT:$PATH"
 			build_gcc_clang x86 $COMPILER
+			cp libsplinter-$SPLINTER_VERSION.dll libsplinter-static-$SPLINTER_VERSION.a "$BUILD_ROOT/$OS/$COMPILER/$ARCH"
 		fi
 		
-		cp libsplinter-$SPLINTER_VERSION.dll libsplinter-static-$SPLINTER_VERSION.a "$BUILD_ROOT/$OS/$COMPILER/$ARCH"
 
 		if [[ $MINGW_64_BIT != "" ]]; then
 			export PATH="$MINGW_64_BIT:$PATH"
 			build_gcc_clang x86-64 $COMPILER
+			cp libsplinter-$SPLINTER_VERSION.dll libsplinter-static-$SPLINTER_VERSION.a "$BUILD_ROOT/$OS/$COMPILER/$ARCH"
 		fi
 		
 		# Have CMake create the interface directory structures, then copy them to the build root
@@ -306,17 +307,17 @@ mkdir -p $BUILD_ROOT # -p to avoid error message when it already exists
 cd $BUILD_ROOT
 
 PLATFORM=$(uname)
-if [[ $PLATFORM == MINGW* ]]; then
-	rm -r $BUILD_ROOT/windows
-	build_windows
+#if [[ $PLATFORM == MINGW* ]]; then
+#	rm -r $BUILD_ROOT/windows
+#	build_windows
 	
-elif [[ $PLATFORM == Linux ]]; then
-	rm -r $BUILD_ROOT/linux
-	build_linux
+#elif [[ $PLATFORM == Linux ]]; then
+#	rm -r $BUILD_ROOT/linux
+#	build_linux
 	
-else
-	echo "Unknown platform: $PLATFORM"
-fi
+#else
+#	echo "Unknown platform: $PLATFORM"
+#fi
 
 cd $BUILD_ROOT
 # Check that all commit ids are the same
@@ -384,7 +385,7 @@ do
 		$TAR -czf $full_filename.tar.gz $files > /dev/null
 
 		echo "Creating archive $filename.zip"
-		$ZIP -r $full_filename $files > /dev/null
+		$ZIP -r $full_filename.zip $files > /dev/null
 		cd $OLDWD
 	done
 done
