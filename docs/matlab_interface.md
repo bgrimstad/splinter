@@ -19,11 +19,11 @@ First, head to the [releases tab](https://github.com/bgrimstad/splinter/releases
   - include
       - cinterface.h
   - matlab
-    - All files from the MATLAB directory in the repository
+    - All files from the matlab directory in the repository
     
 - Note that you only need the folders that correspond to your platform.
 - 32 bit MATLAB only exist on Windows.
-- The numbers in the file name (x-y) corresponds to the SPLINTER version, where x is the major and y is the minor version.
+- The numbers in the filename (x-y) corresponds to the SPLINTER version, where x is the major and y is the minor version.
 
 Run setup() (defined in setup.m), which should load SPLINTER for you automatically. You must run this once for each time you start MATLAB.
 
