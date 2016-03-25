@@ -48,7 +48,9 @@ SparseVector BSplineBasis1D::eval(double x) const
     // Evaluate nonzero basis functions
     for (auto it = indexSupported.begin(); it != indexSupported.end(); ++it)
     {
-        values.insert(*it) = deBoorCox(x, *it, degree);
+        double val = deBoorCox(x, *it, degree);
+        if (fabs(val) > 1e-12)
+            values.insert(*it) = val;
     }
 
     // Alternative evaluation using basis matrix
