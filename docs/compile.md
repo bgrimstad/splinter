@@ -14,7 +14,7 @@ Note: This script compiles the library for all architectures with all compilers 
 * [CMake](http://www.cmake.org/)
 * [Git](http://git-scm.com/)
 * UNIX: [GCC](https://gcc.gnu.org/) and/or [Clang](http://clang.llvm.org/)
-* Windows: [MinGW](http://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/installer/mingw-w64-install.exe/download) and/or [Visual Studio Community](https://www.visualstudio.com/en-us/downloads/download-visual-studio-vs.aspx)
+* Windows: [MinGW](https://sourceforge.net/projects/mingw-w64/) and/or [Visual Studio Community](https://www.visualstudio.com/en-us/downloads/download-visual-studio-vs.aspx)
 * Ubuntu: build-essentials (`apt-get install build-essentials`)
 
 ####MinGW note:

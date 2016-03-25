@@ -25,16 +25,15 @@ First, head to the [releases tab](https://github.com/bgrimstad/splinter/releases
       - cinterface.h
   - python
       - splinter
-          - All files from the matlab directory in the repository
+          - All files from the python directory in the repository
     
-- The numbers in the file name (x-y) corresponds to the SPLINTER version, where x is the major and y is the minor version.
+- The numbers in the filename (x-y) corresponds to the SPLINTER version, where x is the major and y is the minor version.
 
 Make sure the folder called python is in your path, or that that folder is your current working directory. Then you can do
 `import splinter`
 and it should automatically load all classes along with the binary for you.
 
 ### Basic usage
-You can then start using the library by making a DataTable and populate it with samples using addSample().
 
 ```python
 import splinter
@@ -62,7 +61,7 @@ bspline.save("myfile.myextension")
 # Load BSpline from file:
 loadedBSpline = splinter.BSpline("myfile.myextension")
 ```
-Notice that if you are going to evaluate the approximant in more than one point, it is preferred to call eval once, instead of n times.
+Notice that if you are going to evaluate the BSpline in more than one point, it is preferred to call eval once, instead of n times.
 
 More examples can be found in the directory `/python/examples`.
 
