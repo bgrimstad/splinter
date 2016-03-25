@@ -66,7 +66,7 @@ DenseVector BSpline::Builder::computeCoefficients(const BSpline& bspline) const
 {
     SparseMatrix B = computeBasisFunctionMatrix(bspline);
     SparseMatrix A = B;
-    DenseVector b = controlPointEquationRHS();
+    DenseVector b = getSamplePointValues();
 
     if (_smoothing == Smoothing::IDENTITY)
     {
@@ -178,6 +178,7 @@ SparseMatrix BSpline::Builder::computeBasisFunctionMatrix(const BSpline &bspline
     for (auto it = _data.cbegin(); it != _data.cend(); ++it, ++i)
     {
         DenseVector xi(numVariables);
+        xi.setZero();
         std::vector<double> xv = it->getX();
         for (unsigned int j = 0; j < numVariables; ++j)
         {
@@ -197,7 +198,7 @@ SparseMatrix BSpline::Builder::computeBasisFunctionMatrix(const BSpline &bspline
     return A;
 }
 
-DenseVector BSpline::Builder::controlPointEquationRHS() const
+DenseVector BSpline::Builder::getSamplePointValues() const
 {
     DenseVector B = DenseVector::Zero(_data.getNumSamples());
 
