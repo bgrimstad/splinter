@@ -28,22 +28,23 @@ class BSplineBuilder:
         def is_valid(value):
             return value in range(3)
 
-    def __init__(self, data, degree=3, smoothing=Smoothing.NONE, alpha=0.1, knot_spacing=KnotSpacing.AS_SAMPLED):
+    def __init__(self, data, degree=3, smoothing=Smoothing.NONE, alpha=0.1, knot_spacing=KnotSpacing.AS_SAMPLED, num_basis_functions=int(1e6)):
         self._handle = None  # Handle for referencing the c side of this object
         self._datatable = DataTable(data)
         self._num_basis_functions = [10 ** 3] * self._datatable.get_num_variables()
 
         self._degrees = None
-        self._num_basis_functions = None
-        self._knot_spacing = None
-        self._smoothing = None
         self._alpha = None
+        self._smoothing = None
+        self._knot_spacing = None
+        self._num_basis_functions = None
 
         self._handle = splinter._call(splinter._get_handle().splinter_bspline_builder_init, self._datatable._get_handle())
         self.degree(degree)
+        self.set_alpha(alpha)
         self.smoothing(smoothing)
         self.knot_spacing(knot_spacing)
-        self.set_alpha(alpha)
+        self.num_basis_functions(num_basis_functions)
 
     def degree(self, degrees):
         # If the value is a single number, make it a list of numVariables length
@@ -63,30 +64,13 @@ class BSplineBuilder:
         splinter._call(splinter._get_handle().splinter_bspline_builder_set_degree, self._handle, (c_int * len(self._degrees))(*self._degrees), len(self._degrees))
         return self
 
-    def num_basis_functions(self, num_basis_functions):
-        # If the value is a single number, make it a list of num_variables length
-        if not isinstance(num_basis_functions, list):
-            num_basis_functions = [num_basis_functions] * self._datatable.get_num_variables()
+    def set_alpha(self, new_alpha):
+        if new_alpha < 0:
+            raise ValueError("BSplineBuilder:set_alpha: alpha must be non-negative.")
 
-        if len(num_basis_functions) != self._datatable.get_num_variables():
-            raise ValueError("BSplineBuilder:num_basis_functions: Inconsistent number of degrees.")
+        self._alpha = new_alpha
 
-        for num_basis_function in num_basis_functions:
-            if not isinstance(num_basis_function, int):
-                raise ValueError("BSplineBuilder:num_basis_functions: Invalid number of basis functions (must be integer): " + str(num_basis_function))
-
-        self._num_basis_functions = num_basis_functions
-
-        splinter._call(splinter._get_handle().splinter_bspline_builder_set_num_basis_functions, self._handle, (c_int * len(self._num_basis_functions))(*self._num_basis_functions), len(self._num_basis_functions))
-        return self
-
-    def knot_spacing(self, knot_spacing):
-        if not BSplineBuilder.KnotSpacing.is_valid(knot_spacing):
-            raise ValueError("BSplineBuilder::knot_spacing: Invalid knotspacing: " + str(knot_spacing))
-
-        self._knot_spacing = knot_spacing
-
-        splinter._call(splinter._get_handle().splinter_bspline_builder_set_knot_spacing, self._handle, self._knot_spacing)
+        splinter._call(splinter._get_handle().splinter_bspline_builder_set_alpha, self._handle, self._alpha)
         return self
 
     def smoothing(self, smoothing):
@@ -98,13 +82,34 @@ class BSplineBuilder:
         splinter._call(splinter._get_handle().splinter_bspline_builder_set_smoothing, self._handle, self._smoothing)
         return self
 
-    def set_alpha(self, new_alpha):
-        if new_alpha < 0:
-            raise ValueError("BSplineBuilder:set_alpha: alpha must be non-negative.")
+    def knot_spacing(self, knot_spacing):
+        if not BSplineBuilder.KnotSpacing.is_valid(knot_spacing):
+            raise ValueError("BSplineBuilder::knot_spacing: Invalid knotspacing: " + str(knot_spacing))
 
-        self._alpha = new_alpha
+        self._knot_spacing = knot_spacing
 
-        splinter._call(splinter._get_handle().splinter_bspline_builder_set_alpha, self._handle, self._alpha)
+        splinter._call(splinter._get_handle().splinter_bspline_builder_set_knot_spacing, self._handle, self._knot_spacing)
+        return self
+
+    def num_basis_functions(self, num_basis_functions):
+        # If the value is a single number, make it a list of num_variables length
+        if not isinstance(num_basis_functions, list):
+            num_basis_functions = [num_basis_functions] * self._datatable.get_num_variables()
+
+        if len(num_basis_functions) != self._datatable.get_num_variables():
+            raise ValueError("BSplineBuilder:num_basis_functions: Inconsistent number of degrees.")
+
+        for num_basis_function in num_basis_functions:
+            if not isinstance(num_basis_function, int):
+                raise ValueError(
+                    "BSplineBuilder:num_basis_functions: Invalid number of basis functions (must be integer): " + str(
+                        num_basis_function))
+
+        self._num_basis_functions = num_basis_functions
+
+        splinter._call(splinter._get_handle().splinter_bspline_builder_set_num_basis_functions, self._handle,
+                       (c_int * len(self._num_basis_functions))(*self._num_basis_functions),
+                       len(self._num_basis_functions))
         return self
 
     # Returns a handle to the created internal BSpline object
