@@ -27,11 +27,10 @@ std::vector<double> denseVectorToVector(const DenseVector &denseVec)
 DenseVector vectorToDenseVector(const std::vector<double> &vec)
 {
     DenseVector denseVec(vec.size());
+    denseVec.setZero();
 
-    for(size_t i = 0; i < vec.size(); ++i)
-    {
+    for (size_t i = 0; i < vec.size(); ++i)
         denseVec(i) = vec.at(i);
-    }
 
     return denseVec;
 }
@@ -78,6 +77,16 @@ std::vector<double> linspace(double start, double stop, unsigned int num)
     for (unsigned int i = 0; i < num; ++i)
         ret.push_back(start + i*dx);
     return ret;
+}
+
+std::vector<double> extractUniqueSorted(const std::vector<double> &values)
+{
+    // Sort and remove duplicates
+    std::vector<double> unique(values);
+    std::sort(unique.begin(), unique.end());
+    std::vector<double>::iterator it = unique_copy(unique.begin(), unique.end(), unique.begin());
+    unique.resize(distance(unique.begin(),it));
+    return unique;
 }
 
 } // namespace SPLINTER
