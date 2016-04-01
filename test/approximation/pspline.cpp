@@ -67,6 +67,31 @@ TEST_CASE("PSpline function2" COMMON_TEXT, COMMON_TAGS "[function-value2]")
     }
 }
 
+TEST_CASE("PSpline function2" COMMON_TEXT, COMMON_TAGS "[function-value2]")
+{
+    for (auto testFunc : getPolynomialFunctions())
+    {
+        double one_eps = 0.8;
+        double two_eps = 0.1;
+        double inf_eps = 0.1;
+
+        compareFunctionValue(testFunc,
+                             [](const DataTable &table)
+                             {
+                                 BSpline bs = BSpline::Builder(table)
+                                         .smoothing(BSpline::Smoothing::PSPLINE)
+                                         .knotSpacing(BSpline::KnotSpacing::EXPERIMENTAL)
+                                         .numBasisFunctions(10)
+                                         .alpha(0.01)
+                                         .build();
+                                 return (Function*) new BSpline(bs);
+                             },
+                             300,  // Number of points to sample at
+                             1337, // Number of points to test against
+                             one_eps, two_eps, inf_eps);
+    }
+}
+
 TEST_CASE("PSpline jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian]")
 {
     for (auto testFunc : getPolynomialFunctions())
