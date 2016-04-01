@@ -9,6 +9,7 @@
 
 #include <Catch.h>
 #include <knots.h>
+#include <iostream>
 
 using namespace SPLINTER;
 
@@ -49,4 +50,20 @@ TEST_CASE("isKnotVectorRefinement" COMMON_TEXT, COMMON_TAGS)
     std::vector<double> knots2 = {1, 1, 1, 2.1, 2.5, 3.1, 4, 4, 4};
 
     REQUIRE(isKnotVectorRefinement(knots1, knots2));
+}
+
+TEST_CASE("knotVectorEquidistantNotClamped" COMMON_TEXT, COMMON_TAGS)
+{
+    std::vector<double> values = {1, 1, 1, 2.1, 3.1, 4, 4, 4, 3.1, 2.1, 2.2};
+    unsigned int degree = 3;
+    unsigned int num_basis_functions = 1;
+    auto knots = knotVectorEquidistantNotClamped(values, degree, num_basis_functions);
+    std::vector<double> correct_knots = {0.7, 1.6, 2.5, 3.4, 4.3};
+
+    REQUIRE(knots.size() == correct_knots.size());
+    bool flag = true;
+    for (unsigned int i = 0; i < knots.size(); ++i)
+        if (std::fabs(knots.at(i) - correct_knots.at(i)) > 1e-6)
+            flag = false;
+    REQUIRE(flag);
 }

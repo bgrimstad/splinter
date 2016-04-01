@@ -37,6 +37,8 @@ DenseMatrix vectorVectorToDenseMatrix(const std::vector<std::vector<double>> &ve
 
 std::vector<double> linspace(double start, double stop, unsigned int num);
 
+std::vector<double> extractUniqueSorted(const std::vector<double> &values);
+
 } // namespace SPLINTER
 
 #endif // SPLINTER_UTILITIES_H
