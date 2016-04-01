@@ -566,13 +566,14 @@ std::vector<int> BSplineBasis1D::indexSupportedBasisfunctions(double x) const
     std::vector<int> ret;
     if (insideSupport(x))
     {
-        int last = indexHalfopenInterval(x);
-        if (last < 0)
+        int span = indexHalfopenInterval(x);
+        if (span < 0)
         {
             // NOTE: can this happen?
-            last = knots.size() - 1 - (degree + 1);
+            span = knots.size() - 1 - (degree + 1);
         }
-        int first = std::max((int)(last - degree), 0);
+        int first = std::max((int)(span - degree), 0);
+        int last = std::min(span, (int)(getNumBasisFunctions()-1));
         for (int i = first; i <= last; i++)
         {
             ret.push_back(i);
