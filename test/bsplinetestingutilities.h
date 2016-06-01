@@ -28,6 +28,7 @@ bool testKnotInsertion();
  */
 bool domainReductionTest(BSpline &bs, const BSpline &bs_orig);
 bool runRecursiveDomainReductionTest();
+bool domainReductionTest1();
 
 } // namespace SPLINTER
 
