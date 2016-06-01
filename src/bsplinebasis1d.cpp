@@ -199,12 +199,12 @@ SparseMatrix BSplineBasis1D::buildBasisMatrix(double x, unsigned int u, unsigned
             {
                 // Insert diagonal element
                 double a = (knots.at(u+1+i) - x)/dk;
-                if (a != 0)
+                if (!assertNear(a, .0))
                     R.insert(i,i) = a;
 
                 // Insert super-diagonal element
                 double b = (x - knots.at(u+1+i-k))/dk;
-                if (b != 0)
+                if (!assertNear(b, .0))
                     R.insert(i,i+1) = b;
             }
         }
@@ -310,7 +310,7 @@ SparseMatrix BSplineBasis1D::refineKnotsLocally(double x)
             || assertNear(knots.front(), knots.back()))
     {
         unsigned int n = getNumBasisFunctions();
-        DenseMatrix A = DenseMatrix::Identity(n,n);
+        DenseMatrix A = DenseMatrix::Identity(n, n);
         return A.sparseView();
     }
 
@@ -441,7 +441,8 @@ SparseMatrix BSplineBasis1D::buildKnotInsertionMatrix(const std::vector<double> 
         for (int k = 0; k < R.outerSize(); ++k)
         for (SparseMatrix::InnerIterator it(R, k); it; ++it)
         {
-            A.insert(i, j + it.col()) = it.value();
+            if (!assertNear(it.value(), .0))
+                A.insert(i, j + it.col()) = it.value();
         }
     }
 
@@ -463,11 +464,10 @@ void BSplineBasis1D::supportHack(double &x) const
 
 /*
  * Finds index i such that knots.at(i) <= x < knots.at(i+1).
- * Returns false if x is outside support.
  */
 int BSplineBasis1D::indexHalfopenInterval(double x) const
 {
-    if (x < knots.front() || x > knots.back())
+    if (!insideSupport(x))
         throw Exception("BSplineBasis1D::indexHalfopenInterval: x outside knot interval!");
 
     // Find first knot that is larger than x
@@ -475,7 +475,12 @@ int BSplineBasis1D::indexHalfopenInterval(double x) const
 
     // Return index
     int index = it - knots.begin();
-    return index - 1;
+    index -= 1;
+
+    if (index < 0)
+        throw Exception("BSplineBasis1D::indexHalfopenInterval: computed negative index!");
+
+    return index;
 }
 
 SparseMatrix BSplineBasis1D::reduceSupport(double lb, double ub)
@@ -510,24 +515,22 @@ SparseMatrix BSplineBasis1D::reduceSupport(double lb, double ub)
     }
 
     // New knot vector
-    std::vector<double> si;
-    si.insert(si.begin(), knots.begin()+index_lower, knots.begin()+index_upper+k+1);
+    std::vector<double> si(knots.begin()+index_lower, knots.begin()+index_upper+k+1);
 
     // Construct selection matrix A
-    int numOld = knots.size()-k; // Current number of basis functions
-    int numNew = si.size()-k; // Number of basis functions after update
+    int num_old = knots.size()-k; // Current number of basis functions
+    int num_new = si.size()-k; // Number of basis functions after update
 
-    if (numOld < numNew)
+    if (num_old < num_new)
         throw Exception("BSplineBasis1D::reduceSupport: Number of basis functions is increased instead of reduced!");
 
-    DenseMatrix Ad = DenseMatrix::Zero(numOld, numNew);
-    Ad.block(index_lower, 0, numNew, numNew) = DenseMatrix::Identity(numNew, numNew);
-    SparseMatrix A = Ad.sparseView();
+    DenseMatrix Ad = DenseMatrix::Zero(num_new, num_old);
+    Ad.block(0, index_lower, num_new, num_new) = DenseMatrix::Identity(num_new, num_new);
 
     // Update knots
     knots = si;
 
-    return A;
+    return Ad.sparseView();
 }
 
 double BSplineBasis1D::getKnotValue(unsigned int index) const
@@ -563,23 +566,37 @@ unsigned int BSplineBasis1D::getNumBasisFunctionsTarget() const
 // Return indices of supporting basis functions at x
 std::vector<int> BSplineBasis1D::indexSupportedBasisfunctions(double x) const
 {
-    std::vector<int> ret;
-    if (insideSupport(x))
+    if (!insideSupport(x))
+        throw Exception("BSplineBasis1D::indexSupportedBasisfunctions: x not inside support!");
+
+    std::vector<int> supported;
+    for (unsigned int i = 0; i < getNumBasisFunctions(); ++i)
     {
-        int span = indexHalfopenInterval(x);
-        if (span < 0)
+        // Support of basis function i
+        if (knots.at(i) <= x && x < knots.at(i+degree+1))
         {
-            // NOTE: can this happen?
-            span = knots.size() - 1 - (degree + 1);
-        }
-        int first = std::max((int)(span - degree), 0);
-        int last = std::min(span, (int)(getNumBasisFunctions()-1));
-        for (int i = first; i <= last; i++)
-        {
-            ret.push_back(i);
+            supported.push_back(i);
+
+            if (supported.size() == degree + 1)
+                break;
         }
     }
-    return ret;
+
+    // Right edge case
+    if (assertNear(x, knots.back()) && knotMultiplicity(knots.back()) == degree + 1)
+    {
+        auto last_basis_func = getNumBasisFunctions()-1;
+        if (find(supported.begin(), supported.end(), last_basis_func) == supported.end())
+            supported.push_back(last_basis_func);
+    }
+
+    if (supported.size() <= 0)
+        throw Exception("BSplineBasis1D::indexSupportedBasisfunctions: Number of supporting basis functions is not positive!");
+
+    if (supported.size() > degree + 1)
+        throw Exception("BSplineBasis1D::indexSupportedBasisfunctions: Number of supporting basis functions larger than degree + 1!");
+
+    return supported;
 }
 
 unsigned int BSplineBasis1D::indexLongestInterval() const

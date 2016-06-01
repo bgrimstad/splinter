@@ -19,8 +19,8 @@ DataTable sampleTestFunction()
     DataTable samples;
 
     // Sample function
-    auto x0_vec = linspace(0,2,20);
-    auto x1_vec = linspace(0,2,20);
+    auto x0_vec = linspace(0, 2, 20);
+    auto x1_vec = linspace(0, 2, 20);
     DenseVector x(2);
     double y;
 
@@ -159,6 +159,136 @@ bool runRecursiveDomainReductionTest()
         return false;
     if (!domainReductionTest(bspline4, bspline4))
         return false;
+
+    return true;
+}
+
+bool domainReductionTest1()
+{
+    // Create new DataTable to manage samples
+    DataTable samples = sampleTestFunction();
+
+    std::vector<double> x1 = {0.75, 0.75};
+    std::vector<double> x2 = {0.7, 0.8};
+
+    // Build B-splines that interpolate the samples
+    BSpline bspline1_ref = BSpline::Builder(samples).degree(1).build();
+    BSpline bspline2_ref = BSpline::Builder(samples).degree(2).build();
+    BSpline bspline3_ref = BSpline::Builder(samples).degree(3).build();
+    BSpline bspline4_ref = BSpline::Builder(samples).degree(4).build();
+
+    BSpline bspline1 = BSpline::Builder(samples).degree(1).build();
+    BSpline bspline2 = BSpline::Builder(samples).degree(2).build();
+    BSpline bspline3 = BSpline::Builder(samples).degree(3).build();
+    BSpline bspline4 = BSpline::Builder(samples).degree(4).build();
+
+    {
+        std::vector<double> lb = {0, 0};
+        std::vector<double> ub = {2, 2};
+
+        bspline1.reduceSupport(lb, ub);
+        bspline2.reduceSupport(lb, ub);
+        bspline3.reduceSupport(lb, ub);
+        bspline4.reduceSupport(lb, ub);
+
+        if (!assertNear(bspline1.eval(x1), bspline1_ref.eval(x1)))
+            return false;
+        if (!assertNear(bspline2.eval(x1), bspline2_ref.eval(x1)))
+            return false;
+        if (!assertNear(bspline3.eval(x1), bspline3_ref.eval(x1)))
+            return false;
+        if (!assertNear(bspline4.eval(x1), bspline4_ref.eval(x1)))
+            return false;
+        if (!assertNear(bspline1.eval(x2), bspline1_ref.eval(x2)))
+            return false;
+        if (!assertNear(bspline2.eval(x2), bspline2_ref.eval(x2)))
+            return false;
+        if (!assertNear(bspline3.eval(x2), bspline3_ref.eval(x2)))
+            return false;
+        if (!assertNear(bspline4.eval(x2), bspline4_ref.eval(x2)))
+            return false;
+    }
+
+    {
+        std::vector<double> lb = {0, 0};
+        std::vector<double> ub = {1, 1};
+
+        bspline1.reduceSupport(lb, ub);
+        bspline2.reduceSupport(lb, ub);
+        bspline3.reduceSupport(lb, ub);
+        bspline4.reduceSupport(lb, ub);
+
+        if (!assertNear(bspline1.eval(x1), bspline1_ref.eval(x1)))
+            return false;
+        if (!assertNear(bspline2.eval(x1), bspline2_ref.eval(x1)))
+            return false;
+        if (!assertNear(bspline3.eval(x1), bspline3_ref.eval(x1)))
+            return false;
+        if (!assertNear(bspline4.eval(x1), bspline4_ref.eval(x1)))
+            return false;
+        if (!assertNear(bspline1.eval(x2), bspline1_ref.eval(x2)))
+            return false;
+        if (!assertNear(bspline2.eval(x2), bspline2_ref.eval(x2)))
+            return false;
+        if (!assertNear(bspline3.eval(x2), bspline3_ref.eval(x2)))
+            return false;
+        if (!assertNear(bspline4.eval(x2), bspline4_ref.eval(x2)))
+            return false;
+    }
+
+    {
+        std::vector<double> lb = {0.5, 0.5};
+        std::vector<double> ub = {1, 1};
+
+        bspline1.reduceSupport(lb, ub);
+        bspline2.reduceSupport(lb, ub);
+        bspline3.reduceSupport(lb, ub);
+        bspline4.reduceSupport(lb, ub);
+
+        if (!assertNear(bspline1.eval(x1), bspline1_ref.eval(x1)))
+            return false;
+        if (!assertNear(bspline2.eval(x1), bspline2_ref.eval(x1)))
+            return false;
+        if (!assertNear(bspline3.eval(x1), bspline3_ref.eval(x1)))
+            return false;
+        if (!assertNear(bspline4.eval(x1), bspline4_ref.eval(x1)))
+            return false;
+        if (!assertNear(bspline1.eval(x2), bspline1_ref.eval(x2)))
+            return false;
+        if (!assertNear(bspline2.eval(x2), bspline2_ref.eval(x2)))
+            return false;
+        if (!assertNear(bspline3.eval(x2), bspline3_ref.eval(x2)))
+            return false;
+        if (!assertNear(bspline4.eval(x2), bspline4_ref.eval(x2)))
+            return false;
+    }
+
+    {
+        std::vector<double> lb = {0.7, 0.7};
+        std::vector<double> ub = {0.8, 0.8};
+
+        bspline1.reduceSupport(lb, ub);
+        bspline2.reduceSupport(lb, ub);
+        bspline3.reduceSupport(lb, ub);
+        bspline4.reduceSupport(lb, ub);
+
+        if (!assertNear(bspline1.eval(x1), bspline1_ref.eval(x1)))
+            return false;
+        if (!assertNear(bspline2.eval(x1), bspline2_ref.eval(x1)))
+            return false;
+        if (!assertNear(bspline3.eval(x1), bspline3_ref.eval(x1)))
+            return false;
+        if (!assertNear(bspline4.eval(x1), bspline4_ref.eval(x1)))
+            return false;
+        if (!assertNear(bspline1.eval(x2), bspline1_ref.eval(x2)))
+            return false;
+        if (!assertNear(bspline2.eval(x2), bspline2_ref.eval(x2)))
+            return false;
+        if (!assertNear(bspline3.eval(x2), bspline3_ref.eval(x2)))
+            return false;
+        if (!assertNear(bspline4.eval(x2), bspline4_ref.eval(x2)))
+            return false;
+    }
 
     return true;
 }
