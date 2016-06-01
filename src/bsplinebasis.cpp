@@ -237,9 +237,8 @@ SparseMatrix BSplineBasis::evalBasisHessian(DenseVector &x) const
 
 SparseMatrix BSplineBasis::insertKnots(double tau, unsigned int dim, unsigned int multiplicity)
 {
-    SparseMatrix A(1,1);
-//    A.resize(1,1);
-    A.insert(0,0) = 1;
+    SparseMatrix A(1, 1);
+    A.insert(0, 0) = 1;
 
     // Calculate multivariate knot insertion matrix
     for (unsigned int i = 0; i < numVariables; i++)
@@ -256,11 +255,11 @@ SparseMatrix BSplineBasis::insertKnots(double tau, unsigned int dim, unsigned in
         {
             // No insertion - identity matrix
             int m = bases.at(i).getNumBasisFunctions();
-            Ai.resize(m,m);
+            Ai.resize(m, m);
             Ai.setIdentity();
         }
 
-        //A = kroneckerProduct(temp, Ai);
+//        A = kroneckerProduct(temp, Ai);
         A = myKroneckerProduct(temp, Ai);
     }
 
@@ -271,8 +270,8 @@ SparseMatrix BSplineBasis::insertKnots(double tau, unsigned int dim, unsigned in
 
 SparseMatrix BSplineBasis::refineKnots()
 {
-    SparseMatrix A(1,1);
-    A.insert(0,0) = 1;
+    SparseMatrix A(1, 1);
+    A.insert(0, 0) = 1;
 
     for (unsigned int i = 0; i < numVariables; i++)
     {
@@ -331,15 +330,13 @@ SparseMatrix BSplineBasis::reduceSupport(std::vector<double>& lb, std::vector<do
     if (lb.size() != ub.size() || lb.size() != numVariables)
         throw Exception("BSplineBasis::reduceSupport: Incompatible dimension of domain bounds.");
 
-    SparseMatrix A(1,1);
-    A.insert(0,0) = 1;
+    SparseMatrix A(1, 1);
+    A.insert(0, 0) = 1;
 
     for (unsigned int i = 0; i < numVariables; i++)
     {
         SparseMatrix temp = A;
-        SparseMatrix Ai;
-
-        Ai = bases.at(i).reduceSupport(lb.at(i), ub.at(i));
+        SparseMatrix Ai = bases.at(i).reduceSupport(lb.at(i), ub.at(i));
 
         //A = kroneckerProduct(temp, Ai);
         A = myKroneckerProduct(temp, Ai);
