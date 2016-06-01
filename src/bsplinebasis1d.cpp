@@ -41,7 +41,7 @@ SparseVector BSplineBasis1D::eval(double x) const
 
     supportHack(x);
 
-    std::vector<int> indexSupported = indexSupportedBasisfunctions(x);
+    std::vector<int> indexSupported = indexSupportedBasisFunctions(x);
 
     values.reserve(indexSupported.size());
 
@@ -133,7 +133,7 @@ SparseVector BSplineBasis1D::evalFirstDerivative(double x) const
 
     supportHack(x);
 
-    std::vector<int> supportedBasisFunctions = indexSupportedBasisfunctions(x);
+    std::vector<int> supportedBasisFunctions = indexSupportedBasisFunctions(x);
 
     for (int i : supportedBasisFunctions)
     {
@@ -491,8 +491,8 @@ SparseMatrix BSplineBasis1D::reduceSupport(double lb, double ub)
 
     unsigned int k = degree + 1;
 
-    int index_lower = indexSupportedBasisfunctions(lb).front();
-    int index_upper = indexSupportedBasisfunctions(ub).back();
+    int index_lower = indexSupportedBasisFunctions(lb).front();
+    int index_upper = indexSupportedBasisFunctions(ub).back();
 
     // Check lower bound index
     if (k != knotMultiplicity(knots.at(index_lower)))
@@ -564,10 +564,10 @@ unsigned int BSplineBasis1D::getNumBasisFunctionsTarget() const
 }
 
 // Return indices of supporting basis functions at x
-std::vector<int> BSplineBasis1D::indexSupportedBasisfunctions(double x) const
+std::vector<int> BSplineBasis1D::indexSupportedBasisFunctions(double x) const
 {
     if (!insideSupport(x))
-        throw Exception("BSplineBasis1D::indexSupportedBasisfunctions: x not inside support!");
+        throw Exception("BSplineBasis1D::indexSupportedBasisFunctions: x not inside support!");
 
     std::vector<int> supported;
     for (unsigned int i = 0; i < getNumBasisFunctions(); ++i)
@@ -591,10 +591,10 @@ std::vector<int> BSplineBasis1D::indexSupportedBasisfunctions(double x) const
     }
 
     if (supported.size() <= 0)
-        throw Exception("BSplineBasis1D::indexSupportedBasisfunctions: Number of supporting basis functions is not positive!");
+        throw Exception("BSplineBasis1D::indexSupportedBasisFunctions: Number of supporting basis functions is not positive!");
 
     if (supported.size() > degree + 1)
-        throw Exception("BSplineBasis1D::indexSupportedBasisfunctions: Number of supporting basis functions larger than degree + 1!");
+        throw Exception("BSplineBasis1D::indexSupportedBasisFunctions: Number of supporting basis functions larger than degree + 1!");
 
     return supported;
 }

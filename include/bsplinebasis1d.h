@@ -47,7 +47,7 @@ public:
     unsigned int getNumBasisFunctionsTarget() const;
 
     // Index getters
-    std::vector<int> indexSupportedBasisfunctions(double x) const;
+    std::vector<int> indexSupportedBasisFunctions(double x) const;
     int indexHalfopenInterval(double x) const;
     unsigned int indexLongestInterval() const;
     unsigned int indexLongestInterval(const std::vector<double> &vec) const;
