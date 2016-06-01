@@ -154,7 +154,7 @@ std::vector<unsigned int> BSpline::getNumBasisFunctionsPerVariable() const
     return ret;
 }
 
-std::vector< std::vector<double> > BSpline::getKnotVectors() const
+std::vector<std::vector<double>> BSpline::getKnotVectors() const
 {
     return basis.getKnotVectors();
 }
@@ -207,7 +207,7 @@ void BSpline::setControlPoints(const DenseMatrix &controlPoints)
     checkControlPoints();
 }
 
-void BSpline::updateControlPoints(const DenseMatrix &A)
+void BSpline::updateControlPoints(const SparseMatrix &A)
 {
     if (A.cols() != coefficients.rows() || A.cols() != knotaverages.rows())
         throw Exception("BSpline::updateControlPoints: Incompatible size of linear transformation matrix.");
@@ -350,7 +350,7 @@ void BSpline::insertKnots(double tau, unsigned int dim, unsigned int multiplicit
 
 void BSpline::regularizeKnotVectors(std::vector<double> &lb, std::vector<double> &ub)
 {
-    // Add and remove controlpoints and knots to make the b-spline p-regular with support [lb, ub]
+    // Add and remove controlpoints and knots to make the B-spline p-regular with support [lb, ub]
     if (!(lb.size() == numVariables && ub.size() == numVariables))
         throw Exception("BSpline::regularizeKnotVectors: Inconsistent vector sizes.");
 
@@ -363,7 +363,7 @@ void BSpline::regularizeKnotVectors(std::vector<double> &lb, std::vector<double>
         // the method that inserts one knot at the time. This causes the preallocation of
         // kronecker product matrices to become too small and the speed deteriorates drastically
         // in higher dimensions because reallocation is necessary. This can be prevented by
-        // precomputing the number of nonzeros when preallocating memory (see myKroneckerProduct).
+        // computing the number of nonzeros when preallocating memory (see myKroneckerProduct).
         int numKnotsLB = multiplicityTarget - basis.getKnotMultiplicity(dim, lb.at(dim));
         if (numKnotsLB > 0)
         {
@@ -385,11 +385,8 @@ bool BSpline::removeUnsupportedBasisFunctions(std::vector<double> &lb, std::vect
 
     SparseMatrix A = basis.reduceSupport(lb, ub);
 
-    if (coefficients.size() != A.rows())
-        return false;
-
     // Remove unsupported control points (basis functions)
-    updateControlPoints(A.transpose());
+    updateControlPoints(A);
 
     return true;
 }

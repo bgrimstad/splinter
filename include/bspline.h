@@ -68,7 +68,7 @@ public:
     /**
      * Getters
      */
-    DenseVector getCoefficients()
+    DenseVector getCoefficients() const
     {
         return coefficients;
     }
@@ -104,7 +104,7 @@ public:
     void checkControlPoints() const;
 
     // Linear transformation of control points (B-spline has affine invariance)
-    void updateControlPoints(const DenseMatrix &A);
+    void updateControlPoints(const SparseMatrix &A);
 
     // Reduce support of B-spline
     void reduceSupport(std::vector<double> lb, std::vector<double> ub, bool doRegularizeKnotVectors = true);
