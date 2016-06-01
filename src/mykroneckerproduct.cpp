@@ -39,14 +39,14 @@ SparseMatrix myKroneckerProduct(const SparseMatrix &A, const SparseMatrix &B)
     for (int jA = 0; jA < A.outerSize(); ++jA)
     {
         int nnz = 0;
-        for (SparseMatrix::InnerIterator itA(A,jA); itA; ++itA) nnz++;
+        for (SparseMatrix::InnerIterator itA(A, jA); itA; ++itA) nnz++;
         nnzA(jA) = nnz;
     }
 
     for (int jB = 0; jB < B.outerSize(); ++jB)
     {
         int nnz = 0;
-        for (SparseMatrix::InnerIterator itB(B,jB); itB; ++itB) nnz++;
+        for (SparseMatrix::InnerIterator itB(B, jB); itB; ++itB) nnz++;
         nnzB(jB) = nnz;
     }
 
@@ -68,7 +68,7 @@ SparseMatrix myKroneckerProduct(const SparseMatrix &A, const SparseMatrix &B)
     // Compute Kronecker product
     for (int jA = 0; jA < A.outerSize(); ++jA)
     {
-        for (SparseMatrix::InnerIterator itA(A,jA); itA; ++itA)
+        for (SparseMatrix::InnerIterator itA(A, jA); itA; ++itA)
         {
             if (std::abs(itA.value()) > tolerance)
             {
@@ -77,13 +77,13 @@ SparseMatrix myKroneckerProduct(const SparseMatrix &A, const SparseMatrix &B)
 
                 for (int jB = 0; jB < B.outerSize(); ++jB)
                 {
-                    for (SparseMatrix::InnerIterator itB(B,jB); itB; ++itB)
+                    for (SparseMatrix::InnerIterator itB(B, jB); itB; ++itB)
                     {
-                        if (std::abs(itA.value()*itB.value()) > tolerance)
+                        if (std::abs(itB.value()) > tolerance)
                         {
                             int row = jrow + itB.row();
                             int col = jcol + itB.col();
-                            AB.insert(row,col) = itA.value()*itB.value();
+                            AB.insert(row, col) = itA.value()*itB.value();
                         }
                     }
                 }
