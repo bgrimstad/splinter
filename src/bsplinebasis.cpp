@@ -375,12 +375,12 @@ unsigned int BSplineBasis::getNumBasisFunctions() const
     return prod;
 }
 
-BSplineBasis1D BSplineBasis::getSingleBasis(int dim)
+const BSplineBasis1D& BSplineBasis::getSingleBasis(int dim) const
 {
     return bases.at(dim);
 }
 
-std::vector<double> BSplineBasis::getKnotVector(int dim) const
+const std::vector<double>& BSplineBasis::getKnotVector(int dim) const
 {
     return bases.at(dim).getKnotVector();
 }

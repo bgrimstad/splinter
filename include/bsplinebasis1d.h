@@ -40,7 +40,7 @@ public:
     SparseMatrix reduceSupport(double lb, double ub);
 
     // Getters
-    std::vector<double> getKnotVector() const { return knots; }
+    const std::vector<double>& getKnotVector() const { return knots; }
     unsigned int getBasisDegree() const { return degree; }
     double getKnotValue(unsigned int index) const;
     unsigned int getNumBasisFunctions() const;
