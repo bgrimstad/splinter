@@ -60,7 +60,7 @@ public:
         return *this;
     }
 
-    Builder& degree(std::vector<unsigned int> degrees)
+    Builder& degree(const std::vector<unsigned int> &degrees)
     {
         if (degrees.size() != _data.getNumVariables())
             throw Exception("BSpline::Builder: Inconsistent length on degree vector.");
@@ -74,7 +74,7 @@ public:
         return *this;
     }
 
-    Builder& numBasisFunctions(std::vector<unsigned int> numBasisFunctions)
+    Builder& numBasisFunctions(const std::vector<unsigned int> &numBasisFunctions)
     {
         if (numBasisFunctions.size() != _data.getNumVariables())
             throw Exception("BSpline::Builder: Inconsistent length on numBasisFunctions vector.");

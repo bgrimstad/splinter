@@ -36,7 +36,7 @@ public:
     /**
      * Returns the function value at x
      */
-    virtual double eval(DenseVector x) const = 0;
+    virtual double eval(const DenseVector &x) const = 0;
 
     /**
      * Returns the function value at x
@@ -46,7 +46,7 @@ public:
     /**
      * Returns the (1 x numVariables) Jacobian evaluated at x
      */
-    virtual DenseMatrix evalJacobian(DenseVector x) const;
+    virtual DenseMatrix evalJacobian(const DenseVector &x) const;
 
     /**
      * Returns the (1 x numVariables) Jacobian evaluated at x
@@ -56,7 +56,7 @@ public:
     /**
      * Returns the (numVariables x numVariables) Hessian evaluated at x
      */
-    virtual DenseMatrix evalHessian(DenseVector x) const;
+    virtual DenseMatrix evalHessian(const DenseVector &x) const;
 
     /**
      * Returns the (numVariables x numVariables) Hessian evaluated at x
@@ -74,7 +74,7 @@ public:
     /**
      * Check input
      */
-    void checkInput(DenseVector x) const {
+    void checkInput(const DenseVector &x) const {
         if (x.size() != numVariables)
             throw Exception("Function::checkInput: Wrong dimension on evaluation point x.");
     }
@@ -84,10 +84,10 @@ public:
      * Vector of numVariables length
      */
     std::vector<double> centralDifference(const std::vector<double> &x) const;
-    DenseMatrix centralDifference(DenseVector x) const;
+    DenseMatrix centralDifference(const DenseVector &x) const;
 
     std::vector<std::vector<double>> secondOrderCentralDifference(const std::vector<double> &x) const;
-    DenseMatrix secondOrderCentralDifference(DenseVector x) const;
+    DenseMatrix secondOrderCentralDifference(const DenseVector &x) const;
 
     /**
      * Description of function.

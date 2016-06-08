@@ -24,8 +24,8 @@ class DataPoint
 {
 public:
     DataPoint(double x, double y);
-    DataPoint(std::vector<double> x, double y);
-    DataPoint(DenseVector x, double y);
+    DataPoint(const std::vector<double> &x, double y);
+    DataPoint(const DenseVector &x, double y);
 
     bool operator<(const DataPoint &rhs) const; // Returns false if the two are equal
 
@@ -44,9 +44,9 @@ private:
 };
 
 // Measure distance between two points
-double dist(const std::vector<double> x, const std::vector<double> y);
-double dist(const DataPoint x, const DataPoint y);
-bool dist_sort(const DataPoint x, const DataPoint y);
+double dist(const std::vector<double> &x, const std::vector<double> &y);
+double dist(const DataPoint &x, const DataPoint &y);
+bool dist_sort(const DataPoint &x, const DataPoint &y);
 
 } // namespace SPLINTER
 
