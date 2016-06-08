@@ -51,12 +51,12 @@ void DataTable::addSample(double x, double y)
     addSample(DataPoint(x, y));
 }
 
-void DataTable::addSample(std::vector<double> x, double y)
+void DataTable::addSample(const std::vector<double> &x, double y)
 {
     addSample(DataPoint(x, y));
 }
 
-void DataTable::addSample(DenseVector x, double y)
+void DataTable::addSample(const DenseVector &x, double y)
 {
     addSample(DataPoint(x, y));
 }

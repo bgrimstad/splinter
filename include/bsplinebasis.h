@@ -20,18 +20,18 @@ class BSplineBasis
 {
 public:
     BSplineBasis();
-    BSplineBasis(std::vector<std::vector<double>> &knotVectors, std::vector<unsigned int> basisDegrees);
+    BSplineBasis(const std::vector<std::vector<double>> &knotVectors, std::vector<unsigned int> basisDegrees);
 
     // Evaluation
     SparseVector eval(const DenseVector &x) const;
-    DenseMatrix evalBasisJacobianOld(DenseVector &x) const; // Depricated
-    SparseMatrix evalBasisJacobian(DenseVector &x) const;
-    SparseMatrix evalBasisJacobian2(DenseVector &x) const; // A bit slower than evaBasisJacobianOld()
-    SparseMatrix evalBasisHessian(DenseVector &x) const;
+    DenseMatrix evalBasisJacobianOld(const DenseVector &x) const; // Depricated
+    SparseMatrix evalBasisJacobian(const DenseVector &x) const;
+    SparseMatrix evalBasisJacobian2(const DenseVector &x) const; // A bit slower than evaBasisJacobianOld()
+    SparseMatrix evalBasisHessian(const DenseVector &x) const;
 
     // Knot vector manipulation
     SparseMatrix refineKnots();
-    SparseMatrix refineKnotsLocally(DenseVector x);
+    SparseMatrix refineKnotsLocally(const DenseVector &x);
     SparseMatrix decomposeToBezierForm();
     SparseMatrix insertKnots(double tau, unsigned int dim, unsigned int multiplicity = 1);
 
@@ -52,12 +52,12 @@ public:
 
     int supportedPrInterval() const;
 
-    bool insideSupport(DenseVector &x) const;
+    bool insideSupport(const DenseVector &x) const;
     std::vector<double> getSupportLowerBound() const;
     std::vector<double> getSupportUpperBound() const;
 
     // Support related
-    SparseMatrix reduceSupport(std::vector<double>& lb, std::vector<double>& ub);
+    SparseMatrix reduceSupport(const std::vector<double>& lb, const std::vector<double>& ub);
 
 private:
     std::vector<BSplineBasis1D> bases;

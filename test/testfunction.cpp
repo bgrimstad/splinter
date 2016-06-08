@@ -18,9 +18,9 @@ TestFunction::TestFunction(std::function<double (const std::vector<double> &)> f
                            size_t numVariables,
                            std::string functionString)
         : Function(numVariables),
+          powers(DenseMatrix::Zero(0, 0)),
           functionString(functionString),
           constDegree(false),
-          powers(DenseMatrix::Zero(0, 0)),
           f(f)
 {
 }
@@ -28,9 +28,9 @@ TestFunction::TestFunction(std::function<double (const std::vector<double> &)> f
 TestFunction::TestFunction(std::function<double (const std::vector<double> &)> f, size_t numVariables,
                            std::string functionString,  DenseMatrix powers)
         : Function(numVariables),
+          powers(powers),
           functionString(functionString),
           constDegree(true),
-          powers(powers),
           f(f)
 {
 }
@@ -39,7 +39,7 @@ TestFunction::~TestFunction()
 {
 }
 
-double TestFunction::eval(DenseVector x) const
+double TestFunction::eval(const DenseVector &x) const
 {
     return f(denseVectorToVector(x));
 }

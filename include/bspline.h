@@ -35,9 +35,9 @@ public:
     /**
      * Construct B-spline from knot vectors, coefficients, and basis degrees
      */
-    BSpline(std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees);
-    BSpline(std::vector<double> coefficients, std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees);
-    BSpline(DenseVector coefficients, std::vector< std::vector<double> > knotVectors, std::vector<unsigned int> basisDegrees);
+    BSpline(const std::vector< std::vector<double> > &knotVectors, const std::vector<unsigned int> &basisDegrees);
+    BSpline(const std::vector<double> &coefficients, const std::vector< std::vector<double> > &knotVectors, const std::vector<unsigned int> &basisDegrees);
+    BSpline(const DenseVector &coefficients, const std::vector< std::vector<double> > &knotVectors, const std::vector<unsigned int> &basisDegrees);
 
     /**
      * Construct B-spline from file
@@ -57,13 +57,13 @@ public:
     using Function::evalHessian;
 
     // Evaluation of B-spline
-    double eval(DenseVector x) const override;
-    DenseMatrix evalJacobian(DenseVector x) const override;
-    DenseMatrix evalHessian(DenseVector x) const override;
+    double eval(const DenseVector &x) const override;
+    DenseMatrix evalJacobian(const DenseVector &x) const override;
+    DenseMatrix evalHessian(const DenseVector &x) const override;
 
     // Evaluation of B-spline basis functions
-    SparseVector evalBasis(DenseVector x) const;
-    SparseMatrix evalBasisJacobian(DenseVector x) const;
+    SparseVector evalBasis(const DenseVector &x) const;
+    SparseMatrix evalBasisJacobian(const DenseVector &x) const;
 
     /**
      * Getters
@@ -107,13 +107,13 @@ public:
     void updateControlPoints(const SparseMatrix &A);
 
     // Reduce support of B-spline
-    void reduceSupport(std::vector<double> lb, std::vector<double> ub, bool doRegularizeKnotVectors = true);
+    void reduceSupport(const std::vector<double> &lb, const std::vector<double> &ub, bool doRegularizeKnotVectors = true);
 
     // Perform global knot refinement
     void globalKnotRefinement(); // All knots in one shabang
 
     // Perform a local knot refinement at x
-    void localKnotRefinement(DenseVector x);
+    void localKnotRefinement(const DenseVector &x);
 
     // Decompose B-spline to Bezier form
     void decomposeToBezierForm();
@@ -142,11 +142,11 @@ protected:
 
 private:
     // Domain reduction
-    void regularizeKnotVectors(std::vector<double> &lb, std::vector<double> &ub);
-    bool removeUnsupportedBasisFunctions(std::vector<double> &lb, std::vector<double> &ub);
+    void regularizeKnotVectors(const std::vector<double> &lb, const std::vector<double> &ub);
+    bool removeUnsupportedBasisFunctions(const std::vector<double> &lb, const std::vector<double> &ub);
 
     // Helper functions
-    bool pointInDomain(DenseVector x) const;
+    bool pointInDomain(const DenseVector &x) const;
 
     void load(const std::string &fileName) override;
 
