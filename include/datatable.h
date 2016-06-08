@@ -36,8 +36,8 @@ public:
      */
     void addSample(const DataPoint &sample);
     void addSample(double x, double y);
-    void addSample(std::vector<double> x, double y);
-    void addSample(DenseVector x, double y);
+    void addSample(const std::vector<double> &x, double y);
+    void addSample(const DenseVector &x, double y);
 
     /*
      * Getters
@@ -49,7 +49,7 @@ public:
     unsigned int getNumSamples() const {return samples.size();}
     const std::multiset<DataPoint>& getSamples() const {return samples;}
 
-    std::vector<std::set<double>> getGrid() const { return grid; }
+    const std::vector<std::set<double>>& getGrid() const { return grid; }
     std::vector< std::vector<double> > getTableX() const;
     std::vector<double> getVectorY() const;
     

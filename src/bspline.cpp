@@ -30,7 +30,7 @@ BSpline::BSpline(unsigned int numVariables)
 /*
  * Constructors for multivariate B-spline using explicit data
  */
-BSpline::BSpline(std::vector<std::vector<double>> knotVectors, std::vector<unsigned int> basisDegrees)
+BSpline::BSpline(const std::vector<std::vector<double>> &knotVectors, const std::vector<unsigned int> &basisDegrees)
     : Function(knotVectors.size()),
       basis(BSplineBasis(knotVectors, basisDegrees)),
       coefficients(DenseVector::Zero(1)),
@@ -42,12 +42,12 @@ BSpline::BSpline(std::vector<std::vector<double>> knotVectors, std::vector<unsig
     checkControlPoints();
 }
 
-BSpline::BSpline(std::vector<double> coefficients, std::vector<std::vector<double>> knotVectors, std::vector<unsigned int> basisDegrees)
+BSpline::BSpline(const std::vector<double> &coefficients, const std::vector<std::vector<double>> &knotVectors, const std::vector<unsigned int> &basisDegrees)
     : BSpline(vectorToDenseVector(coefficients), knotVectors, basisDegrees)
 {
 }
 
-BSpline::BSpline(DenseVector coefficients, std::vector<std::vector<double>> knotVectors, std::vector<unsigned int> basisDegrees)
+BSpline::BSpline(const DenseVector &coefficients, const std::vector<std::vector<double>> &knotVectors, const std::vector<unsigned int> &basisDegrees)
     : Function(knotVectors.size()),
       basis(BSplineBasis(knotVectors, basisDegrees)),
       coefficients(coefficients),
@@ -75,7 +75,7 @@ BSpline::BSpline(const std::string &fileName)
 /**
  * Returns the function value at x
  */
-double BSpline::eval(DenseVector x) const
+double BSpline::eval(const DenseVector &x) const
 {
     checkInput(x);
     // NOTE: casting to DenseVector to allow accessing as res(0)
@@ -86,7 +86,7 @@ double BSpline::eval(DenseVector x) const
 /**
  * Returns the (1 x numVariables) Jacobian evaluated at x
  */
-DenseMatrix BSpline::evalJacobian(DenseVector x) const
+DenseMatrix BSpline::evalJacobian(const DenseVector &x) const
 {
     checkInput(x);
     return coefficients.transpose()*evalBasisJacobian(x);
@@ -97,7 +97,7 @@ DenseMatrix BSpline::evalJacobian(DenseVector x) const
  * The Hessian is an n x n matrix,
  * where n is the dimension of x.
  */
-DenseMatrix BSpline::evalHessian(DenseVector x) const
+DenseMatrix BSpline::evalHessian(const DenseVector &x) const
 {
     checkInput(x);
 
@@ -122,7 +122,7 @@ DenseMatrix BSpline::evalHessian(DenseVector x) const
 }
 
 // Evaluation of B-spline basis functions
-SparseVector BSpline::evalBasis(DenseVector x) const
+SparseVector BSpline::evalBasis(const DenseVector &x) const
 {
     #ifndef NDEBUG
     if (!pointInDomain(x))
@@ -132,7 +132,7 @@ SparseVector BSpline::evalBasis(DenseVector x) const
     return basis.eval(x);
 }
 
-SparseMatrix BSpline::evalBasisJacobian(DenseVector x) const
+SparseMatrix BSpline::evalBasisJacobian(const DenseVector &x) const
 {
     #ifndef NDEBUG
     if (!pointInDomain(x))
@@ -223,12 +223,12 @@ void BSpline::checkControlPoints() const
         throw Exception("BSpline::checkControlPoints: Inconsistent size of knot averages matrix.");
 }
 
-bool BSpline::pointInDomain(DenseVector x) const
+bool BSpline::pointInDomain(const DenseVector &x) const
 {
     return basis.insideSupport(x);
 }
 
-void BSpline::reduceSupport(std::vector<double> lb, std::vector<double> ub, bool doRegularizeKnotVectors)
+void BSpline::reduceSupport(const std::vector<double> &lb, const std::vector<double> &ub, bool doRegularizeKnotVectors)
 {
     if (lb.size() != numVariables || ub.size() != numVariables)
         throw Exception("BSpline::reduceSupport: Inconsistent vector sizes!");
@@ -272,7 +272,7 @@ void BSpline::globalKnotRefinement()
     updateControlPoints(A);
 }
 
-void BSpline::localKnotRefinement(DenseVector x)
+void BSpline::localKnotRefinement(const DenseVector &x)
 {
     // Compute knot insertion matrix
     SparseMatrix A = basis.refineKnotsLocally(x);
@@ -348,7 +348,7 @@ void BSpline::insertKnots(double tau, unsigned int dim, unsigned int multiplicit
     updateControlPoints(A);
 }
 
-void BSpline::regularizeKnotVectors(std::vector<double> &lb, std::vector<double> &ub)
+void BSpline::regularizeKnotVectors(const std::vector<double> &lb, const std::vector<double> &ub)
 {
     // Add and remove controlpoints and knots to make the B-spline p-regular with support [lb, ub]
     if (!(lb.size() == numVariables && ub.size() == numVariables))
@@ -378,7 +378,7 @@ void BSpline::regularizeKnotVectors(std::vector<double> &lb, std::vector<double>
     }
 }
 
-bool BSpline::removeUnsupportedBasisFunctions(std::vector<double> &lb, std::vector<double> &ub)
+bool BSpline::removeUnsupportedBasisFunctions(const std::vector<double> &lb, const std::vector<double> &ub)
 {
     if (lb.size() != numVariables || ub.size() != numVariables)
         throw Exception("BSpline::removeUnsupportedBasisFunctions: Incompatible dimension of domain bounds.");

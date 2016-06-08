@@ -52,12 +52,12 @@ std::vector<std::vector<double>> Function::secondOrderCentralDifference(const st
     return denseMatrixToVectorVector(ddx);
 }
 
-DenseMatrix Function::evalJacobian(DenseVector x) const
+DenseMatrix Function::evalJacobian(const DenseVector &x) const
 {
     return centralDifference(x);
 }
 
-DenseMatrix Function::evalHessian(DenseVector x) const
+DenseMatrix Function::evalHessian(const DenseVector &x) const
 {
     auto vec = denseVectorToVector(x);
 
@@ -66,7 +66,7 @@ DenseMatrix Function::evalHessian(DenseVector x) const
     return vectorVectorToDenseMatrix(hessian);
 }
 
-DenseMatrix Function::centralDifference(DenseVector x) const
+DenseMatrix Function::centralDifference(const DenseVector &x) const
 {
     DenseMatrix dx(1, x.size());
 
@@ -91,7 +91,7 @@ DenseMatrix Function::centralDifference(DenseVector x) const
     return dx;
 }
 
-DenseMatrix Function::secondOrderCentralDifference(DenseVector x) const
+DenseMatrix Function::secondOrderCentralDifference(const DenseVector &x) const
 {
     DenseMatrix ddx(getNumVariables(), getNumVariables());
 
