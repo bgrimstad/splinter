@@ -29,7 +29,7 @@ public:
 
     bool operator<(const DataPoint &rhs) const; // Returns false if the two are equal
 
-    std::vector<double> getX() const { return x; }
+    const std::vector<double>& getX() const { return x; }
     double getY() const { return y; }
     unsigned int getDimX() const { return x.size(); }
 
