@@ -36,8 +36,8 @@ public:
      */
     void addSample(const DataPoint &sample);
     void addSample(double x, double y);
-    void addSample(std::vector<double> x, double y);
-    void addSample(DenseVector x, double y);
+    void addSample(const std::vector<double> &x, double y);
+    void addSample(const DenseVector &x, double y);
 
     /*
      * Getters

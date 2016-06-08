@@ -20,7 +20,7 @@ BSplineBasis::BSplineBasis()
 {
 }
 
-BSplineBasis::BSplineBasis(std::vector< std::vector<double> > &knotVectors, std::vector<unsigned int> basisDegrees)
+BSplineBasis::BSplineBasis(const std::vector< std::vector<double> > &knotVectors, std::vector<unsigned int> basisDegrees)
     : numVariables(knotVectors.size())
 {
     if (knotVectors.size() != basisDegrees.size())
@@ -53,7 +53,7 @@ SparseVector BSplineBasis::eval(const DenseVector &x) const
 }
 
 // Old implementation of Jacobian
-DenseMatrix BSplineBasis::evalBasisJacobianOld(DenseVector &x) const
+DenseMatrix BSplineBasis::evalBasisJacobianOld(const DenseVector &x) const
 {
     // Jacobian basis matrix
     DenseMatrix J; J.setZero(getNumBasisFunctions(), numVariables);
@@ -89,7 +89,7 @@ DenseMatrix BSplineBasis::evalBasisJacobianOld(DenseVector &x) const
 }
 
 // NOTE: does not pass tests
-SparseMatrix BSplineBasis::evalBasisJacobian(DenseVector &x) const
+SparseMatrix BSplineBasis::evalBasisJacobian(const DenseVector &x) const
 {
     // Jacobian basis matrix
     SparseMatrix J(getNumBasisFunctions(), numVariables);
@@ -132,7 +132,7 @@ SparseMatrix BSplineBasis::evalBasisJacobian(DenseVector &x) const
     return J;
 }
 
-SparseMatrix BSplineBasis::evalBasisJacobian2(DenseVector &x) const
+SparseMatrix BSplineBasis::evalBasisJacobian2(const DenseVector &x) const
 {
     // Jacobian basis matrix
     SparseMatrix J(getNumBasisFunctions(), numVariables);
@@ -170,7 +170,7 @@ SparseMatrix BSplineBasis::evalBasisJacobian2(DenseVector &x) const
     return J;
 }
 
-SparseMatrix BSplineBasis::evalBasisHessian(DenseVector &x) const
+SparseMatrix BSplineBasis::evalBasisHessian(const DenseVector &x) const
 {
     // Hessian basis matrix
     /* Hij = B1 x ... x DBi x ... x DBj x ... x Bn
@@ -287,7 +287,7 @@ SparseMatrix BSplineBasis::refineKnots()
     return A;
 }
 
-SparseMatrix BSplineBasis::refineKnotsLocally(DenseVector x)
+SparseMatrix BSplineBasis::refineKnotsLocally(const DenseVector &x)
 {
     SparseMatrix A(1,1);
     A.insert(0,0) = 1;
@@ -325,7 +325,7 @@ SparseMatrix BSplineBasis::decomposeToBezierForm()
     return A;
 }
 
-SparseMatrix BSplineBasis::reduceSupport(std::vector<double>& lb, std::vector<double>& ub)
+SparseMatrix BSplineBasis::reduceSupport(const std::vector<double>& lb, const std::vector<double>& ub)
 {
     if (lb.size() != ub.size() || lb.size() != numVariables)
         throw Exception("BSplineBasis::reduceSupport: Incompatible dimension of domain bounds.");
@@ -428,7 +428,7 @@ int BSplineBasis::supportedPrInterval() const
     return ret;
 }
 
-bool BSplineBasis::insideSupport(DenseVector &x) const
+bool BSplineBasis::insideSupport(const DenseVector &x) const
 {
     for (unsigned int dim = 0; dim < numVariables; dim++)
     {
