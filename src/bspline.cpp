@@ -188,7 +188,9 @@ DenseMatrix BSpline::getControlPoints() const
 void BSpline::setCoefficients(const DenseVector &coefficients)
 {
     if (coefficients.size() != getNumBasisFunctions())
-        throw Exception("BSpline::setControlPoints: Incompatible size of coefficient vector.");
+        throw Exception("BSpline::setCoefficients: Incompatible size of coefficient vector. " +
+                                std::to_string(coefficients.size()) + " not equal to " +
+                                std::to_string(getNumBasisFunctions()) + "!");
 
     this->coefficients = coefficients;
     checkControlPoints();
