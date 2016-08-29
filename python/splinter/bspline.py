@@ -26,6 +26,24 @@ class BSpline(Function):
 
         self._num_variables = splinter._call(splinter._get_handle().splinter_bspline_get_num_variables, self._handle)
 
+    @staticmethod
+    def init_from_param(coefficients, knot_vectors, degrees):
+
+        n = len(degrees)
+        if len(knot_vectors) != n:
+            raise ValueError("Inconsistent data: len(knot_vectors) should equal len(degrees)")
+
+        coefficients_c_array = list_to_c_array_of_doubles(coefficients)
+        num_coefficients = len(coefficients)
+        knot_vectors_c_array = list_to_c_array_of_doubles(flatten_list(knot_vectors))
+        num_knots_per_vector_c_array = list_to_c_array_of_ints(list([len(vec) for vec in knot_vectors]))
+        degrees_c_array = list_to_c_array_of_ints(degrees)
+        dim = n
+        handle = splinter._call(splinter._get_handle().splinter_bspline_param_init, coefficients_c_array,
+                                num_coefficients, knot_vectors_c_array, num_knots_per_vector_c_array, degrees_c_array,
+                                dim)
+        return BSpline(handle)
+
     def get_knot_vectors(self):
         """
         :return List of knot vectors (of possibly differing lengths)

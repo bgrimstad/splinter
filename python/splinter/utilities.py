@@ -42,7 +42,7 @@ def list_to_c_array_of_doubles(py_list):
     return (c_double * len(py_list))(*py_list)
 
 
-def list_to_c_array_of_of_ints(py_list):
+def list_to_c_array_of_ints(py_list):
     int_list = [int(x) for x in py_list]
     return (c_int * len(int_list))(*int_list)
 

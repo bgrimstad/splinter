@@ -124,6 +124,9 @@ def __init():
     _get_handle().splinter_bspline_builder_delete.restype = None
     _get_handle().splinter_bspline_builder_delete.argtypes = [handle_type]
 
+    _get_handle().splinter_bspline_param_init.restype = handle_type
+    _get_handle().splinter_bspline_param_init.argtypes = [c_double_p, c_int, c_double_p, c_int_p, c_int_p, c_int]
+
     _get_handle().splinter_bspline_load_init.restype = handle_type
     _get_handle().splinter_bspline_load_init.argtypes = [c_char_p]
 

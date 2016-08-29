@@ -184,6 +184,20 @@ SPLINTER_API void splinter_bspline_builder_delete(splinter_obj_ptr bspline_build
 
 
 
+/**
+ * Construct a BSpline from parameters: coefficients, knot vectors and degrees.
+ *
+ * @param coefficients The B-spline coefficients
+ * @param num_coefficients Number of coefficients
+ * @param knot_vectors The B-spline knot vectors
+ * @param knot_vectors Number of knots per knot vector
+ * @param degrees The B-spline degrees
+ * @param dim The B-spline dimension
+ * @return Pointer to the created BSpline.
+ */
+SPLINTER_API splinter_obj_ptr splinter_bspline_param_init(double *coefficients, int num_coefficients,
+                                                          double *knot_vectors, int *num_knots_per_vector,
+                                                          unsigned int *degrees, int dim);
 
 /**
  * Load a BSpline from file.
@@ -349,6 +363,11 @@ SPLINTER_API void splinter_bspline_delete(splinter_obj_ptr bspline_ptr);
  */
 SPLINTER_API void splinter_bspline_insert_knots(splinter_obj_ptr bspline_ptr, double tau, unsigned int dim, unsigned int multiplicity);
 
+/**
+ * Insert knots untill all knots have multiplicity equal to the B-spline degree.
+ *
+ * @param bspline_ptr Pointer to the BSpline to decompose to Bezier form
+ */
 SPLINTER_API void splinter_bspline_decompose_to_bezier_form(splinter_obj_ptr bspline_ptr);
 
 #ifdef __cplusplus

@@ -16,6 +16,28 @@ using namespace SPLINTER;
 extern "C"
 {
 
+splinter_obj_ptr splinter_bspline_param_init(double *coefficients, int num_coefficients, double *knot_vectors,
+                                             int *num_knots_per_vector, unsigned int *degrees, int dim)
+{
+    splinter_obj_ptr bspline = nullptr;
+
+    auto coefficients_vec = get_vector(coefficients, num_coefficients);
+    auto knot_vectors_vec_vec = get_vector_vector(knot_vectors, num_knots_per_vector, dim);
+    auto degrees_vec = get_vector(degrees, dim);
+
+    try
+    {
+        bspline = (splinter_obj_ptr) new BSpline(coefficients_vec, knot_vectors_vec_vec, degrees_vec);
+        bsplines.insert(bspline);
+    }
+    catch(const Exception &e)
+    {
+        set_error_string(e.what());
+    }
+
+    return bspline;
+}
+
 splinter_obj_ptr splinter_bspline_load_init(const char *filename)
 {
     splinter_obj_ptr bspline = nullptr;
