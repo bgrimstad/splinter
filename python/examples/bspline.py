@@ -13,8 +13,8 @@ sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 import splinter
 
 # Only for dev purposes
-# splinter.load("/home/bjarne/Code/C++/splinter4/splinter/bin/Release/libsplinter-3-0.so")
-splinter.load("/home/anders/SPLINTER/build/debug/libsplinter-3-0.so")
+splinter.load("/home/bjarne/Code/C++/splinter/splinter/bin/Release/libsplinter-3-1.so")
+# splinter.load("/home/anders/SPLINTER/build/debug/libsplinter-3-0.so")
 
 
 # Example with one variable
@@ -28,6 +28,8 @@ for i in range(len(x)):
 
 # Piecewise constant B-spline that interpolates the data
 b0 = splinter.BSplineBuilder(x, y, degree=0).build()
+print(b0.get_coefficients())
+print(b0.get_knot_vectors())
 
 # Linear B-spline that interpolates the data
 b1 = splinter.BSplineBuilder(x, y, degree=1).build()
