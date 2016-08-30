@@ -203,8 +203,10 @@ def __locate_splinter():
     splinter_basename = "splinter-" + splinter_version
     if is_windows:
         splinter_name = splinter_basename + ".dll"
-    elif is_linux or is_mac:
+    elif is_linux:
         splinter_name = "lib" + splinter_basename + ".so"
+    elif is_mac:
+        splinter_name = "lib" + splinter_basename + ".dylib"
     else:
         raise("Unknown platform: " + platform.system())
 
