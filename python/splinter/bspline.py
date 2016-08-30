@@ -13,7 +13,7 @@ from .utilities import *
 
 class BSpline(Function):
     def __init__(self, handle_or_filename):
-        super(BSpline, self).__init__()
+        super().__init__()
 
         # If string we load the BSpline from the file
         if is_string(handle_or_filename):
