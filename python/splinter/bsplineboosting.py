@@ -5,15 +5,9 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from . import splinter
+from .bsplinebuilder import BSplineBuilder
 import numpy as np
-import matplotlib.pyplot as plt
-from os import sys, path, remove
-sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-import splinter
-
-# Only for dev purposes
-splinter.load("/home/bjarne/Code/C++/splinter4/splinter/bin/Release/libsplinter-3-0.so")
-# splinter.load("/home/anders/SPLINTER/build/debug/libsplinter-3-0.so")
 
 
 class BSplineBoosting:
@@ -29,10 +23,23 @@ class BSplineBoosting:
         """
         # super(Function, self).__init__()
         self._loss = ls  # Function pointer
+
+        if not 0 < learning_rate < 1:
+            raise ValueError("'learning_rate' must be a number in (0, 1)")
         self._learning_rate = learning_rate
+
+        if not n_estimators > 0:
+            raise ValueError("'n_estimators' must be a strictly positive number")
         self._n_estimators = n_estimators
+
+        if not 0 < subsample <= 1:
+            raise ValueError("'subsample' must be a number in (0, 1]")
         self._subsample = subsample
+
+        if not alpha > 0:
+            raise ValueError("'alpha' must be a strictly positive number")
         self._alpha = alpha
+
         self._learner = 'pspline'
         self._estimators = [None] * self._n_estimators
         self._oob_improvement = np.array((self._n_estimators,))
@@ -55,7 +62,11 @@ class BSplineBoosting:
             ss_tot = np.sum(np.apply_along_axis(np.square, 0, u_hat - np.mean(u_hat)))
 
             for j in range(n):
-                learners[j] = splinter.BSplineBuilder(x, u_hat, smoothing=splinter.BSplineBuilder.Smoothing.PSPLINE, alpha=self._alpha, knot_spacing=splinter.BSplineBuilder.KnotSpacing.EQUIDISTANT, num_basis_functions=20).build()
+                learners[j] = BSplineBuilder(x, u_hat,
+                                             smoothing=splinter.BSplineBuilder.Smoothing.PSPLINE,
+                                             alpha=self._alpha,
+                                             knot_spacing=splinter.BSplineBuilder.KnotSpacing.EXPERIMENTAL,
+                                             num_basis_functions=20).build()
                 u_hat_est = learners[j].eval(x)
                 ss_res = np.sum(np.apply_along_axis(np.square, 0, u_hat - u_hat_est))
                 goodness[j] = 1 - (ss_res / ss_tot)
@@ -108,49 +119,3 @@ def mse(x: np.ndarray, y: np.ndarray):
     assert(x.shape == y.shape)
     assert(x.ndim == 1)
     return sse(x, y) / x.shape[0]
-
-
-def underlying_func(x: np.array):
-    return 0.5*x + 0.1*np.apply_along_axis(np.square, 0, x)
-
-
-def noisy_func(x: np.array):
-    return underlying_func(x) + np.random.randn(x.shape[0])
-
-
-if __name__ == '__main__':
-
-    print("Testing stochastic gradient boosting with B-spline learners")
-    fh = mse
-    a = np.array([3, 4, 5])
-    b = np.array([2, 3, 3])
-    print(fh(a, b))
-    print(ls(b))
-
-    # Sampling
-    x = np.arange(0, 10, 0.1)
-    xd = np.arange(0, 10, 0.01)
-    y = noisy_func(x)
-    yd = underlying_func(xd)
-
-    # Just one P-spline
-    pspline = splinter.BSplineBuilder(x, y, smoothing=splinter.BSplineBuilder.Smoothing.PSPLINE, alpha=0.1,
-                                      knot_spacing=splinter.BSplineBuilder.KnotSpacing.EQUIDISTANT,
-                                      num_basis_functions=20).build()
-
-    yd_pspline = pspline.eval(xd)
-
-    # Boosting
-    bb = BSplineBoosting(learning_rate=0.1, n_estimators=100, alpha=1.0)
-    bb.fit(x, y)
-
-    # Prediction
-    yd_boost = bb.eval(xd)
-
-    # Plotting
-    plt.plot(x, y, '*', label='Data points')
-    plt.plot(xd, yd, label='Unknown function')
-    plt.plot(xd, yd_pspline, label='P-spline')
-    plt.plot(xd, yd_boost, label='Boosted spline')
-    plt.legend(loc='upper left')
-    plt.show()

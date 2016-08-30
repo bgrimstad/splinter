@@ -9,6 +9,7 @@
 from .datatable import DataTable
 from .bspline import BSpline
 from .bsplinebuilder import BSplineBuilder
+from .bsplineboosting import BSplineBoosting
 
 from .splinter import load
 
@@ -21,7 +22,9 @@ __all__ = [
     "splinter",
     "datatable",
     "bspline",
-    "bsplinebuilder"
+    "bsplinebuilder",
+    "bsplineboosting"
 ]
 
 splinter.BSplineBuilder = bsplinebuilder.BSplineBuilder
+splinter.BSplineBoosting = bsplineboosting.BSplineBoosting
