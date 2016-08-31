@@ -21,7 +21,9 @@ class Function(object):
         x = self._transform_input(x)
 
         num_points = len(x) // self._num_variables
-        res = splinter._call(splinter._get_handle().splinter_bspline_eval_row_major, self._handle, (c_double * len(x))(*x), len(x))
+
+        f_handle = splinter._get_handle().splinter_bspline_eval_row_major
+        res = splinter._call(f_handle, self._handle, (c_double * len(x))(*x), len(x))
 
         return c_array_to_list(res, num_points)
 
@@ -29,7 +31,9 @@ class Function(object):
         x = self._transform_input(x)
 
         num_points = len(x) // self._num_variables
-        jac = splinter._call(splinter._get_handle().splinter_bspline_eval_jacobian_row_major, self._handle, (c_double * len(x))(*x), len(x))
+
+        f_handle = splinter._get_handle().splinter_bspline_eval_jacobian_row_major
+        jac = splinter._call(f_handle, self._handle, (c_double * len(x))(*x), len(x))
 
         # Convert from ctypes array to Python list of lists
         # jacobians is a list of the jacobians in all evaluated points
@@ -44,7 +48,9 @@ class Function(object):
         x = self._transform_input(x)
 
         num_points = len(x) // self._num_variables
-        hes = splinter._call(splinter._get_handle().splinter_bspline_eval_hessian_row_major, self._handle, (c_double * len(x))(*x), len(x))
+
+        f_handle = splinter._get_handle().splinter_bspline_eval_hessian_row_major
+        hes = splinter._call(f_handle, self._handle, (c_double * len(x))(*x), len(x))
 
         # Convert from ctypes array to Python list of list of lists
         # hessians is a list of the hessians in all points
@@ -77,7 +83,6 @@ class Function(object):
             x = flatten_list(x)
 
         return x
-
 
     def __del__(self):
         if self._handle is not None:

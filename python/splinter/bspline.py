@@ -9,6 +9,7 @@
 from . import splinter
 from .function import Function
 from .utilities import *
+from typing import List
 
 
 class BSpline(Function):
@@ -27,7 +28,7 @@ class BSpline(Function):
         self._num_variables = splinter._call(splinter._get_handle().splinter_bspline_get_num_variables, self._handle)
 
     @staticmethod
-    def init_from_param(coefficients, knot_vectors, degrees):
+    def init_from_param(coefficients: List[float], knot_vectors: List[List[float]], degrees: List[int]) -> 'BSpline':
 
         n = len(degrees)
         if len(knot_vectors) != n:
@@ -44,7 +45,7 @@ class BSpline(Function):
                                 dim)
         return BSpline(handle)
 
-    def get_knot_vectors(self):
+    def get_knot_vectors(self) -> List[List[float]]:
         """
         :return List of knot vectors (of possibly differing lengths)
         """
@@ -67,7 +68,7 @@ class BSpline(Function):
 
         return knot_vectors
 
-    def get_coefficients(self):
+    def get_coefficients(self) -> List[float]:
         """
         :return List of the coefficients of the BSpline
         """
@@ -76,7 +77,7 @@ class BSpline(Function):
 
         return c_array_to_list(coefficients_raw, num_coefficients)
 
-    def get_control_points(self):
+    def get_control_points(self) -> List[List[float]]:
         """
         Get the matrix with the control points of the BSpline.
         :return Matrix (as a list of lists) with getNumVariables+1 columns and len(getCoefficients) rows
@@ -97,7 +98,7 @@ class BSpline(Function):
 
         return control_points
 
-    def get_basis_degrees(self):
+    def get_basis_degrees(self) -> List[int]:
         """
         :return List with the basis degrees of the BSpline
         """
@@ -106,7 +107,7 @@ class BSpline(Function):
 
         return c_array_to_list(basis_degrees, num_vars)
 
-    def insert_knots(self, val, dim, multiplicity=1):
+    def insert_knots(self, val: float, dim: int, multiplicity: int=1):
         """
         Insert knot at 'val' to knot vector for variable 'dim'. The knot is inserted until a knot multiplicity of
         'multiplicity' is obtained.

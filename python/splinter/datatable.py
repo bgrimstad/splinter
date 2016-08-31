@@ -67,7 +67,9 @@ class DataTable:
         #	print(str(self.__samples[i*(self.__xDim+1)]) + "," + str(self.__samples[i*(self.__xDim+1)+1]) + " = " + str(self.__samples[i*(self.__xDim+1)+2]))
 
         if self.__num_samples > 0:
-            splinter._call(splinter._get_handle().splinter_datatable_add_samples_row_major, self.__handle, (c_double * len(self.__samples))(*self.__samples), self.__num_samples, self.__x_dim)
+            f_handle = splinter._get_handle().splinter_datatable_add_samples_row_major
+            splinter._call(f_handle, self.__handle, (c_double * len(self.__samples))(*self.__samples),
+                           self.__num_samples, self.__x_dim)
 
         self.__samples = []
         self.__num_samples = 0

@@ -8,7 +8,7 @@
 # Add the SPLINTER directory to the search path, so we can include it
 import numpy as np
 import matplotlib.pyplot as plt
-from os import sys, path, remove
+from os import sys, path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 import splinter
 

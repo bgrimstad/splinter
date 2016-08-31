@@ -11,7 +11,8 @@ import numpy as np
 
 
 class BSplineBoosting:
-    def __init__(self, loss='ls', learning_rate=0.1, n_estimators=100, subsample=1.0, alpha=1.0):
+    def __init__(self, loss: str='ls', learning_rate: float=0.1, n_estimators: int=100, subsample: float=1.0,
+                 alpha: float=1.0):
         """
         Class for stochastic gradient boosting with B-spline learners
         :param loss: loss function, 'ls' for least squares loss function
