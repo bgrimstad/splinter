@@ -12,7 +12,7 @@ import pandas as pd
 import numpy as np
 
 
-class Function:
+class Function(object):
     def __init__(self):
         self._handle = None
         self._num_variables = None
