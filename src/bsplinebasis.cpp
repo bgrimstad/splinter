@@ -117,12 +117,12 @@ SparseMatrix BSplineBasis::evalBasisJacobian(const DenseVector &x) const
 
         SparseVector Ji = kroneckerProductVectors(values);
 
-        // Fill out column
+        // Fill out column i
         for (int k = 0; k < Ji.outerSize(); ++k)
-        for (SparseMatrix::InnerIterator it(Ji,k); it; ++it)
+        for (SparseVector::InnerIterator it(Ji, k); it; ++it)
         {
             if (it.value() != 0)
-                J.insert(it.row(),i) = it.value();
+                J.insert(it.row(), i) = it.value();
         }
         //J.block(0,i,Ji.rows(),1) = bi.block(0,0,Ji.rows(),1);
     }
