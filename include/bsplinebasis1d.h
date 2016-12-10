@@ -35,7 +35,7 @@ public:
     unsigned int knotMultiplicity(double tau) const; // Returns the number of repetitions of tau in the knot vector
 
     // Support related
-    void supportHack(double &x) const;
+    double supportHack(double x) const;
     bool insideSupport(double x) const;
     SparseMatrix reduceSupport(double lb, double ub);
 

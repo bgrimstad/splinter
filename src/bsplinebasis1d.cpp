@@ -39,7 +39,7 @@ SparseVector BSplineBasis1D::eval(double x) const
     if (!insideSupport(x))
         return values;
 
-    supportHack(x);
+    x = supportHack(x);
 
     std::vector<int> indexSupported = indexSupportedBasisFunctions(x);
 
@@ -88,7 +88,7 @@ SparseVector BSplineBasis1D::evalDerivative(double x, int r) const
 
     // Check for knot multiplicity here!
 
-    supportHack(x);
+    x = supportHack(x);
 
     int knotIndex = indexHalfopenInterval(x);
 
@@ -131,7 +131,7 @@ SparseVector BSplineBasis1D::evalFirstDerivative(double x) const
 {
     SparseVector values(getNumBasisFunctions());
 
-    supportHack(x);
+    x = supportHack(x);
 
     std::vector<int> supportedBasisFunctions = indexSupportedBasisFunctions(x);
 
@@ -456,10 +456,11 @@ SparseMatrix BSplineBasis1D::buildKnotInsertionMatrix(const std::vector<double> 
  * The hack checks if x is at the right boundary (if x = knots.end()), if so,
  * a small number is subtracted from x, moving x into the half-open domain.
  */
-void BSplineBasis1D::supportHack(double &x) const
+double BSplineBasis1D::supportHack(double x) const
 {
     if (x == knots.back())
-        x = std::nextafter(x, std::numeric_limits<double>::lowest());
+        return std::nextafter(x, std::numeric_limits<double>::lowest());
+    return x;
 }
 
 /*

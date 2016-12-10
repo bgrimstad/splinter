@@ -21,7 +21,7 @@ TEST_CASE("supportHack" COMMON_TEXT, COMMON_TAGS)
     BSplineBasis1D bb(knots, 2);
 
     double x = 4;
-    bb.supportHack(x);
+    x = bb.supportHack(x);
     REQUIRE(x < 4);
 }
 
