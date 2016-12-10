@@ -24,7 +24,6 @@ bool isKnotVectorRefinement(const std::vector<double> &knots, const std::vector<
 std::vector<double> knotVectorEquidistantNotClamped(const std::vector<double> &values, unsigned int degree, unsigned int numBasisFunctions);
 std::vector<double> knotVectorMovingAverage(const std::vector<double> &values, unsigned int degree);
 std::vector<double> knotVectorEquidistant(const std::vector<double> &values, unsigned int degree, unsigned int numBasisFunctions);
-std::vector<double> knotVectorBuckets(const std::vector<double> &values, unsigned int degree, unsigned int maxSegments = 10);
 
 } // namespace SPLINTER
 

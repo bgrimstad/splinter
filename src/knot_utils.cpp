@@ -54,10 +54,10 @@ bool isKnotVectorRefinement(const std::vector<double> &knots, const std::vector<
         return false;
 
     // Check that each element in knots occurs at least as many times in refinedKnots
-    for (std::vector<double>::const_iterator it = knots.begin() ; it != knots.end(); ++it)
+    for (auto it = knots.cbegin() ; it != knots.cend(); ++it)
     {
-        int m_tau = count(knots.begin(), knots.end(), *it);
-        int m_t = count(refinedKnots.begin(), refinedKnots.end(), *it);
+        auto m_tau = count(knots.begin(), knots.end(), *it);
+        auto m_t = count(refinedKnots.begin(), refinedKnots.end(), *it);
         if (m_t < m_tau) return false;
     }
 
@@ -203,84 +203,6 @@ std::vector<double> knotVectorEquidistant(const std::vector<double> &values,
 
     // Number of knots in a (p+1)-regular knot vector
     //assert(knots.size() == uniqueX.size() + degree + 1);
-
-    return knots;
-}
-
-std::vector<double> knotVectorBuckets(const std::vector<double> &values,
-                                      unsigned int degree,
-                                      unsigned int maxSegments)
-{
-    // Sort and remove duplicates
-    std::vector<double> unique = extractUniqueSorted(values);
-
-    // The minimum number of samples from which a free knot vector can be created
-    if (unique.size() < degree+1)
-    {
-        std::ostringstream e;
-        e << "BSpline::Builder::knotVectorBuckets: Only " << unique.size()
-        << " unique sample points are given. A minimum of degree+1 = " << degree+1
-        << " unique points are required to build a B-spline basis of degree " << degree << ".";
-        throw Exception(e.str());
-    }
-
-    // Num internal knots (0 <= ni <= unique.size() - degree - 1)
-    unsigned int ni = unique.size() - degree - 1;
-
-    // Num segments
-    unsigned int ns = ni + degree + 1;
-
-    // Limit number of segments
-    if (ns > maxSegments && maxSegments >= degree + 1)
-    {
-        ns = maxSegments;
-        ni = ns - degree - 1;
-    }
-
-    // Num knots
-//        unsigned int nk = ns + degree + 1;
-
-    // Check numbers
-    if (ni > unique.size() - degree - 1)
-        throw Exception("BSpline::Builder::knotVectorBuckets: Invalid number of internal knots!");
-
-    // Compute window sizes
-    unsigned int w = 0;
-    if (ni > 0)
-        w = std::floor(unique.size()/ni);
-
-    // Residual
-    unsigned int res = unique.size() - w*ni;
-
-    // Create array with window sizes
-    std::vector<unsigned int> windows(ni, w);
-
-    // Add residual
-    for (unsigned int i = 0; i < res; ++i)
-        windows.at(i) += 1;
-
-    // Compute internal knots
-    std::vector<double> knots(ni, 0);
-
-    // Compute (n-k-2) interior knots using moving average
-    unsigned int index = 0;
-    for (unsigned int i = 0; i < ni; ++i)
-    {
-        for (unsigned int j = 0; j < windows.at(i); ++j)
-        {
-            knots.at(i) += unique.at(index+j);
-        }
-        knots.at(i) /= windows.at(i);
-        index += windows.at(i);
-    }
-
-    // Repeat first knot p + 1 times (for interpolation of start point)
-    for (unsigned int i = 0; i < degree + 1; ++i)
-        knots.insert(knots.begin(), unique.front());
-
-    // Repeat last knot p + 1 times (for interpolation of end point)
-    for (unsigned int i = 0; i < degree + 1; ++i)
-        knots.insert(knots.end(), unique.back());
 
     return knots;
 }
