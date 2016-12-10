@@ -42,7 +42,6 @@ public:
     // Getters
     std::vector<double> getKnotVector() const { return knots; }
     unsigned int getBasisDegree() const { return degree; }
-    double getKnotValue(unsigned int index) const;
     unsigned int getNumBasisFunctions() const;
     unsigned int getNumBasisFunctionsTarget() const;
 

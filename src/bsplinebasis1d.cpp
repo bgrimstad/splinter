@@ -533,11 +533,6 @@ SparseMatrix BSplineBasis1D::reduceSupport(double lb, double ub)
     return Ad.sparseView();
 }
 
-double BSplineBasis1D::getKnotValue(unsigned int index) const
-{
-    return knots.at(index);
-}
-
 unsigned int BSplineBasis1D::knotMultiplicity(double tau) const
 {
     return std::count(knots.begin(), knots.end(), tau);

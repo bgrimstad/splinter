@@ -398,11 +398,6 @@ unsigned int BSplineBasis::getKnotMultiplicity(unsigned int dim, double tau) con
     return bases.at(dim).knotMultiplicity(tau);
 }
 
-double BSplineBasis::getKnotValue(int dim, int index) const
-{
-    return bases.at(dim).getKnotValue(index);
-}
-
 unsigned int BSplineBasis::getLargestKnotInterval(unsigned int dim) const
 {
     return bases.at(dim).indexLongestInterval();

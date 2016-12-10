@@ -46,7 +46,6 @@ public:
     unsigned int getNumBasisFunctions(unsigned int dim) const;
     std::vector<unsigned int> getNumBasisFunctionsTarget() const;
 
-    double getKnotValue(int dim, int index) const;
     unsigned int getKnotMultiplicity(unsigned int dim, double tau) const;
     unsigned int getLargestKnotInterval(unsigned int dim) const;
 
