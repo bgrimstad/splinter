@@ -158,6 +158,7 @@ set(SRC_LIST
     include/bsplinebasis.h
     include/bsplinebasis1d.h
     include/knot_utils.h
+    include/knot_vector.h
     include/bsplinebuilder.h
     include/datapoint.h
     include/datatable.h
@@ -172,6 +173,7 @@ set(SRC_LIST
     src/bsplinebasis.cpp
     src/bsplinebasis1d.cpp
     src/knot_utils.cpp
+    src/knot_vector.cpp
     src/bsplinebuilder.cpp
     src/datapoint.cpp
     src/datatable.cpp
@@ -202,7 +204,8 @@ set(TEST_SRC_LIST
     test/bsplinetestingutilities.cpp
     test/serialization/eigentypes.cpp
     test/unit/bsplinebasis1d.cpp
-    test/unit/knots.cpp)
+    test/unit/knots.cpp
+    test/unit/knot_vector.cpp)
 
 set(SHARED_LIBRARY ${PROJECT_NAME_LOWER}-${VERSION})
 set(STATIC_LIBRARY ${PROJECT_NAME_LOWER}-static-${VERSION})
