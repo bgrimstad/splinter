@@ -11,6 +11,7 @@
 #define SPLINTER_KNOT_VECTOR_H
 
 #include <vector>
+#include <algorithm>
 
 namespace SPLINTER
 {
@@ -18,12 +19,33 @@ namespace SPLINTER
 class KnotVector
 {
 public:
-    KnotVector(const std::vector<double> &knots, unsigned int degree = 0)
-            : knots(std::vector<double>(knots)),
-              degree(degree)
+    KnotVector(const std::vector<double> &knots)
+            : knots(std::vector<double>(knots))
     {
         // Test knots here
 
+    }
+
+    std::vector<double> get_raw() const
+    {
+        // Return copy of knots
+        return knots;
+    }
+
+    bool is_regular(unsigned int degree);
+
+    bool is_clamped(unsigned int degree);
+
+    bool is_refinement(const std::vector<double> &refinedKnots);
+
+    bool inside_support(double x) const
+    {
+        return (knots.front() <= x) && (x <= knots.back());
+    }
+
+    unsigned int knot_multiplicity(double tau) const
+    {
+        return (unsigned int)std::count(knots.begin(), knots.end(), tau);
     }
 
     std::vector<double>::size_type size() const {
@@ -56,11 +78,8 @@ public:
 
 private:
     std::vector<double> knots;
-    const unsigned int degree;
 
 //    friend class Serializer;
-//    friend bool operator==(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs);
-//    friend bool operator!=(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs);
 };
 
 bool operator==(const KnotVector &lhs, const KnotVector &rhs);

@@ -48,7 +48,6 @@ public:
     // Index getters
     std::vector<int> indexSupportedBasisFunctions(double x) const;
     int indexHalfopenInterval(double x) const;
-    unsigned int indexLongestInterval() const;
     unsigned int indexLongestInterval(const std::vector<double> &vec) const;
 
     // Setters

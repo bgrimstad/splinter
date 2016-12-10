@@ -595,11 +595,6 @@ std::vector<int> BSplineBasis1D::indexSupportedBasisFunctions(double x) const
     return supported;
 }
 
-unsigned int BSplineBasis1D::indexLongestInterval() const
-{
-    return indexLongestInterval(knots);
-}
-
 unsigned int BSplineBasis1D::indexLongestInterval(const std::vector<double> &vec) const
 {
     double longest = 0;
