@@ -398,11 +398,6 @@ unsigned int BSplineBasis::getKnotMultiplicity(unsigned int dim, double tau) con
     return bases.at(dim).knotMultiplicity(tau);
 }
 
-unsigned int BSplineBasis::getLargestKnotInterval(unsigned int dim) const
-{
-    return bases.at(dim).indexLongestInterval();
-}
-
 std::vector<unsigned int> BSplineBasis::getNumBasisFunctionsTarget() const
 {
     std::vector<unsigned int> ret;
