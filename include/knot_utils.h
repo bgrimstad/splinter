@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#ifndef SPLINTER_KNOTS_H
-#define SPLINTER_KNOTS_H
+#ifndef SPLINTER_KNOT_UTILS_H
+#define SPLINTER_KNOT_UTILS_H
 
 #include <vector>
 
@@ -28,4 +28,4 @@ std::vector<double> knotVectorBuckets(const std::vector<double> &values, unsigne
 
 } // namespace SPLINTER
 
-#endif // SPLINTER_KNOTS_H
+#endif // SPLINTER_KNOT_UTILS_H

@@ -8,7 +8,7 @@
 */
 
 #include <Catch.h>
-#include <knots.h>
+#include <knot_utils.h>
 #include <iostream>
 
 using namespace SPLINTER;

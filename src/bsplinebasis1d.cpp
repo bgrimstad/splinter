@@ -8,7 +8,7 @@
 */
 
 #include <bsplinebasis1d.h>
-#include <knots.h>
+#include <knot_utils.h>
 #include <algorithm>
 #include <utilities.h>
 #include <iostream>
