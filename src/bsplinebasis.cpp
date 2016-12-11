@@ -422,7 +422,7 @@ bool BSplineBasis::insideSupport(const DenseVector &x) const
 {
     for (unsigned int dim = 0; dim < numVariables; dim++)
     {
-        if (!bases.at(dim).insideSupport(x(dim)))
+        if (!bases.at(dim).is_supported(x(dim)))
         {
             return false;
         }

@@ -25,14 +25,12 @@ TEST_CASE("knot_vector_initialization" COMMON_TEXT, COMMON_TAGS)
     std::vector<double> knots2 = {1, 1, 2.1, 3.1, 4, 4};
     std::vector<double> knots3 = {1, 1, 1, 2.1, 3.1, 4, 4, 4};
     std::vector<double> knots4 = {1, 1, 1, 1, 2.1, 3.1, 4, 4, 4, 4};
-    std::vector<double> knots5 = {1, 1, 2.1, 2.0, 4, 4};
 
     auto knot_vector0 = KnotVector(knots0);
     auto knot_vector1 = KnotVector(knots1);
     auto knot_vector2 = KnotVector(knots2);
     auto knot_vector3 = KnotVector(knots3);
     auto knot_vector4 = KnotVector(knots4);
-    auto knot_vector5 = KnotVector(knots5);
 
     REQUIRE(knot_vector0 == knot_vector0);
     REQUIRE(knot_vector0 != knot_vector1);

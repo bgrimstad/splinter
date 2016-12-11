@@ -15,6 +15,7 @@
 #include <bspline.h>
 #include <bsplinebasis.h>
 #include <bsplinebasis1d.h>
+#include <knot_vector.h>
 
 namespace SPLINTER
 {
@@ -111,6 +112,11 @@ size_t Serializer::get_size(const BSplineBasis1D &obj)
            + get_size(obj.targetNumBasisfunctions);
 }
 
+size_t Serializer::get_size(const KnotVector &obj)
+{
+    return get_size(obj.knots);
+}
+
 size_t Serializer::get_size(const DenseMatrix &obj)
 {
     size_t size = sizeof(obj.rows());
@@ -183,6 +189,11 @@ void Serializer::_serialize(const BSplineBasis1D &obj)
     _serialize(obj.degree);
     _serialize(obj.knots);
     _serialize(obj.targetNumBasisfunctions);
+}
+
+void Serializer::_serialize(const KnotVector &obj)
+{
+    _serialize(obj.knots);
 }
 
 void Serializer::_serialize(const DenseMatrix &obj)
@@ -259,6 +270,11 @@ void Serializer::deserialize(BSplineBasis1D &obj)
     deserialize(obj.degree);
     deserialize(obj.knots);
     deserialize(obj.targetNumBasisfunctions);
+}
+
+void Serializer::deserialize(KnotVector &obj)
+{
+    deserialize(obj.knots);
 }
 
 void Serializer::deserialize(DenseMatrix &obj)

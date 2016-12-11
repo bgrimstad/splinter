@@ -11,6 +11,7 @@
 #define SPLINTER_BSPLINEBASIS1D_H
 
 #include "definitions.h"
+#include "knot_vector.h"
 
 namespace SPLINTER
 {
@@ -21,36 +22,53 @@ public:
     BSplineBasis1D();
     BSplineBasis1D(const std::vector<double> &knots, unsigned int degree);
 
-    // Evaluation of basis functions
+    /**
+     * Evaluation of basis functions
+     */
     SparseVector eval(double x) const;
     SparseVector evalDerivative(double x, int r) const;
     SparseVector evalFirstDerivative(double x) const; // Depricated
 
-    // Knot vector related
+    /**
+     * Knot vector related
+     */
     SparseMatrix refineKnots();
     SparseMatrix refineKnotsLocally(double x);
     SparseMatrix decomposeToBezierForm();
     SparseMatrix insertKnots(double tau, unsigned int multiplicity = 1);
     // bool insertKnots(SparseMatrix &A, std::vector<tuple<double,int>> newKnots); // Add knots at several locations
-    unsigned int knotMultiplicity(double tau) const; // Returns the number of repetitions of tau in the knot vector
 
-    // Support related
+    unsigned int knotMultiplicity(double tau) const {
+        // Return the number of repetitions of tau in the knot vector
+        return knots.multiplicity(tau);
+    }
+
+    /**
+     * Support related
+     */
     double supportHack(double x) const;
-    bool insideSupport(double x) const;
+    bool is_supported(double x) const {
+        return knots.is_supported(x);
+    }
     SparseMatrix reduceSupport(double lb, double ub);
 
-    // Getters
-    std::vector<double> getKnotVector() const { return knots; }
+    /**
+     * Getters
+     */
+    std::vector<double> getKnotVector() const { return knots.get_values(); }
     unsigned int getBasisDegree() const { return degree; }
     unsigned int getNumBasisFunctions() const;
     unsigned int getNumBasisFunctionsTarget() const;
 
-    // Index getters
-    std::vector<int> indexSupportedBasisFunctions(double x) const;
-    int indexHalfopenInterval(double x) const;
+    /**
+     * Index getters
+     */
+    std::vector<unsigned int> indexSupportedBasisFunctions(double x) const;
     unsigned int indexLongestInterval(const std::vector<double> &vec) const;
 
-    // Setters
+    /**
+     * Setters
+     */
     void setNumBasisFunctionsTarget(unsigned int target)
     {
         targetNumBasisfunctions = std::max(degree+1, target);
@@ -58,7 +76,7 @@ public:
 
 private:
     // DeBoorCox algorithm for evaluating basis functions
-    double deBoorCox(double x, int i, int k) const;
+    double deBoorCox(double x, unsigned int i, unsigned int k) const;
     double deBoorCoxCoeff(double x, double x_min, double x_max) const;
 
     // Builds basis matrix for alternative evaluation of basis functions
@@ -68,14 +86,11 @@ private:
      * Builds knot insertion matrix
      * Implements Oslo Algorithm 1 from Lyche and Moerken (2011). Spline methods draft.
      */
-    SparseMatrix buildKnotInsertionMatrix(const std::vector<double> &refinedKnots) const;
-
-    // Helper functions
-    bool inHalfopenInterval(double x, double x_min, double x_max) const;
+    SparseMatrix buildKnotInsertionMatrix(const std::vector<double> &refined_knots) const;
 
     // Member variables
     unsigned int degree;
-    std::vector<double> knots;
+    KnotVector knots;
     unsigned int targetNumBasisfunctions;
 
     friend class Serializer;

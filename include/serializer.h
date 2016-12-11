@@ -26,6 +26,7 @@ class DataTable;
 class BSpline;
 class BSplineBasis;
 class BSplineBasis1D;
+class KnotVector;
 
 /**
  * Class for serialization
@@ -67,6 +68,7 @@ public:
     void deserialize(BSpline &obj);
     void deserialize(BSplineBasis &obj);
     void deserialize(BSplineBasis1D &obj);
+    void deserialize(KnotVector &obj);
 
     // Save the serialized stream to fileName
     void saveToFile(const std::string &fileName);
@@ -96,6 +98,7 @@ public:
     static size_t get_size(const BSpline &obj);
     static size_t get_size(const BSplineBasis &obj);
     static size_t get_size(const BSplineBasis1D &obj);
+    static size_t get_size(const KnotVector &obj);
 
 protected:
     template <class T>
@@ -120,6 +123,7 @@ protected:
     void _serialize(const BSpline &obj);
     void _serialize(const BSplineBasis &obj);
     void _serialize(const BSplineBasis1D &obj);
+    void _serialize(const KnotVector &obj);
 
     typedef std::vector<uint8_t> StreamType;
     StreamType stream;

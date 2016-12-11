@@ -13,48 +13,53 @@
 namespace SPLINTER
 {
 
-bool KnotVector::is_regular(unsigned int degree)
+bool KnotVector::is_regular(unsigned int degree) const
 {
-    // Check size
-    if (knots.size() < 2 * (degree + 1))
-        return false;
+//    // Check size
+//    if (size() < 2 * (degree + 1))
+//        return false;
 
     // Check order
-    if (!std::is_sorted(knots.begin(), knots.end()))
+    if (!is_nondecreasing())
         return false;
 
     // Check multiplicity of knots
-    for (std::vector<double>::const_iterator it = knots.begin(); it != knots.end(); ++it)
+    for (std::vector<double>::const_iterator it = cbegin(); it != cend(); ++it)
     {
-        if (count(knots.begin(), knots.end(), *it) > degree + 1)
+        if (count(cbegin(), cend(), *it) > degree + 1)
             return false;
     }
 
     return true;
 }
 
-bool KnotVector::is_refinement(const std::vector<double> &refinedKnots)
+bool KnotVector::is_refinement(const std::vector<double> &refined_knots) const
 {
     // Check size
-    if (refinedKnots.size() < knots.size())
+    if (refined_knots.size() < knots.size())
         return false;
 
-    // Check that each element in knots occurs at least as many times in refinedKnots
+    // Check that each element in knots occurs at least as many times in refined_knots
     for (auto it = knots.cbegin() ; it != knots.cend(); ++it)
     {
         auto m_tau = count(knots.begin(), knots.end(), *it);
-        auto m_t = count(refinedKnots.begin(), refinedKnots.end(), *it);
+        auto m_t = count(refined_knots.begin(), refined_knots.end(), *it);
         if (m_t < m_tau) return false;
     }
 
     // Check that range is not changed
-    if (knots.front() != refinedKnots.front()) return false;
-    if (knots.back() != refinedKnots.back()) return false;
+    if (knots.front() != refined_knots.front()) return false;
+    if (knots.back() != refined_knots.back()) return false;
 
     return true;
 }
 
-bool KnotVector::is_clamped(unsigned int degree)
+/**
+ * Check if end knots have multiplicity degree + 1
+ * @param degree
+ * @return bool
+ */
+bool KnotVector::is_clamped(unsigned int degree) const
 {
     // Check multiplicity of first knot
     if (std::count(knots.begin(), knots.begin() + degree + 1, knots.front()) != degree + 1)
@@ -65,6 +70,26 @@ bool KnotVector::is_clamped(unsigned int degree)
         return false;
 
     return true;
+}
+
+/**
+ * Finds index i such that knots.at(i) <= x < knots.at(i+1).
+ */
+unsigned int KnotVector::index_interval(double x) const
+{
+    if (!is_supported(x))
+        throw Exception("KnotVector::index_interval: x outside knot support!");
+
+    // Find first knot that is larger than x
+    auto it = std::upper_bound(cbegin(), cend(), x);
+
+    // Compute index
+    auto index = (it - knots.cbegin()) - 1;
+
+    if (index < 0)
+        throw Exception("KnotVector::index_interval: computed negative index!");
+
+    return (unsigned int)index;
 }
 
 bool operator==(const KnotVector &lhs, const KnotVector &rhs) {

@@ -12,41 +12,58 @@
 
 #include <vector>
 #include <algorithm>
+#include "definitions.h"
 
 namespace SPLINTER
 {
 
+/**
+ * Class representing a knot vector (nondecreasing sequence of number)
+ */
 class KnotVector
 {
 public:
-    KnotVector(const std::vector<double> &knots)
-            : knots(std::vector<double>(knots))
+    KnotVector()
+        : knots(std::vector<double>())
     {
-        // Test knots here
-
     }
 
-    std::vector<double> get_raw() const
+    KnotVector(const std::vector<double> &knots)
+        : knots(std::vector<double>(knots))
     {
+        // Test knots here
+        if (!is_nondecreasing())
+            throw Exception("KnotVector::KnotVector: Knot vector is not nondecreasing.");
+    }
+
+    std::vector<double> get_values() const {
         // Return copy of knots
         return knots;
     }
 
-    bool is_regular(unsigned int degree);
+    bool is_nondecreasing() const {
+        return std::is_sorted(knots.begin(), knots.end());
+    }
 
-    bool is_clamped(unsigned int degree);
+    bool is_regular(unsigned int degree) const;
 
-    bool is_refinement(const std::vector<double> &refinedKnots);
+    bool is_clamped(unsigned int degree) const;
 
-    bool inside_support(double x) const
-    {
+    bool is_refinement(const KnotVector &refined_knots) const {
+        return is_refinement(refined_knots.get_values());
+    }
+
+    bool is_refinement(const std::vector<double> &refined_knots) const;
+
+    bool is_supported(double x) const {
         return (knots.front() <= x) && (x <= knots.back());
     }
 
-    unsigned int knot_multiplicity(double tau) const
-    {
+    unsigned int multiplicity(double tau) const {
         return (unsigned int)std::count(knots.begin(), knots.end(), tau);
     }
+
+    unsigned int index_interval(double x) const;
 
     std::vector<double>::size_type size() const {
         return knots.size();
@@ -64,22 +81,22 @@ public:
         return knots.cend();
     }
 
-    const double at(unsigned int i) {
+    const double at(unsigned int i) const {
         return knots.at(i);
     }
 
-    const double front() {
+    const double front() const {
         return knots.front();
     }
 
-    const double back() {
+    const double back() const {
         return knots.back();
     }
 
 private:
     std::vector<double> knots;
 
-//    friend class Serializer;
+    friend class Serializer;
 };
 
 bool operator==(const KnotVector &lhs, const KnotVector &rhs);

@@ -15,15 +15,17 @@
 namespace SPLINTER
 {
 
-// Knot vector testing
-bool isKnotVectorRegular(const std::vector<double> &knots, unsigned int degree);
-bool isKnotVectorClamped(const std::vector<double> &knots, unsigned int degree);
-bool isKnotVectorRefinement(const std::vector<double> &knots, const std::vector<double> &refinedKnots);
-
 // Knot vector construction
-std::vector<double> knotVectorEquidistantNotClamped(const std::vector<double> &values, unsigned int degree, unsigned int numBasisFunctions);
-std::vector<double> knotVectorMovingAverage(const std::vector<double> &values, unsigned int degree);
-std::vector<double> knotVectorEquidistant(const std::vector<double> &values, unsigned int degree, unsigned int numBasisFunctions);
+std::vector<double> knotVectorEquidistantNotClamped(const std::vector<double> &values,
+                                                    unsigned int degree,
+                                                    unsigned int numBasisFunctions);
+
+std::vector<double> knotVectorMovingAverage(const std::vector<double> &values,
+                                            unsigned int degree);
+
+std::vector<double> knotVectorEquidistant(const std::vector<double> &values,
+                                          unsigned int degree,
+                                          unsigned int numBasisFunctions);
 
 } // namespace SPLINTER
 
