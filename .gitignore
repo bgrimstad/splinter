@@ -5,6 +5,7 @@ test*.datatable
 *.a
 .idea/
 build/
+bin/
 *.cbp
 *.save
 *.layout
