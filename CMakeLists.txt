@@ -174,7 +174,7 @@ set(SRC_LIST
     src/bspline_basis_1d.cpp
     src/knot_utils.cpp
     src/knot_vector.cpp
-    src/bsplinebuilder.cpp
+    src/bspline_builder.cpp
     src/data_point.cpp
     src/data_table.cpp
     src/function.cpp
@@ -188,9 +188,9 @@ set(TEST_SRC_LIST
     test/approximation/bspline.cpp
     test/approximation/pspline.cpp
     test/general/bspline.cpp
-    test/general/datatable.cpp
+    test/general/data_table.cpp
     test/general/utilities.cpp
-    test/serialization/datatable.cpp
+    test/serialization/data_table.cpp
     test/serialization/bspline.cpp
     test/op_overloads.h
     test/op_overloads.cpp
@@ -203,7 +203,7 @@ set(TEST_SRC_LIST
     test/bspline_test_utils.h
     test/bspline_test_utils.cpp
     test/serialization/eigentypes.cpp
-    test/unit/bsplinebasis1d.cpp
+    test/unit/bspline_basis_1d.cpp
     test/unit/knots.cpp
     test/unit/knot_vector.cpp)
 
