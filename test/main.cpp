@@ -9,8 +9,8 @@
 
 #define CATCH_CONFIG_RUNNER
 #include <Catch.h>
-#include <testfunction.h>
-#include <testfunctions.h>
+#include <test_function.h>
+#include <test_functions.h>
 
 int main(int argc, char *argv[])
 {

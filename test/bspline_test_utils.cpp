@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include <bsplinetestingutilities.h>
-#include <testingutilities.h>
+#include <bspline_test_utils.h>
+#include <test_utils.h>
 #include <utilities.h>
 
 namespace SPLINTER

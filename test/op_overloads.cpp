@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include <operatoroverloads.h>
-#include <testingutilities.h>
+#include <op_overloads.h>
+#include <test_utils.h>
 
 
 /*

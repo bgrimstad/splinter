@@ -11,7 +11,7 @@
 #define SPLINTER_BSPLINE_H
 
 #include "function.h"
-#include "bsplinebasis.h"
+#include "bspline_basis.h"
 
 namespace SPLINTER
 {

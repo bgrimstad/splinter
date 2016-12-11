@@ -8,8 +8,8 @@
 */
 
 #include <Catch.h>
-#include <datatable.h>
-#include "testingutilities.h"
+#include <data_table.h>
+#include "test_utils.h"
 
 using namespace SPLINTER;
 

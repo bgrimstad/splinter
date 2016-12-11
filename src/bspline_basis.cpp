@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include "bsplinebasis.h"
-#include "mykroneckerproduct.h"
+#include "bspline_basis.h"
+#include "kronecker_product.h"
 #include "unsupported/Eigen/KroneckerProduct"
 
 #include <iostream>

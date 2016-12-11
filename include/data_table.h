@@ -11,7 +11,7 @@
 #define SPLINTER_DATATABLE_H
 
 #include <set>
-#include "datapoint.h"
+#include "data_point.h"
 
 #include <ostream>
 

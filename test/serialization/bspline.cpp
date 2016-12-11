@@ -8,9 +8,9 @@
 */
 
 #include <Catch.h>
-#include <datatable.h>
-#include <bsplinebuilder.h>
-#include "testingutilities.h"
+#include <data_table.h>
+#include <bspline_builder.h>
+#include "test_utils.h"
 
 using namespace SPLINTER;
 

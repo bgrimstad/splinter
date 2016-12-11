@@ -10,7 +10,7 @@
 #ifndef SPLINTER_BSPLINEBUILDER_H
 #define SPLINTER_BSPLINEBUILDER_H
 
-#include "datatable.h"
+#include "data_table.h"
 #include "bspline.h"
 
 namespace SPLINTER

@@ -13,8 +13,8 @@
 #include <definitions.h>
 #include <vector>
 #include <set>
-#include <datapoint.h>
-#include <datatable.h>
+#include <data_point.h>
+#include <data_table.h>
 #include <bspline.h>
 
 

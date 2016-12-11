@@ -9,7 +9,7 @@
 
 #include "cinterface/cinterface.h"
 #include "cinterface/utilities.h"
-#include "datatable.h"
+#include "data_table.h"
 //#include <fstream>
 
 using namespace SPLINTER;

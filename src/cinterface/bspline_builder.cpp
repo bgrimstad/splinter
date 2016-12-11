@@ -7,7 +7,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include "bsplinebuilder.h"
+#include "bspline_builder.h"
 #include "cinterface/cinterface.h"
 #include "cinterface/utilities.h"
 

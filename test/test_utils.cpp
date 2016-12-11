@@ -7,12 +7,12 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include "testingutilities.h"
+#include "test_utils.h"
 #include <utilities.h>
-#include <testfunctions.h>
+#include <test_functions.h>
 #include <Catch.h>
 #include <iostream>
-#include <bsplinebuilder.h>
+#include <bspline_builder.h>
 
 using namespace std;
 

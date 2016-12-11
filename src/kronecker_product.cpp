@@ -7,7 +7,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include "mykroneckerproduct.h"
+#include "kronecker_product.h"
 #include "unsupported/Eigen/KroneckerProduct"
 
 namespace SPLINTER

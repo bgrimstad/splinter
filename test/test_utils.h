@@ -10,12 +10,12 @@
 #ifndef SPLINTER_TESTINGUTILITIES_H
 #define SPLINTER_TESTINGUTILITIES_H
 
-#include <datatable.h>
+#include <data_table.h>
 #include <function.h>
 #include "definitions.h"
 #include <bspline.h>
-#include <operatoroverloads.h>
-#include <testfunction.h>
+#include <op_overloads.h>
+#include <test_function.h>
 
 
 namespace SPLINTER

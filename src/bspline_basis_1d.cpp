@@ -7,7 +7,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include <bsplinebasis1d.h>
+#include <bspline_basis_1d.h>
 #include <knot_utils.h>
 #include <algorithm>
 #include <utilities.h>

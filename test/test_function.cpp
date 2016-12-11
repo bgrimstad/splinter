@@ -7,7 +7,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include <testfunction.h>
+#include <test_function.h>
 #include <utilities.h>
 #include <cmath> // std::ceil
 

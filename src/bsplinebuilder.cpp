@@ -7,11 +7,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include "bsplinebuilder.h"
-#include "mykroneckerproduct.h"
+#include "bspline_builder.h"
+#include "kronecker_product.h"
 #include "unsupported/Eigen/KroneckerProduct"
 #include <knot_utils.h>
-#include <linearsolvers.h>
+#include <linear_solvers.h>
 #include <serializer.h>
 #include <iostream>
 #include <utilities.h>

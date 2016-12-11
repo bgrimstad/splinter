@@ -8,10 +8,10 @@
 */
 
 #include "bspline.h"
-#include "bsplinebasis.h"
-#include "mykroneckerproduct.h"
+#include "bspline_basis.h"
+#include "kronecker_product.h"
 #include "unsupported/Eigen/KroneckerProduct"
-#include <linearsolvers.h>
+#include <linear_solvers.h>
 #include <serializer.h>
 #include <iostream>
 #include <utilities.h>

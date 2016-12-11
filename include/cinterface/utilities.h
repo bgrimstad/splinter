@@ -10,7 +10,7 @@
 #ifndef SPLINTER_UTILITIES_H
 #define SPLINTER_UTILITIES_H
 
-#include "datatable.h"
+#include "data_table.h"
 #include "function.h"
 #include "cinterface.h"
 #include "bspline.h"

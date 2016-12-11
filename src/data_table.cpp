@@ -7,7 +7,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include "datatable.h"
+#include "data_table.h"
 #include <string>
 #include <fstream>
 #include <iomanip>

@@ -10,11 +10,11 @@
 #include "serializer.h"
 #include <fstream>
 #include "definitions.h"
-#include "datapoint.h"
-#include <datatable.h>
+#include "data_point.h"
+#include <data_table.h>
 #include <bspline.h>
-#include <bsplinebasis.h>
-#include <bsplinebasis1d.h>
+#include <bspline_basis.h>
+#include <bspline_basis_1d.h>
 #include <knot_vector.h>
 
 namespace SPLINTER

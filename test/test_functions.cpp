@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include "testfunctions.h"
-#include "testfunction.h"
+#include "test_functions.h"
+#include "test_function.h"
 #include <iostream>
 
 #define MAKE_TESTFUNCTION(FUNC, NUMVARIABLES, PRETTY_STRING) new TestFunction([](const std::vector<double> &x) { return FUNC; }, NUMVARIABLES, PRETTY_STRING)
