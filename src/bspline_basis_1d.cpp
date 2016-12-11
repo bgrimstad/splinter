@@ -25,10 +25,7 @@ BSplineBasis1D::BSplineBasis1D(const std::vector<double> &knots, unsigned int de
       knots(KnotVector(knots)),
       targetNumBasisfunctions((degree+1)+2*degree+1) // Minimum p+1
 {
-    // Check that knot vector is regular
-//    if (!isKnotVectorRegular(knots, degree))
-//        throw Exception("BSplineBasis1D::BSplineBasis1D: Knot vector is not regular.");
-
+    // Check that knot vector is (p+1)-regular
     if (!this->knots.is_regular(degree))
         throw Exception("BSplineBasis1D::BSplineBasis1D: Knot vector is not regular.");
 }
