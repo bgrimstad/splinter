@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#ifndef SPLINTER_DATATABLE_H
-#define SPLINTER_DATATABLE_H
+#ifndef SPLINTER_DATA_TABLE_H
+#define SPLINTER_DATA_TABLE_H
 
 #include <set>
 #include "data_point.h"
@@ -86,4 +86,4 @@ DataTable operator-(const DataTable &lhs, const DataTable &rhs);
 
 } // namespace SPLINTER
 
-#endif // SPLINTER_DATATABLE_H
+#endif // SPLINTER_DATA_TABLE_H

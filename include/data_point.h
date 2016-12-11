@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#ifndef SPLINTER_DATAPOINT_H
-#define SPLINTER_DATAPOINT_H
+#ifndef SPLINTER_DATA_POINT_H
+#define SPLINTER_DATA_POINT_H
 
 #include "definitions.h"
 
@@ -50,4 +50,4 @@ bool dist_sort(const DataPoint &x, const DataPoint &y);
 
 } // namespace SPLINTER
 
-#endif // SPLINTER_DATAPOINT_H
+#endif // SPLINTER_DATA_POINT_H

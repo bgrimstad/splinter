@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#ifndef SPLINTER_BSPLINEBASIS_H
-#define SPLINTER_BSPLINEBASIS_H
+#ifndef SPLINTER_BSPLINE_BASIS_H
+#define SPLINTER_BSPLINE_BASIS_H
 
 #include "definitions.h"
 #include "bspline_basis_1d.h"
@@ -67,4 +67,4 @@ private:
 
 } // namespace SPLINTER
 
-#endif // SPLINTER_BSPLINEBASIS_H
+#endif // SPLINTER_BSPLINE_BASIS_H

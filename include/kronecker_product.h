@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#ifndef SPLINTER_MYKRONECKERPRODUCT_H
-#define SPLINTER_MYKRONECKERPRODUCT_H
+#ifndef SPLINTER_KRONECKER_PRODUCT_H
+#define SPLINTER_KRONECKER_PRODUCT_H
 
 #include "definitions.h"
 
@@ -24,4 +24,4 @@ SparseMatrix kroneckerProductMatrices(const std::vector<SparseMatrix> &matrices)
 
 } // namespace SPLINTER
 
-#endif // SPLINTER_MYKRONECKERPRODUCT_H
+#endif // SPLINTER_KRONECKER_PRODUCT_H

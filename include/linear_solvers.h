@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#ifndef SPLINTER_LINEARSOLVER_H
-#define SPLINTER_LINEARSOLVER_H
+#ifndef SPLINTER_LINEAR_SOLVER_H
+#define SPLINTER_LINEAR_SOLVER_H
 
 #include "definitions.h"
 #include "Eigen/IterativeLinearSolvers"
@@ -163,4 +163,4 @@ private:
 
 } // namespace SPLINTER
 
-#endif // SPLINTER_LINEARSOLVER_H
+#endif // SPLINTER_LINEAR_SOLVER_H
