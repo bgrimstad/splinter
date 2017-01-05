@@ -94,7 +94,6 @@ size_t Serializer::get_size(const DataTable &obj)
 size_t Serializer::get_size(const BSpline &obj)
 {
     return get_size(obj.basis)
-           + get_size(obj.knotaverages)
            + get_size(obj.coefficients)
            + get_size(obj.numVariables);
 }
@@ -173,7 +172,6 @@ void Serializer::_serialize(const DataTable &obj)
 void Serializer::_serialize(const BSpline &obj)
 {
     _serialize(obj.basis);
-    _serialize(obj.knotaverages);
     _serialize(obj.coefficients);
     _serialize(obj.numVariables);
 }
@@ -254,7 +252,6 @@ void Serializer::deserialize(DataTable &obj)
 void Serializer::deserialize(BSpline &obj)
 {
     deserialize(obj.basis);
-    deserialize(obj.knotaverages);
     deserialize(obj.coefficients);
     deserialize(obj.numVariables);
 }

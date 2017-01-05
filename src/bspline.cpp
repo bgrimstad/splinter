@@ -33,11 +33,10 @@ BSpline::BSpline(unsigned int numVariables)
 BSpline::BSpline(const std::vector<std::vector<double>> &knotVectors, const std::vector<unsigned int> &basisDegrees)
     : Function(knotVectors.size()),
       basis(BSplineBasis(knotVectors, basisDegrees)),
-      coefficients(DenseVector::Zero(1)),
-      knotaverages(computeKnotAverages())
+      coefficients(DenseVector::Zero(1))
 {
     // Initialize coefficients to ones
-    setCoefficients(DenseVector::Ones(basis.getNumBasisFunctions()));
+    setControlPoints(DenseVector::Ones(basis.getNumBasisFunctions()));
 
     checkControlPoints();
 }
@@ -50,10 +49,9 @@ BSpline::BSpline(const std::vector<double> &coefficients, const std::vector<std:
 BSpline::BSpline(const DenseVector &coefficients, const std::vector<std::vector<double>> &knotVectors, const std::vector<unsigned int> &basisDegrees)
     : Function(knotVectors.size()),
       basis(BSplineBasis(knotVectors, basisDegrees)),
-      coefficients(coefficients),
-      knotaverages(computeKnotAverages())
+      coefficients(coefficients)
 {
-    setCoefficients(coefficients);
+    setControlPoints(coefficients);
 
     checkControlPoints();
 }
@@ -174,42 +172,39 @@ std::vector<double> BSpline::getDomainLowerBound() const
     return basis.getSupportLowerBound();
 }
 
-DenseMatrix BSpline::getControlPoints() const
+//DenseMatrix BSpline::getControlPoints() const
+//{
+//    int nc = coefficients.size();
+//    DenseMatrix controlPoints(nc, numVariables + 1);
+//
+//    controlPoints.block(0, 0, nc, numVariables) = knotaverages;
+//    controlPoints.block(0, numVariables, nc, 1) = coefficients;
+//
+//    return controlPoints;
+//}
+
+void BSpline::setControlPoints(const DenseVector &control_points)
 {
-    int nc = coefficients.size();
-    DenseMatrix controlPoints(nc, numVariables + 1);
-
-    controlPoints.block(0, 0, nc, numVariables) = knotaverages;
-    controlPoints.block(0, numVariables, nc, 1) = coefficients;
-
-    return controlPoints;
-}
-
-void BSpline::setCoefficients(const DenseVector &coefficients)
-{
-    if (coefficients.size() != getNumBasisFunctions())
-        throw Exception("BSpline::setCoefficients: Incompatible size of coefficient vector. " +
-                                std::to_string(coefficients.size()) + " not equal to " +
+    if (control_points.size() != getNumBasisFunctions())
+        throw Exception("BSpline::setControlPoints: Incompatible size of coefficient vector. " +
+                                std::to_string(control_points.size()) + " not equal to " +
                                 std::to_string(getNumBasisFunctions()) + "!");
 
-    this->coefficients = coefficients;
+    this->coefficients = control_points;
     checkControlPoints();
 }
 
 void BSpline::updateControlPoints(const SparseMatrix &A)
 {
-    if (A.cols() != coefficients.rows() || A.cols() != knotaverages.rows())
+    if (A.cols() != coefficients.rows())
         throw Exception("BSpline::updateControlPoints: Incompatible size of linear transformation matrix.");
     coefficients = A*coefficients;
-    knotaverages = A*knotaverages;
 }
 
 void BSpline::checkControlPoints() const
 {
-    if (coefficients.rows() != knotaverages.rows())
-        throw Exception("BSpline::checkControlPoints: Inconsistent size of coefficients and knot averages matrices.");
-    if (knotaverages.cols() != numVariables)
-        throw Exception("BSpline::checkControlPoints: Inconsistent size of knot averages matrix.");
+//    if (coefficients.cols() != numVariables)
+//        throw Exception("BSpline::checkControlPoints: Inconsistent size of control point matrix.");
 }
 
 bool BSpline::pointInDomain(const DenseVector &x) const

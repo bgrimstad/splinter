@@ -68,14 +68,9 @@ public:
     /**
      * Getters
      */
-    DenseVector getCoefficients() const
+    DenseVector getControlPoints() const
     {
         return coefficients;
-    }
-
-    unsigned int getNumCoefficients() const
-    {
-        return coefficients.size();
     }
 
     unsigned int getNumControlPoints() const
@@ -90,7 +85,10 @@ public:
         return basis.getNumBasisFunctions();
     }
 
-    DenseMatrix getControlPoints() const;
+//    DenseMatrix getControlPoints() const;
+    DenseMatrix getKnotAverages() const {
+        return computeKnotAverages();
+    };
     std::vector< std::vector<double>> getKnotVectors() const;
     std::vector<unsigned int> getBasisDegrees() const;
     std::vector<double> getDomainUpperBound() const;
@@ -99,7 +97,7 @@ public:
     /**
      * Setters
      */
-    void setCoefficients(const DenseVector &coefficients);
+    void setControlPoints(const DenseVector &control_points);
     void checkControlPoints() const;
 
     // Linear transformation of control points (B-spline has affine invariance)
@@ -134,7 +132,6 @@ protected:
      * where m = numBasisFunctions and n = numVariables + 1. Each row in P is a control point.
      */
     DenseVector coefficients;
-    DenseMatrix knotaverages;
 
     // Control point computations
     DenseMatrix computeKnotAverages() const;

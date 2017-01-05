@@ -48,7 +48,7 @@ BSpline BSpline::Builder::build() const
 
     // Compute coefficients from samples and update B-spline
     auto coefficients = computeCoefficients(bspline);
-    bspline.setCoefficients(coefficients);
+    bspline.setControlPoints(coefficients);
 
     return bspline;
 }

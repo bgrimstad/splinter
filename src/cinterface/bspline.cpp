@@ -137,7 +137,7 @@ int splinter_bspline_get_num_coefficients(splinter_obj_ptr bspline_ptr)
     {
         try
         {
-            return bspline->getNumCoefficients();
+            return bspline->getNumControlPoints();
         }
         catch (const Exception &e)
         {
@@ -155,7 +155,7 @@ double *splinter_bspline_get_coefficients(splinter_obj_ptr bspline_ptr)
     {
         try
         {
-            auto coefficients = bspline->getCoefficients();
+            auto coefficients = bspline->getControlPoints();
 
             coefficients_as_array = (double *) malloc(coefficients.size() * sizeof (double));
 
