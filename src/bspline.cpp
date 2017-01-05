@@ -196,19 +196,6 @@ void BSpline::setCoefficients(const DenseVector &coefficients)
     checkControlPoints();
 }
 
-void BSpline::setControlPoints(const DenseMatrix &controlPoints)
-{
-    if (controlPoints.cols() != numVariables + 1)
-        throw Exception("BSpline::setControlPoints: Incompatible size of control point matrix.");
-
-    int nc = controlPoints.rows();
-
-    knotaverages = controlPoints.block(0, 0, nc, numVariables);
-    coefficients = controlPoints.block(0, numVariables, nc, 1);
-
-    checkControlPoints();
-}
-
 void BSpline::updateControlPoints(const SparseMatrix &A)
 {
     if (A.cols() != coefficients.rows() || A.cols() != knotaverages.rows())

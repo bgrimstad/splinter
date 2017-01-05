@@ -100,7 +100,6 @@ public:
      * Setters
      */
     void setCoefficients(const DenseVector &coefficients);
-    void setControlPoints(const DenseMatrix &controlPoints);
     void checkControlPoints() const;
 
     // Linear transformation of control points (B-spline has affine invariance)
