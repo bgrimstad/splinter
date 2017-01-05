@@ -190,7 +190,7 @@ SPLINTER_API void splinter_bspline_builder_delete(splinter_obj_ptr bspline_build
  * @param coefficients The B-spline coefficients
  * @param num_coefficients Number of coefficients
  * @param knot_vectors The B-spline knot vectors
- * @param knot_vectors Number of knots per knot vector
+ * @param num_knots_per_vector Number of knots per knot vector
  * @param degrees The B-spline degrees
  * @param dim The B-spline dimension
  * @return Pointer to the created BSpline.
