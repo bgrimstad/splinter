@@ -12,7 +12,7 @@
 namespace SPLINTER
 {
 
-std::vector<double> denseVectorToVector(const DenseVector &denseVec)
+std::vector<double> eigToStdVec(const DenseVector &denseVec)
 {
     std::vector<double> vec(denseVec.size());
 
@@ -24,7 +24,7 @@ std::vector<double> denseVectorToVector(const DenseVector &denseVec)
     return vec;
 }
 
-DenseVector vectorToDenseVector(const std::vector<double> &vec)
+DenseVector stdToEigVec(const std::vector<double> &vec)
 {
     DenseVector denseVec(vec.size());
     denseVec.setZero();
@@ -35,7 +35,7 @@ DenseVector vectorToDenseVector(const std::vector<double> &vec)
     return denseVec;
 }
 
-std::vector<std::vector<double>> denseMatrixToVectorVector(const DenseMatrix &mat)
+std::vector<std::vector<double>> eigMatToStdVecVec(const DenseMatrix &mat)
 {
     std::vector<std::vector<double>> vec(mat.rows());
 
@@ -50,7 +50,7 @@ std::vector<std::vector<double>> denseMatrixToVectorVector(const DenseMatrix &ma
     return vec;
 }
 
-DenseMatrix vectorVectorToDenseMatrix(const std::vector<std::vector<double>> &vec)
+DenseMatrix stdVecVecToEigMat(const std::vector<std::vector<double>> &vec)
 {
     size_t numRows = vec.size();
     size_t numCols = numRows > 0 ? vec.at(0).size() : 0;

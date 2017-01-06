@@ -42,7 +42,7 @@ BSpline::BSpline(const std::vector<std::vector<double>> &knotVectors, const std:
 }
 
 BSpline::BSpline(const std::vector<double> &coefficients, const std::vector<std::vector<double>> &knotVectors, const std::vector<unsigned int> &basisDegrees)
-    : BSpline(vectorToDenseVector(coefficients), knotVectors, basisDegrees)
+    : BSpline(stdToEigVec(coefficients), knotVectors, basisDegrees)
 {
 }
 

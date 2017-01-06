@@ -177,7 +177,7 @@ SparseMatrix BSpline::Builder::computeBasisFunctionMatrix(const BSpline &bspline
     int i = 0;
     for (auto it = _data.cbegin(); it != _data.cend(); ++it, ++i)
     {
-        DenseVector xi = vectorToDenseVector(it->getX());
+        DenseVector xi = stdToEigVec(it->getX());
         SparseVector basis_values = bspline.evalBasis(xi);
         for (SparseVector::InnerIterator it2(basis_values); it2; ++it2)
             A.insert(i, it2.index()) = it2.value();

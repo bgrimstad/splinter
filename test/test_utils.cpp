@@ -91,7 +91,7 @@ bool compareFunctions(const Function &exact, const Function &approx, const std::
 
     int i = 0;
     for (auto &point : points) {
-        DenseVector x = vecToDense(point);
+        DenseVector x = stdToEigVec(point);
 
 //        INFO("Evaluation point: " << pretty_print(x));
 
@@ -256,12 +256,12 @@ void compareFunctionValue(TestFunction *exact,
     DenseVector errorVec(evalPoints.size());
 
     double maxError = 0.0;
-    DenseVector maxErrorPoint = vecToDense(evalPoints.at(0));
+    DenseVector maxErrorPoint = stdToEigVec(evalPoints.at(0));
 
     int i = 0;
     for (auto &point : evalPoints)
     {
-        DenseVector x = vecToDense(point);
+        DenseVector x = stdToEigVec(point);
 
         double exactValue = exact->eval(x);
         double approxValue = approx->eval(x);
@@ -349,7 +349,7 @@ void compareJacobianValue(TestFunction *exact,
     int i = 0;
     for (auto &point : evalPoints)
     {
-        DenseVector x = vecToDense(point);
+        DenseVector x = stdToEigVec(point);
 
         // Compare the central difference to the approximated jacobian
         DenseMatrix exactValue = approx->centralDifference(x);
@@ -459,7 +459,7 @@ void checkHessianSymmetry(TestFunction *exact,
     DenseVector x(dim);
     for (auto &point : evalPoints)
     {
-        x = vecToDense(point);
+        x = stdToEigVec(point);
 
         if(!isSymmetricHessian(*approx, x))
         {
@@ -541,14 +541,12 @@ DataTable sample(const Function *func, std::vector<std::vector<double>> &points)
     DataTable table;
 
     for(auto &point : points) {
-        DenseVector x = vecToDense(point);
+        DenseVector x = stdToEigVec(point);
         table.addSample(point, func->eval(x));
     }
 
     return table;
 }
-
-
 
 double sixHumpCamelBack(std::vector<double> x)
 {
@@ -711,17 +709,6 @@ std::vector<std::vector<double>> linspace(int dim, unsigned int pointsPerDim)
     return linspace(start, end, numPoints);
 }
 
-
-std::vector<double> denseToVec(const DenseVector &dense)
-{
-    auto vec = std::vector<double>(dense.size());
-    for(int i = 0; i < (int) dense.size(); i++) {
-        vec.at(i) = dense(i);
-    }
-
-    return vec;
-}
-
 DenseVector vecToDense(const std::vector<double> &vec)
 {
     DenseVector dense(vec.size());
@@ -802,7 +789,7 @@ DenseMatrix getErrorNorms(const Function *exact, const Function *approx, const s
 
     int i = 0;
     for (auto &point : points) {
-        DenseVector x = vecToDense(point);
+        DenseVector x = stdToEigVec(point);
 
         {
             DenseMatrix exactValue(1,1);

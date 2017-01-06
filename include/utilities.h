@@ -27,13 +27,13 @@ bool assertNear(T x, T y, double tolAbs = 1e-8, double tolRel = 1e-8)
     return dx < err;
 }
 
-std::vector<double> denseVectorToVector(const DenseVector &denseVec);
+std::vector<double> eigToStdVec(const DenseVector &denseVec);
 
-DenseVector vectorToDenseVector(const std::vector<double> &vec);
+DenseVector stdToEigVec(const std::vector<double> &vec);
 
-std::vector<std::vector<double>> denseMatrixToVectorVector(const DenseMatrix &mat);
+std::vector<std::vector<double>> eigMatToStdVecVec(const DenseMatrix &mat);
 
-DenseMatrix vectorVectorToDenseMatrix(const std::vector<std::vector<double>> &vec);
+DenseMatrix stdVecVecToEigMat(const std::vector<std::vector<double>> &vec);
 
 std::vector<double> linspace(double start, double stop, unsigned int num);
 

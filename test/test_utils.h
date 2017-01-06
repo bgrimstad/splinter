@@ -98,10 +98,6 @@ double getInfNorm(const DenseMatrix &m);
 // returns log(x) in base base
 double log(double base, double x);
 
-std::vector<double> denseToVec(const DenseVector &dense);
-
-DenseVector vecToDense(const std::vector<double> &vec);
-
 std::string pretty_print(const DenseVector &denseVec);
 
 TestFunction *getTestFunction(int numVariables, int degree);

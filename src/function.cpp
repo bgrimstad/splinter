@@ -15,41 +15,41 @@ namespace SPLINTER
 
 double Function::eval(const std::vector<double> &x) const
 {
-    auto denseX = vectorToDenseVector(x);
+    auto denseX = stdToEigVec(x);
 
     return eval(denseX);
 }
 
 std::vector<double> Function::evalJacobian(const std::vector<double> &x) const
 {
-    auto denseX = vectorToDenseVector(x);
+    auto denseX = stdToEigVec(x);
 
-    return denseVectorToVector(evalJacobian(denseX));
+    return eigToStdVec(evalJacobian(denseX));
 }
 
 std::vector<std::vector<double>> Function::evalHessian(const std::vector<double> &x) const
 {
-    auto denseX = vectorToDenseVector(x);
+    auto denseX = stdToEigVec(x);
 
-    return denseMatrixToVectorVector(secondOrderCentralDifference(denseX));
+    return eigMatToStdVecVec(secondOrderCentralDifference(denseX));
 }
 
 std::vector<double> Function::centralDifference(const std::vector<double> &x) const
 {
-    auto denseX = vectorToDenseVector(x);
+    auto denseX = stdToEigVec(x);
 
     auto dx = centralDifference(denseX);
 
-    return denseVectorToVector(dx);
+    return eigToStdVec(dx);
 }
 
 std::vector<std::vector<double>> Function::secondOrderCentralDifference(const std::vector<double> &x) const
 {
-    auto denseX = vectorToDenseVector(x);
+    auto denseX = stdToEigVec(x);
 
     DenseMatrix ddx = secondOrderCentralDifference(denseX);
 
-    return denseMatrixToVectorVector(ddx);
+    return eigMatToStdVecVec(ddx);
 }
 
 DenseMatrix Function::evalJacobian(const DenseVector &x) const
@@ -59,11 +59,11 @@ DenseMatrix Function::evalJacobian(const DenseVector &x) const
 
 DenseMatrix Function::evalHessian(const DenseVector &x) const
 {
-    auto vec = denseVectorToVector(x);
+    auto vec = eigToStdVec(x);
 
     auto hessian = evalHessian(vec);
 
-    return vectorVectorToDenseMatrix(hessian);
+    return stdVecVecToEigMat(hessian);
 }
 
 DenseMatrix Function::centralDifference(const DenseVector &x) const
