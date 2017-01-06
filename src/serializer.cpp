@@ -86,7 +86,8 @@ size_t Serializer::get_size(const DataTable &obj)
     return get_size(obj.allowDuplicates)
            + get_size(obj.allowIncompleteGrid)
            + get_size(obj.numDuplicates)
-           + get_size(obj.numVariables)
+           + get_size(obj.dimX)
+           + get_size(obj.dimY)
            + get_size(obj.samples)
            + get_size(obj.grid);
 }
@@ -164,7 +165,8 @@ void Serializer::_serialize(const DataTable &obj)
     _serialize(obj.allowDuplicates);
     _serialize(obj.allowIncompleteGrid);
     _serialize(obj.numDuplicates);
-    _serialize(obj.numVariables);
+    _serialize(obj.dimX);
+    _serialize(obj.dimY);
     _serialize(obj.samples);
     _serialize(obj.grid);
 }
@@ -244,7 +246,8 @@ void Serializer::deserialize(DataTable &obj)
     deserialize(obj.allowDuplicates);
     deserialize(obj.allowIncompleteGrid);
     deserialize(obj.numDuplicates);
-    deserialize(obj.numVariables);
+    deserialize(obj.dimX);
+    deserialize(obj.dimY);
     deserialize(obj.samples);
     deserialize(obj.grid);
 }

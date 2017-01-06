@@ -51,25 +51,14 @@ void splinter_datatable_add_samples_row_major(splinter_obj_ptr datatable_ptr, do
     {
         try
         {
-//            std::ofstream out("test.txt");
-            DenseVector vec(x_dim);
+            std::vector<double> vec(x_dim, 0);
             for (int i = 0; i < n_samples; ++i)
             {
                 int sample_start = i*(x_dim+1);
                 for (int offset = 0; offset < x_dim; ++offset)
                 {
-                    vec(offset) = x[sample_start + offset];
+                    vec.at(offset) = x[sample_start + offset];
                 }
-
-//                out << "Adding sample: (";
-//                for(int l = 0; l < vec.size(); l++)
-//                {
-//                    if(l != 0)
-//                        out << ",";
-//                    out << vec(l);
-//                }
-//                out << ") = ";
-//                out  << x[sample_start + x_dim] << std::endl;
 
                 dataTable->addSample(vec, x[sample_start + x_dim]);
             }
@@ -88,24 +77,13 @@ void splinter_datatable_add_samples_col_major(splinter_obj_ptr datatable_ptr, do
     {
         try
         {
-//            std::ofstream out("test.txt");
-            DenseVector vec(x_dim);
+            std::vector<double> vec(x_dim, 0);
             for (int i = 0; i < n_samples; ++i)
             {
                 for (int j = 0; j < x_dim; ++j)
                 {
-                    vec(j) = x[i + j * n_samples];
+                    vec.at(j) = x[i + j * n_samples];
                 }
-
-//                out << "Adding sample: (";
-//                for(int l = 0; l < vec.size(); l++)
-//                {
-//                    if(l != 0)
-//                        out << ",";
-//                    out << vec(l);
-//                }
-//                out << ") = ";
-//                out  << x[i + x_dim * n_samples] << std::endl;
 
                 dataTable->addSample(vec, x[i + x_dim * n_samples]);
             }
@@ -122,7 +100,7 @@ int splinter_datatable_get_num_variables(splinter_obj_ptr datatable_ptr)
     auto dataTable = get_datatable(datatable_ptr);
     if (dataTable != nullptr)
     {
-        return dataTable->getNumVariables();
+        return dataTable->getDimX();
     }
 
     return 0;

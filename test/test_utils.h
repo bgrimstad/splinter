@@ -87,7 +87,7 @@ std::vector<std::vector<double>> linspace(int dim);
 
 std::vector<std::vector<double>> linspace(int dim, unsigned int pointsPerDim);
 
-double sixHumpCamelBack(DenseVector x);
+double sixHumpCamelBack(std::vector<double> x);
 
 double getOneNorm(const DenseMatrix &m);
 

@@ -550,10 +550,12 @@ DataTable sample(const Function *func, std::vector<std::vector<double>> &points)
 
 
 
-double sixHumpCamelBack(DenseVector x)
+double sixHumpCamelBack(std::vector<double> x)
 {
-    assert(x.rows() == 2);
-    return (4 - 2.1*x(0)*x(0) + (1/3.)*x(0)*x(0)*x(0)*x(0))*x(0)*x(0) + x(0)*x(1) + (-4 + 4*x(1)*x(1))*x(1)*x(1);
+    assert(x.size() == 2);
+    double x0 = x.at(0);
+    double x1 = x.at(1);
+    return (4 - 2.1*x0*x0 + (1/3.)*x0*x0*x0*x0)*x0*x0 + x0*x1 + (-4 + 4*x1*x1)*x1*x1;
 }
 
 double getOneNorm(const DenseMatrix &m)

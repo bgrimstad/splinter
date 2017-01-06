@@ -22,8 +22,8 @@ namespace SPLINTER
 BSpline::Builder::Builder(const DataTable &data)
         :
         _data(data),
-        _degrees(getBSplineDegrees(data.getNumVariables(), 3)),
-        _numBasisFunctions(std::vector<unsigned int>(data.getNumVariables(), 1)),
+        _degrees(getBSplineDegrees(data.getDimX(), 3)),
+        _numBasisFunctions(std::vector<unsigned int>(data.getDimX(), 1)),
         _knotSpacing(KnotSpacing::AS_SAMPLED),
         _smoothing(Smoothing::NONE),
         _alpha(0.1)
@@ -194,7 +194,7 @@ DenseVector BSpline::Builder::getSamplePointValues() const
 
     int i = 0;
     for (auto it = _data.cbegin(); it != _data.cend(); ++it, ++i)
-        B(i) = it->getY();
+        B(i) = it->getY().at(0); // TODO: Update!
 
     return B;
 }
@@ -304,14 +304,14 @@ SparseMatrix BSpline::Builder::getSecondOrderFiniteDifferenceMatrix(const BSplin
 // Compute all knot vectors from sample data
 std::vector<std::vector<double> > BSpline::Builder::computeKnotVectors() const
 {
-    if (_data.getNumVariables() != _degrees.size())
+    if (_data.getDimX() != _degrees.size())
         throw Exception("BSpline::Builder::computeKnotVectors: Inconsistent sizes on input vectors.");
 
     std::vector<std::vector<double>> grid = _data.getTableX();
 
     std::vector<std::vector<double>> knotVectors;
 
-    for (unsigned int i = 0; i < _data.getNumVariables(); ++i)
+    for (unsigned int i = 0; i < _data.getDimX(); ++i)
     {
         // Compute knot vector
         auto knotVec = computeKnotVector(grid.at(i), _degrees.at(i), _numBasisFunctions.at(i));

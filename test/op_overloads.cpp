@@ -85,10 +85,10 @@ bool operator==(const DataTable &lhs, const DataTable &rhs)
             lhs.allowDuplicates == rhs.allowDuplicates
             && lhs.allowIncompleteGrid == rhs.allowIncompleteGrid
             && lhs.numDuplicates == rhs.numDuplicates
-            && lhs.numVariables == rhs.numVariables
+            && lhs.dimX == rhs.dimX
             && lhs.samples == rhs.samples
             && lhs.grid == rhs.grid
-            && lhs.getNumVariables() == rhs.getNumVariables()
+            && lhs.getDimX() == rhs.getDimX()
             && lhs.getNumSamples() == rhs.getNumSamples()
             && lhs.getSamples() == rhs.getSamples()
             && lhs.getGrid() == rhs.getGrid();
@@ -102,8 +102,11 @@ bool operator==(const DataPoint &lhs, const DataPoint &rhs)
             return false;
     }
 
-    if (!equalsWithinRange(lhs.getY(), rhs.getY()))
-        return false;
+    for (unsigned int i = 0; i < lhs.getDimY(); i++)
+    {
+        if (!equalsWithinRange(lhs.getY().at(i), rhs.getY().at(i)))
+            return false;
+    }
 
     return true;
 }
@@ -169,7 +172,7 @@ std::ostream &operator<<(std::ostream &out, const DataPoint &sample) {
 
 std::ostream &operator<<(std::ostream &out, const DataTable &table)
 {
-    out << "numVariables: " << table.getNumVariables() << std::endl;
+    out << "dimX: " << table.getDimX() << std::endl;
     out << "numSamples: " << table.getNumSamples() << std::endl;
     //out << "samples: " << table.getSamples() << std::endl;
     out << "grid dimensions: ";

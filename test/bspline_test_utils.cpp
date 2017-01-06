@@ -21,7 +21,7 @@ DataTable sampleTestFunction()
     // Sample function
     auto x0_vec = linspace(0, 2, 20);
     auto x1_vec = linspace(0, 2, 20);
-    DenseVector x(2);
+    std::vector<double> x(2, 0);
     double y;
 
     for (auto x0 : x0_vec)
@@ -29,12 +29,12 @@ DataTable sampleTestFunction()
         for (auto x1 : x1_vec)
         {
             // Sample function at x
-            x(0) = x0;
-            x(1) = x1;
+            x.at(0) = x0;
+            x.at(1) = x1;
             y = sixHumpCamelBack(x);
 
             // Store sample
-            samples.addSample(x,y);
+            samples.addSample(x, y);
         }
     }
 
