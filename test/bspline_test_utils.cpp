@@ -74,22 +74,22 @@ bool testKnotInsertion()
             x(0) = x0;
             x(1) = x1;
 
-            double y1 = bspline1.eval(x);
-            double y1_copy = bspline1_copy.eval(x);
+            auto y1 = bspline1.eval(x);
+            auto y1_copy = bspline1_copy.eval(x);
 
-            if (!assertNear(y1, y1_copy, 1e-10))
+            if (!compareVectors(y1, y1_copy, 1e-10))
                 return false;
 
-            double y2 = bspline2.eval(x);
-            double y2_copy = bspline2_copy.eval(x);
+            auto y2 = bspline2.eval(x);
+            auto y2_copy = bspline2_copy.eval(x);
 
-            if (!assertNear(y2, y2_copy, 1e-10))
+            if (!compareVectors(y2, y2_copy, 1e-10))
                 return false;
 
-            double y3 = bspline3.eval(x);
-            double y3_copy = bspline3_copy.eval(x);
+            auto y3 = bspline3.eval(x);
+            auto y3_copy = bspline3_copy.eval(x);
 
-            if (!assertNear(y3, y3_copy, 1e-10))
+            if (!compareVectors(y3, y3_copy, 1e-10))
                 return false;
         }
     }
@@ -191,21 +191,21 @@ bool domainReductionTest1()
         bspline3.reduceSupport(lb, ub);
         bspline4.reduceSupport(lb, ub);
 
-        if (!assertNear(bspline1.eval(x1), bspline1_ref.eval(x1)))
+        if (!compareVectors(bspline1.eval(x1), bspline1_ref.eval(x1)))
             return false;
-        if (!assertNear(bspline2.eval(x1), bspline2_ref.eval(x1)))
+        if (!compareVectors(bspline2.eval(x1), bspline2_ref.eval(x1)))
             return false;
-        if (!assertNear(bspline3.eval(x1), bspline3_ref.eval(x1)))
+        if (!compareVectors(bspline3.eval(x1), bspline3_ref.eval(x1)))
             return false;
-        if (!assertNear(bspline4.eval(x1), bspline4_ref.eval(x1)))
+        if (!compareVectors(bspline4.eval(x1), bspline4_ref.eval(x1)))
             return false;
-        if (!assertNear(bspline1.eval(x2), bspline1_ref.eval(x2)))
+        if (!compareVectors(bspline1.eval(x2), bspline1_ref.eval(x2)))
             return false;
-        if (!assertNear(bspline2.eval(x2), bspline2_ref.eval(x2)))
+        if (!compareVectors(bspline2.eval(x2), bspline2_ref.eval(x2)))
             return false;
-        if (!assertNear(bspline3.eval(x2), bspline3_ref.eval(x2)))
+        if (!compareVectors(bspline3.eval(x2), bspline3_ref.eval(x2)))
             return false;
-        if (!assertNear(bspline4.eval(x2), bspline4_ref.eval(x2)))
+        if (!compareVectors(bspline4.eval(x2), bspline4_ref.eval(x2)))
             return false;
     }
 
@@ -218,21 +218,21 @@ bool domainReductionTest1()
         bspline3.reduceSupport(lb, ub);
         bspline4.reduceSupport(lb, ub);
 
-        if (!assertNear(bspline1.eval(x1), bspline1_ref.eval(x1)))
+        if (!compareVectors(bspline1.eval(x1), bspline1_ref.eval(x1)))
             return false;
-        if (!assertNear(bspline2.eval(x1), bspline2_ref.eval(x1)))
+        if (!compareVectors(bspline2.eval(x1), bspline2_ref.eval(x1)))
             return false;
-        if (!assertNear(bspline3.eval(x1), bspline3_ref.eval(x1)))
+        if (!compareVectors(bspline3.eval(x1), bspline3_ref.eval(x1)))
             return false;
-        if (!assertNear(bspline4.eval(x1), bspline4_ref.eval(x1)))
+        if (!compareVectors(bspline4.eval(x1), bspline4_ref.eval(x1)))
             return false;
-        if (!assertNear(bspline1.eval(x2), bspline1_ref.eval(x2)))
+        if (!compareVectors(bspline1.eval(x2), bspline1_ref.eval(x2)))
             return false;
-        if (!assertNear(bspline2.eval(x2), bspline2_ref.eval(x2)))
+        if (!compareVectors(bspline2.eval(x2), bspline2_ref.eval(x2)))
             return false;
-        if (!assertNear(bspline3.eval(x2), bspline3_ref.eval(x2)))
+        if (!compareVectors(bspline3.eval(x2), bspline3_ref.eval(x2)))
             return false;
-        if (!assertNear(bspline4.eval(x2), bspline4_ref.eval(x2)))
+        if (!compareVectors(bspline4.eval(x2), bspline4_ref.eval(x2)))
             return false;
     }
 
@@ -245,21 +245,21 @@ bool domainReductionTest1()
         bspline3.reduceSupport(lb, ub);
         bspline4.reduceSupport(lb, ub);
 
-        if (!assertNear(bspline1.eval(x1), bspline1_ref.eval(x1)))
+        if (!compareVectors(bspline1.eval(x1), bspline1_ref.eval(x1)))
             return false;
-        if (!assertNear(bspline2.eval(x1), bspline2_ref.eval(x1)))
+        if (!compareVectors(bspline2.eval(x1), bspline2_ref.eval(x1)))
             return false;
-        if (!assertNear(bspline3.eval(x1), bspline3_ref.eval(x1)))
+        if (!compareVectors(bspline3.eval(x1), bspline3_ref.eval(x1)))
             return false;
-        if (!assertNear(bspline4.eval(x1), bspline4_ref.eval(x1)))
+        if (!compareVectors(bspline4.eval(x1), bspline4_ref.eval(x1)))
             return false;
-        if (!assertNear(bspline1.eval(x2), bspline1_ref.eval(x2)))
+        if (!compareVectors(bspline1.eval(x2), bspline1_ref.eval(x2)))
             return false;
-        if (!assertNear(bspline2.eval(x2), bspline2_ref.eval(x2)))
+        if (!compareVectors(bspline2.eval(x2), bspline2_ref.eval(x2)))
             return false;
-        if (!assertNear(bspline3.eval(x2), bspline3_ref.eval(x2)))
+        if (!compareVectors(bspline3.eval(x2), bspline3_ref.eval(x2)))
             return false;
-        if (!assertNear(bspline4.eval(x2), bspline4_ref.eval(x2)))
+        if (!compareVectors(bspline4.eval(x2), bspline4_ref.eval(x2)))
             return false;
     }
 
@@ -272,21 +272,21 @@ bool domainReductionTest1()
         bspline3.reduceSupport(lb, ub);
         bspline4.reduceSupport(lb, ub);
 
-        if (!assertNear(bspline1.eval(x1), bspline1_ref.eval(x1)))
+        if (!compareVectors(bspline1.eval(x1), bspline1_ref.eval(x1)))
             return false;
-        if (!assertNear(bspline2.eval(x1), bspline2_ref.eval(x1)))
+        if (!compareVectors(bspline2.eval(x1), bspline2_ref.eval(x1)))
             return false;
-        if (!assertNear(bspline3.eval(x1), bspline3_ref.eval(x1)))
+        if (!compareVectors(bspline3.eval(x1), bspline3_ref.eval(x1)))
             return false;
-        if (!assertNear(bspline4.eval(x1), bspline4_ref.eval(x1)))
+        if (!compareVectors(bspline4.eval(x1), bspline4_ref.eval(x1)))
             return false;
-        if (!assertNear(bspline1.eval(x2), bspline1_ref.eval(x2)))
+        if (!compareVectors(bspline1.eval(x2), bspline1_ref.eval(x2)))
             return false;
-        if (!assertNear(bspline2.eval(x2), bspline2_ref.eval(x2)))
+        if (!compareVectors(bspline2.eval(x2), bspline2_ref.eval(x2)))
             return false;
-        if (!assertNear(bspline3.eval(x2), bspline3_ref.eval(x2)))
+        if (!compareVectors(bspline3.eval(x2), bspline3_ref.eval(x2)))
             return false;
-        if (!assertNear(bspline4.eval(x2), bspline4_ref.eval(x2)))
+        if (!compareVectors(bspline4.eval(x2), bspline4_ref.eval(x2)))
             return false;
     }
 

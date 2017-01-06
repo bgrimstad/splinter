@@ -108,10 +108,9 @@ private:
     }
 
     // Control point computations
-    DenseVector computeCoefficients(const BSpline &bspline) const;
-    DenseVector computeBSplineCoefficients(const BSpline &bspline) const;
+    DenseMatrix computeControlPoints(const BSpline &bspline) const;
     SparseMatrix computeBasisFunctionMatrix(const BSpline &bspline) const;
-    DenseVector getSamplePointValues() const;
+    DenseMatrix stackSamplePointValues() const;
     // P-spline control point calculation
     SparseMatrix getSecondOrderFiniteDifferenceMatrix(const BSpline &bspline) const;
 

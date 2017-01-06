@@ -47,7 +47,7 @@ BSpline BSpline::Builder::build() const
     auto bspline = BSpline(knotVectors, _degrees);
 
     // Compute coefficients from samples and update B-spline
-    auto coefficients = computeCoefficients(bspline);
+    auto coefficients = computeControlPoints(bspline);
     bspline.setControlPoints(coefficients);
 
     return bspline;
@@ -63,11 +63,11 @@ BSpline BSpline::Builder::build() const
  * R = Regularization matrix,
  * alpha = regularization parameter.
  */
-DenseVector BSpline::Builder::computeCoefficients(const BSpline& bspline) const
+DenseMatrix BSpline::Builder::computeControlPoints(const BSpline &bspline) const
 {
     SparseMatrix B = computeBasisFunctionMatrix(bspline);
     SparseMatrix A = B;
-    DenseVector b = getSamplePointValues();
+    DenseMatrix b = stackSamplePointValues();
 
     if (_smoothing == Smoothing::IDENTITY)
     {
@@ -127,7 +127,7 @@ DenseVector BSpline::Builder::computeCoefficients(const BSpline& bspline) const
         b = Bt*W*b;
     }
 
-    DenseVector x;
+    DenseMatrix x;
 
     int numEquations = A.rows();
     int maxNumEquations = 100;
@@ -135,11 +135,11 @@ DenseVector BSpline::Builder::computeCoefficients(const BSpline& bspline) const
 
     if (!solveAsDense)
     {
-#ifndef NDEBUG
+        #ifndef NDEBUG
         std::cout << "BSpline::Builder::computeBSplineCoefficients: Computing B-spline control points using sparse solver." << std::endl;
-#endif // NDEBUG
+        #endif // NDEBUG
 
-        SparseLU<> s;
+        SparseLU<DenseMatrix> s;
         //bool successfulSolve = (s.solve(A,Bx,Cx) && s.solve(A,By,Cy));
 
         solveAsDense = !s.solve(A, b, x);
@@ -147,12 +147,12 @@ DenseVector BSpline::Builder::computeCoefficients(const BSpline& bspline) const
 
     if (solveAsDense)
     {
-#ifndef NDEBUG
+        #ifndef NDEBUG
         std::cout << "BSpline::Builder::computeBSplineCoefficients: Computing B-spline control points using dense solver." << std::endl;
-#endif // NDEBUG
+        #endif // NDEBUG
 
         DenseMatrix Ad = A.toDense();
-        DenseQR<DenseVector> s;
+        DenseQR<DenseMatrix> s;
         // DenseSVD<DenseVector> s;
         //bool successfulSolve = (s.solve(Ad,Bx,Cx) && s.solve(Ad,By,Cy));
         if (!s.solve(Ad, b, x))
@@ -188,14 +188,17 @@ SparseMatrix BSpline::Builder::computeBasisFunctionMatrix(const BSpline &bspline
     return A;
 }
 
-DenseVector BSpline::Builder::getSamplePointValues() const
+DenseMatrix BSpline::Builder::stackSamplePointValues() const
 {
-    DenseVector B = DenseVector::Zero(_data.getNumSamples());
+    DenseMatrix B = DenseMatrix::Zero(_data.getNumSamples(), _data.getDimY());
 
     int i = 0;
     for (auto it = _data.cbegin(); it != _data.cend(); ++it, ++i)
-        B(i) = it->getY().at(0); // TODO: Update!
-
+    {
+        auto y = it->getY();
+        for (unsigned int j = 0; j < _data.getDimY(); ++j)
+            B(i, j) = y.at(j);
+    }
     return B;
 }
 
@@ -241,7 +244,7 @@ SparseMatrix BSpline::Builder::getSecondOrderFiniteDifferenceMatrix(const BSplin
 
     // Resize and initialize D
     SparseMatrix D(numRows, numCols);
-    D.reserve(DenseVector::Constant(numCols,2*numVariables));   // D has no more than two elems per col per dim
+    D.reserve(DenseVector::Constant(numCols, 2*numVariables));   // D has no more than two elems per col per dim
 
     int i = 0;                                          // Row index
     // Loop though each dimension (each dimension has its own block)

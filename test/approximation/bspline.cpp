@@ -132,21 +132,6 @@ TEST_CASE("Linear BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::line
     }
 }
 
-TEST_CASE("Linear BSpline hessian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::linear][hessian]")
-{
-    for (auto testFunc : getPolynomialFunctions())
-    {
-        checkHessianSymmetry(testFunc,
-                             [](const DataTable &table)
-                             {
-                                 BSpline bs = BSpline::Builder(table).degree(1).build();
-                                 return (Function*) new BSpline(bs);
-                             },
-                             300,
-                             1337);
-    }
-}
-
 // TESTING QUADRATIC B-SPLINES
 TEST_CASE("Quadratic BSpline function" COMMON_TEXT " densely sampled", COMMON_TAGS "[bsplinetype::quadratic][function-value]")
 {
@@ -255,21 +240,6 @@ TEST_CASE("Quadratic BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::q
                              300,  // Number of points to sample at
                              1337, // Number of points to test against
                              one_eps, two_eps, inf_eps);
-    }
-}
-
-TEST_CASE("Quadratic BSpline hessian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::quadratic][hessian]")
-{
-    for (auto testFunc : getPolynomialFunctions())
-    {
-        checkHessianSymmetry(testFunc,
-                             [](const DataTable &table)
-                             {
-                                 BSpline bs = BSpline::Builder(table).degree(2).build();
-                                 return (Function*) new BSpline(bs);
-                             },
-                             300,   // Number of points to sample at
-                             1337); // Number of points to test against
     }
 }
 
@@ -384,21 +354,6 @@ TEST_CASE("Cubic BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::cubic
     }
 }
 
-TEST_CASE("Cubic BSpline hessian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::cubic][hessian]")
-{
-    for (auto testFunc : getPolynomialFunctions())
-    {
-        checkHessianSymmetry(testFunc,
-                             [](const DataTable &table)
-                             {
-                                 BSpline bs = BSpline::Builder(table).degree(3).build();
-                                 return (Function*) new BSpline(bs);
-                             },
-                             300,   // Number of points to sample at
-                             1337); // Number of points to test against
-    }
-}
-
 // TESTING QUARTIC B-SPLINES
 TEST_CASE("Quartic BSpline function" COMMON_TEXT " densely sampled", COMMON_TAGS "[bsplinetype::quartic][function-value]")
 {
@@ -507,20 +462,5 @@ TEST_CASE("Quartic BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::qua
                              300,  // Number of points to sample at
                              1337, // Number of points to test against
                              one_eps, two_eps, inf_eps);
-    }
-}
-
-TEST_CASE("Quartic BSpline hessian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::quartic][hessian]")
-{
-    for (auto testFunc : getPolynomialFunctions())
-    {
-        checkHessianSymmetry(testFunc,
-                             [](const DataTable &table)
-                             {
-                                 BSpline bs = BSpline::Builder(table).degree(4).build();
-                                 return (Function*) new BSpline(bs);
-                             },
-                             300,   // Number of points to sample at
-                             1337); // Number of points to test against
     }
 }

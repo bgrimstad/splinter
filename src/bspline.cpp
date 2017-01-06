@@ -34,20 +34,18 @@ BSpline::BSpline(const std::vector<std::vector<double>> &knotVectors,
                  const std::vector<unsigned int> &degrees)
     : Function(knotVectors.size(), 1),
       basis(BSplineBasis(knotVectors, degrees)),
-      controlPoints(DenseVector::Zero(1))
+      controlPoints(DenseMatrix::Zero(basis.getNumBasisFunctions(), 1))
 {
-    // Initialize coefficients to ones
-    setControlPoints(DenseVector::Ones(basis.getNumBasisFunctions()));
-
+    // Initialize B-spline assuming 1-D control points
     checkControlPoints();
 }
 
-BSpline::BSpline(const std::vector<double> &controlPoints,
+BSpline::BSpline(const std::vector<std::vector<double>> &controlPoints,
                  const std::vector<std::vector<double>> &knotVectors,
                  const std::vector<unsigned int> &degrees)
-    : Function(knotVectors.size(), 1),
+    : Function(knotVectors.size(), controlPoints.at(0).size()),
       basis(BSplineBasis(knotVectors, degrees)),
-      controlPoints(stdToEigVec(controlPoints))
+      controlPoints(stdVecVecToEigMat(controlPoints))
 {
     checkControlPoints();
 }
@@ -69,50 +67,20 @@ BSpline::BSpline(const std::string &fileName)
 /**
  * Returns the function value at x
  */
-double BSpline::eval(const DenseVector &x) const
+std::vector<double> BSpline::eval(const DenseVector &x) const
 {
     checkInput(x);
-    // NOTE: casting to DenseVector to allow accessing as res(0)
     DenseVector res = controlPoints.transpose()*evalBasis(x);
-    return res(0);
+    return eigToStdVec(res);
 }
 
 /**
- * Returns the (1 x numVariables) Jacobian evaluated at x
+ * Returns the (dimY x dimX) Jacobian evaluated at x
  */
 DenseMatrix BSpline::evalJacobian(const DenseVector &x) const
 {
     checkInput(x);
     return controlPoints.transpose()*evalBasisJacobian(x);
-}
-
-/*
- * Returns the Hessian evaluated at x.
- * The Hessian is an n x n matrix,
- * where n is the dimension of x.
- */
-DenseMatrix BSpline::evalHessian(const DenseVector &x) const
-{
-    checkInput(x);
-
-    #ifndef NDEBUG
-    if (!pointInDomain(x))
-        throw Exception("BSpline::evalHessian: Evaluation at point outside domain.");
-    #endif // NDEBUG
-
-    DenseMatrix H;
-    H.setZero(1,1);
-    DenseMatrix identity = DenseMatrix::Identity(dimX, dimX);
-    DenseMatrix caug = kroneckerProduct(identity, controlPoints.transpose());
-    DenseMatrix DB = basis.evalBasisHessian(x);
-    H = caug*DB;
-
-    // Fill in upper triangular of Hessian
-    for (size_t i = 0; i < dimX; ++i)
-        for (size_t j = i+1; j < dimX; ++j)
-            H(i,j) = H(j,i);
-
-    return H;
 }
 
 // Evaluation of B-spline basis functions
@@ -179,11 +147,11 @@ std::vector<double> BSpline::getDomainLowerBound() const
 //    return controlPoints;
 //}
 
-void BSpline::setControlPoints(const DenseVector &newControlPoints)
+void BSpline::setControlPoints(const DenseMatrix &newControlPoints)
 {
-    if (newControlPoints.size() != getNumBasisFunctions())
+    if (newControlPoints.rows() != getNumBasisFunctions())
         throw Exception("BSpline::setControlPoints: Incompatible size of coefficient vector. " +
-                                std::to_string(newControlPoints.size()) + " not equal to " +
+                                std::to_string(newControlPoints.rows()) + " not equal to " +
                                 std::to_string(getNumBasisFunctions()) + "!");
 
     this->controlPoints = newControlPoints;
@@ -199,8 +167,8 @@ void BSpline::updateControlPoints(const SparseMatrix &A)
 
 void BSpline::checkControlPoints() const
 {
-//    if (coefficients.cols() != numVariables)
-//        throw Exception("BSpline::checkControlPoints: Inconsistent size of control point matrix.");
+    if (controlPoints.cols() != getDimY())
+        throw Exception("BSpline::checkControlPoints: Inconsistent size of control points matrix.");
 }
 
 bool BSpline::pointInDomain(const DenseVector &x) const

@@ -36,32 +36,19 @@ public:
     /**
      * Returns the function value at x
      */
-    virtual double eval(const DenseVector &x) const = 0;
+    std::vector<double> eval(const std::vector<double> &x) const;
+
+    virtual std::vector<double> eval(const DenseVector &x) const = 0;
 
     /**
-     * Returns the function value at x
-     */
-    double eval(const std::vector<double> &x) const;
-
-    /**
-     * Returns the (1 x numVariables) Jacobian evaluated at x
+     * Returns the (dimY x dimX) Jacobian evaluated at x
      */
     virtual DenseMatrix evalJacobian(const DenseVector &x) const;
 
     /**
-     * Returns the (1 x numVariables) Jacobian evaluated at x
+     * Returns the (dimY x dimX) Jacobian evaluated at x
      */
-    std::vector<double> evalJacobian(const std::vector<double> &x) const;
-
-    /**
-     * Returns the (numVariables x numVariables) Hessian evaluated at x
-     */
-    virtual DenseMatrix evalHessian(const DenseVector &x) const;
-
-    /**
-     * Returns the (numVariables x numVariables) Hessian evaluated at x
-     */
-    std::vector<std::vector<double>> evalHessian(const std::vector<double> &x) const;
+    std::vector<std::vector<double>> evalJacobian(const std::vector<double> &x) const;
 
     /**
      * Get dimensions
@@ -79,20 +66,17 @@ public:
     /**
      * Check input
      */
-    void checkInput(const DenseVector &x) const {
+    void checkInput(const std::vector<double> &x) const {
         if (x.size() != dimX)
             throw Exception("Function::checkInput: Wrong dimension on evaluation point x.");
     }
 
+    void checkInput(const DenseVector &x) const;
+
     /**
      * Returns the central difference at x
-     * Vector of numVariables length
      */
-    std::vector<double> centralDifference(const std::vector<double> &x) const;
     DenseMatrix centralDifference(const DenseVector &x) const;
-
-    std::vector<std::vector<double>> secondOrderCentralDifference(const std::vector<double> &x) const;
-    DenseMatrix secondOrderCentralDifference(const DenseVector &x) const;
 
     /**
      * Description of function.

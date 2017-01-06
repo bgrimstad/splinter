@@ -24,8 +24,7 @@ namespace SPLINTER
 enum class TestType {
     All,
     FunctionValue,
-    Jacobian,
-    Hessian
+    Jacobian
 };
 
 double getError(double exactVal, double approxVal);
@@ -60,18 +59,12 @@ void compareJacobianValue(TestFunction *exact,
                           size_t numSamplePoints, size_t numEvalPoints,
                           double one_eps, double two_eps, double inf_eps);
 
-void checkHessianSymmetry(TestFunction *exact,
-                          std::function<Function *(const DataTable &table)> approx_gen_func,
-                          size_t numSamplePoints, size_t numEvalPoints);
-
 bool compareBSplines(const BSpline &left, const BSpline &right);
 
 /*
  * Computes the central difference at x. Returns a 1xN row-vector.
  */
 DenseMatrix centralDifference(const Function &approx, const DenseVector &x);
-
-bool isSymmetricHessian(const Function &approx, const DenseVector &x);
 
 DataTable sample(const Function &func, std::vector<std::vector<double>> &points);
 DataTable sample(const Function *func, std::vector<std::vector<double>> &points);
@@ -107,10 +100,9 @@ std::vector<TestFunction *> getPolynomialFunctions();
 std::vector<TestFunction *> getNastyTestFunctions();
 
 /*
- * Returns 3x3 matrix,
+ * Returns 2x3 matrix,
  * first row: function value error norms
  * second row: jacobian value error norms
- * third row: hessian value error norms
  * first col: 1-norms
  * second col: 2-norms
  * third col: inf-norms

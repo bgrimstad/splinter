@@ -16,18 +16,24 @@ using namespace SPLINTER;
 extern "C"
 {
 
-splinter_obj_ptr splinter_bspline_param_init(double *coefficients, int num_coefficients, double *knot_vectors,
-                                             int *num_knots_per_vector, unsigned int *degrees, int dim)
+splinter_obj_ptr splinter_bspline_param_init(double *coefficients,
+                                             int num_coefficients,
+                                             double *knot_vectors,
+                                             int *num_knots_per_vector,
+                                             unsigned int *degrees,
+                                             int dim)
 {
     splinter_obj_ptr bspline = nullptr;
 
     auto coefficients_vec = get_vector(coefficients, num_coefficients);
+    // TODO: Temporary fix for control points (currently, only 1-D control points are allowed)
+    auto coefficients_vec_vec = std::vector<std::vector<double>>(1, coefficients_vec);
     auto knot_vectors_vec_vec = get_vector_vector(knot_vectors, num_knots_per_vector, dim);
     auto degrees_vec = get_vector(degrees, dim);
 
     try
     {
-        bspline = (splinter_obj_ptr) new BSpline(coefficients_vec, knot_vectors_vec_vec, degrees_vec);
+        bspline = (splinter_obj_ptr) new BSpline(coefficients_vec_vec, knot_vectors_vec_vec, degrees_vec);
         bsplines.insert(bspline);
     }
     catch(const Exception &e)
@@ -246,6 +252,7 @@ int *splinter_bspline_get_basis_degrees(splinter_obj_ptr bspline_ptr)
     return basis_degrees_as_array;
 }
 
+// TODO: allow multidimensional outputs
 double *splinter_bspline_eval_row_major(splinter_obj_ptr bspline_ptr, double *x, int x_len)
 {
     double *retVal = nullptr;
@@ -262,7 +269,7 @@ double *splinter_bspline_eval_row_major(splinter_obj_ptr bspline_ptr, double *x,
             for (size_t i = 0; i < num_points; ++i)
             {
                 auto xvec = get_densevector<double>(x, num_variables);
-                retVal[i] = bspline->eval(xvec);
+                retVal[i] = bspline->eval(xvec).at(0);
                 x += num_variables;
             }
         }
@@ -295,38 +302,6 @@ double *splinter_bspline_eval_jacobian_row_major(splinter_obj_ptr bspline_ptr, d
 
                 /* Copy jacobian from stack to heap */
                 memcpy(retVal + i*num_variables, jacobian.data(), sizeof(double) * num_variables);
-                x += num_variables;
-            }
-        }
-        catch(const Exception &e)
-        {
-            set_error_string(e.what());
-        }
-    }
-
-    return retVal;
-}
-
-double *splinter_bspline_eval_hessian_row_major(splinter_obj_ptr bspline_ptr, double *x, int x_len)
-{
-    double *retVal = nullptr;
-
-    auto bspline = get_bspline(bspline_ptr);
-    if (bspline != nullptr)
-    {
-        try
-        {
-            size_t num_variables = bspline->getDimX();
-            size_t num_points = x_len / num_variables;
-
-            retVal = (double *) malloc(sizeof(double) * num_variables * num_variables * num_points);
-            for (size_t i = 0; i < num_points; ++i)
-            {
-                auto xvec = get_densevector<double>(x, num_variables);
-                DenseMatrix hessian = bspline->evalHessian(xvec);
-
-                /* Copy hessian from stack to heap */
-                memcpy(retVal + i*num_variables*num_variables, hessian.data(), sizeof(double) * num_variables * num_variables);
                 x += num_variables;
             }
         }
@@ -392,33 +367,6 @@ double *splinter_bspline_eval_jacobian_col_major(splinter_obj_ptr bspline_ptr, d
         free(row_major);
     }
 
-    return retVal;
-}
-
-double *splinter_bspline_eval_hessian_col_major(splinter_obj_ptr bspline_ptr, double *x, int x_len)
-{
-    double *retVal = nullptr;
-
-    auto bspline = get_bspline(bspline_ptr);
-    if (bspline != nullptr)
-    {
-        double *row_major = nullptr;
-        try
-        {
-            row_major = get_row_major(x, bspline->getDimX(), x_len);
-            if (row_major == nullptr)
-            {
-                return nullptr; // Pass on the error message set by get_row_major
-            }
-
-            retVal = splinter_bspline_eval_hessian_row_major(bspline, row_major, x_len);
-        }
-        catch(const Exception &e)
-        {
-            set_error_string(e.what());
-        }
-        free(row_major);
-    }
     return retVal;
 }
 

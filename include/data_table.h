@@ -51,7 +51,7 @@ public:
     }
 
     unsigned int getDimY() const {
-        return dimX;
+        return dimY;
     }
 
     unsigned int getNumSamples() const {

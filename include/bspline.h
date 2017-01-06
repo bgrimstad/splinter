@@ -38,7 +38,7 @@ public:
     BSpline(const std::vector<std::vector<double>> &knotVectors,
             const std::vector<unsigned int> &degrees);
 
-    BSpline(const std::vector<double> &controlPoints,
+    BSpline(const std::vector<std::vector<double>> &controlPoints,
             const std::vector<std::vector<double>> &knotVectors,
             const std::vector<unsigned int> &degrees);
 
@@ -57,12 +57,10 @@ public:
     // Avoid name hiding
     using Function::eval;
     using Function::evalJacobian;
-    using Function::evalHessian;
 
     // Evaluation of B-spline
-    double eval(const DenseVector &x) const override;
+    std::vector<double> eval(const DenseVector &x) const override;
     DenseMatrix evalJacobian(const DenseVector &x) const override;
-    DenseMatrix evalHessian(const DenseVector &x) const override;
 
     // Evaluation of B-spline basis functions
     SparseVector evalBasis(const DenseVector &x) const;
@@ -100,7 +98,7 @@ public:
     /**
      * Setters
      */
-    void setControlPoints(const DenseVector &newControlPoints);
+    void setControlPoints(const DenseMatrix &newControlPoints);
     void checkControlPoints() const;
 
     // Linear transformation of control points (B-spline has affine invariance)

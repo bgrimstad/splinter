@@ -12,27 +12,25 @@
 namespace SPLINTER
 {
 
-std::vector<double> eigToStdVec(const DenseVector &denseVec)
+std::vector<double> eigToStdVec(const DenseVector &vec)
 {
-    std::vector<double> vec(denseVec.size());
+    std::vector<double> stdVec(vec.size());
 
-    for(size_t i = 0; i < (size_t) denseVec.size(); ++i)
-    {
-        vec.at(i) = denseVec(i);
-    }
+    for(size_t i = 0; i < (size_t) stdVec.size(); ++i)
+        stdVec.at(i) = vec(i);
 
-    return vec;
+    return stdVec;
 }
 
 DenseVector stdToEigVec(const std::vector<double> &vec)
 {
-    DenseVector denseVec(vec.size());
-    denseVec.setZero();
+    DenseVector eigVec(vec.size());
+    eigVec.setZero();
 
     for (size_t i = 0; i < vec.size(); ++i)
-        denseVec(i) = vec.at(i);
+        eigVec(i) = vec.at(i);
 
-    return denseVec;
+    return eigVec;
 }
 
 std::vector<std::vector<double>> eigMatToStdVecVec(const DenseMatrix &mat)

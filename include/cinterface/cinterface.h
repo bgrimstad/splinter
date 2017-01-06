@@ -287,17 +287,6 @@ SPLINTER_API double *splinter_bspline_eval_row_major(splinter_obj_ptr bspline_pt
 SPLINTER_API double *splinter_bspline_eval_jacobian_row_major(splinter_obj_ptr bspline_ptr, double *x, int x_len);
 
 /**
- * Evaluate the hessian of a BSpline in one or more points.
- * @see splinter_bspline_eval_row_major() for further explanation of the behaviour.
- *
- * @param bspline_ptr Pointer to the BSpline to evaluate.
- * @param x Array of doubles. Is of x_len length.
- * @param x_len Length of x.
- * @return Flattened array of array of array of results corresponding to the points in x.
- */
-SPLINTER_API double *splinter_bspline_eval_hessian_row_major(splinter_obj_ptr bspline_ptr, double *x, int x_len);
-
-/**
  * Evaluate the a BSpline in one or more points that are stored in column major order.
  * @see splinter_bspline_eval_row_major() for further explanation of the behaviour.
  *
@@ -318,17 +307,6 @@ SPLINTER_API double *splinter_bspline_eval_col_major(splinter_obj_ptr bspline_pt
  * @return Flattened array of array of results corresponding to the points in x. Stored in ROW major order.
  */
 SPLINTER_API double *splinter_bspline_eval_jacobian_col_major(splinter_obj_ptr bspline_ptr, double *x, int x_len);
-
-/**
- * Evaluate the hessian of a BSpline in one or more points that are stored in column major order.
- * @see splinter_bspline_eval_row_major() for further explanation of the behaviour.
- *
- * @param bspline_ptr Pointer to the BSpline to evaluate.
- * @param x Array of doubles. Is of x_len length.
- * @param x_len Length of x.
- * @return Flattened array of array of array of results corresponding to the points in x. Stored in ROW major order.
- */
-SPLINTER_API double *splinter_bspline_eval_hessian_col_major(splinter_obj_ptr bspline_ptr, double *x, int x_len);
 
 /**
  * Get the number of variables (dimension) of a BSpline.

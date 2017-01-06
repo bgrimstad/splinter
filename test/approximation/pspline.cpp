@@ -89,21 +89,3 @@ TEST_CASE("PSpline jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian]")
                              one_eps, two_eps, inf_eps);
     }
 }
-
-TEST_CASE("PSpline hessian" COMMON_TEXT, COMMON_TAGS "[hessian]")
-{
-    for (auto testFunc : getPolynomialFunctions())
-    {
-        checkHessianSymmetry(testFunc,
-                             [](const DataTable &table)
-                             {
-                                 BSpline bs = BSpline::Builder(table)
-                                         .smoothing(BSpline::Smoothing::PSPLINE)
-                                         .alpha(0.03)
-                                         .build();
-                                 return (Function*) new BSpline(bs);
-                             },
-                             300,   // Number of points to sample at
-                             1337); // Number of points to test against
-    }
-}
