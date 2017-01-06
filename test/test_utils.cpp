@@ -43,7 +43,7 @@ bool equalsWithinRange(double a, double b, double margin)
 
 bool compareFunctions(const Function &f1, const Function &f2)
 {
-    int dim = f1.getNumVariables();
+    int dim = f1.getDimX();
     auto start = std::vector<double>(dim);
     auto end = std::vector<double>(dim);
     auto numPoints = std::vector<unsigned int>(dim);
@@ -75,7 +75,7 @@ bool compareFunctions(const Function &exact, const Function &approx, const std::
 {
     bool equal = true;
 
-    REQUIRE(exact.getNumVariables() == approx.getNumVariables());
+    REQUIRE(exact.getDimX() == approx.getDimX());
 
     DenseVector normOneValVec(points.size());
     DenseVector normTwoValVec(points.size());
@@ -241,7 +241,7 @@ void compareFunctionValue(TestFunction *exact,
                           size_t numSamplePoints, size_t numEvalPoints,
                           double one_eps, double two_eps, double inf_eps)
 {
-    auto dim = exact->getNumVariables();
+    auto dim = exact->getDimX();
 
     auto samplePoints = linspace(dim, -5, 5, std::pow(numSamplePoints, 1.0/dim));
     auto evalPoints = linspace(dim, -5, 5, std::pow(numEvalPoints, 1.0/dim));
@@ -319,7 +319,7 @@ void compareJacobianValue(TestFunction *exact,
                           size_t numSamplePoints, size_t numEvalPoints,
                           double one_eps, double two_eps, double inf_eps)
 {
-    auto dim = exact->getNumVariables();
+    auto dim = exact->getDimX();
 
     auto samplePoints = linspace(dim, -5, 5, std::pow(numSamplePoints, 1.0/dim));
     auto evalPoints = linspace(dim, -4.95, 4.95, std::pow(numEvalPoints, 1.0/dim));
@@ -442,7 +442,7 @@ void checkHessianSymmetry(TestFunction *exact,
                           std::function<Function *(const DataTable &table)> approx_gen_func,
                           size_t numSamplePoints, size_t numEvalPoints)
 {
-    auto dim = exact->getNumVariables();
+    auto dim = exact->getDimX();
 
     auto samplePoints = linspace(dim, -5, 5, std::pow(numSamplePoints, 1.0/dim));
     auto evalPoints = linspace(dim, -4.95, 4.95, std::pow(numEvalPoints, 1.0/dim));
@@ -773,7 +773,7 @@ std::vector<TestFunction *> getNastyTestFunctions()
 
 DenseMatrix getErrorNorms(const Function *exact, const Function *approx, const std::vector<std::vector<double>> &points)
 {
-    assert(exact->getNumVariables() == approx->getNumVariables());
+    assert(exact->getDimX() == approx->getDimX());
 
     DenseVector normOneValVec(points.size());
     DenseVector normTwoValVec(points.size());
@@ -885,7 +885,7 @@ void testApproximation(std::vector<TestFunction *> funcs,
 {
     for(auto &exact : funcs) {
 
-        auto dim = exact->getNumVariables();
+        auto dim = exact->getDimX();
         CHECK(dim > 0);
         if(dim > 0) {
             auto samplePoints = linspace(dim, -5, 5, std::pow(numSamplePoints, 1.0/dim));
@@ -915,7 +915,7 @@ DenseMatrix centralDifference(const Function &approx, const DenseVector &x)
     double hForward = 0.5*h;
     double hBackward = 0.5*h;
 
-    for (unsigned int i = 0; i < approx.getNumVariables(); ++i)
+    for (unsigned int i = 0; i < approx.getDimX(); ++i)
     {
         DenseVector xForward(x);
 //        if (xForward(i) + hForward > variables.at(i)->getUpperBound())

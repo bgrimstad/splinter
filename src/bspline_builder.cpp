@@ -205,7 +205,7 @@ DenseVector BSpline::Builder::getSamplePointValues() const
 */
 SparseMatrix BSpline::Builder::getSecondOrderFiniteDifferenceMatrix(const BSpline &bspline) const
 {
-    unsigned int numVariables = bspline.getNumVariables();
+    unsigned int numVariables = bspline.getDimX();
 
     // Number of (total) basis functions - defines the number of columns in D
     unsigned int numCols = bspline.getNumBasisFunctions();

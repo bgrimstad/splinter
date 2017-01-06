@@ -99,7 +99,7 @@ bool testKnotInsertion()
 
 bool domainReductionTest(BSpline &bs, const BSpline &bs_orig)
 {
-    if (bs.getNumVariables() != 2 || bs_orig.getNumVariables() != 2)
+    if (bs.getDimX() != 2 || bs_orig.getDimX() != 2)
         return false;
 
     // Check for error

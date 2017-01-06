@@ -96,7 +96,8 @@ size_t Serializer::get_size(const BSpline &obj)
 {
     return get_size(obj.basis)
            + get_size(obj.controlPoints)
-           + get_size(obj.numVariables);
+           + get_size(obj.dimX)
+           + get_size(obj.dimY);
 }
 
 size_t Serializer::get_size(const BSplineBasis &obj)
@@ -175,7 +176,8 @@ void Serializer::_serialize(const BSpline &obj)
 {
     _serialize(obj.basis);
     _serialize(obj.controlPoints);
-    _serialize(obj.numVariables);
+    _serialize(obj.dimX);
+    _serialize(obj.dimY);
 }
 
 void Serializer::_serialize(const BSplineBasis &obj)
@@ -256,7 +258,8 @@ void Serializer::deserialize(BSpline &obj)
 {
     deserialize(obj.basis);
     deserialize(obj.controlPoints);
-    deserialize(obj.numVariables);
+    deserialize(obj.dimX);
+    deserialize(obj.dimY);
 }
 
 void Serializer::deserialize(BSplineBasis &obj)

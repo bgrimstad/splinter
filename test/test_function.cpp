@@ -17,7 +17,7 @@ namespace SPLINTER
 TestFunction::TestFunction(std::function<double (const std::vector<double> &)> f,
                            size_t numVariables,
                            std::string functionString)
-        : Function(numVariables),
+        : Function(numVariables, 1),
           powers(DenseMatrix::Zero(0, 0)),
           functionString(functionString),
           constDegree(false),
@@ -27,7 +27,7 @@ TestFunction::TestFunction(std::function<double (const std::vector<double> &)> f
 
 TestFunction::TestFunction(std::function<double (const std::vector<double> &)> f, size_t numVariables,
                            std::string functionString,  DenseMatrix powers)
-        : Function(numVariables),
+        : Function(numVariables, 1),
           powers(powers),
           functionString(functionString),
           constDegree(true),

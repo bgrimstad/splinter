@@ -74,7 +74,7 @@ DenseMatrix Function::centralDifference(const DenseVector &x) const
     double hForward = 0.5*h;
     double hBackward = 0.5*h;
 
-    for (unsigned int i = 0; i < getNumVariables(); ++i)
+    for (unsigned int i = 0; i < getDimX(); ++i)
     {
         DenseVector xForward(x);
         xForward(i) = xForward(i) + hForward;
@@ -93,15 +93,15 @@ DenseMatrix Function::centralDifference(const DenseVector &x) const
 
 DenseMatrix Function::secondOrderCentralDifference(const DenseVector &x) const
 {
-    DenseMatrix ddx(getNumVariables(), getNumVariables());
+    DenseMatrix ddx(getDimX(), getDimX());
 
     double h = 1e-6; // perturbation step size
     double hForward = 0.5*h;
     double hBackward = 0.5*h;
 
-    for (size_t i = 0; i < getNumVariables(); ++i)
+    for (size_t i = 0; i < getDimX(); ++i)
     {
-        for (size_t j = 0; j < getNumVariables(); ++j)
+        for (size_t j = 0; j < getDimX(); ++j)
         {
             DenseVector x0(x);
             DenseVector x1(x);

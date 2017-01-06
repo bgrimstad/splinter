@@ -255,7 +255,7 @@ double *splinter_bspline_eval_row_major(splinter_obj_ptr bspline_ptr, double *x,
     {
         try
         {
-            size_t num_variables = bspline->getNumVariables();
+            size_t num_variables = bspline->getDimX();
             size_t num_points = x_len / num_variables;
 
             retVal = (double *) malloc(sizeof(double) * num_points);
@@ -284,7 +284,7 @@ double *splinter_bspline_eval_jacobian_row_major(splinter_obj_ptr bspline_ptr, d
     {
         try
         {
-            size_t num_variables = bspline->getNumVariables();
+            size_t num_variables = bspline->getDimX();
             size_t num_points = x_len / num_variables;
 
             retVal = (double *) malloc(sizeof(double) * num_variables * num_points);
@@ -316,7 +316,7 @@ double *splinter_bspline_eval_hessian_row_major(splinter_obj_ptr bspline_ptr, do
     {
         try
         {
-            size_t num_variables = bspline->getNumVariables();
+            size_t num_variables = bspline->getDimX();
             size_t num_points = x_len / num_variables;
 
             retVal = (double *) malloc(sizeof(double) * num_variables * num_variables * num_points);
@@ -349,7 +349,7 @@ double *splinter_bspline_eval_col_major(splinter_obj_ptr bspline_ptr, double *x,
         double *row_major = nullptr;
         try
         {
-            row_major = get_row_major(x, bspline->getNumVariables(), x_len);
+            row_major = get_row_major(x, bspline->getDimX(), x_len);
             if (row_major == nullptr)
             {
                 return nullptr; // Pass on the error message set by get_row_major
@@ -377,7 +377,7 @@ double *splinter_bspline_eval_jacobian_col_major(splinter_obj_ptr bspline_ptr, d
         double *row_major = nullptr;
         try
         {
-            row_major = get_row_major(x, bspline->getNumVariables(), x_len);
+            row_major = get_row_major(x, bspline->getDimX(), x_len);
             if (row_major == nullptr)
             {
                 return nullptr; // Pass on the error message set by get_row_major
@@ -405,7 +405,7 @@ double *splinter_bspline_eval_hessian_col_major(splinter_obj_ptr bspline_ptr, do
         double *row_major = nullptr;
         try
         {
-            row_major = get_row_major(x, bspline->getNumVariables(), x_len);
+            row_major = get_row_major(x, bspline->getDimX(), x_len);
             if (row_major == nullptr)
             {
                 return nullptr; // Pass on the error message set by get_row_major
@@ -429,7 +429,7 @@ int splinter_bspline_get_num_variables(splinter_obj_ptr bspline_ptr)
     auto bspline = get_bspline(bspline_ptr);
     if (bspline != nullptr)
     {
-        retVal = bspline->getNumVariables();
+        retVal = bspline->getDimX();
     }
 
     return retVal;

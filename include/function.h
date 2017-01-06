@@ -17,19 +17,19 @@ namespace SPLINTER
 {
 
 /*
- * Interface for functions
+ * Interface for functions f : R^m -> R^n
  * All functions working with standard C++11 types are defined in terms of their Eigen counterparts.
- * Default implementations of jacobian and hessian evaluation is using central difference.
+ * Default implementations of Jacobian and Hessian evaluation is using central difference.
  * TODO: Remove current requirement that all functions must implement save and load!
  */
 class SPLINTER_API Function : public Saveable
 {
 public:
     Function()
-        : Function(1) {}
+        : Function(1, 1) {}
 
-    Function(unsigned int numVariables)
-        : numVariables(numVariables) {}
+    Function(unsigned int m, unsigned int n)
+        : dimX(m), dimY(n) {}
 
     virtual ~Function() {}
 
@@ -64,18 +64,23 @@ public:
     std::vector<std::vector<double>> evalHessian(const std::vector<double> &x) const;
 
     /**
-     * Get the dimension
+     * Get dimensions
      */
-    inline unsigned int getNumVariables() const
+    inline unsigned int getDimX() const
     {
-        return numVariables;
+        return dimX;
+    }
+
+    inline unsigned int getDimY() const
+    {
+        return dimY;
     }
 
     /**
      * Check input
      */
     void checkInput(const DenseVector &x) const {
-        if (x.size() != numVariables)
+        if (x.size() != dimX)
             throw Exception("Function::checkInput: Wrong dimension on evaluation point x.");
     }
 
@@ -98,7 +103,8 @@ public:
     }
 
 protected:
-    unsigned int numVariables; // Dimension of domain (size of x)
+    unsigned int dimX; // Dimension of domain (size of x)
+    unsigned int dimY; // Dimension of codomain (size of y)
 
     friend class Serializer;
 };

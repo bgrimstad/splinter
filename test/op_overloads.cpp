@@ -114,7 +114,7 @@ bool operator==(const DataPoint &lhs, const DataPoint &rhs)
 bool operator==(const BSpline &lhs, const BSpline &rhs)
 {
     return
-            lhs.numVariables == rhs.numVariables
+            lhs.dimX == rhs.dimX
             && lhs.controlPoints == rhs.controlPoints
             && lhs.basis == rhs.basis
             && lhs.getNumBasisFunctionsPerVariable() == rhs.getNumBasisFunctionsPerVariable()
