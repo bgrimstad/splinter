@@ -30,10 +30,11 @@ BSpline::BSpline(unsigned int numVariables)
 /*
  * Constructors for multivariate B-spline using explicit data
  */
-BSpline::BSpline(const std::vector<std::vector<double>> &knotVectors, const std::vector<unsigned int> &basisDegrees)
+BSpline::BSpline(const std::vector<std::vector<double>> &knotVectors,
+                 const std::vector<unsigned int> &degrees)
     : Function(knotVectors.size()),
-      basis(BSplineBasis(knotVectors, basisDegrees)),
-      coefficients(DenseVector::Zero(1))
+      basis(BSplineBasis(knotVectors, degrees)),
+      controlPoints(DenseVector::Zero(1))
 {
     // Initialize coefficients to ones
     setControlPoints(DenseVector::Ones(basis.getNumBasisFunctions()));
@@ -41,17 +42,21 @@ BSpline::BSpline(const std::vector<std::vector<double>> &knotVectors, const std:
     checkControlPoints();
 }
 
-BSpline::BSpline(const std::vector<double> &coefficients, const std::vector<std::vector<double>> &knotVectors, const std::vector<unsigned int> &basisDegrees)
-    : BSpline(stdToEigVec(coefficients), knotVectors, basisDegrees)
+BSpline::BSpline(const std::vector<double> &controlPoints,
+                 const std::vector<std::vector<double>> &knotVectors,
+                 const std::vector<unsigned int> &degrees)
+    : BSpline(stdToEigVec(controlPoints), knotVectors, degrees)
 {
 }
 
-BSpline::BSpline(const DenseVector &coefficients, const std::vector<std::vector<double>> &knotVectors, const std::vector<unsigned int> &basisDegrees)
+BSpline::BSpline(const DenseVector &controlPoints,
+                 const std::vector<std::vector<double>> &knotVectors,
+                 const std::vector<unsigned int> &degrees)
     : Function(knotVectors.size()),
-      basis(BSplineBasis(knotVectors, basisDegrees)),
-      coefficients(coefficients)
+      basis(BSplineBasis(knotVectors, degrees)),
+      controlPoints(controlPoints)
 {
-    setControlPoints(coefficients);
+    setControlPoints(controlPoints);
 
     checkControlPoints();
 }
@@ -77,7 +82,7 @@ double BSpline::eval(const DenseVector &x) const
 {
     checkInput(x);
     // NOTE: casting to DenseVector to allow accessing as res(0)
-    DenseVector res = coefficients.transpose()*evalBasis(x);
+    DenseVector res = controlPoints.transpose()*evalBasis(x);
     return res(0);
 }
 
@@ -87,7 +92,7 @@ double BSpline::eval(const DenseVector &x) const
 DenseMatrix BSpline::evalJacobian(const DenseVector &x) const
 {
     checkInput(x);
-    return coefficients.transpose()*evalBasisJacobian(x);
+    return controlPoints.transpose()*evalBasisJacobian(x);
 }
 
 /*
@@ -107,7 +112,7 @@ DenseMatrix BSpline::evalHessian(const DenseVector &x) const
     DenseMatrix H;
     H.setZero(1,1);
     DenseMatrix identity = DenseMatrix::Identity(numVariables, numVariables);
-    DenseMatrix caug = kroneckerProduct(identity, coefficients.transpose());
+    DenseMatrix caug = kroneckerProduct(identity, controlPoints.transpose());
     DenseMatrix DB = basis.evalBasisHessian(x);
     H = caug*DB;
 
@@ -183,22 +188,22 @@ std::vector<double> BSpline::getDomainLowerBound() const
 //    return controlPoints;
 //}
 
-void BSpline::setControlPoints(const DenseVector &control_points)
+void BSpline::setControlPoints(const DenseVector &newControlPoints)
 {
-    if (control_points.size() != getNumBasisFunctions())
+    if (newControlPoints.size() != getNumBasisFunctions())
         throw Exception("BSpline::setControlPoints: Incompatible size of coefficient vector. " +
-                                std::to_string(control_points.size()) + " not equal to " +
+                                std::to_string(newControlPoints.size()) + " not equal to " +
                                 std::to_string(getNumBasisFunctions()) + "!");
 
-    this->coefficients = control_points;
+    this->controlPoints = newControlPoints;
     checkControlPoints();
 }
 
 void BSpline::updateControlPoints(const SparseMatrix &A)
 {
-    if (A.cols() != coefficients.rows())
+    if (A.cols() != controlPoints.rows())
         throw Exception("BSpline::updateControlPoints: Incompatible size of linear transformation matrix.");
-    coefficients = A*coefficients;
+    controlPoints = A*controlPoints;
 }
 
 void BSpline::checkControlPoints() const

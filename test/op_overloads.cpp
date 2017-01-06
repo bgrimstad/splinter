@@ -115,7 +115,7 @@ bool operator==(const BSpline &lhs, const BSpline &rhs)
 {
     return
             lhs.numVariables == rhs.numVariables
-            && lhs.coefficients == rhs.coefficients
+            && lhs.controlPoints == rhs.controlPoints
             && lhs.basis == rhs.basis
             && lhs.getNumBasisFunctionsPerVariable() == rhs.getNumBasisFunctionsPerVariable()
             && lhs.getKnotVectors() == rhs.getKnotVectors()

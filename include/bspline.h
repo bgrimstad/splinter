@@ -33,11 +33,18 @@ public:
     BSpline(unsigned int numVariables);
 
     /**
-     * Construct B-spline from knot vectors, coefficients, and basis degrees
+     * Construct B-spline from knot vectors, control points, and basis degrees
      */
-    BSpline(const std::vector< std::vector<double> > &knotVectors, const std::vector<unsigned int> &basisDegrees);
-    BSpline(const std::vector<double> &coefficients, const std::vector< std::vector<double> > &knotVectors, const std::vector<unsigned int> &basisDegrees);
-    BSpline(const DenseVector &coefficients, const std::vector< std::vector<double> > &knotVectors, const std::vector<unsigned int> &basisDegrees);
+    BSpline(const std::vector<std::vector<double>> &knotVectors,
+            const std::vector<unsigned int> &degrees);
+
+    BSpline(const std::vector<double> &controlPoints,
+            const std::vector<std::vector<double>> &knotVectors,
+            const std::vector<unsigned int> &degrees);
+
+    BSpline(const DenseVector &controlPoints,
+            const std::vector<std::vector<double>> &knotVectors,
+            const std::vector<unsigned int> &degrees);
 
     /**
      * Construct B-spline from file
@@ -70,12 +77,12 @@ public:
      */
     DenseVector getControlPoints() const
     {
-        return coefficients;
+        return controlPoints;
     }
 
     unsigned int getNumControlPoints() const
     {
-        return coefficients.size();
+        return (unsigned int) controlPoints.size();
     }
 
     std::vector<unsigned int> getNumBasisFunctionsPerVariable() const;
@@ -97,7 +104,7 @@ public:
     /**
      * Setters
      */
-    void setControlPoints(const DenseVector &control_points);
+    void setControlPoints(const DenseVector &newControlPoints);
     void checkControlPoints() const;
 
     // Linear transformation of control points (B-spline has affine invariance)
@@ -128,10 +135,11 @@ protected:
     BSplineBasis basis;
 
     /*
-     * The control point matrix is P = (knotaverages, coefficients) in R^(m x n),
-     * where m = numBasisFunctions and n = numVariables + 1. Each row in P is a control point.
+     * B-spline control points in R^(m x n),
+     * where m = numBasisFunctions and n = dimY.
+     * Each row is a control point.
      */
-    DenseVector coefficients;
+    DenseVector controlPoints;
 
     // Control point computations
     DenseMatrix computeKnotAverages() const;
