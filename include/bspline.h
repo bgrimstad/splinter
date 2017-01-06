@@ -42,10 +42,6 @@ public:
             const std::vector<std::vector<double>> &knotVectors,
             const std::vector<unsigned int> &degrees);
 
-    BSpline(const DenseVector &controlPoints,
-            const std::vector<std::vector<double>> &knotVectors,
-            const std::vector<unsigned int> &degrees);
-
     /**
      * Construct B-spline from file
      */
@@ -75,14 +71,14 @@ public:
     /**
      * Getters
      */
-    DenseVector getControlPoints() const
+    DenseMatrix getControlPoints() const
     {
         return controlPoints;
     }
 
     unsigned int getNumControlPoints() const
     {
-        return (unsigned int) controlPoints.size();
+        return (unsigned int) controlPoints.rows();
     }
 
     std::vector<unsigned int> getNumBasisFunctionsPerVariable() const;
@@ -139,7 +135,7 @@ protected:
      * where m = numBasisFunctions and n = dimY.
      * Each row is a control point.
      */
-    DenseVector controlPoints;
+    DenseMatrix controlPoints;
 
     // Control point computations
     DenseMatrix computeKnotAverages() const;

@@ -45,19 +45,10 @@ BSpline::BSpline(const std::vector<std::vector<double>> &knotVectors,
 BSpline::BSpline(const std::vector<double> &controlPoints,
                  const std::vector<std::vector<double>> &knotVectors,
                  const std::vector<unsigned int> &degrees)
-    : BSpline(stdToEigVec(controlPoints), knotVectors, degrees)
-{
-}
-
-BSpline::BSpline(const DenseVector &controlPoints,
-                 const std::vector<std::vector<double>> &knotVectors,
-                 const std::vector<unsigned int> &degrees)
     : Function(knotVectors.size()),
       basis(BSplineBasis(knotVectors, degrees)),
-      controlPoints(controlPoints)
+      controlPoints(stdToEigVec(controlPoints))
 {
-    setControlPoints(controlPoints);
-
     checkControlPoints();
 }
 
