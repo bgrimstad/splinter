@@ -23,7 +23,7 @@ TEST_CASE("BSpline can be saved and loaded", COMMON_TAGS)
     unsigned int dim = 2;
     auto func = getTestFunction(dim, 1);
     // Don't sample too fine, this test isn't supposed to test the speed
-    auto points = linspace(dim, std::pow(300, 1.0/dim));
+    auto points = multi_linspace(dim, std::pow(300, 1.0 / dim));
     DataTable table = sample(func, points);
 
     const char *fileName = "test.bspline";

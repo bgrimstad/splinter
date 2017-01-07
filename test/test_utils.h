@@ -70,15 +70,16 @@ DataTable sample(const Function &func, std::vector<std::vector<double>> &points)
 DataTable sample(const Function *func, std::vector<std::vector<double>> &points);
 
 // points is a vector where each element is the number of points for that dim
-std::vector<std::vector<double>> linspace(std::vector<double> start, std::vector<double> end, std::vector<unsigned int> points);
+std::vector<std::vector<double>> multi_linspace(std::vector<double> start, std::vector<double> end,
+                                                std::vector<unsigned int> points);
 
 // points is the total number of points, not per dim
-std::vector<std::vector<double>> linspace(int dim, double start, double end, unsigned int points);
+std::vector<std::vector<double>> multi_linspace(int dim, double start, double end, unsigned int points);
 
 // Returns a default linspace of dim dim
-std::vector<std::vector<double>> linspace(int dim);
+std::vector<std::vector<double>> multi_linspace(int dim);
 
-std::vector<std::vector<double>> linspace(int dim, unsigned int pointsPerDim);
+std::vector<std::vector<double>> multi_linspace(int dim, unsigned int pointsPerDim);
 
 double sixHumpCamelBack(std::vector<double> x);
 

@@ -136,17 +136,6 @@ std::vector<double> BSpline::getDomainLowerBound() const
     return basis.getSupportLowerBound();
 }
 
-//DenseMatrix BSpline::getControlPoints() const
-//{
-//    int nc = coefficients.size();
-//    DenseMatrix controlPoints(nc, numVariables + 1);
-//
-//    controlPoints.block(0, 0, nc, numVariables) = knotaverages;
-//    controlPoints.block(0, numVariables, nc, 1) = coefficients;
-//
-//    return controlPoints;
-//}
-
 void BSpline::setControlPoints(const DenseMatrix &newControlPoints)
 {
     if (newControlPoints.rows() != getNumBasisFunctions())

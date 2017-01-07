@@ -56,7 +56,7 @@ bool compareFunctions(const Function &f1, const Function &f2)
         numPoints.at(i) = 10;
     }
 
-    auto points = linspace(start, end, numPoints);
+    auto points = multi_linspace(start, end, numPoints);
 
     return compareFunctions(f1, f2, points);
 }
@@ -182,8 +182,8 @@ void compareFunctionValue(TestFunction *exact,
 {
     auto dim = exact->getDimX();
 
-    auto samplePoints = linspace(dim, -5, 5, std::pow(numSamplePoints, 1.0/dim));
-    auto evalPoints = linspace(dim, -5, 5, std::pow(numEvalPoints, 1.0/dim));
+    auto samplePoints = multi_linspace(dim, -5, 5, std::pow(numSamplePoints, 1.0 / dim));
+    auto evalPoints = multi_linspace(dim, -5, 5, std::pow(numEvalPoints, 1.0 / dim));
 
     DataTable table = sample(exact, samplePoints);
 
@@ -260,8 +260,8 @@ void compareJacobianValue(TestFunction *exact,
 {
     auto dim = exact->getDimX();
 
-    auto samplePoints = linspace(dim, -5, 5, std::pow(numSamplePoints, 1.0/dim));
-    auto evalPoints = linspace(dim, -4.95, 4.95, std::pow(numEvalPoints, 1.0/dim));
+    auto samplePoints = multi_linspace(dim, -5, 5, std::pow(numSamplePoints, 1.0 / dim));
+    auto evalPoints = multi_linspace(dim, -4.95, 4.95, std::pow(numEvalPoints, 1.0 / dim));
 
     DataTable table = sample(exact, samplePoints);
 
@@ -390,7 +390,7 @@ bool compareBSplines(const BSpline &left, const BSpline &right)
 
     int dim = left_lb.size();
 
-    auto points = linspace(dim);
+    auto points = multi_linspace(dim);
 
     for(int i = 0; i < dim; i++) {
         REQUIRE(left_lb.at(i) == right_lb.at(i));
@@ -473,7 +473,8 @@ double log(double base, double x)
 }
 
 // Enumerates all permutations
-std::vector<std::vector<double>> linspace(std::vector<double> start, std::vector<double> end, std::vector<unsigned int> points)
+std::vector<std::vector<double>> multi_linspace(std::vector<double> start, std::vector<double> end,
+                                                std::vector<unsigned int> points)
 {
     assert(start.size() == end.size() && end.size() == points.size());
 
@@ -530,7 +531,7 @@ std::vector<std::vector<double>> linspace(std::vector<double> start, std::vector
     return result;
 }
 
-std::vector<std::vector<double>> linspace(int dim, double start, double end, unsigned int points)
+std::vector<std::vector<double>> multi_linspace(int dim, double start, double end, unsigned int points)
 {
     auto startVec = std::vector<double>(dim);
     auto endVec = std::vector<double>(dim);
@@ -542,10 +543,10 @@ std::vector<std::vector<double>> linspace(int dim, double start, double end, uns
         pointsVec.at(i) = points;
     }
 
-    return linspace(startVec, endVec, pointsVec);
+    return multi_linspace(startVec, endVec, pointsVec);
 }
 
-std::vector<std::vector<double>> linspace(int dim)
+std::vector<std::vector<double>> multi_linspace(int dim)
 {
     // Total number of points to evaluate
     // Will be distributed evenly per dimension
@@ -559,10 +560,10 @@ std::vector<std::vector<double>> linspace(int dim)
         pointsPerDim = 2;
     }
 
-    return linspace(dim, pointsPerDim);
+    return multi_linspace(dim, pointsPerDim);
 }
 
-std::vector<std::vector<double>> linspace(int dim, unsigned int pointsPerDim)
+std::vector<std::vector<double>> multi_linspace(int dim, unsigned int pointsPerDim)
 {
     auto start = std::vector<double>(dim);
     auto end = std::vector<double>(dim);
@@ -576,7 +577,7 @@ std::vector<std::vector<double>> linspace(int dim, unsigned int pointsPerDim)
         numPoints.at(i) = pointsPerDim;
     }
 
-    return linspace(start, end, numPoints);
+    return multi_linspace(start, end, numPoints);
 }
 
 std::string pretty_print(const DenseVector &denseVec)
@@ -726,8 +727,8 @@ void testApproximation(std::vector<TestFunction *> funcs,
         auto dim = exact->getDimX();
         CHECK(dim > 0);
         if(dim > 0) {
-            auto samplePoints = linspace(dim, -5, 5, std::pow(numSamplePoints, 1.0/dim));
-            auto evalPoints = linspace(dim, -4.95, 4.95, std::pow(numEvalPoints, 1.0/dim));
+            auto samplePoints = multi_linspace(dim, -5, 5, std::pow(numSamplePoints, 1.0 / dim));
+            auto evalPoints = multi_linspace(dim, -4.95, 4.95, std::pow(numEvalPoints, 1.0 / dim));
 
             DataTable table = sample(exact, samplePoints);
 
