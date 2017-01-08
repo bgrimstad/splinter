@@ -24,7 +24,7 @@ public:
 
     // Evaluation
     SparseVector eval(const DenseVector &x) const;
-    DenseMatrix evalBasisJacobianOld(const DenseVector &x) const; // Depricated
+    DenseMatrix evalBasisJacobianOld(const DenseVector &x) const; // Deprecated
     SparseMatrix evalBasisJacobian(const DenseVector &x) const;
     SparseMatrix evalBasisJacobian2(const DenseVector &x) const; // A bit slower than evaBasisJacobianOld()
     SparseMatrix evalBasisHessian(const DenseVector &x) const;
