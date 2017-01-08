@@ -11,8 +11,6 @@
 #include <bspline_test_utils.h>
 #include <utilities.h>
 
-#include <iostream>
-
 using namespace SPLINTER;
 
 #define COMMON_TAGS "[general][bspline]"

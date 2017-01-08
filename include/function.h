@@ -36,9 +36,9 @@ public:
     /**
      * Returns the function value at x
      */
-    std::vector<double> eval(const std::vector<double> &x) const;
+    virtual std::vector<double> eval(const std::vector<double> &x) const = 0;
 
-    virtual std::vector<double> eval(const DenseVector &x) const = 0;
+    virtual DenseVector eval(const DenseVector &x) const;
 
     /**
      * Returns the (dimY x dimX) Jacobian evaluated at x

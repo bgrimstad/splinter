@@ -39,10 +39,9 @@ TestFunction::~TestFunction()
 {
 }
 
-std::vector<double> TestFunction::eval(const DenseVector &x) const
+std::vector<double> TestFunction::eval(const std::vector<double> &x) const
 {
-    auto stdX = eigToStdVec(x);
-    return std::vector<double>(1, f(stdX));
+    return std::vector<double>(1, f(x));
 }
 
 std::vector<unsigned int> TestFunction::getConstDegreeInt() const

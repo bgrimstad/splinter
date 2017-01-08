@@ -97,9 +97,9 @@ bool compareFunctions(const Function &exact, const Function &approx, const std::
         /*SECTION("Function approximates the value within tolerance")*/
         {
             DenseMatrix exactValue(1,1);
-            exactValue(0, 0) = exact.eval(x).at(0);
+            exactValue(0, 0) = exact.eval(x)(0);
             DenseMatrix approxValue(1,1);
-            approxValue(0, 0) = approx.eval(x).at(0);
+            approxValue(0, 0) = approx.eval(x)(0);
             DenseMatrix error = exactValue - approxValue;
 
 
@@ -411,8 +411,7 @@ DataTable sample(const Function *func, std::vector<std::vector<double>> &points)
     DataTable table;
 
     for(auto &point : points) {
-        DenseVector x = stdToEigVec(point);
-        table.addSample(point, func->eval(x));
+        table.addSample(point, func->eval(point));
     }
 
     return table;
@@ -650,9 +649,9 @@ DenseMatrix getErrorNorms(const Function *exact, const Function *approx, const s
 
         {
             DenseMatrix exactValue(1,1);
-            exactValue(0, 0) = exact->eval(x).at(0);
+            exactValue(0, 0) = exact->eval(x)(0);
             DenseMatrix approxValue(1,1);
-            approxValue(0, 0) = approx->eval(x).at(0);
+            approxValue(0, 0) = approx->eval(x)(0);
             DenseMatrix error = exactValue - approxValue;
 
             normOneValVec(i) = getOneNorm(error);
@@ -763,8 +762,8 @@ DenseMatrix centralDifference(const Function &approx, const DenseVector &x)
         DenseVector xBackward(x);
         xBackward(i) = xBackward(i) - hBackward;
 
-        double yForward = approx.eval(xForward).at(0);
-        double yBackward = approx.eval(xBackward).at(0);
+        double yForward = approx.eval(xForward)(0);
+        double yBackward = approx.eval(xBackward)(0);
 
         dx(i) = (yForward - yBackward)/(hBackward + hForward);
     }

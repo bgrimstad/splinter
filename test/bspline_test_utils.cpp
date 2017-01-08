@@ -64,15 +64,13 @@ bool testKnotInsertion()
     // Sample function
     auto x0_vec = linspace(0, 2, 200);
     auto x1_vec = linspace(0, 2, 200);
-    DenseVector x(2);
 
     for (auto x0 : x0_vec)
     {
         for (auto x1 : x1_vec)
         {
             // Sample function at x
-            x(0) = x0;
-            x(1) = x1;
+            auto x = std::vector<double>({x0, x1});
 
             auto y1 = bspline1.eval(x);
             auto y1_copy = bspline1_copy.eval(x);

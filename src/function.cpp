@@ -13,8 +13,8 @@
 namespace SPLINTER
 {
 
-std::vector<double> Function::eval(const std::vector<double> &x) const {
-    return eval(stdToEigVec(x));
+DenseVector Function::eval(const DenseVector &x) const {
+    return stdToEigVec(eval(eigToStdVec(x)));
 }
 
 std::vector<std::vector<double>> Function::evalJacobian(const std::vector<double> &x) const
@@ -49,7 +49,7 @@ DenseMatrix Function::centralDifference(const DenseVector &x) const
         auto yBackward = eval(xBackward);
 
         for (unsigned int j = 0; j < dimY; ++j)
-            Jac(j, i) = (yForward.at(j) - yBackward.at(j)) / (hBackward + hForward);
+            Jac(j, i) = (yForward(j) - yBackward(j)) / (hBackward + hForward);
     }
 
     return Jac;

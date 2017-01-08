@@ -59,7 +59,8 @@ public:
     using Function::evalJacobian;
 
     // Evaluation of B-spline
-    std::vector<double> eval(const DenseVector &x) const override;
+    std::vector<double> eval(const std::vector<double> &x) const override;
+    DenseVector eval(const DenseVector &x) const override;
     DenseMatrix evalJacobian(const DenseVector &x) const override;
 
     // Evaluation of B-spline basis functions

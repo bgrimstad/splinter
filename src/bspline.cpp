@@ -67,11 +67,15 @@ BSpline::BSpline(const std::string &fileName)
 /**
  * Returns the function value at x
  */
-std::vector<double> BSpline::eval(const DenseVector &x) const
+std::vector<double> BSpline::eval(const std::vector<double> &x) const {
+    return eigToStdVec(eval(stdToEigVec(x)));
+}
+
+DenseVector BSpline::eval(const DenseVector &x) const
 {
     checkInput(x);
     DenseVector res = controlPoints.transpose()*evalBasis(x);
-    return eigToStdVec(res);
+    return res;
 }
 
 /**

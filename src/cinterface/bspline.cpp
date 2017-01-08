@@ -268,7 +268,7 @@ double *splinter_bspline_eval_row_major(splinter_obj_ptr bspline_ptr, double *x,
             retVal = (double *) malloc(sizeof(double) * num_points);
             for (size_t i = 0; i < num_points; ++i)
             {
-                auto xvec = get_densevector<double>(x, num_variables);
+                auto xvec = get_vector<double>(x, num_variables);
                 retVal[i] = bspline->eval(xvec).at(0);
                 x += num_variables;
             }
