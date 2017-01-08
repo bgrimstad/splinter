@@ -9,7 +9,10 @@
 from . import splinter
 from .function import Function
 from .utilities import *
-from typing import List
+from typing import List, Union
+
+ListList = List[List[float]]
+ControlPointsType = Union[ListList, List[float]]
 
 
 class BSpline(Function):
@@ -25,27 +28,47 @@ class BSpline(Function):
         else:
             self._handle = handle_or_filename
 
-        self._num_variables = splinter._call(splinter._get_handle().splinter_bspline_get_num_variables, self._handle)
+        self._num_variables = splinter._call(splinter._get_handle().splinter_bspline_get_dim_x, self._handle)
 
     @staticmethod
-    def init_from_param(coefficients: List[float], knot_vectors: List[List[float]], degrees: List[int]) -> 'BSpline':
-
-        n = len(degrees)
-        if len(knot_vectors) != n:
+    def init_from_param(control_points: ControlPointsType, knot_vectors: ListList, degrees: List[int]) -> 'BSpline':
+        """
+        Builds B-splines given explicit parameters
+        :param control_points: a list of control points in R^dim_y
+        :param knot_vectors: a list of dim_x knot vectors of variable size
+        :param degrees: a list of dim_x degrees (each being a non-negative integer)
+        :return: BSpline object
+        """
+        if len(knot_vectors) != len(degrees):
             raise ValueError("Inconsistent data: len(knot_vectors) should equal len(degrees)")
 
-        coefficients_c_array = list_to_c_array_of_doubles(coefficients)
-        num_coefficients = len(coefficients)
+        dim_x = len(degrees)
+
+        if not any(control_points):
+            raise ValueError("Array of control points is empty")
+
+        # Handle 1-D case - create a list of lists from a list of control points
+        if not any(isinstance(cp, list) for cp in control_points):
+            control_points = [[cp] for cp in control_points]
+
+        dim_y = len(control_points[0])
+
+        control_points_c_array = list_to_c_array_of_doubles(flatten_list(control_points))
+        num_control_points = len(control_points)
         knot_vectors_c_array = list_to_c_array_of_doubles(flatten_list(knot_vectors))
         num_knots_per_vector_c_array = list_to_c_array_of_ints(list([len(vec) for vec in knot_vectors]))
         degrees_c_array = list_to_c_array_of_ints(degrees)
-        dim = n
-        handle = splinter._call(splinter._get_handle().splinter_bspline_param_init, coefficients_c_array,
-                                num_coefficients, knot_vectors_c_array, num_knots_per_vector_c_array, degrees_c_array,
-                                dim)
+        handle = splinter._call(splinter._get_handle().splinter_bspline_param_init,
+                                dim_x,
+                                dim_y,
+                                control_points_c_array,
+                                num_control_points,
+                                knot_vectors_c_array,
+                                num_knots_per_vector_c_array,
+                                degrees_c_array)
         return BSpline(handle)
 
-    def get_knot_vectors(self) -> List[List[float]]:
+    def get_knot_vectors(self) -> ListList:
         """
         :return List of knot vectors (of possibly differing lengths)
         """
@@ -68,24 +91,14 @@ class BSpline(Function):
 
         return knot_vectors
 
-    def get_coefficients(self) -> List[float]:
-        """
-        :return List of the coefficients of the BSpline
-        """
-        num_coefficients = splinter._call(splinter._get_handle().splinter_bspline_get_num_coefficients, self._handle)
-        coefficients_raw = splinter._call(splinter._get_handle().splinter_bspline_get_coefficients, self._handle)
-
-        return c_array_to_list(coefficients_raw, num_coefficients)
-
-    def get_control_points(self) -> List[List[float]]:
+    def get_control_points(self) -> ListList:
         """
         Get the matrix with the control points of the BSpline.
-        :return Matrix (as a list of lists) with getNumVariables+1 columns and len(getCoefficients) rows
+        :return Matrix (as a list of lists) with len(getCoefficients) rows and getNumOutputs columns
         """
         control_points_raw = splinter._call(splinter._get_handle().splinter_bspline_get_control_points, self._handle)
 
-        # Yes, num_coefficients is correct
-        num_rows = splinter._call(splinter._get_handle().splinter_bspline_get_num_coefficients, self._handle)
+        num_rows = splinter._call(splinter._get_handle().splinter_bspline_get_num_control_points, self._handle)
         num_cols = self._num_variables + 1
 
         control_points_flattened = c_array_to_list(control_points_raw, num_rows * num_cols)
@@ -98,11 +111,31 @@ class BSpline(Function):
 
         return control_points
 
+    def get_knot_averages(self) -> ListList:
+        """
+        Get the matrix with the knot averages of the BSpline.
+        :return Matrix (as a list of lists) with len(getControlPoints) rows and getNumVariables columns
+        """
+        knot_averages_raw = splinter._call(splinter._get_handle().splinter_bspline_get_knot_averages, self._handle)
+
+        num_rows = splinter._call(splinter._get_handle().splinter_bspline_get_num_control_points, self._handle)
+        num_cols = self._num_variables
+
+        knot_averages_flattened = c_array_to_list(knot_averages_raw, num_rows * num_cols)
+
+        knot_averages = []
+        start = 0
+        for row in range(num_rows):
+            knot_averages.append(knot_averages_flattened[start:start+num_cols])
+            start += num_cols
+
+        return knot_averages
+
     def get_basis_degrees(self) -> List[int]:
         """
         :return List with the basis degrees of the BSpline
         """
-        num_vars = splinter._call(splinter._get_handle().splinter_bspline_get_num_variables, self._handle)
+        num_vars = splinter._call(splinter._get_handle().splinter_bspline_get_dim_x, self._handle)
         basis_degrees = splinter._call(splinter._get_handle().splinter_bspline_get_basis_degrees, self._handle)
 
         return c_array_to_list(basis_degrees, num_vars)

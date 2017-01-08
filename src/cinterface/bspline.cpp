@@ -16,27 +16,25 @@ using namespace SPLINTER;
 extern "C"
 {
 
-splinter_obj_ptr splinter_bspline_param_init(double *coefficients,
-                                             int num_coefficients,
+splinter_obj_ptr splinter_bspline_param_init(int dim_x,
+                                             int dim_y,
+                                             double *control_points,
+                                             int num_control_points,
                                              double *knot_vectors,
                                              int *num_knots_per_vector,
-                                             unsigned int *degrees,
-                                             int dim)
+                                             unsigned int *degrees)
 {
     splinter_obj_ptr bspline = nullptr;
-
-    auto coefficients_vec = get_vector(coefficients, num_coefficients);
-    // TODO: Temporary fix for control points (currently, only 1-D control points are allowed)
-    auto coefficients_vec_vec = std::vector<std::vector<double>>(1, coefficients_vec);
-    auto knot_vectors_vec_vec = get_vector_vector(knot_vectors, num_knots_per_vector, dim);
-    auto degrees_vec = get_vector(degrees, dim);
+    auto control_points_vec_vec = get_vector_vector(control_points, dim_y, num_control_points);
+    auto knot_vectors_vec_vec = get_vector_vector(knot_vectors, num_knots_per_vector, dim_x);
+    auto degrees_vec = get_vector(degrees, dim_x);
 
     try
     {
-        bspline = (splinter_obj_ptr) new BSpline(coefficients_vec_vec, knot_vectors_vec_vec, degrees_vec);
+        bspline = (splinter_obj_ptr) new BSpline(control_points_vec_vec, knot_vectors_vec_vec, degrees_vec);
         bsplines.insert(bspline);
     }
-    catch(const Exception &e)
+    catch (const Exception &e)
     {
         set_error_string(e.what());
     }
@@ -53,7 +51,7 @@ splinter_obj_ptr splinter_bspline_load_init(const char *filename)
         bspline = (splinter_obj_ptr) new BSpline(filename);
         bsplines.insert(bspline);
     }
-    catch(const Exception &e)
+    catch (const Exception &e)
     {
         set_error_string(e.what());
     }
@@ -136,7 +134,7 @@ double *splinter_bspline_get_knot_vectors(splinter_obj_ptr bspline_ptr)
     return knot_vectors_as_array;
 }
 
-int splinter_bspline_get_num_coefficients(splinter_obj_ptr bspline_ptr)
+int splinter_bspline_get_num_control_points(splinter_obj_ptr bspline_ptr)
 {
     auto bspline = get_bspline(bspline_ptr);
     if (bspline != nullptr)
@@ -151,38 +149,6 @@ int splinter_bspline_get_num_coefficients(splinter_obj_ptr bspline_ptr)
         }
     }
     return -1;
-}
-
-double *splinter_bspline_get_coefficients(splinter_obj_ptr bspline_ptr)
-{
-    auto bspline = get_bspline(bspline_ptr);
-    double *coefficients_as_array = nullptr;
-    if (bspline != nullptr)
-    {
-        try
-        {
-            auto coefficients = bspline->getControlPoints();
-
-            coefficients_as_array = (double *) malloc(coefficients.size() * sizeof (double));
-
-            if (coefficients_as_array != nullptr)
-            {
-                for (int i = 0; i < coefficients.size(); ++i)
-                {
-                    coefficients_as_array[i] = coefficients(i);
-                }
-            }
-            else
-            {
-                set_error_string("Unable to allocate memory!");
-            }
-        }
-        catch (const Exception &e)
-        {
-            set_error_string(e.what());
-        }
-    }
-    return coefficients_as_array;
 }
 
 double *splinter_bspline_get_control_points(splinter_obj_ptr bspline_ptr)
@@ -218,6 +184,41 @@ double *splinter_bspline_get_control_points(splinter_obj_ptr bspline_ptr)
         }
     }
     return control_points_as_array;
+}
+
+double *splinter_bspline_get_knot_averages(splinter_obj_ptr bspline_ptr)
+{
+    auto bspline = get_bspline(bspline_ptr);
+    double *knot_averages_as_array = nullptr;
+    if (bspline != nullptr)
+    {
+        try
+        {
+            auto knot_averages = bspline->getKnotAverages();
+
+            knot_averages_as_array = (double *) malloc(knot_averages.size() * sizeof (double));
+
+            if (knot_averages_as_array != nullptr)
+            {
+                for (int i = 0; i < knot_averages.rows(); ++i)
+                {
+                    for (int j = 0; j < knot_averages.cols(); ++j)
+                    {
+                        knot_averages_as_array[i*knot_averages.cols() + j] = knot_averages(i, j);
+                    }
+                }
+            }
+            else
+            {
+                set_error_string("Unable to allocate memory!");
+            }
+        }
+        catch (const Exception &e)
+        {
+            set_error_string(e.what());
+        }
+    }
+    return knot_averages_as_array;
 }
 
 int *splinter_bspline_get_basis_degrees(splinter_obj_ptr bspline_ptr)
@@ -370,14 +371,27 @@ double *splinter_bspline_eval_jacobian_col_major(splinter_obj_ptr bspline_ptr, d
     return retVal;
 }
 
-int splinter_bspline_get_num_variables(splinter_obj_ptr bspline_ptr)
+int splinter_bspline_get_dim_x(splinter_obj_ptr bspline_ptr)
 {
-    int retVal = 0;
+    int retVal = 1;
 
     auto bspline = get_bspline(bspline_ptr);
     if (bspline != nullptr)
     {
         retVal = bspline->getDimX();
+    }
+
+    return retVal;
+}
+
+int splinter_bspline_get_dim_y(splinter_obj_ptr bspline_ptr)
+{
+    int retVal = 1;
+
+    auto bspline = get_bspline(bspline_ptr);
+    if (bspline != nullptr)
+    {
+        retVal = bspline->getDimY();
     }
 
     return retVal;

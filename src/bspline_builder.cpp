@@ -169,7 +169,7 @@ SparseMatrix BSpline::Builder::computeBasisFunctionMatrix(const BSpline &bspline
     unsigned int numSamples = _data.getNumSamples();
 
     // TODO: Reserve nnz per row (degree+1)
-    //int nnzPrCol = bspline.basis.supportedPrInterval();
+    //int nnzPrCol = bspline.basis.numSupported();
 
     SparseMatrix A(numSamples, bspline.getNumBasisFunctions());
     //A.reserve(DenseVector::Constant(numSamples, nnzPrCol)); // TODO: should reserve nnz per row!

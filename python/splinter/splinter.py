@@ -125,7 +125,7 @@ def __init():
     _get_handle().splinter_bspline_builder_delete.argtypes = [handle_type]
 
     _get_handle().splinter_bspline_param_init.restype = handle_type
-    _get_handle().splinter_bspline_param_init.argtypes = [c_double_p, c_int, c_double_p, c_int_p, c_int_p, c_int]
+    _get_handle().splinter_bspline_param_init.argtypes = [c_int, c_int, c_double_p, c_int, c_double_p, c_int_p, c_int_p]
 
     _get_handle().splinter_bspline_load_init.restype = handle_type
     _get_handle().splinter_bspline_load_init.argtypes = [c_char_p]
@@ -136,14 +136,14 @@ def __init():
     _get_handle().splinter_bspline_get_knot_vectors.restype = c_double_p
     _get_handle().splinter_bspline_get_knot_vectors.argtypes = [handle_type]
 
-    _get_handle().splinter_bspline_get_num_coefficients.restype = c_int
-    _get_handle().splinter_bspline_get_num_coefficients.argtypes = [handle_type]
-
-    _get_handle().splinter_bspline_get_coefficients.restype = c_double_p
-    _get_handle().splinter_bspline_get_coefficients.argtypes = [handle_type]
+    _get_handle().splinter_bspline_get_num_control_points.restype = c_int
+    _get_handle().splinter_bspline_get_num_control_points.argtypes = [handle_type]
 
     _get_handle().splinter_bspline_get_control_points.restype = c_double_p
     _get_handle().splinter_bspline_get_control_points.argtypes = [handle_type]
+
+    _get_handle().splinter_bspline_get_knot_averages.restype = c_double_p
+    _get_handle().splinter_bspline_get_knot_averages.argtypes = [handle_type]
 
     _get_handle().splinter_bspline_get_basis_degrees.restype = c_int_p
     _get_handle().splinter_bspline_get_basis_degrees.argtypes = [handle_type]
@@ -154,11 +154,11 @@ def __init():
     _get_handle().splinter_bspline_eval_jacobian_row_major.restype = c_double_p
     _get_handle().splinter_bspline_eval_jacobian_row_major.argtypes = [handle_type, c_double_p, c_int]
 
-    _get_handle().splinter_bspline_eval_hessian_row_major.restype = c_double_p
-    _get_handle().splinter_bspline_eval_hessian_row_major.argtypes = [handle_type, c_double_p, c_int]
+    _get_handle().splinter_bspline_get_dim_x.restype = c_int
+    _get_handle().splinter_bspline_get_dim_x.argtypes = [handle_type]
 
-    _get_handle().splinter_bspline_get_num_variables.restype = c_int
-    _get_handle().splinter_bspline_get_num_variables.argtypes = [handle_type]
+    _get_handle().splinter_bspline_get_dim_y.restype = c_int
+    _get_handle().splinter_bspline_get_dim_y.argtypes = [handle_type]
 
     _get_handle().splinter_bspline_save.restype = None
     _get_handle().splinter_bspline_save.argtypes = [handle_type, c_char_p]

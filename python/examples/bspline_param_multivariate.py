@@ -7,7 +7,6 @@
 
 # Add the SPLINTER directory to the search path, so we can include it
 import numpy as np
-import matplotlib.pyplot as plt
 from os import sys, path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 import splinter
@@ -17,16 +16,23 @@ splinter.load("/home/bjarne/Code/C++/splinter/bin/Release/libsplinter-3-1.so")
 # splinter.load("/home/anders/SPLINTER/build/debug/libsplinter-3-0.so")
 
 # B-spline built from parameters: coefficients, knot vectors and degrees
-control_points = [0, 1, 0, 1, 0]
-knot_vectors = [[0, 0, 1, 2, 3, 4, 4]]
-degrees = [1]
+single_knot_vector = [k for k in np.linspace(-10, 10, 21)]
+knot_vectors = [single_knot_vector] * 3
+
+degrees = [1, 2, 3]
+
+num_control_points = 1
+for i, kv in enumerate(knot_vectors):
+    num_control_points *= len(kv) - degrees[i] - 1
+
+control_points = np.linspace(0, 100, num_control_points)
+
 bs = splinter.BSpline.init_from_param(control_points, knot_vectors, degrees)
 
-xd = np.arange(0, 4, .01)
+xd = [0, 0, 0]
 yd = bs.eval(xd)
+print(yd)
 
-plt.plot(xd, yd, label='B-spline')
-plt.legend(loc='upper right')
-plt.show()
-
-
+knot_averages = bs.get_knot_averages()
+control_points = bs.get_control_points()
+print(knot_averages)

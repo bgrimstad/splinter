@@ -13,7 +13,7 @@ classdef BSpline
         Eval_col_major_function = 'splinter_bspline_eval_col_major';
         Eval_jacobian_col_major_function = 'splinter_bspline_eval_jacobian_col_major';
         Eval_hessian_col_major_function = 'splinter_bspline_eval_hessian_col_major';
-        Get_num_variables_function = 'splinter_bspline_get_num_variables';
+        Get_num_variables_function = 'splinter_bspline_get_dim_x';
         Save_function = 'splinter_bspline_save';
         Delete_function = 'splinter_bspline_delete';
     end

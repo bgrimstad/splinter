@@ -187,17 +187,18 @@ SPLINTER_API void splinter_bspline_builder_delete(splinter_obj_ptr bspline_build
 /**
  * Construct a BSpline from parameters: coefficients, knot vectors and degrees.
  *
- * @param coefficients The B-spline coefficients
- * @param num_coefficients Number of coefficients
+ * @param dim_x The number of variables
+ * @param dim_y The number of outputs
+ * @param control_points The B-spline coefficients
+ * @param num_control_points Number of coefficients
  * @param knot_vectors The B-spline knot vectors
  * @param num_knots_per_vector Number of knots per knot vector
  * @param degrees The B-spline degrees
- * @param dim The B-spline dimension
  * @return Pointer to the created BSpline.
  */
-SPLINTER_API splinter_obj_ptr splinter_bspline_param_init(double *coefficients, int num_coefficients,
-                                                          double *knot_vectors, int *num_knots_per_vector,
-                                                          unsigned int *degrees, int dim);
+SPLINTER_API splinter_obj_ptr splinter_bspline_param_init(int dim_x, int dim_y, double *control_points,
+                                                          int num_control_points, double *knot_vectors,
+                                                          int *num_knots_per_vector, unsigned int *degrees);
 
 /**
  * Load a BSpline from file.
@@ -231,26 +232,29 @@ SPLINTER_API double *splinter_bspline_get_knot_vectors(splinter_obj_ptr bspline_
  *
  * @param bspline_ptr Pointer to the BSpline
  */
-SPLINTER_API int splinter_bspline_get_num_coefficients(splinter_obj_ptr bspline_ptr);
-
-/**
- * Get the coefficients of the BSpline
- *
- * @param bspline_ptr Pointer to the BSpline
- * @return Array of doubles of splinter_get_num_coefficients length
- */
-SPLINTER_API double *splinter_bspline_get_coefficients(splinter_obj_ptr bspline_ptr);
+SPLINTER_API int splinter_bspline_get_num_control_points(splinter_obj_ptr bspline_ptr);
 
 /**
  * Get the control points of the BSpline
  * Returns a two-dimensional matrix with
- * splinter_bspline_get_num_coefficients rows (NOTE *coefficients*, not *control*)
- * and splinter_bspline_get_num_variables+1 columns
+ * splinter_bspline_get_num_control_points rows
+ * and splinter_bspline_get_num_outputs columns
  *
  * @param bspline_ptr Pointer to the BSpline
  * @return Row major flattened array of the control points
  */
 SPLINTER_API double *splinter_bspline_get_control_points(splinter_obj_ptr bspline_ptr);
+
+/**
+ * Get the knot averages of the BSpline
+ * Returns a two-dimensional matrix with
+ * splinter_bspline_get_num_control_points rows
+ * and splinter_bspline_get_num_variables columns
+ *
+ * @param bspline_ptr Pointer to the BSpline
+ * @return Row major flattened array of the knot averages
+ */
+SPLINTER_API double *splinter_bspline_get_knot_averages(splinter_obj_ptr bspline_ptr);
 
 /**
  * Get the basis degrees of the BSpline
@@ -309,11 +313,18 @@ SPLINTER_API double *splinter_bspline_eval_col_major(splinter_obj_ptr bspline_pt
 SPLINTER_API double *splinter_bspline_eval_jacobian_col_major(splinter_obj_ptr bspline_ptr, double *x, int x_len);
 
 /**
- * Get the number of variables (dimension) of a BSpline.
+ * Get the number of variables of a BSpline (dimension of domain).
  *
  * @param bspline_ptr Pointer to the BSpline.
  */
-SPLINTER_API int splinter_bspline_get_num_variables(splinter_obj_ptr bspline_ptr);
+SPLINTER_API int splinter_bspline_get_dim_x(splinter_obj_ptr bspline_ptr);
+
+/**
+ * Get the number of outputs of a BSpline (dimensions of codomain).
+ *
+ * @param bspline_ptr Pointer to the BSpline.
+ */
+SPLINTER_API int splinter_bspline_get_dim_y(splinter_obj_ptr bspline_ptr);
 
 /**
  * Save a BSpline to file.

@@ -64,7 +64,7 @@ class Function(object):
         return hessians
 
     def get_num_variables(self):
-        return splinter._call(splinter._get_handle().splinter_bspline_get_num_variables, self._handle)
+        return splinter._call(splinter._get_handle().splinter_bspline_get_dim_x, self._handle)
 
     def save(self, filename):
         splinter._call(splinter._get_handle().splinter_bspline_save, self._handle, get_c_string(filename))
