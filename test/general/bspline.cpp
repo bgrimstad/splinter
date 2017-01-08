@@ -16,25 +16,47 @@
 using namespace SPLINTER;
 
 #define COMMON_TAGS "[general][bspline]"
-#define COMMON_TEXT " subdivision test"
+#define COMMON_TEXT "BSpline "
 
-TEST_CASE("BSpline domain reduction" COMMON_TEXT, COMMON_TAGS "[subdivision]")
+TEST_CASE(COMMON_TEXT "construction", COMMON_TAGS "[construction]")
+{
+    // Build a tensor product B-spline with three input variables
+    std::vector<std::vector<double>> kv = {linspace(-10, 10, 21),
+                                           linspace(-10, 10, 21),
+                                           linspace(-10, 10, 21)};
+
+    std::vector<unsigned int> deg = {1, 2, 3};
+
+    // Building a B-spline without specifying control points (just to get the number of basis functions)
+    BSpline bs = BSpline(kv, deg);
+
+    // Create vector of 1-D control points
+    // For m outputs and l control points, the constructor expects a vector containing l vectors of size m
+    // Here, we construct a vector containing m vectors of size l,
+    // which should cause the constructor to throw an exception
+    auto cp_vec = std::vector<std::vector<double>>(1, linspace(0, 100, bs.getNumBasisFunctions()));
+
+    // Expecting constructor to throw
+    REQUIRE_THROWS(BSpline(cp_vec, kv, deg));
+}
+
+TEST_CASE(COMMON_TEXT "domain reduction", COMMON_TAGS "[subdivision]")
 {
     REQUIRE(domainReductionTest1());
 }
 
-TEST_CASE("BSpline recursive subdivision" COMMON_TEXT, COMMON_TAGS "[subdivision]")
+TEST_CASE(COMMON_TEXT "recursive subdivision", COMMON_TAGS "[subdivision]")
 {
     // TODO: The current code for comparing BSplines require identical bounds which fails in this test.
     //REQUIRE(runRecursiveDomainReductionTest());
 }
 
-TEST_CASE("BSpline knot insertion" COMMON_TEXT, COMMON_TAGS "[knotinsertion]")
+TEST_CASE(COMMON_TEXT "knot insertion", COMMON_TAGS "[knotinsertion]")
 {
     REQUIRE(testKnotInsertion());
 }
 
-TEST_CASE("BSpline knot averages" COMMON_TEXT, COMMON_TAGS "[knotaverages]")
+TEST_CASE(COMMON_TEXT "knot averages", COMMON_TAGS "[knotaverages]")
 {
     // Build a tensor product B-spline with three input variables
     std::vector<std::vector<double>> kv1 = {linspace(-10, 10, 21),
@@ -79,12 +101,14 @@ TEST_CASE("BSpline knot averages" COMMON_TEXT, COMMON_TAGS "[knotaverages]")
     REQUIRE(assertNear(50., y.back()));
 
     /*
-     * Testing for many points in support
+     * Testing for many points in the range of the knot averages
+     * NOTE: The range of the knot averages is [t_p, t_n] for a knot vector [t_0, ..., t_{n+p}].
+     * In this example, the range of the knot averages are [-9, 9], [-8, 8], and [-7, 7].
      */
     bool test = true;
-    for (auto x0 : linspace(-6, 6, 100))
-    for (auto x1 : linspace(-6, 6, 100))
-    for (auto x2 : linspace(-6, 6, 100))
+    for (auto x0 : linspace(-9, 9, 50))
+    for (auto x1 : linspace(-8, 8, 50))
+    for (auto x2 : linspace(-7, 7, 50))
     {
         auto x = std::vector<double>({x0, x1, x2});
         auto y = bs1_new.eval(x);
