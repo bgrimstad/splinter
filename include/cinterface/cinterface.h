@@ -82,12 +82,20 @@ SPLINTER_API void splinter_datatable_add_samples_row_major(splinter_obj_ptr data
 SPLINTER_API void splinter_datatable_add_samples_col_major(splinter_obj_ptr datatable_ptr, double *x, int n_samples, int x_dim);
 
 /**
- * Get the number of variables (dimension of the samples) in the datatable.
+ * Get the dimension of the domain of the samples in the datatable.
  *
  * @param datatable_ptr Pointer to the datatable.
- * @return The number of variables (dimension) of the samples in the datatable.
+ * @return The dimension of the domain of the samples in the datatable.
  */
-SPLINTER_API int splinter_datatable_get_num_variables(splinter_obj_ptr datatable_ptr);
+SPLINTER_API int splinter_datatable_get_dim_x(splinter_obj_ptr datatable_ptr);
+
+/**
+ * Get the dimension of the codomain of the samples in the datatable.
+ *
+ * @param datatable_ptr Pointer to the datatable.
+ * @return The dimension of the codomain of the samples in the datatable.
+ */
+SPLINTER_API int splinter_datatable_get_dim_y(splinter_obj_ptr datatable_ptr);
 
 /**
  * Get the number of samples stored in the datatable.

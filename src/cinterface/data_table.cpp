@@ -95,17 +95,27 @@ void splinter_datatable_add_samples_col_major(splinter_obj_ptr datatable_ptr, do
     }
 }
 
-int splinter_datatable_get_num_variables(splinter_obj_ptr datatable_ptr)
+int splinter_datatable_get_dim_x(splinter_obj_ptr datatable_ptr)
 {
     auto dataTable = get_datatable(datatable_ptr);
     if (dataTable != nullptr)
     {
-        return dataTable->getDimX();
+        return (int) dataTable->getDimX();
     }
 
     return 0;
 }
 
+int splinter_datatable_get_dim_y(splinter_obj_ptr datatable_ptr)
+{
+    auto dataTable = get_datatable(datatable_ptr);
+    if (dataTable != nullptr)
+    {
+        return (int) dataTable->getDimY();
+    }
+
+    return 0;
+}
 
 int splinter_datatable_get_num_samples(splinter_obj_ptr datatable_ptr)
 {
