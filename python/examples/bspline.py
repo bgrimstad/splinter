@@ -28,7 +28,7 @@ for i in range(len(x)):
 
 # Piecewise constant B-spline that interpolates the data
 b0 = splinter.BSplineBuilder(x, y, degree=0).build()
-print(b0.get_coefficients())
+print(b0.get_control_points())
 print(b0.get_knot_vectors())
 
 # Linear B-spline that interpolates the data
