@@ -33,7 +33,7 @@ class BSplineBuilder:
                  knot_spacing: int=KnotSpacing.AS_SAMPLED, num_basis_functions: int=int(1e6)):
         self._handle = None  # Handle for referencing the c side of this object
         self._datatable = DataTable(x, y)
-        self._num_basis_functions = [10 ** 3] * self._datatable.get_num_variables()
+        self._num_basis_functions = [10 ** 3] * self._datatable.get_dim_x()
 
         self._degrees = None
         self._alpha = None
@@ -52,9 +52,9 @@ class BSplineBuilder:
     def degree(self, degrees: Union[List[int], int]) -> 'BSplineBuilder':
         # If the value is a single number, make it a list of numVariables length
         if not isinstance(degrees, list):
-            degrees = [degrees] * self._datatable.get_num_variables()
+            degrees = [degrees] * self._datatable.get_dim_x()
 
-        if len(degrees) != self._datatable.get_num_variables():
+        if len(degrees) != self._datatable.get_dim_x():
             raise ValueError("Inconsistent number of degrees.")
 
         valid_degrees = range(0, 6)
@@ -101,9 +101,9 @@ class BSplineBuilder:
     def num_basis_functions(self, num_basis_functions: Union[List[int], int]) -> 'BSplineBuilder':
         # If the value is a single number, make it a list of num_variables length
         if not isinstance(num_basis_functions, list):
-            num_basis_functions = [num_basis_functions] * self._datatable.get_num_variables()
+            num_basis_functions = [num_basis_functions] * self._datatable.get_dim_x()
 
-        if len(num_basis_functions) != self._datatable.get_num_variables():
+        if len(num_basis_functions) != self._datatable.get_dim_x():
             raise ValueError("Inconsistent number of degrees.")
 
         for num_basis_func in num_basis_functions:
