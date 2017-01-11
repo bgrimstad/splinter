@@ -35,7 +35,9 @@ public:
     /**
      * Construct B-spline from knot vectors, control points, and basis degrees
      */
-    BSpline(const std::vector<std::vector<double>> &knotVectors,
+    BSpline(unsigned int dimX,
+            unsigned int dimY,
+            const std::vector<std::vector<double>> &knotVectors,
             const std::vector<unsigned int> &degrees);
 
     BSpline(const std::vector<std::vector<double>> &controlPoints,

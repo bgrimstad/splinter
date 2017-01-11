@@ -16,7 +16,37 @@ using namespace SPLINTER;
 #define COMMON_TAGS "[general][bspline]"
 #define COMMON_TEXT "BSpline "
 
-TEST_CASE(COMMON_TEXT "construction", COMMON_TAGS "[construction]")
+TEST_CASE(COMMON_TEXT "construction multivariate", COMMON_TAGS "[construction]")
+{
+    // Build a tensor product B-spline f : R -> R
+    unsigned int num_knots = 11;
+    std::vector<std::vector<double>> knots = {linspace(0, 10, num_knots)};
+    std::vector<unsigned int> deg = {3};
+
+    unsigned int num_cp = num_knots - deg.at(0) - 1;
+    auto cp1_vec = linspace(0, 6, num_cp);
+    std::vector<std::vector<double>> cp1;
+    for (auto cpi : cp1_vec)
+        cp1.push_back({cpi});
+
+    auto cp2_vec = linspace(6, 13, num_cp);
+    std::vector<std::vector<double>> cp2;
+    for (auto cpi : cp2_vec)
+        cp2.push_back({cpi});
+
+    // Build two 1-D B-splines
+    auto bs1 = BSpline(cp1, knots, deg);
+    auto bs2 = BSpline(cp2, knots, deg);
+
+    // Build a B-spline f : R -> R^2
+    std::vector<std::vector<double>> cp3;
+    for (unsigned int i = 0; i < num_cp; ++i)
+        cp3.push_back({cp1_vec.at(i), cp2_vec.at(i)});
+
+    auto bs3 = BSpline(cp3, knots, deg);
+}
+
+TEST_CASE(COMMON_TEXT "construction throws", COMMON_TAGS "[construction]")
 {
     // Build a tensor product B-spline with three input variables
     std::vector<std::vector<double>> kv = {linspace(-10, 10, 21),
@@ -26,7 +56,7 @@ TEST_CASE(COMMON_TEXT "construction", COMMON_TAGS "[construction]")
     std::vector<unsigned int> deg = {1, 2, 3};
 
     // Building a B-spline without specifying control points (just to get the number of basis functions)
-    BSpline bs = BSpline(kv, deg);
+    BSpline bs = BSpline(3, 1, kv, deg);
 
     // Create vector of 1-D control points
     // For m outputs and l control points, the constructor expects a vector containing l vectors of size m
@@ -64,7 +94,7 @@ TEST_CASE(COMMON_TEXT "knot averages", COMMON_TAGS "[knotaverages]")
     std::vector<unsigned int> deg1 = {1, 2, 3};
 
     // Building a B-spline without specifying control points (just to get the number of basis functions)
-    BSpline bs1 = BSpline(kv1, deg1);
+    BSpline bs1 = BSpline(3, 1, kv1, deg1);
 
     // Create vector of 1-D control points
     auto cp1_vec = linspace(0, 100, bs1.getNumBasisFunctions());

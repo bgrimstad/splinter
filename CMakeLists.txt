@@ -188,6 +188,7 @@ set(TEST_SRC_LIST
     test/approximation/bspline.cpp
     test/approximation/pspline.cpp
     test/general/bspline.cpp
+    test/general/bspline_builder.cpp
     test/general/data_table.cpp
     test/general/utilities.cpp
     test/serialization/data_table.cpp

@@ -30,13 +30,15 @@ BSpline::BSpline(unsigned int numVariables)
 /*
  * Constructors for multivariate B-spline using explicit data
  */
-BSpline::BSpline(const std::vector<std::vector<double>> &knotVectors,
-                 const std::vector<unsigned int> &degrees)
-    : Function(knotVectors.size(), 1),
+BSpline::BSpline(
+        unsigned int dimX,
+        unsigned int dimY,
+        const std::vector<std::vector<double>> &knotVectors,
+        const std::vector<unsigned int> &degrees)
+    : Function(dimX, dimY),
       basis(BSplineBasis(knotVectors, degrees)),
-      controlPoints(DenseMatrix::Zero(basis.getNumBasisFunctions(), 1))
+      controlPoints(DenseMatrix::Zero(basis.getNumBasisFunctions(), dimY))
 {
-    // Initialize B-spline assuming 1-D control points
     checkControlPoints();
 }
 
@@ -92,7 +94,11 @@ SparseVector BSpline::evalBasis(const DenseVector &x) const
 {
     #ifndef NDEBUG
     if (!pointInDomain(x))
-        throw Exception("BSpline::evalBasis: Evaluation at point outside domain.");
+    {
+        std::cout << "BSpline::evalBasisJacobian: Evaluation at point outside domain." << std::endl;
+//        throw Exception("BSpline::evalBasis: Evaluation at point outside domain.");
+    }
+
     #endif // NDEBUG
 
     return basis.eval(x);
@@ -102,7 +108,11 @@ SparseMatrix BSpline::evalBasisJacobian(const DenseVector &x) const
 {
     #ifndef NDEBUG
     if (!pointInDomain(x))
-        throw Exception("BSpline::evalBasisJacobian: Evaluation at point outside domain.");
+    {
+        std::cout << "BSpline::evalBasisJacobian: Evaluation at point outside domain." << std::endl;
+//        throw Exception("BSpline::evalBasisJacobian: Evaluation at point outside domain.");
+    }
+
     #endif // NDEBUG
 
     //SparseMatrix Bi = basis.evalBasisJacobian(x);       // Sparse Jacobian implementation

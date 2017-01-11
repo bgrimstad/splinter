@@ -44,7 +44,7 @@ BSpline BSpline::Builder::build() const
     auto knotVectors = computeKnotVectors();
 
     // Build B-spline (with default coefficients)
-    auto bspline = BSpline(knotVectors, _degrees);
+    auto bspline = BSpline(_data.getDimX(), _data.getDimY(), knotVectors, _degrees);
 
     // Compute coefficients from samples and update B-spline
     auto coefficients = computeControlPoints(bspline);
