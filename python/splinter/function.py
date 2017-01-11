@@ -15,22 +15,39 @@ import numpy as np
 class Function(object):
     def __init__(self):
         self._handle = None
-        self._num_variables = None
+        self._dim_x = None
+        self._dim_y = None
 
     def eval(self, x):
         x = self._transform_input(x)
 
-        num_points = len(x) // self._num_variables
+        num_points = len(x) // self._dim_x
+
+        if len(x) % self._dim_x != 0:
+            raise Exception("Attempting to evaluate function with input that is not a multiple of the dimension of the"
+                            "function! {} % {} != 0".format(len(x), self._dim_x))
 
         f_handle = splinter._get_handle().splinter_bspline_eval_row_major
         res = splinter._call(f_handle, self._handle, (c_double * len(x))(*x), len(x))
 
-        return c_array_to_list(res, num_points)
+        results = []
+        # Convert from ctypes array to Python list of lists
+        # results is a list of the results in all evaluated points
+        if self._dim_y == 1:
+            results = c_array_to_list(res, num_points)
+        else:
+            for i in range(num_points):
+                results.append([res[i:i+self._dim_x]])
+
+        # We don't want to return a list when only evaluating one point
+        if num_points == 1:
+            return results[0]
+        return results
 
     def eval_jacobian(self, x):
         x = self._transform_input(x)
 
-        num_points = len(x) // self._num_variables
+        num_points = len(x) // self._dim_x
 
         f_handle = splinter._get_handle().splinter_bspline_eval_jacobian_row_major
         jac = splinter._call(f_handle, self._handle, (c_double * len(x))(*x), len(x))
@@ -40,14 +57,14 @@ class Function(object):
         jacobians = []
         for i in range(num_points):
             jacobians.append([])
-            for j in range(self._num_variables):
-                jacobians[i].append(jac[i * self._num_variables + j])
+            for j in range(self._dim_x):
+                jacobians[i].append(jac[i * self._dim_x + j])
         return jacobians
 
     def eval_hessian(self, x):
         x = self._transform_input(x)
 
-        num_points = len(x) // self._num_variables
+        num_points = len(x) // self._dim_x
 
         f_handle = splinter._get_handle().splinter_bspline_eval_hessian_row_major
         hes = splinter._call(f_handle, self._handle, (c_double * len(x))(*x), len(x))
@@ -57,14 +74,17 @@ class Function(object):
         hessians = []
         for i in range(num_points):
             hessians.append([])
-            for j in range(self._num_variables):
+            for j in range(self._dim_x):
                 hessians[i].append([])
-                for k in range(self._num_variables):
-                    hessians[i][j].append(hes[i * self._num_variables * self._num_variables + j * self._num_variables + k])
+                for k in range(self._dim_x):
+                    hessians[i][j].append(hes[i * self._dim_x * self._dim_x + j * self._dim_x + k])
         return hessians
 
-    def get_num_variables(self):
-        return splinter._call(splinter._get_handle().splinter_bspline_get_dim_x, self._handle)
+    def get_dim_x(self):
+        return self._dim_x
+
+    def get_dim_y(self):
+        return self._dim_y
 
     def save(self, filename):
         splinter._call(splinter._get_handle().splinter_bspline_save, self._handle, get_c_string(filename))

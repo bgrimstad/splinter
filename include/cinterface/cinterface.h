@@ -294,12 +294,15 @@ SPLINTER_API int *splinter_bspline_get_basis_degrees(splinter_obj_ptr bspline_pt
  * This function will then return an array of 2 doubles, the first being the result of evaluating the function in [0, 1],
  * and the second being the result of evaluating the function in [2, 3].
  *
+ * If the function is multi-dimensional in the codomain, the results are flattened so that the result of evaluating
+ * the first point comes first, then the second, etc.
+ *
  * @param bspline_ptr Pointer to the BSpline to evaluate.
- * @param x Array of doubles. Is of x_len length.
+ * @param xs Array of doubles. Is of x_len length.
  * @param x_len Length of x.
  * @return Array of results corresponding to the points in x.
  */
-SPLINTER_API double *splinter_bspline_eval_row_major(splinter_obj_ptr bspline_ptr, double *x, int x_len);
+SPLINTER_API double *splinter_bspline_eval_row_major(splinter_obj_ptr bspline_ptr, double *xs, int x_len);
 
 /**
  * Evaluate the jacobian of a BSpline in one or more points.
@@ -335,7 +338,7 @@ SPLINTER_API double *splinter_bspline_eval_col_major(splinter_obj_ptr bspline_pt
 SPLINTER_API double *splinter_bspline_eval_jacobian_col_major(splinter_obj_ptr bspline_ptr, double *x, int x_len);
 
 /**
- * Get the number of variables of a BSpline (dimension of domain).
+ * Get the number of inputs of a BSpline (dimension of domain).
  *
  * @param bspline_ptr Pointer to the BSpline.
  */

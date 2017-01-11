@@ -253,8 +253,7 @@ int *splinter_bspline_get_basis_degrees(splinter_obj_ptr bspline_ptr)
     return basis_degrees_as_array;
 }
 
-// TODO: allow multidimensional outputs
-double *splinter_bspline_eval_row_major(splinter_obj_ptr bspline_ptr, double *x, int x_len)
+double *splinter_bspline_eval_row_major(splinter_obj_ptr bspline_ptr, double *xs, int x_len)
 {
     double *retVal = nullptr;
 
@@ -263,15 +262,17 @@ double *splinter_bspline_eval_row_major(splinter_obj_ptr bspline_ptr, double *x,
     {
         try
         {
-            size_t num_variables = bspline->getDimX();
-            size_t num_points = x_len / num_variables;
+            size_t x_dim = bspline->getDimX();
+            size_t y_dim = bspline->getDimY();
+            size_t num_points = x_len / x_dim;
 
-            retVal = (double *) malloc(sizeof(double) * num_points);
-            for (size_t i = 0; i < num_points; ++i)
+            retVal = (double *) malloc(sizeof(double) * num_points * y_dim);
+            for (size_t i = 0; i < num_points; i++)
             {
-                auto xvec = get_vector<double>(x, num_variables);
-                retVal[i] = bspline->eval(xvec).at(0);
-                x += num_variables;
+                auto xvec = get_vector<double>(xs, x_dim);
+                // Underlying memory of vector is guaranteed to be contiguous
+                memcpy(&retVal[i*y_dim], bspline->eval(xvec).data(), sizeof(double) * y_dim);
+                xs += x_dim;
             }
         }
         catch(const Exception &e)

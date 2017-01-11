@@ -28,7 +28,8 @@ class BSpline(Function):
         else:
             self._handle = handle_or_filename
 
-        self._num_variables = splinter._call(splinter._get_handle().splinter_bspline_get_dim_x, self._handle)
+        self._dim_x = splinter._call(splinter._get_handle().splinter_bspline_get_dim_x, self._handle)
+        self._dim_y = splinter._call(splinter._get_handle().splinter_bspline_get_dim_y, self._handle)
 
     @staticmethod
     def init_from_param(control_points: ControlPointsType, knot_vectors: ListList, degrees: List[int]) -> 'BSpline':
