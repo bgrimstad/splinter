@@ -161,9 +161,9 @@ void BSpline::updateControlPoints(const SparseMatrix &A)
 void BSpline::checkControlPoints() const
 {
     if (controlPoints.cols() != getDimY())
-        throw Exception("BSpline::checkControlPoints: Inconsistent size of control points matrix.");
+        throw Exception("BSpline::checkControlPoints: Inconsistent number of columns of control points matrix.");
     if (controlPoints.rows() != getNumBasisFunctions())
-        throw Exception("BSpline::checkControlPoints: Inconsistent size of control points matrix.");
+        throw Exception("BSpline::checkControlPoints: Inconsistent number of rows of control points matrix.");
 }
 
 bool BSpline::pointInDomain(const DenseVector &x) const
