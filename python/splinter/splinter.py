@@ -85,7 +85,7 @@ def __init():
     _get_handle().splinter_datatable_load_init.argtypes = [c_char_p]
 
     _get_handle().splinter_datatable_add_samples_row_major.restype = None
-    _get_handle().splinter_datatable_add_samples_row_major.argtypes = [handle_type, c_double_p, c_int, c_int]
+    _get_handle().splinter_datatable_add_samples_row_major.argtypes = [handle_type, c_double_p, c_int, c_double_p, c_int, c_int]
 
     _get_handle().splinter_datatable_get_dim_x.restype = c_int
     _get_handle().splinter_datatable_get_dim_x.argtypes = [handle_type]

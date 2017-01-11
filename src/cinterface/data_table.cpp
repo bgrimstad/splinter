@@ -10,7 +10,11 @@
 #include "cinterface/cinterface.h"
 #include "cinterface/utilities.h"
 #include "data_table.h"
-//#include <fstream>
+
+// Used for printing debug info to files when the library is loaded from eg. Python
+#ifndef NDEBUG
+# include <fstream>
+#endif
 
 using namespace SPLINTER;
 
@@ -44,23 +48,26 @@ splinter_obj_ptr splinter_datatable_load_init(const char *filename)
     return dataTable;
 }
 
-void splinter_datatable_add_samples_row_major(splinter_obj_ptr datatable_ptr, double *x, int n_samples, int x_dim)
+void splinter_datatable_add_samples_row_major(splinter_obj_ptr datatable_ptr,
+                                              double *xs, int x_dim,
+                                              double *ys, int y_dim,
+                                              int n_samples)
 {
     auto dataTable = get_datatable(datatable_ptr);
     if (dataTable != nullptr)
     {
         try
         {
-            std::vector<double> vec(x_dim, 0);
+            std::vector<double> x_vec(x_dim, 0);
+            std::vector<double> y_vec(y_dim, 0);
+
             for (int i = 0; i < n_samples; ++i)
             {
-                int sample_start = i*(x_dim+1);
-                for (int offset = 0; offset < x_dim; ++offset)
-                {
-                    vec.at(offset) = x[sample_start + offset];
-                }
+                // Vectors have been initialised to appropriate sizes, so this should be safe
+                memcpy(x_vec.data(), &xs[x_dim*i], sizeof(double) * x_dim);
+                memcpy(y_vec.data(), &ys[y_dim*i], sizeof(double) * y_dim);
 
-                dataTable->addSample(vec, x[sample_start + x_dim]);
+                dataTable->addSample(x_vec, y_vec);
             }
         }
         catch(const Exception &e)

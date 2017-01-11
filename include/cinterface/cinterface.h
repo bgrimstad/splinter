@@ -64,12 +64,26 @@ SPLINTER_API splinter_obj_ptr splinter_datatable_load_init(const char *filename)
 /**
  * Add samples that are stored in row major order to the datatable.
  *
+ * If x0 = [x0_0, x0_1, x0_2], x1 = [x1_0, x1_1, x1_2] are two inputs with
+ * y0 = [y0_0, y0_1], y1 = [y1_0, y1_1], as the corresponding outputs, then
+ *
+ * xs = [x0_0, x0_1, x0_2, x1_0, x1_1, x1_2]
+ * x_dim = 3
+ * ys = [y0_0, y0_1, y1_0, y1_1]
+ * y_dim = 2
+ * n_samples = 2
+ *
  * @param datatable_ptr Pointer to the datatable.
- * @param x Pointer to the start of the samples.
- * @param n_samples Number of samples to add.
- * @param x_dim The dimension of each point (that is, the sample size - 1).
+ * @param xs Pointer to the start of the inputs.
+ * @param x_dim The dimension of each input.
+ * @param ys Pointer to the start of the outputs.
+ * @param y_dim The dimension of each output.
+ * @param n_samples Number of samples to add (= xs/x_dim = ys/y_dim).
  */
-SPLINTER_API void splinter_datatable_add_samples_row_major(splinter_obj_ptr datatable_ptr, double *x, int n_samples, int x_dim);
+SPLINTER_API void splinter_datatable_add_samples_row_major(splinter_obj_ptr datatable_ptr,
+                                                           double *xs, int x_dim,
+                                                           double *ys, int y_dim,
+                                                           int n_samples);
 
 /**
  * Add samples that are stored in column major order to the datatable.

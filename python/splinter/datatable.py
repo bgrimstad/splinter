@@ -16,7 +16,8 @@ class DataTable:
         self.__dim_x = None
         self.__dim_y = None
         self.__num_samples = 0  # Number of samples not yet transferred to back end
-        self.__samples = []
+        self.__xs = []
+        self.__ys = []
 
         if is_string(x_or_data):
             self.__handle = splinter._call(splinter._get_handle().splinter_datatable_load_init, get_c_string(x_or_data))
@@ -56,8 +57,11 @@ class DataTable:
             raise Exception("Dimension of the codomain of the new sample disagrees with the dimension of the codomain of previous samples!\n"
                             "Previous: {}, new: {}".format(self.__dim_y, len(y)))
 
-        self.__samples += x
-        self.__samples += y
+        x_float = [float(_x) for _x in x]
+        y_float = [float(_y) for _y in y]
+
+        self.__xs += x_float
+        self.__ys += y_float
         self.__num_samples += 1
 
     def get_dim_x(self):
@@ -76,10 +80,11 @@ class DataTable:
     def __transfer(self):
         if self.__num_samples > 0:
             func_handle = splinter._get_handle().splinter_datatable_add_samples_row_major
-            splinter._call(func_handle, self.__handle, (c_double * len(self.__samples))(*self.__samples),
-                           self.__num_samples, self.__dim_x)
+            splinter._call(func_handle, self.__handle,
+                           list_to_c_array_of_doubles(self.__xs), self.__dim_x,
+                           list_to_c_array_of_doubles(self.__ys), self.__dim_y,
+                           self.__num_samples)
 
-            self.__samples = []
             self.__num_samples = 0
 
     # Getter for the datatable for use by BSpline
