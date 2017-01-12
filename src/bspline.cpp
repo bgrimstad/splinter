@@ -92,28 +92,20 @@ DenseMatrix BSpline::evalJacobian(const DenseVector &x) const
 // Evaluation of B-spline basis functions
 SparseVector BSpline::evalBasis(const DenseVector &x) const
 {
-    #ifndef NDEBUG
-    if (!pointInDomain(x))
-    {
-        std::cout << "BSpline::evalBasisJacobian: Evaluation at point outside domain." << std::endl;
-//        throw Exception("BSpline::evalBasis: Evaluation at point outside domain.");
-    }
-
-    #endif // NDEBUG
+#ifndef NDEBUG
+    if (!isSupported(x))
+        std::cout << "BSpline::evalBasis: Evaluation at point outside support." << std::endl;
+#endif // NDEBUG
 
     return basis.eval(x);
 }
 
 SparseMatrix BSpline::evalBasisJacobian(const DenseVector &x) const
 {
-    #ifndef NDEBUG
-    if (!pointInDomain(x))
-    {
-        std::cout << "BSpline::evalBasisJacobian: Evaluation at point outside domain." << std::endl;
-//        throw Exception("BSpline::evalBasisJacobian: Evaluation at point outside domain.");
-    }
-
-    #endif // NDEBUG
+#ifndef NDEBUG
+    if (!isSupported(x))
+        std::cout << "BSpline::evalBasisJacobian: Evaluation at point outside support." << std::endl;
+#endif // NDEBUG
 
     //SparseMatrix Bi = basis.evalBasisJacobian(x);       // Sparse Jacobian implementation
     //SparseMatrix Bi = basis.evalBasisJacobian2(x);  // Sparse Jacobian implementation
@@ -176,7 +168,7 @@ void BSpline::checkControlPoints() const
         throw Exception("BSpline::checkControlPoints: Inconsistent number of rows of control points matrix.");
 }
 
-bool BSpline::pointInDomain(const DenseVector &x) const
+bool BSpline::isSupported(const DenseVector &x) const
 {
     return basis.insideSupport(x);
 }

@@ -147,7 +147,7 @@ private:
     bool removeUnsupportedBasisFunctions(const std::vector<double> &lb, const std::vector<double> &ub);
 
     // Helper functions
-    bool pointInDomain(const DenseVector &x) const;
+    bool isSupported(const DenseVector &x) const;
 
     void load(const std::string &fileName) override;
 
