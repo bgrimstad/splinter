@@ -37,7 +37,8 @@ class Function(object):
             results = c_array_to_list(res, num_points)
         else:
             for i in range(num_points):
-                results.append([res[i:i+self._dim_x]])
+                this_result = res[i:i+self._dim_x]
+                results.append(c_array_to_list(this_result, len(this_result)))
 
         # We don't want to return a list when only evaluating one point
         if num_points == 1:
