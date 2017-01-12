@@ -16,8 +16,11 @@ sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 import splinter
 
 # Only for dev purposes
-splinter.load("/home/bjarne/Code/C++/splinter/bin/Release/libsplinter-3-1.so")
-# splinter.load("/home/anders/SPLINTER/build/debug/libsplinter-3-0.so")
+import os.path
+if os.path.isdir("/home/bjarne/"):
+    splinter.load("/home/bjarne/Code/C++/splinter/bin/Release/libsplinter-3-1.so")
+elif os.path.isdir("/home/anders/"):
+    splinter.load("/home/anders/SPLINTER/build/debug/libsplinter-3-1.so")
 
 
 # Example with two variables
@@ -49,7 +52,7 @@ for i in range(len(x1)):
     for j in range(len(x2)):
         x1_ij = X1[i, j]
         x2_ij = X2[i, j]
-        Zbs[i, j] = bspline.eval([x1_ij, x2_ij])[0]
+        Zbs[i, j] = bspline.eval([x1_ij, x2_ij])
 
 # Plot f
 fig = plt.figure()

@@ -10,9 +10,13 @@ import matplotlib.pyplot as plt
 from os import sys, path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 import splinter
+
 # Only for dev purposes
-splinter.load("/home/bjarne/Code/C++/splinter/bin/Release/libsplinter-3-1.so")
-# splinter.load("/home/anders/SPLINTER/build/debug/libsplinter-3-0.so")
+import os.path
+if os.path.isdir("/home/bjarne/"):
+    splinter.load("/home/bjarne/Code/C++/splinter/bin/Release/libsplinter-3-1.so")
+elif os.path.isdir("/home/anders/"):
+    splinter.load("/home/anders/SPLINTER/build/debug/libsplinter-3-1.so")
 
 
 def underlying_func(x: np.array):
