@@ -191,6 +191,7 @@ set(TEST_SRC_LIST
     test/general/bspline_builder.cpp
     test/general/data_table.cpp
     test/general/utilities.cpp
+    test/examples/approximation.cpp
     test/serialization/data_table.cpp
     test/serialization/bspline.cpp
     test/op_overloads.h
