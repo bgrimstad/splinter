@@ -3,6 +3,8 @@ The C++ interface is the native interface to SPLINTER. At any given time, the C+
 
 Below is a simple example demonstrating the use of SPLINTER. Remember to compile with a C++11 compatible compiler!
 
+More examples can be found in the directory `/test/examples`.
+
 ```c++
 #include <iostream>
 #include "bspline_builder.h"
