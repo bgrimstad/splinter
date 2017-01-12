@@ -24,17 +24,39 @@ enum class BSpline::Smoothing
     PSPLINE     // Smoothing term alpha*Delta(c,2) is added to OLS objective
 };
 
-// B-spline knot spacing
 /*
- * To be added:
- * AS_SAMPLED_NOT_CLAMPED   // Place knots close to sample points. Without clamps.
- * EQUIDISTANT_NOT_CLAMPED  // Equidistant knots without clamps.
+ * B-spline knot spacing
  */
 enum class BSpline::KnotSpacing
 {
-    AS_SAMPLED,     // Mimic spacing of sample points (moving average). With clamps (p+1 multiplicity of end knots).
-    EQUIDISTANT,    // Equidistant knots. With clamps (p+1 multiplicity of end knots).
-    EXPERIMENTAL    // Experimental knot spacing (for testing purposes).
+    /*
+     * Clamped and with knots that mimic the spacing of sample points using a moving average filter.
+     * p+1 multiplicity of end knots.
+     * Example:
+     *      Given sample points [0, 1, 2, 3, 4, 5]
+     *      Then, for degree 3 the knot vector becomes: [0, 0, 0, 0, 2, 3, 5, 5, 5, 5]
+     *      and for degree 1 the knot vector becomes: [0, 0, 1, 2, 3, 4, 5, 5]
+     */
+    AS_SAMPLED,
+
+    /*
+     * Clamped knot vector with equidistant internal knots. p+1 multiplicity of end knots.
+     * Example:
+     *      Given samples on the interval [0, 5]
+     *      For degree 3: [0, 0, 0, 0, 1, 2, 3, 4, 5, 5, 5, 5]
+     *      For degree 1: [0, 0, 1, 2, 3, 4, 5, 5]
+     */
+    EQUIDISTANT,
+
+    /*
+     * Experimental knot spacing for testing purposes only.
+     * Currently, it gives a non-clamped knot vector of equidistant knots.
+     * NOTE: may eventually become EQUIDISTANT_NOT_CLAMPED
+     * Example:
+     *      For any degree: [0, 1, 2, 3, 4, 5]
+     *
+     */
+    EXPERIMENTAL
 };
 
 // B-spline builder class
