@@ -75,7 +75,7 @@ class BSpline(Function):
         """
         # Get the sizes of the knot vectors first
         knot_vector_sizes_raw = splinter._call(splinter._get_handle().splinter_bspline_get_knot_vector_sizes, self._handle)
-        knot_vector_sizes = c_array_to_list(knot_vector_sizes_raw, self._num_variables)
+        knot_vector_sizes = c_array_to_list(knot_vector_sizes_raw, self._dim_x)
 
         knot_vectors_raw = splinter._call(splinter._get_handle().splinter_bspline_get_knot_vectors, self._handle)
         # Get the knot vectors as one long vector where knot vectors v1, ..., vn is laid out like this:
@@ -100,7 +100,7 @@ class BSpline(Function):
         control_points_raw = splinter._call(splinter._get_handle().splinter_bspline_get_control_points, self._handle)
 
         num_rows = splinter._call(splinter._get_handle().splinter_bspline_get_num_control_points, self._handle)
-        num_cols = self._num_variables + 1
+        num_cols = self._dim_x + 1
 
         control_points_flattened = c_array_to_list(control_points_raw, num_rows * num_cols)
 
@@ -120,7 +120,7 @@ class BSpline(Function):
         knot_averages_raw = splinter._call(splinter._get_handle().splinter_bspline_get_knot_averages, self._handle)
 
         num_rows = splinter._call(splinter._get_handle().splinter_bspline_get_num_control_points, self._handle)
-        num_cols = self._num_variables
+        num_cols = self._dim_x
 
         knot_averages_flattened = c_array_to_list(knot_averages_raw, num_rows * num_cols)
 
