@@ -277,7 +277,7 @@ SPLINTER_API double *splinter_bspline_eval_row_major(splinter_obj_ptr bspline_pt
 
 /**
  * Evaluate the jacobian of a BSpline in one or more points.
- * @see eval_row_major() for further explanation of the behaviour.
+ * @see splinter_bspline_eval_row_major() for further explanation of the behaviour.
  *
  * @param bspline_ptr Pointer to the BSpline to evaluate.
  * @param x Array of doubles. Is of x_len length.
@@ -288,7 +288,7 @@ SPLINTER_API double *splinter_bspline_eval_jacobian_row_major(splinter_obj_ptr b
 
 /**
  * Evaluate the hessian of a BSpline in one or more points.
- * @see eval_row_major() for further explanation of the behaviour.
+ * @see splinter_bspline_eval_row_major() for further explanation of the behaviour.
  *
  * @param bspline_ptr Pointer to the BSpline to evaluate.
  * @param x Array of doubles. Is of x_len length.
@@ -299,7 +299,7 @@ SPLINTER_API double *splinter_bspline_eval_hessian_row_major(splinter_obj_ptr bs
 
 /**
  * Evaluate the a BSpline in one or more points that are stored in column major order.
- * @see eval_row_major() for further explanation of the behaviour.
+ * @see splinter_bspline_eval_row_major() for further explanation of the behaviour.
  *
  * @param bspline_ptr Pointer to the BSpline to evaluate.
  * @param x Array of doubles. Is of x_len length.
@@ -310,7 +310,7 @@ SPLINTER_API double *splinter_bspline_eval_col_major(splinter_obj_ptr bspline_pt
 
 /**
  * Evaluate the jacobian of a BSpline in one or more points that are stored in column major order.
- * @see eval_row_major() for further explanation of the behaviour.
+ * @see splinter_bspline_eval_row_major() for further explanation of the behaviour.
  *
  * @param bspline_ptr Pointer to the BSpline to evaluate.
  * @param x Array of doubles. Is of x_len length.
@@ -321,7 +321,7 @@ SPLINTER_API double *splinter_bspline_eval_jacobian_col_major(splinter_obj_ptr b
 
 /**
  * Evaluate the hessian of a BSpline in one or more points that are stored in column major order.
- * @see eval_row_major() for further explanation of the behaviour.
+ * @see splinter_bspline_eval_row_major() for further explanation of the behaviour.
  *
  * @param bspline_ptr Pointer to the BSpline to evaluate.
  * @param x Array of doubles. Is of x_len length.
