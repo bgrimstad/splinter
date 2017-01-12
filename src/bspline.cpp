@@ -94,7 +94,7 @@ SparseVector BSpline::evalBasis(const DenseVector &x) const
 {
 #ifndef NDEBUG
     if (!isSupported(x))
-        std::cout << "BSpline::evalBasis: Evaluation at point outside support." << std::endl;
+        std::cout << "BSpline::evalBasis: Evaluation at point outside of support." << std::endl;
 #endif // NDEBUG
 
     return basis.eval(x);
@@ -104,7 +104,7 @@ SparseMatrix BSpline::evalBasisJacobian(const DenseVector &x) const
 {
 #ifndef NDEBUG
     if (!isSupported(x))
-        std::cout << "BSpline::evalBasisJacobian: Evaluation at point outside support." << std::endl;
+        std::cout << "BSpline::evalBasisJacobian: Evaluation at point outside of support." << std::endl;
 #endif // NDEBUG
 
     //SparseMatrix Bi = basis.evalBasisJacobian(x);       // Sparse Jacobian implementation
