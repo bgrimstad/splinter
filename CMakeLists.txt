@@ -34,17 +34,11 @@ else()
 endif()
 
 # Detect compiler
-if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    set(CLANG 1)
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
-    set(CLANG 1)
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    set(GCC 1)
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
-    set(INTEL 1)
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    set(MSVC 1)
-endif()
+string(COMPARE EQUAL "Clang"      ${CMAKE_CXX_COMPILER_ID} CLANG)
+string(COMPARE EQUAL "AppleClang" ${CMAKE_CXX_COMPILER_ID} CLANG)
+string(COMPARE EQUAL "GNU"        ${CMAKE_CXX_COMPILER_ID} GCC)
+string(COMPARE EQUAL "Intel"      ${CMAKE_CXX_COMPILER_ID} INTEL)
+string(COMPARE EQUAL "MSVC"       ${CMAKE_CXX_COMPILER_ID} MSVC)
 
 # Set build type
 if(NOT CMAKE_BUILD_TYPE)
@@ -59,9 +53,9 @@ endif()
 
 # Set bitness
 if(${ARCH} STREQUAL "x86-64")
-	set(BITNESS "64")
+    set(BITNESS "64")
 elseif(${ARCH} STREQUAL "x86")
-	set(BITNESS "32")
+    set(BITNESS "32")
 else()
     set(BITNESS "32")
     set(ARCH "x86")
@@ -69,32 +63,32 @@ else()
 endif()
 
 if(WINDOWS AND GCC)
-	# MinGW (GCC on Windows) version 4.8.1 has a bug where _hypot is not found
-	# when using any level of optimization. Defining __NO_INLINE__ fixes the bug.
-	# The bug probably exists on other versions of MinGW as well, but that has not been verified by us.
+    # MinGW (GCC on Windows) version 4.8.1 has a bug where _hypot is not found
+    # when using any level of optimization. Defining __NO_INLINE__ fixes the bug.
+    # The bug probably exists on other versions of MinGW as well, but that has not been verified by us.
     if(CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL "4.8.1")
         set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -D__NO_INLINE__")
     endif()
     if(CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL "4.9.2")
-		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
-		# From the GCC man pages:
-		# If you use multiple -O options, with or without level numbers, the last such option is the one that is effective.
-		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -finline-functions")
-		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -funswitch-loops")
-		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fpredictive-commoning")
-		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fgcse-after-reload")
-		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ftree-loop-vectorize")
-		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ftree-loop-distribute-patterns")
-		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ftree-slp-vectorize")
-		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fvect-cost-model")
-		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ftree-partial-pre")
-		# -fipa-cp-clone causes a SegFault in Eigen when enabled with MinGW i686 4.9.2 with dwarf exception model
-		#set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fipa-cp-clone")
-	endif()
-	
-	# To avoid an external dependency (libgcc_s_seh11.dll or libgcc_s_dw2-1.dll)
-	# we statically link the libraries required by MinGW runtimes
-	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -static")
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
+        # From the GCC man pages:
+        # If you use multiple -O options, with or without level numbers, the last such option is the one that is effective.
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -finline-functions")
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -funswitch-loops")
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fpredictive-commoning")
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fgcse-after-reload")
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ftree-loop-vectorize")
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ftree-loop-distribute-patterns")
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ftree-slp-vectorize")
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fvect-cost-model")
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ftree-partial-pre")
+        # -fipa-cp-clone causes a SegFault in Eigen when enabled with MinGW i686 4.9.2 with dwarf exception model
+        #set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fipa-cp-clone")
+    endif()
+
+    # To avoid an external dependency (libgcc_s_seh11.dll or libgcc_s_dw2-1.dll)
+    # we statically link the libraries required by MinGW runtimes
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -static")
 endif()
 
 if(MSVC)
@@ -105,7 +99,7 @@ if(MSVC)
     else()
         set(BITNESS "32")
     endif()
-	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Ox")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Ox")
 
 elseif(GCC OR CLANG)
     # Treat warning return-type as error to avoid undefined behaviour
@@ -119,7 +113,7 @@ elseif(INTEL)
 endif()
 
 if(NOT EIGEN_DIRECTORY)
-	set(EIGEN_DIRECTORY ${DEFAULT_EIGEN_DIRECTORY})
+    set(EIGEN_DIRECTORY ${DEFAULT_EIGEN_DIRECTORY})
 endif()
 # CACHE STRING = Display the option with help text in CMakeCache.txt
 set(EIGEN_DIRECTORY ${EIGEN_DIRECTORY} CACHE STRING "Directory where the Eigen library is located.")
@@ -309,13 +303,13 @@ endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL DEBUG)
     message("Detected compiler and platform:")
-	message("Clang:   ${CLANG}")
-	message("GCC:     ${GCC}")
-	message("Intel:   ${INTEL}")
-	message("MSVC:    ${MSVC}")
-	message("Linux:   ${LINUX}")
-	message("Windows: ${WINDOWS}")
-	message("OS X:    ${OS_X}")
+    message("Clang:   ${CLANG}")
+    message("GCC:     ${GCC}")
+    message("Intel:   ${INTEL}")
+    message("MSVC:    ${MSVC}")
+    message("Linux:   ${LINUX}")
+    message("Windows: ${WINDOWS}")
+    message("OS X:    ${OS_X}")
 endif()
 
 message("Configuring ${PROJECT_NAME} version ${VERSION} in ${CMAKE_BUILD_TYPE} mode for ${ARCH} (${BITNESS} bit)")
