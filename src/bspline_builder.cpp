@@ -35,10 +35,10 @@ BSpline::Builder::Builder(const DataTable &data)
  */
 BSpline BSpline::Builder::build() const
 {
-    // Check data
-    // TODO: Remove this test
+#ifndef NDEBUG
     if (!_data.isGridComplete())
-        throw Exception("BSpline::Builder::build: Cannot create B-spline from irregular (incomplete) grid.");
+        std::cout << "BSpline::Builder::build: Building B-spline from irregular (incomplete) grid." << std::endl;
+#endif // NDEBUG
 
     // Build knot vectors
     auto knotVectors = computeKnotVectors();
@@ -337,7 +337,6 @@ std::vector<double> BSpline::Builder::computeKnotVector(const std::vector<double
         case KnotSpacing::EQUIDISTANT:
             return knotVectorEquidistant(values, degree, numBasisFunctions);
         case KnotSpacing::EXPERIMENTAL:
-//            return knotVectorBuckets(values, degree);
             return knotVectorEquidistantNotClamped(values, degree, numBasisFunctions);
         default:
             return knotVectorMovingAverage(values, degree);
