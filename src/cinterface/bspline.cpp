@@ -457,4 +457,25 @@ void splinter_bspline_decompose_to_bezier_form(splinter_obj_ptr bspline_ptr)
     }
 }
 
+splinter_obj_ptr splinter_bspline_copy(splinter_obj_ptr bspline_ptr) {
+    auto bspline = get_bspline(bspline_ptr);
+    splinter_obj_ptr copy = nullptr;
+
+    if (bspline != nullptr)
+    {
+        try
+        {
+            copy = (splinter_obj_ptr) bspline->clone();
+            bsplines.insert(copy);
+        }
+        catch (const Exception &e)
+        {
+            // Free the memory of the copy in case the exception was thrown by the insert
+            delete (BSpline *) copy;
+            set_error_string(e.what());
+        }
+    }
+    return copy;
+}
+
 } // extern "C"

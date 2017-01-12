@@ -378,11 +378,19 @@ SPLINTER_API void splinter_bspline_delete(splinter_obj_ptr bspline_ptr);
 SPLINTER_API void splinter_bspline_insert_knots(splinter_obj_ptr bspline_ptr, double tau, unsigned int dim, unsigned int multiplicity);
 
 /**
- * Insert knots untill all knots have multiplicity equal to the B-spline degree.
+ * Insert knots until all knots have multiplicity equal to the B-spline degree.
  *
  * @param bspline_ptr Pointer to the BSpline to decompose to Bezier form
  */
 SPLINTER_API void splinter_bspline_decompose_to_bezier_form(splinter_obj_ptr bspline_ptr);
+
+/**
+ * Make a copy of a BSpline.
+ *
+ * @param bspline_ptr
+ * @return The new copy
+ */
+SPLINTER_API splinter_obj_ptr splinter_bspline_copy(splinter_obj_ptr bspline_ptr);
 
 #ifdef __cplusplus
     }

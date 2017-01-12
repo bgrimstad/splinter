@@ -16,20 +16,21 @@ ControlPointsType = Union[ListList, List[float]]
 
 
 class BSpline(Function):
-    def __init__(self, handle_or_filename):
+    def __init__(self, handle_or_filename = None):
         super().__init__()
 
-        # If string we load the BSpline from the file
-        if is_string(handle_or_filename):
-            filename = get_c_string(handle_or_filename)
-            self._handle = splinter._call(splinter._get_handle().splinter_bspline_load_init, filename)
+        if handle_or_filename is not None:
+            # If string we load the BSpline from the file
+            if is_string(handle_or_filename):
+                filename = get_c_string(handle_or_filename)
+                self._handle = splinter._call(splinter._get_handle().splinter_bspline_load_init, filename)
 
-        # Else, the argument is the handle to the internal BSpline object
-        else:
-            self._handle = handle_or_filename
+            # Else, the argument is the handle to the internal BSpline object
+            else:
+                self._handle = handle_or_filename
 
-        self._dim_x = splinter._call(splinter._get_handle().splinter_bspline_get_dim_x, self._handle)
-        self._dim_y = splinter._call(splinter._get_handle().splinter_bspline_get_dim_y, self._handle)
+            self._dim_x = splinter._call(splinter._get_handle().splinter_bspline_get_dim_x, self._handle)
+            self._dim_y = splinter._call(splinter._get_handle().splinter_bspline_get_dim_y, self._handle)
 
     @staticmethod
     def init_from_param(control_points: ControlPointsType, knot_vectors: ListList, degrees: List[int]) -> 'BSpline':
@@ -154,3 +155,19 @@ class BSpline(Function):
         overlapping.
         """
         splinter._call(splinter._get_handle().splinter_bspline_decompose_to_bezier_form, self._handle)
+
+    def copy(self) -> 'BSpline':
+        """
+        Make a copy of this BSpline.
+
+        NOTE: This is a deep copy. No changes made to the copy will have effects on the original.
+
+        :return: A copy of this BSpline
+        """
+        copy = BSpline()
+        copy._handle = splinter._call(splinter._get_handle().splinter_bspline_copy, self._handle)
+
+        copy._dim_x = self._dim_x
+        copy._dim_y = self._dim_y
+
+        return copy
