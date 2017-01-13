@@ -26,15 +26,15 @@ knots = [[0, 0, 0, 0, 1, 1, 1, 1]]
 control_points = [[0, 0], [1, 1], [2, 1], [3, 0]]
 bspline_curve = splinter.BSpline.init_from_param(control_points, knots, degree)
 
-# Evaluate B-spline curve for t in [0, 1]
-t = np.linspace(0, 1, 1000)
-y = [0] * len(t)
-for i in range(len(t)):
-    y[i] = bspline_curve.eval(t[i])
+# Evaluate B-spline curve for u in [0, 1]
+u = np.linspace(0, 1, 1000)
+y = [0] * len(u)
+for i in range(len(u)):
+    y[i] = bspline_curve.eval(u[i])
 
 # Now y contains a list of 2-D coordinates
 # The following call does not produce the same y!
-# y = bspline_curve.eval(x)
+y = bspline_curve.eval(u)
 
 # Unzip to obtain two lists, one for each coordinate
 y0, y1 = zip(*y)
