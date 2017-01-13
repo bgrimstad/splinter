@@ -36,7 +36,7 @@ class Function(object):
         if self._dim_y == 1:
             results = c_array_to_list(res, num_points)
         else:
-            for i in range(num_points):
+            for i in range(0, num_points*self._dim_y, self._dim_y):
                 this_result = res[i:i+self._dim_y]
                 results.append(c_array_to_list(this_result, len(this_result)))
 
