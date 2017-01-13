@@ -34,7 +34,7 @@ for i in range(len(u)):
 
 # Now y contains a list of 2-D coordinates
 # The following call does not produce the same y!
-y = bspline_curve.eval(u)
+# y = bspline_curve.eval(u)
 
 # Unzip to obtain two lists, one for each coordinate
 y0, y1 = zip(*y)
