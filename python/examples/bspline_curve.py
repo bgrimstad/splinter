@@ -19,17 +19,29 @@ if os.path.isdir("/home/bjarne/"):
 elif os.path.isdir("/home/anders/"):
     splinter.load("/home/anders/SPLINTER/build/debug/libsplinter-3-1.so")
 
-# B-spline built from parameters: coefficients, knot vectors and degrees
-control_points = [0, 1, 0, 1, 0]
-knot_vectors = [[0, 0, 1, 2, 3, 4, 4]]
-degrees = [1]
-bs = splinter.BSpline.init_from_param(control_points, knot_vectors, degrees)
 
-xd = np.arange(0, 4, .01)
-yd = bs.eval(xd)
+# Example showing a B-spline curve with a clamped knot vector
+degree = [3]
+knots = [[0, 0, 0, 0, 1, 1, 1, 1]]
+control_points = [[0, 0], [1, 1], [2, 1], [3, 0]]
+bspline_curve = splinter.BSpline.init_from_param(control_points, knots, degree)
 
-plt.plot(xd, yd, label='B-spline')
-plt.legend(loc='upper right')
+# Evaluate B-spline curve for t in [0, 1]
+t = np.linspace(0, 1, 1000)
+y = [0] * len(t)
+for i in range(len(t)):
+    y[i] = bspline_curve.eval(t[i])
+
+# Now y contains a list of 2-D coordinates
+# The following call does not produce the same y!
+# y = bspline_curve.eval(x)
+
+# Unzip to obtain two lists, one for each coordinate
+y0, y1 = zip(*y)
+p0, p1 = zip(*control_points)
+
+# Plot results
+plt.plot(p0, p1, '*', label='Control points')
+plt.plot(y0, y1, '-', label='B-spline curve')
+plt.legend(loc='upper left')
 plt.show()
-
-

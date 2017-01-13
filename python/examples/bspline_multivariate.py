@@ -18,7 +18,7 @@ import splinter
 # Only for dev purposes
 import os.path
 if os.path.isdir("/home/bjarne/"):
-    splinter.load("/home/bjarne/Code/C++/splinter/bin/Release/libsplinter-3-1.so")
+    splinter.load("/home/bjarne/Code/C++/splinter/build/release/libsplinter-3-1.so")
 elif os.path.isdir("/home/anders/"):
     splinter.load("/home/anders/SPLINTER/build/debug/libsplinter-3-1.so")
 
