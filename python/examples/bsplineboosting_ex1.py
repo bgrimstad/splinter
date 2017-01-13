@@ -14,9 +14,9 @@ import splinter
 # Only for dev purposes
 import os.path
 if os.path.isdir("/home/bjarne/"):
-    splinter.load("/home/bjarne/Code/C++/splinter/build/release/libsplinter-3-1.so")
+    splinter.load("/home/bjarne/Code/C++/splinter/build/release/libsplinter-4-0.so")
 elif os.path.isdir("/home/anders/"):
-    splinter.load("/home/anders/SPLINTER/build/debug/libsplinter-3-1.so")
+    splinter.load("/home/anders/SPLINTER/build/debug/libsplinter-4-0.so")
 
 
 def underlying_func(x: np.array):
