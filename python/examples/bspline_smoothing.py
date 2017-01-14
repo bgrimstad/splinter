@@ -25,9 +25,7 @@ def f1(x):
     return -1. + 2*x + 0.1*(x**2) + 10*np.random.rand(1)[0]
 
 x = np.arange(0, 11, 1)
-y = np.zeros((len(x),))
-for i in range(len(x)):
-    y[i] = f1(x[i])
+y = np.array([f1(x_i) for x_i in x])
 
 # Piecewise constant B-spline that interpolates the data
 b0 = splinter.BSplineBuilder(x, y, degree=0).build()
