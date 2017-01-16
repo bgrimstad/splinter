@@ -9,6 +9,7 @@
 
 #include <Catch.h>
 #include <test_utils.h>
+#include <utilities.h>
 #include <bspline_builder.h>
 
 using namespace SPLINTER;
@@ -463,4 +464,45 @@ TEST_CASE("Quartic BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::qua
                              1337, // Number of points to test against
                              one_eps, two_eps, inf_eps);
     }
+}
+
+
+// TESTING INTERPOLATION OF ZERO FUNCTION (SPARSE SOLVER)
+TEST_CASE("B-spline approximation of zero function (sparse)", COMMON_TAGS "[zero-function][sparse]")
+{
+    DataTable data;
+
+    auto x0 = linspace(-10, 10, 20);
+    auto x1 = linspace(-10, 10, 20);
+
+    for (auto x0_i : x0)
+        for (auto x1_i : x1)
+            data.addSample({x0_i, x1_i}, .0);
+
+    REQUIRE_NOTHROW(BSpline::Builder(data).degree(0).build());
+    REQUIRE_NOTHROW(BSpline::Builder(data).degree(1).build());
+    REQUIRE_NOTHROW(BSpline::Builder(data).degree(2).build());
+    REQUIRE_NOTHROW(BSpline::Builder(data).degree(3).build());
+    REQUIRE_NOTHROW(BSpline::Builder(data).degree(4).build());
+    REQUIRE_NOTHROW(BSpline::Builder(data).degree(5).build());
+}
+
+// TESTING INTERPOLATION OF ZERO FUNCTION (DENSE SOLVER)
+TEST_CASE("B-spline approximation of zero function (dense)", COMMON_TAGS "[zero-function][dense]")
+{
+    DataTable data;
+
+    auto x0 = linspace(-10, 10, 8);
+    auto x1 = linspace(-10, 10, 8);
+
+    for (auto x0_i : x0)
+        for (auto x1_i : x1)
+            data.addSample({x0_i, x1_i}, .0);
+
+    REQUIRE_NOTHROW(BSpline::Builder(data).degree(0).build());
+    REQUIRE_NOTHROW(BSpline::Builder(data).degree(1).build());
+    REQUIRE_NOTHROW(BSpline::Builder(data).degree(2).build());
+    REQUIRE_NOTHROW(BSpline::Builder(data).degree(3).build());
+    REQUIRE_NOTHROW(BSpline::Builder(data).degree(4).build());
+    REQUIRE_NOTHROW(BSpline::Builder(data).degree(5).build());
 }
