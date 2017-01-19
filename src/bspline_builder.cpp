@@ -42,7 +42,7 @@ BSpline BSpline::Builder::fit(const DataTable &data) const
         throw Exception("BSpline::Builder::fit: Expected " + std::to_string(_dim_y) + " output variables.");
 
 #ifndef NDEBUG
-    if (!_data.isGridComplete())
+    if (!data.isGridComplete())
         std::cout << "BSpline::Builder::fit: Building B-spline from irregular (incomplete) grid." << std::endl;
 #endif // NDEBUG
 
