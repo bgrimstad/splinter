@@ -31,9 +31,9 @@ BSpline::Builder::Builder(const DataTable &data)
 }
 
 /*
- * Build B-spline
+ * Fit B-spline to data
  */
-BSpline BSpline::Builder::build() const
+BSpline BSpline::Builder::fit() const
 {
 #ifndef NDEBUG
     if (!_data.isGridComplete())

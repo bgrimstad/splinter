@@ -121,8 +121,8 @@ def __init():
     _get_handle().splinter_bspline_builder_set_alpha.restype = None
     _get_handle().splinter_bspline_builder_set_alpha.argtypes = [handle_type, c_double]
 
-    _get_handle().splinter_bspline_builder_build.restype = handle_type
-    _get_handle().splinter_bspline_builder_build.argtypes = [handle_type]
+    _get_handle().splinter_bspline_builder_fit.restype = handle_type
+    _get_handle().splinter_bspline_builder_fit.argtypes = [handle_type]
 
     _get_handle().splinter_bspline_builder_delete.restype = None
     _get_handle().splinter_bspline_builder_delete.argtypes = [handle_type]

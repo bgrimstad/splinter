@@ -37,7 +37,7 @@ splinter_obj_ptr splinter_bspline_builder_init(splinter_obj_ptr datatable_ptr)
 void splinter_bspline_builder_set_degree(splinter_obj_ptr bspline_builder_ptr, unsigned int *degrees, int n)
 {
     auto builder = get_builder(bspline_builder_ptr);
-    if(builder != nullptr)
+    if (builder != nullptr)
     {
         auto _degrees = get_vector(degrees, n);
         builder->degree(_degrees);
@@ -47,7 +47,7 @@ void splinter_bspline_builder_set_degree(splinter_obj_ptr bspline_builder_ptr, u
 void splinter_bspline_builder_set_num_basis_functions(splinter_obj_ptr bspline_builder_ptr, int *num_basis_functions, int n)
 {
     auto builder = get_builder(bspline_builder_ptr);
-    if(builder != nullptr)
+    if (builder != nullptr)
     {
         std::vector<unsigned int> _num_basis_functions((unsigned int) n);
         for (int i = 0; i < n; ++i)
@@ -61,7 +61,7 @@ void splinter_bspline_builder_set_num_basis_functions(splinter_obj_ptr bspline_b
 void splinter_bspline_builder_set_knot_spacing(splinter_obj_ptr bspline_builder_ptr, int knot_spacing)
 {
     auto builder = get_builder(bspline_builder_ptr);
-    if(builder != nullptr)
+    if (builder != nullptr)
     {
         switch (knot_spacing)
         {
@@ -84,7 +84,7 @@ void splinter_bspline_builder_set_knot_spacing(splinter_obj_ptr bspline_builder_
 void splinter_bspline_builder_set_smoothing(splinter_obj_ptr bspline_builder_ptr, int smoothing)
 {
     auto builder = get_builder(bspline_builder_ptr);
-    if(builder != nullptr)
+    if (builder != nullptr)
     {
         switch (smoothing)
         {
@@ -116,7 +116,7 @@ void splinter_bspline_builder_set_alpha(splinter_obj_ptr bspline_builder_ptr, do
     builder->alpha(alpha);
 }
 
-splinter_obj_ptr splinter_bspline_builder_build(splinter_obj_ptr bspline_builder_ptr)
+splinter_obj_ptr splinter_bspline_builder_fit(splinter_obj_ptr bspline_builder_ptr)
 {
     auto builder = get_builder(bspline_builder_ptr);
     if (builder == nullptr)
@@ -124,7 +124,7 @@ splinter_obj_ptr splinter_bspline_builder_build(splinter_obj_ptr bspline_builder
         return nullptr;
     }
 
-    auto bspline = builder->build().clone();
+    auto bspline = builder->fit().clone();
     bsplines.insert(bspline);
     return bspline;
 }

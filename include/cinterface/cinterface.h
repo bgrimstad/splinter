@@ -194,7 +194,7 @@ SPLINTER_API void splinter_bspline_builder_set_alpha(splinter_obj_ptr bspline_bu
  * @param bspline_builder_ptr The Builder to "build the BSpline with".
  * @return Pointer to the created BSpline.
  */
-SPLINTER_API splinter_obj_ptr splinter_bspline_builder_build(splinter_obj_ptr bspline_builder_ptr);
+SPLINTER_API splinter_obj_ptr splinter_bspline_builder_fit(splinter_obj_ptr bspline_builder_ptr);
 
 /**
  * Free the memory of the internal Builder

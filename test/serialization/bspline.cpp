@@ -30,7 +30,7 @@ TEST_CASE("BSpline can be saved and loaded", COMMON_TAGS)
 
     SECTION("Linear BSpline")
     {
-        BSpline bspline = BSpline::Builder(table).degree(1).build();
+        BSpline bspline = BSpline::Builder(table).degree(1).fit();
         bspline.save(fileName);
         BSpline loadedBSpline(fileName);
         REQUIRE(bspline == loadedBSpline);
@@ -38,7 +38,7 @@ TEST_CASE("BSpline can be saved and loaded", COMMON_TAGS)
 
     SECTION("Quadratic BSpline")
     {
-        BSpline bspline = BSpline::Builder(table).degree(2).build();
+        BSpline bspline = BSpline::Builder(table).degree(2).fit();
         bspline.save(fileName);
         BSpline loadedBSpline(fileName);
         REQUIRE(bspline == loadedBSpline);
@@ -46,7 +46,7 @@ TEST_CASE("BSpline can be saved and loaded", COMMON_TAGS)
 
     SECTION("Cubic BSpline")
     {
-        BSpline bspline = BSpline::Builder(table).degree(3).build();
+        BSpline bspline = BSpline::Builder(table).degree(3).fit();
         bspline.save(fileName);
         BSpline loadedBSpline(fileName);
         REQUIRE(bspline == loadedBSpline);
@@ -54,7 +54,7 @@ TEST_CASE("BSpline can be saved and loaded", COMMON_TAGS)
 
     SECTION("Quartic BSpline")
     {
-        BSpline bspline = BSpline::Builder(table).degree(4).build();
+        BSpline bspline = BSpline::Builder(table).degree(4).fit();
         bspline.save(fileName);
         BSpline loadedBSpline(fileName);
         REQUIRE(bspline == loadedBSpline);

@@ -122,8 +122,8 @@ class BSplineBuilder:
         return self
 
     # Returns a handle to the created internal BSpline object
-    def build(self) -> BSpline:
-        f_handle = splinter._get_handle().splinter_bspline_builder_build
+    def fit(self) -> BSpline:
+        f_handle = splinter._get_handle().splinter_bspline_builder_fit
         bspline_handle = splinter._call(f_handle, self._handle)
 
         return BSpline(bspline_handle)

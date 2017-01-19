@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
             .degree(3)
             .smoothing(BSpline::Smoothing::PSPLINE)
             .alpha(0.03)
-            .build();
+            .fit();
 
     /*
      * Evaluate the splines at x = (1,1)

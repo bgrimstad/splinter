@@ -46,7 +46,7 @@ pspline = splinter.BSplineBuilder(x, y,
                                   smoothing=splinter.BSplineBuilder.Smoothing.PSPLINE,
                                   alpha=10.0,
                                   knot_spacing=splinter.BSplineBuilder.KnotSpacing.EXPERIMENTAL,
-                                  num_basis_functions=20).build()
+                                  num_basis_functions=20).fit()
 
 yd_pspline = pspline.eval(xd)
 

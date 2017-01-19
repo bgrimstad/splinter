@@ -67,7 +67,7 @@ class BSplineBoosting:
                                              smoothing=splinter.BSplineBuilder.Smoothing.PSPLINE,
                                              alpha=self._alpha,
                                              knot_spacing=splinter.BSplineBuilder.KnotSpacing.EXPERIMENTAL,
-                                             num_basis_functions=20).build()
+                                             num_basis_functions=20).fit()
                 u_hat_est = learners[j].eval(x)
                 ss_res = np.sum(np.apply_along_axis(np.square, 0, u_hat - u_hat_est))
                 goodness[j] = 1 - (ss_res / ss_tot)

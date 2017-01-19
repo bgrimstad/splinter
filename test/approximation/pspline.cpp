@@ -33,7 +33,7 @@ TEST_CASE("PSpline function" COMMON_TEXT, COMMON_TAGS "[function-value]")
                                  BSpline bs = BSpline::Builder(table)
                                          .smoothing(BSpline::Smoothing::PSPLINE)
                                          .alpha(0.03)
-                                         .build();
+                                         .fit();
                                  return (Function*) new BSpline(bs);
                              },
                              300,  // Number of points to sample at
@@ -58,7 +58,7 @@ TEST_CASE("PSpline function2" COMMON_TEXT, COMMON_TAGS "[function-value2]")
                                          .knotSpacing(BSpline::KnotSpacing::EXPERIMENTAL)
                                          .numBasisFunctions(10)
                                          .alpha(0.01)
-                                         .build();
+                                         .fit();
                                  return (Function*) new BSpline(bs);
                              },
                              300,  // Number of points to sample at
@@ -81,7 +81,7 @@ TEST_CASE("PSpline jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian]")
                                  BSpline bs = BSpline::Builder(table)
                                          .smoothing(BSpline::Smoothing::PSPLINE)
                                          .alpha(0.03)
-                                         .build();
+                                         .fit();
                                  return (Function*) new BSpline(bs);
                              },
                              300,  // Number of points to sample at

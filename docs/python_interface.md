@@ -49,7 +49,7 @@ for i in range(len(x)):
 data = list(zip(x, y))
 
 # Build cubic B-spline that interpolates the data
-bspline = splinter.BSplineBuilder(data, degree=3).build()
+bspline = splinter.BSplineBuilder(data, degree=3).fit()
 
 # Evaluate the B-spline
 xd = np.arange(0, 10, .01)

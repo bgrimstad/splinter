@@ -117,7 +117,7 @@ public:
     }
 
     // Build B-spline
-    BSpline build() const;
+    BSpline fit() const;
 
 private:
     Builder();
