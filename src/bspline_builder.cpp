@@ -19,35 +19,41 @@
 namespace SPLINTER
 {
 // Default constructor
-BSpline::Builder::Builder(const DataTable &data)
-        :
-        _data(data),
-        _degrees(getBSplineDegrees(data.getDimX(), 3)),
-        _numBasisFunctions(std::vector<unsigned int>(data.getDimX(), 1)),
-        _knotSpacing(KnotSpacing::AS_SAMPLED),
-        _smoothing(Smoothing::NONE),
-        _alpha(0.1)
+BSpline::Builder::Builder(unsigned int dim_x, unsigned int dim_y)
+        : _dim_x(dim_x),
+          _dim_y(dim_y),
+          _degrees(getBSplineDegrees(_dim_x, 3)),
+          _numBasisFunctions(std::vector<unsigned int>(_dim_x, 1)),
+          _knotSpacing(KnotSpacing::AS_SAMPLED),
+          _smoothing(Smoothing::NONE),
+          _alpha(0.1)
 {
 }
 
 /*
  * Fit B-spline to data
  */
-BSpline BSpline::Builder::fit() const
+BSpline BSpline::Builder::fit(const DataTable &data) const
 {
+    if (data.getDimX() != _dim_x)
+        throw Exception("BSpline::Builder::fit: Expected " + std::to_string(_dim_x) + " input variables.");
+
+    if (data.getDimY() != _dim_y)
+        throw Exception("BSpline::Builder::fit: Expected " + std::to_string(_dim_y) + " output variables.");
+
 #ifndef NDEBUG
     if (!_data.isGridComplete())
-        std::cout << "BSpline::Builder::build: Building B-spline from irregular (incomplete) grid." << std::endl;
+        std::cout << "BSpline::Builder::fit: Building B-spline from irregular (incomplete) grid." << std::endl;
 #endif // NDEBUG
 
     // Build knot vectors
-    auto knotVectors = computeKnotVectors();
+    auto knotVectors = computeKnotVectors(data);
 
     // Build B-spline (with default coefficients)
-    auto bspline = BSpline(_data.getDimX(), _data.getDimY(), knotVectors, _degrees);
+    auto bspline = BSpline(_dim_x, _dim_y, knotVectors, _degrees);
 
     // Compute coefficients from samples and update B-spline
-    auto coefficients = computeControlPoints(bspline);
+    auto coefficients = computeControlPoints(bspline, data);
     bspline.setControlPoints(coefficients);
 
     return bspline;
@@ -63,11 +69,11 @@ BSpline BSpline::Builder::fit() const
  * R = Regularization matrix,
  * alpha = regularization parameter.
  */
-DenseMatrix BSpline::Builder::computeControlPoints(const BSpline &bspline) const
+DenseMatrix BSpline::Builder::computeControlPoints(const BSpline &bspline, const DataTable &data) const
 {
-    SparseMatrix B = computeBasisFunctionMatrix(bspline);
+    SparseMatrix B = computeBasisFunctionMatrix(bspline, data);
     SparseMatrix A = B;
-    DenseMatrix b = stackSamplePointValues();
+    DenseMatrix b = stackSamplePointValues(data);
 
     if (_smoothing == Smoothing::IDENTITY)
     {
@@ -108,7 +114,7 @@ DenseMatrix BSpline::Builder::computeControlPoints(const BSpline &bspline) const
          */
 
         // Assuming regular grid
-        unsigned int numSamples = _data.getNumSamples();
+        unsigned int numSamples = data.getNumSamples();
 
         SparseMatrix Bt = B.transpose();
 
@@ -164,9 +170,9 @@ DenseMatrix BSpline::Builder::computeControlPoints(const BSpline &bspline) const
     return x;
 }
 
-SparseMatrix BSpline::Builder::computeBasisFunctionMatrix(const BSpline &bspline) const
+SparseMatrix BSpline::Builder::computeBasisFunctionMatrix(const BSpline &bspline, const DataTable &data) const
 {
-    unsigned int numSamples = _data.getNumSamples();
+    unsigned int numSamples = data.getNumSamples();
 
     // TODO: Reserve nnz per row (degree+1)
     //int nnzPrCol = bspline.basis.numSupported();
@@ -175,7 +181,7 @@ SparseMatrix BSpline::Builder::computeBasisFunctionMatrix(const BSpline &bspline
     //A.reserve(DenseVector::Constant(numSamples, nnzPrCol)); // TODO: should reserve nnz per row!
 
     int i = 0;
-    for (auto it = _data.cbegin(); it != _data.cend(); ++it, ++i)
+    for (auto it = data.cbegin(); it != data.cend(); ++it, ++i)
     {
         DenseVector xi = stdToEigVec(it->getX());
         SparseVector basis_values = bspline.evalBasis(xi);
@@ -188,15 +194,15 @@ SparseMatrix BSpline::Builder::computeBasisFunctionMatrix(const BSpline &bspline
     return A;
 }
 
-DenseMatrix BSpline::Builder::stackSamplePointValues() const
+DenseMatrix BSpline::Builder::stackSamplePointValues(const DataTable &data) const
 {
-    DenseMatrix B = DenseMatrix::Zero(_data.getNumSamples(), _data.getDimY());
+    DenseMatrix B = DenseMatrix::Zero(data.getNumSamples(), data.getDimY());
 
     int i = 0;
-    for (auto it = _data.cbegin(); it != _data.cend(); ++it, ++i)
+    for (auto it = data.cbegin(); it != data.cend(); ++it, ++i)
     {
         auto y = it->getY();
-        for (unsigned int j = 0; j < _data.getDimY(); ++j)
+        for (unsigned int j = 0; j < data.getDimY(); ++j)
             B(i, j) = y.at(j);
     }
     return B;
@@ -305,16 +311,16 @@ SparseMatrix BSpline::Builder::getSecondOrderFiniteDifferenceMatrix(const BSplin
 }
 
 // Compute all knot vectors from sample data
-std::vector<std::vector<double> > BSpline::Builder::computeKnotVectors() const
+std::vector<std::vector<double> > BSpline::Builder::computeKnotVectors(const DataTable &data) const
 {
-    if (_data.getDimX() != _degrees.size())
+    if (_dim_x != _degrees.size())
         throw Exception("BSpline::Builder::computeKnotVectors: Inconsistent sizes on input vectors.");
 
-    std::vector<std::vector<double>> grid = _data.getTableX();
+    std::vector<std::vector<double>> grid = data.getTableX();
 
     std::vector<std::vector<double>> knotVectors;
 
-    for (unsigned int i = 0; i < _data.getDimX(); ++i)
+    for (unsigned int i = 0; i < _dim_x; ++i)
     {
         // Compute knot vector
         auto knotVec = computeKnotVector(grid.at(i), _degrees.at(i), _numBasisFunctions.at(i));

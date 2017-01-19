@@ -34,9 +34,9 @@ TEST_CASE(COMMON_TEXT "multivariate output", COMMON_TAGS "[construction]")
         table_ys.addSample(xi, {f1(xi), f2(xi)});
     }
 
-    auto bs_y1 = BSpline::Builder(table_y1).degree(3).fit();
-    auto bs_y2 = BSpline::Builder(table_y2).degree(3).fit();
-    auto bs_ys = BSpline::Builder(table_ys).degree(3).fit();
+    auto bs_y1 = BSpline::Builder(1, 1).degree(3).fit(table_y1);
+    auto bs_y2 = BSpline::Builder(1, 1).degree(3).fit(table_y2);
+    auto bs_ys = BSpline::Builder(1, 2).degree(3).fit(table_ys);
 
     auto x_vec_test = linspace(-10, 20, 100);
 

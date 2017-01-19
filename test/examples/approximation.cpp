@@ -46,15 +46,15 @@ TEST_CASE("Approximation example", COMMON_TAGS)
     }
 
     // Build B-splines that interpolate the samples
-    BSpline bspline1 = BSpline::Builder(samples).degree(1).fit();
-    BSpline bspline3 = BSpline::Builder(samples).degree(3).fit();
+    BSpline bspline1 = BSpline::Builder(2, 1).degree(1).fit(samples);
+    BSpline bspline3 = BSpline::Builder(2, 1).degree(3).fit(samples);
 
     // Build penalized B-spline (P-spline) that smooths the samples
-    BSpline pspline = BSpline::Builder(samples)
+    BSpline pspline = BSpline::Builder(2, 1)
             .degree(3)
             .smoothing(BSpline::Smoothing::PSPLINE)
             .alpha(0.03)
-            .fit();
+            .fit(samples);
 
     /*
      * Evaluate the splines at x = (1,1)

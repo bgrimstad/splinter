@@ -42,11 +42,11 @@ xd = np.arange(-2, 22, 0.01)
 yd = underlying_func(xd)
 
 # Just one P-spline
-pspline = splinter.BSplineBuilder(x, y,
+pspline = splinter.BSplineBuilder(1, 1,
                                   smoothing=splinter.BSplineBuilder.Smoothing.PSPLINE,
                                   alpha=10.0,
                                   knot_spacing=splinter.BSplineBuilder.KnotSpacing.EXPERIMENTAL,
-                                  num_basis_functions=20).fit()
+                                  num_basis_functions=20).fit(x, y)
 
 yd_pspline = pspline.eval(xd)
 

@@ -45,10 +45,13 @@ bool testKnotInsertion()
 {
     DataTable samples = sampleTestFunction();
 
+    auto dim_x = samples.getDimX();
+    auto dim_y = samples.getDimY();
+
     // Build B-splines that interpolate the samples
-    BSpline bspline1 = BSpline::Builder(samples).degree(1).fit();
-    BSpline bspline2 = BSpline::Builder(samples).degree(2).fit();
-    BSpline bspline3 = BSpline::Builder(samples).degree(3).fit();
+    BSpline bspline1 = BSpline::Builder(dim_x, dim_y).degree(1).fit(samples);
+    BSpline bspline2 = BSpline::Builder(dim_x, dim_y).degree(2).fit(samples);
+    BSpline bspline3 = BSpline::Builder(dim_x, dim_y).degree(3).fit(samples);
 
     BSpline bspline1_copy(bspline1);
     BSpline bspline2_copy(bspline2);
@@ -143,11 +146,14 @@ bool runRecursiveDomainReductionTest()
     // Create new DataTable to manage samples
     DataTable samples = sampleTestFunction();
 
+    auto dim_x = samples.getDimX();
+    auto dim_y = samples.getDimY();
+
     // Build B-splines that interpolate the samples
-    BSpline bspline1 = BSpline::Builder(samples).degree(1).fit();
-    BSpline bspline2 = BSpline::Builder(samples).degree(2).fit();
-    BSpline bspline3 = BSpline::Builder(samples).degree(3).fit();
-    BSpline bspline4 = BSpline::Builder(samples).degree(4).fit();
+    BSpline bspline1 = BSpline::Builder(dim_x, dim_y).degree(1).fit(samples);
+    BSpline bspline2 = BSpline::Builder(dim_x, dim_y).degree(2).fit(samples);
+    BSpline bspline3 = BSpline::Builder(dim_x, dim_y).degree(3).fit(samples);
+    BSpline bspline4 = BSpline::Builder(dim_x, dim_y).degree(4).fit(samples);
 
     if (!domainReductionTest(bspline1, bspline1))
         return false;
@@ -169,16 +175,19 @@ bool domainReductionTest1()
     std::vector<double> x1 = {0.75, 0.75};
     std::vector<double> x2 = {0.7, 0.8};
 
-    // Build B-splines that interpolate the samples
-    BSpline bspline1_ref = BSpline::Builder(samples).degree(1).fit();
-    BSpline bspline2_ref = BSpline::Builder(samples).degree(2).fit();
-    BSpline bspline3_ref = BSpline::Builder(samples).degree(3).fit();
-    BSpline bspline4_ref = BSpline::Builder(samples).degree(4).fit();
+    auto dim_x = samples.getDimX();
+    auto dim_y = samples.getDimY();
 
-    BSpline bspline1 = BSpline::Builder(samples).degree(1).fit();
-    BSpline bspline2 = BSpline::Builder(samples).degree(2).fit();
-    BSpline bspline3 = BSpline::Builder(samples).degree(3).fit();
-    BSpline bspline4 = BSpline::Builder(samples).degree(4).fit();
+    // Build B-splines that interpolate the samples
+    BSpline bspline1_ref = BSpline::Builder(dim_x, dim_y).degree(1).fit(samples);
+    BSpline bspline2_ref = BSpline::Builder(dim_x, dim_y).degree(2).fit(samples);
+    BSpline bspline3_ref = BSpline::Builder(dim_x, dim_y).degree(3).fit(samples);
+    BSpline bspline4_ref = BSpline::Builder(dim_x, dim_y).degree(4).fit(samples);
+
+    BSpline bspline1 = BSpline::Builder(dim_x, dim_y).degree(1).fit(samples);
+    BSpline bspline2 = BSpline::Builder(dim_x, dim_y).degree(2).fit(samples);
+    BSpline bspline3 = BSpline::Builder(dim_x, dim_y).degree(3).fit(samples);
+    BSpline bspline4 = BSpline::Builder(dim_x, dim_y).degree(4).fit(samples);
 
     {
         std::vector<double> lb = {0, 0};

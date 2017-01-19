@@ -28,18 +28,18 @@ x = np.arange(0, 11, 1)
 y = np.array([f1(x_i) for x_i in x])
 
 # Piecewise constant B-spline that interpolates the data
-b0 = splinter.BSplineBuilder(x, y, degree=0).fit()
+b0 = splinter.BSplineBuilder(1, 1, degree=0).fit(x, y)
 print(b0.get_control_points())
 print(b0.get_knot_vectors())
 
 # Linear B-spline that interpolates the data
-b1 = splinter.BSplineBuilder(x, y, degree=1).fit()
+b1 = splinter.BSplineBuilder(1, 1, degree=1).fit(x, y)
 
 # Quadratic B-spline that interpolates the data
-b2 = splinter.BSplineBuilder(x, y, degree=2).fit()
+b2 = splinter.BSplineBuilder(1, 1, degree=2).fit(x, y)
 
 # Cubic B-spline that interpolates the data
-b3 = splinter.BSplineBuilder(x, y, degree=3).fit()
+b3 = splinter.BSplineBuilder(1, 1, degree=3).fit(x, y)
 
 xd = np.arange(0, 10, .01)
 yd0 = b0.eval(xd)

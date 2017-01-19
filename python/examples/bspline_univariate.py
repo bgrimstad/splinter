@@ -31,5 +31,3 @@ yd = bs.eval(xd)
 plt.plot(xd, yd, label='B-spline')
 plt.legend(loc='upper right')
 plt.show()
-
-

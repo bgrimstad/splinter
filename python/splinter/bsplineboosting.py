@@ -52,6 +52,12 @@ class BSplineBoosting:
         """
         n = x.shape[0]
 
+        if not y.shape[0] == n:
+            raise ValueError("Number of samples in X and Y are not equal.")
+
+        dim_x = x.shape[1] if len(x.shape) > 1 else 1
+        dim_y = y.shape[1] if len(y.shape) > 1 else 1
+
         # Initialize first base learner
         self._estimators[0] = Const(np.mean(y) / self._learning_rate)
 
@@ -63,11 +69,11 @@ class BSplineBoosting:
             ss_tot = np.sum(np.apply_along_axis(np.square, 0, u_hat - np.mean(u_hat)))
 
             for j in range(n):
-                learners[j] = BSplineBuilder(x, u_hat,
+                learners[j] = BSplineBuilder(dim_x, dim_y,
                                              smoothing=splinter.BSplineBuilder.Smoothing.PSPLINE,
                                              alpha=self._alpha,
                                              knot_spacing=splinter.BSplineBuilder.KnotSpacing.EXPERIMENTAL,
-                                             num_basis_functions=20).fit()
+                                             num_basis_functions=20).fit(x, u_hat)
                 u_hat_est = learners[j].eval(x)
                 ss_res = np.sum(np.apply_along_axis(np.square, 0, u_hat - u_hat_est))
                 goodness[j] = 1 - (ss_res / ss_tot)

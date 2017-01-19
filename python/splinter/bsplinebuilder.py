@@ -29,11 +29,12 @@ class BSplineBuilder:
         def is_valid(value):
             return value in range(3)
 
-    def __init__(self, x, y, degree: int=3, smoothing: int=Smoothing.NONE, alpha: float=0.1,
+    def __init__(self, dim_x, dim_y, degree: int=3, smoothing: int=Smoothing.NONE, alpha: float=0.1,
                  knot_spacing: int=KnotSpacing.AS_SAMPLED, num_basis_functions: int=int(1e6)):
         self._handle = None  # Handle for referencing the c side of this object
-        self._datatable = DataTable(x, y)
-        self._num_basis_functions = [10 ** 3] * self._datatable.get_dim_x()
+        self._dim_x = dim_x
+        self._dim_y = dim_y
+        self._num_basis_functions = [10 ** 3] * self._dim_x
 
         self._degrees = None
         self._alpha = None
@@ -42,7 +43,7 @@ class BSplineBuilder:
         self._num_basis_functions = None
 
         f_handle_init = splinter._get_handle().splinter_bspline_builder_init
-        self._handle = splinter._call(f_handle_init, self._datatable._get_handle())
+        self._handle = splinter._call(f_handle_init, self._dim_x, self._dim_y)
         self.degree(degree)
         self.set_alpha(alpha)
         self.smoothing(smoothing)
@@ -52,9 +53,9 @@ class BSplineBuilder:
     def degree(self, degrees: Union[List[int], int]) -> 'BSplineBuilder':
         # If the value is a single number, make it a list of numVariables length
         if not isinstance(degrees, list):
-            degrees = [degrees] * self._datatable.get_dim_x()
+            degrees = [degrees] * self._dim_x
 
-        if len(degrees) != self._datatable.get_dim_x():
+        if len(degrees) != self._dim_x:
             raise ValueError("Inconsistent number of degrees.")
 
         valid_degrees = range(0, 6)
@@ -101,9 +102,9 @@ class BSplineBuilder:
     def num_basis_functions(self, num_basis_functions: Union[List[int], int]) -> 'BSplineBuilder':
         # If the value is a single number, make it a list of num_variables length
         if not isinstance(num_basis_functions, list):
-            num_basis_functions = [num_basis_functions] * self._datatable.get_dim_x()
+            num_basis_functions = [num_basis_functions] * self._dim_x
 
-        if len(num_basis_functions) != self._datatable.get_dim_x():
+        if len(num_basis_functions) != self._dim_x:
             raise ValueError("Inconsistent number of degrees.")
 
         for num_basis_func in num_basis_functions:
@@ -122,10 +123,10 @@ class BSplineBuilder:
         return self
 
     # Returns a handle to the created internal BSpline object
-    def fit(self) -> BSpline:
+    def fit(self, X, Y) -> BSpline:
+        data_table = DataTable(X, Y)
         f_handle = splinter._get_handle().splinter_bspline_builder_fit
-        bspline_handle = splinter._call(f_handle, self._handle)
-
+        bspline_handle = splinter._call(f_handle, self._handle, data_table._get_handle())
         return BSpline(bspline_handle)
 
     def __del__(self):

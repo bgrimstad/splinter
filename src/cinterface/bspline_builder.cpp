@@ -16,14 +16,13 @@ using namespace SPLINTER;
 extern "C"
 {
 
-splinter_obj_ptr splinter_bspline_builder_init(splinter_obj_ptr datatable_ptr)
+splinter_obj_ptr splinter_bspline_builder_init(int dim_x, int dim_y)
 {
     splinter_obj_ptr bspline_builder_ptr = nullptr;
 
     try
     {
-        DataTable *dataTable = get_datatable(datatable_ptr);
-        bspline_builder_ptr = new BSpline::Builder(*dataTable);
+        bspline_builder_ptr = new BSpline::Builder(dim_x, dim_y);
         bspline_builders.insert(bspline_builder_ptr);
     }
     catch (const Exception &e)
@@ -116,7 +115,7 @@ void splinter_bspline_builder_set_alpha(splinter_obj_ptr bspline_builder_ptr, do
     builder->alpha(alpha);
 }
 
-splinter_obj_ptr splinter_bspline_builder_fit(splinter_obj_ptr bspline_builder_ptr)
+splinter_obj_ptr splinter_bspline_builder_fit(splinter_obj_ptr bspline_builder_ptr, splinter_obj_ptr datatable_ptr)
 {
     auto builder = get_builder(bspline_builder_ptr);
     if (builder == nullptr)
@@ -124,9 +123,19 @@ splinter_obj_ptr splinter_bspline_builder_fit(splinter_obj_ptr bspline_builder_p
         return nullptr;
     }
 
-    auto bspline = builder->fit().clone();
-    bsplines.insert(bspline);
-    return bspline;
+    try
+    {
+        DataTable *dataTable = get_datatable(datatable_ptr);
+        auto bspline = builder->fit(*dataTable).clone();
+        bsplines.insert(bspline);
+        return bspline;
+    }
+    catch (const Exception &e)
+    {
+        set_error_string(e.what());
+    }
+
+    return nullptr;
 }
 
 void splinter_bspline_builder_delete(splinter_obj_ptr bspline_builder_ptr)

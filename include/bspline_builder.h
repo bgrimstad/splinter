@@ -63,7 +63,7 @@ enum class BSpline::KnotSpacing
 class SPLINTER_API BSpline::Builder
 {
 public:
-    Builder(const DataTable &data);
+    Builder(unsigned int dim_x, unsigned int dim_y);
 
     Builder& alpha(double alpha)
     {
@@ -78,28 +78,30 @@ public:
 
     Builder& degree(unsigned int degree)
     {
-        _degrees = getBSplineDegrees(_data.getDimX(), degree);
+        _degrees = getBSplineDegrees(_dim_x, degree);
         return *this;
     }
 
     Builder& degree(const std::vector<unsigned int> &degrees)
     {
-        if (degrees.size() != _data.getDimX())
-            throw Exception("BSpline::Builder: Inconsistent length on degree vector.");
+        if (degrees.size() != _dim_x)
+            throw Exception("BSpline::Builder::degree: Expected degree vector of length"
+                            + std::to_string(_dim_x) + ".");
         _degrees = degrees;
         return *this;
     }
 
     Builder& numBasisFunctions(unsigned int numBasisFunctions)
     {
-        _numBasisFunctions = std::vector<unsigned int>(_data.getDimX(), numBasisFunctions);
+        _numBasisFunctions = std::vector<unsigned int>(_dim_x, numBasisFunctions);
         return *this;
     }
 
     Builder& numBasisFunctions(const std::vector<unsigned int> &numBasisFunctions)
     {
-        if (numBasisFunctions.size() != _data.getDimX())
-            throw Exception("BSpline::Builder: Inconsistent length on numBasisFunctions vector.");
+        if (numBasisFunctions.size() != _dim_x)
+            throw Exception("BSpline::Builder::numBasisFunctions: Expected numBasisFunctions vector of length "
+                            + std::to_string(_dim_x) + ".");
         _numBasisFunctions = numBasisFunctions;
         return *this;
     }
@@ -116,32 +118,34 @@ public:
         return *this;
     }
 
-    // Build B-spline
-    BSpline fit() const;
+    // Fit B-spline to data
+    BSpline fit(const DataTable &data) const;
 
 private:
     Builder();
 
     std::vector<unsigned int> getBSplineDegrees(unsigned int numVariables, unsigned int degree)
     {
+        // TODO: Remove this test
         if (degree > 5)
             throw Exception("BSpline::Builder: Only degrees in range [0, 5] are supported.");
         return std::vector<unsigned int>(numVariables, degree);
     }
 
     // Control point computations
-    DenseMatrix computeControlPoints(const BSpline &bspline) const;
-    SparseMatrix computeBasisFunctionMatrix(const BSpline &bspline) const;
-    DenseMatrix stackSamplePointValues() const;
+    DenseMatrix computeControlPoints(const BSpline &bspline, const DataTable &data) const;
+    SparseMatrix computeBasisFunctionMatrix(const BSpline &bspline, const DataTable &data) const;
+    DenseMatrix stackSamplePointValues(const DataTable &data) const;
     // P-spline control point calculation
     SparseMatrix getSecondOrderFiniteDifferenceMatrix(const BSpline &bspline) const;
 
     // Computing knots
-    std::vector<std::vector<double>> computeKnotVectors() const;
+    std::vector<std::vector<double>> computeKnotVectors(const DataTable &data) const;
     std::vector<double> computeKnotVector(const std::vector<double> &values, unsigned int degree, unsigned int numBasisFunctions) const;
 
     // Member variables
-    DataTable _data;
+    unsigned int _dim_x;
+    unsigned int _dim_y;
     std::vector<unsigned int> _degrees;
     std::vector<unsigned int> _numBasisFunctions;
     KnotSpacing _knotSpacing;

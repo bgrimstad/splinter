@@ -41,7 +41,9 @@ TEST_CASE("Linear BSpline function" COMMON_TEXT " densely sampled", COMMON_TAGS 
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSpline::Builder(table).degree(1).fit();
+                                 auto dim_x = table.getDimX();
+                                 auto dim_y = table.getDimY();
+                                 BSpline bs = BSpline::Builder(dim_x, dim_y).degree(1).fit(table);
                                  return (Function*) new BSpline(bs);
                              }
                 ,
@@ -72,7 +74,9 @@ TEST_CASE("Linear BSpline function" COMMON_TEXT " sampled with medium density", 
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSpline::Builder(table).degree(1).fit();
+                                 auto dim_x = table.getDimX();
+                                 auto dim_y = table.getDimY();
+                                 BSpline bs = BSpline::Builder(dim_x, dim_y).degree(1).fit(table);
                                  return (Function*) new BSpline(bs);
                              }
                 ,
@@ -103,7 +107,9 @@ TEST_CASE("Linear BSpline function" COMMON_TEXT " sparsely sampled", COMMON_TAGS
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSpline::Builder(table).degree(1).fit();
+                                 auto dim_x = table.getDimX();
+                                 auto dim_y = table.getDimY();
+                                 BSpline bs = BSpline::Builder(dim_x, dim_y).degree(1).fit(table);
                                  return (Function*) new BSpline(bs);
                              }
                 ,
@@ -124,7 +130,9 @@ TEST_CASE("Linear BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::line
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSpline::Builder(table).degree(1).fit();
+                                 auto dim_x = table.getDimX();
+                                 auto dim_y = table.getDimY();
+                                 BSpline bs = BSpline::Builder(dim_x, dim_y).degree(1).fit(table);
                                  return (Function*) new BSpline(bs);
                              },
                              300,  // Number of points to sample at
@@ -155,7 +163,9 @@ TEST_CASE("Quadratic BSpline function" COMMON_TEXT " densely sampled", COMMON_TA
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSpline::Builder(table).degree(2).fit();
+                                 auto dim_x = table.getDimX();
+                                 auto dim_y = table.getDimY();
+                                 BSpline bs = BSpline::Builder(dim_x, dim_y).degree(2).fit(table);
                                  return (Function*) new BSpline(bs);
                              },
                              5000,  // Number of points to sample at
@@ -185,7 +195,9 @@ TEST_CASE("Quadratic BSpline function" COMMON_TEXT " sampled with normal density
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSpline::Builder(table).degree(2).fit();
+                                 auto dim_x = table.getDimX();
+                                 auto dim_y = table.getDimY();
+                                 BSpline bs = BSpline::Builder(dim_x, dim_y).degree(2).fit(table);
                                  return (Function*) new BSpline(bs);
                              },
                              500,  // Number of points to sample at
@@ -215,7 +227,9 @@ TEST_CASE("Quadratic BSpline function" COMMON_TEXT " sparsely sampled", COMMON_T
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSpline::Builder(table).degree(2).fit();
+                                 auto dim_x = table.getDimX();
+                                 auto dim_y = table.getDimY();
+                                 BSpline bs = BSpline::Builder(dim_x, dim_y).degree(2).fit(table);
                                  return (Function*) new BSpline(bs);
                              },
                              50,  // Number of points to sample at
@@ -235,7 +249,9 @@ TEST_CASE("Quadratic BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::q
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSpline::Builder(table).degree(2).fit();
+                                 auto dim_x = table.getDimX();
+                                 auto dim_y = table.getDimY();
+                                 BSpline bs = BSpline::Builder(dim_x, dim_y).degree(2).fit(table);
                                  return (Function*) new BSpline(bs);
                              },
                              300,  // Number of points to sample at
@@ -266,7 +282,9 @@ TEST_CASE("Cubic BSpline function" COMMON_TEXT " densely sampled", COMMON_TAGS "
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSpline::Builder(table).degree(3).fit();
+                                 auto dim_x = table.getDimX();
+                                 auto dim_y = table.getDimY();
+                                 BSpline bs = BSpline::Builder(dim_x, dim_y).degree(3).fit(table);
                                  return (Function*) new BSpline(bs);
                              },
                              5000,  // Number of points to sample at
@@ -296,7 +314,9 @@ TEST_CASE("Cubic BSpline function" COMMON_TEXT " sampled with normal density", C
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSpline::Builder(table).degree(3).fit();
+                                 auto dim_x = table.getDimX();
+                                 auto dim_y = table.getDimY();
+                                 BSpline bs = BSpline::Builder(dim_x, dim_y).degree(3).fit(table);
                                  return (Function*) new BSpline(bs);
                              },
                              500,  // Number of points to sample at
@@ -326,7 +346,9 @@ TEST_CASE("Cubic BSpline function" COMMON_TEXT " sparsely sampled", COMMON_TAGS 
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSpline::Builder(table).degree(3).fit();
+                                 auto dim_x = table.getDimX();
+                                 auto dim_y = table.getDimY();
+                                 BSpline bs = BSpline::Builder(dim_x, dim_y).degree(3).fit(table);
                                  return (Function*) new BSpline(bs);
                              },
                              80,  // Number of points to sample at
@@ -346,7 +368,9 @@ TEST_CASE("Cubic BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::cubic
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSpline::Builder(table).degree(3).fit();
+                                 auto dim_x = table.getDimX();
+                                 auto dim_y = table.getDimY();
+                                 BSpline bs = BSpline::Builder(dim_x, dim_y).degree(3).fit(table);
                                  return (Function*) new BSpline(bs);
                              },
                              300,  // Number of points to sample at
@@ -377,7 +401,9 @@ TEST_CASE("Quartic BSpline function" COMMON_TEXT " densely sampled", COMMON_TAGS
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSpline::Builder(table).degree(4).fit();
+                                 auto dim_x = table.getDimX();
+                                 auto dim_y = table.getDimY();
+                                 BSpline bs = BSpline::Builder(dim_x, dim_y).degree(4).fit(table);
                                  return (Function*) new BSpline(bs);
                              },
                              5000,  // Number of points to sample at
@@ -407,7 +433,9 @@ TEST_CASE("Quartic BSpline function" COMMON_TEXT " sampled with normal density",
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSpline::Builder(table).degree(4).fit();
+                                 auto dim_x = table.getDimX();
+                                 auto dim_y = table.getDimY();
+                                 BSpline bs = BSpline::Builder(dim_x, dim_y).degree(4).fit(table);
                                  return (Function*) new BSpline(bs);
                              },
                              500,  // Number of points to sample at
@@ -437,7 +465,9 @@ TEST_CASE("Quartic BSpline function" COMMON_TEXT " sparsely sampled", COMMON_TAG
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSpline::Builder(table).degree(4).fit();
+                                 auto dim_x = table.getDimX();
+                                 auto dim_y = table.getDimY();
+                                 BSpline bs = BSpline::Builder(dim_x, dim_y).degree(4).fit(table);
                                  return (Function*) new BSpline(bs);
                              },
                              200,  // Number of points to sample at
@@ -457,7 +487,9 @@ TEST_CASE("Quartic BSpline jacobian" COMMON_TEXT, COMMON_TAGS "[bsplinetype::qua
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSpline::Builder(table).degree(4).fit();
+                                 auto dim_x = table.getDimX();
+                                 auto dim_y = table.getDimY();
+                                 BSpline bs = BSpline::Builder(dim_x, dim_y).degree(4).fit(table);
                                  return (Function*) new BSpline(bs);
                              },
                              300,  // Number of points to sample at
@@ -479,12 +511,12 @@ TEST_CASE("B-spline approximation of zero function (sparse)", COMMON_TAGS "[zero
         for (auto x1_i : x1)
             data.addSample({x0_i, x1_i}, .0);
 
-    REQUIRE_NOTHROW(BSpline::Builder(data).degree(0).fit());
-    REQUIRE_NOTHROW(BSpline::Builder(data).degree(1).fit());
-    REQUIRE_NOTHROW(BSpline::Builder(data).degree(2).fit());
-    REQUIRE_NOTHROW(BSpline::Builder(data).degree(3).fit());
-    REQUIRE_NOTHROW(BSpline::Builder(data).degree(4).fit());
-    REQUIRE_NOTHROW(BSpline::Builder(data).degree(5).fit());
+    REQUIRE_NOTHROW(BSpline::Builder(2, 1).degree(0).fit(data));
+    REQUIRE_NOTHROW(BSpline::Builder(2, 1).degree(1).fit(data));
+    REQUIRE_NOTHROW(BSpline::Builder(2, 1).degree(2).fit(data));
+    REQUIRE_NOTHROW(BSpline::Builder(2, 1).degree(3).fit(data));
+    REQUIRE_NOTHROW(BSpline::Builder(2, 1).degree(4).fit(data));
+    REQUIRE_NOTHROW(BSpline::Builder(2, 1).degree(5).fit(data));
 }
 
 // TESTING INTERPOLATION OF ZERO FUNCTION (DENSE SOLVER)
@@ -499,10 +531,10 @@ TEST_CASE("B-spline approximation of zero function (dense)", COMMON_TAGS "[zero-
         for (auto x1_i : x1)
             data.addSample({x0_i, x1_i}, .0);
 
-    REQUIRE_NOTHROW(BSpline::Builder(data).degree(0).fit());
-    REQUIRE_NOTHROW(BSpline::Builder(data).degree(1).fit());
-    REQUIRE_NOTHROW(BSpline::Builder(data).degree(2).fit());
-    REQUIRE_NOTHROW(BSpline::Builder(data).degree(3).fit());
-    REQUIRE_NOTHROW(BSpline::Builder(data).degree(4).fit());
-    REQUIRE_NOTHROW(BSpline::Builder(data).degree(5).fit());
+    REQUIRE_NOTHROW(BSpline::Builder(2, 1).degree(0).fit(data));
+    REQUIRE_NOTHROW(BSpline::Builder(2, 1).degree(1).fit(data));
+    REQUIRE_NOTHROW(BSpline::Builder(2, 1).degree(2).fit(data));
+    REQUIRE_NOTHROW(BSpline::Builder(2, 1).degree(3).fit(data));
+    REQUIRE_NOTHROW(BSpline::Builder(2, 1).degree(4).fit(data));
+    REQUIRE_NOTHROW(BSpline::Builder(2, 1).degree(5).fit(data));
 }

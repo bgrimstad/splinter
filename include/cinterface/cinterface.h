@@ -141,10 +141,11 @@ SPLINTER_API void splinter_datatable_delete(splinter_obj_ptr datatable_ptr);
 /**
  * Create a new BSpline::Builder.
  *
- * @param datatable_ptr The datatable to create the BSpline::Builder from.
+ * @param dim_x Dimension of domain (number of inputs)
+ * @param dim_y Dimension of codomain (number of outputs)
  * @return Pointer to the created BSplineBuilder.
  */
-SPLINTER_API splinter_obj_ptr splinter_bspline_builder_init(splinter_obj_ptr datatable_ptr);
+SPLINTER_API splinter_obj_ptr splinter_bspline_builder_init(int dim_x, int dim_y);
 
 /**
  * Set the degree of the BSplineBuilder.
@@ -192,9 +193,10 @@ SPLINTER_API void splinter_bspline_builder_set_alpha(splinter_obj_ptr bspline_bu
  * Build the BSpline with the parameters of the Builder.
  *
  * @param bspline_builder_ptr The Builder to "build the BSpline with".
+ * @param datatable_ptr The datatable to create the BSpline::Builder from.
  * @return Pointer to the created BSpline.
  */
-SPLINTER_API splinter_obj_ptr splinter_bspline_builder_fit(splinter_obj_ptr bspline_builder_ptr);
+SPLINTER_API splinter_obj_ptr splinter_bspline_builder_fit(splinter_obj_ptr bspline_builder_ptr, splinter_obj_ptr datatable_ptr);
 
 /**
  * Free the memory of the internal Builder
