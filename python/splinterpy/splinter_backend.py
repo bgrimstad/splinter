@@ -61,6 +61,7 @@ class SplinterBackend:
             out(str(e))
             self._handle = None
 
+
     @property
     def handle(self):
         """
@@ -69,7 +70,7 @@ class SplinterBackend:
         :return:
         """
         if self._handle is None:
-            raise Exception("The SPLINTER back-end has not been loaded!\n"\
+            raise Exception("The SPLINTER back-end has not been loaded!\n"
                     + "You can do it with splinter_py.load(\"/path/to/libsplinter-x-y.so\")")
         return self._handle
 
@@ -109,115 +110,47 @@ class SplinterBackend:
 
         this = self
         def set_signature(function_name: str, return_type, *parameters):
-            this._handle[function_name].restype = return_type
-            this._handle[function_name].argtypes = list(*parameters)
+            function = getattr(this._handle, function_name)
 
-        self._handle.splinter_get_error.restype = c_int
-        self._handle.splinter_get_error.argtypes = []
-
-        self._handle.splinter_get_error_string.restype = c_char_p
-        self._handle.splinter_get_error_string.argtypes = []
+            setattr(function, 'restype', return_type)
+            setattr(function, 'argtypes', list(parameters))
 
 
-        self._handle.splinter_datatable_init.restype = handle_type
-        self._handle.splinter_datatable_init.argtypes = []
+        set_signature('splinter_get_error', c_int)
+        set_signature('splinter_get_error_string', c_char_p)
 
-        self._handle.splinter_datatable_load_init.restype = handle_type
-        self._handle.splinter_datatable_load_init.argtypes = [c_char_p]
+        set_signature('splinter_datatable_init', handle_type)
+        set_signature('splinter_datatable_load_init', handle_type, c_char_p)
+        set_signature('splinter_datatable_add_samples_row_major', c_void, handle_type, c_double_p, c_int, c_double_p, c_int, c_int)
+        set_signature('splinter_datatable_get_dim_x', c_int, handle_type)
+        set_signature('splinter_datatable_get_dim_y', c_int, handle_type)
+        set_signature('splinter_datatable_get_num_samples', c_int, handle_type)
+        set_signature('splinter_datatable_save', c_void, handle_type, c_char_p)
+        set_signature('splinter_datatable_delete', c_void, handle_type)
 
-        self._handle.splinter_datatable_add_samples_row_major.restype = c_void
-        self._handle.splinter_datatable_add_samples_row_major.argtypes = [handle_type, c_double_p, c_int, c_double_p, c_int, c_int]
-
-        self._handle.splinter_datatable_get_dim_x.restype = c_int
-        self._handle.splinter_datatable_get_dim_x.argtypes = [handle_type]
-
-        self._handle.splinter_datatable_get_dim_y.restype = c_int
-        self._handle.splinter_datatable_get_dim_y.argtypes = [handle_type]
-
-        self._handle.splinter_datatable_get_num_samples.restype = c_int
-        self._handle.splinter_datatable_get_num_samples.argtypes = [handle_type]
-
-        self._handle.splinter_datatable_save.restype = c_void
-        self._handle.splinter_datatable_save.argtypes = [handle_type, c_char_p]
-
-        self._handle.splinter_datatable_delete.restype = c_void
-        self._handle.splinter_datatable_delete.argtypes = [handle_type]
-
-
-        self._handle.splinter_bspline_builder_init.restype = handle_type
-        self._handle.splinter_bspline_builder_init.argtypes = [handle_type]
-
-        self._handle.splinter_bspline_builder_set_degree.restype = c_void
-        self._handle.splinter_bspline_builder_set_degree.argtypes = [handle_type, c_int_p, c_int]
-
-        self._handle.splinter_bspline_builder_set_num_basis_functions.restype = c_void
-        self._handle.splinter_bspline_builder_set_num_basis_functions.argtypes = [handle_type, c_int_p, c_int]
-
-        self._handle.splinter_bspline_builder_set_knot_spacing.restype = c_void
-        self._handle.splinter_bspline_builder_set_knot_spacing.argtypes = [handle_type, c_int]
-
-        # self._handle.splinter_bspline_builder_set_smoothing.restype = c_void
-        # self._handle.splinter_bspline_builder_set_smoothing.argtypes = [handle_type, c_int]
-        #
-        # self._handle.splinter_bspline_builder_set_alpha.restype = c_void
-        # self._handle.splinter_bspline_builder_set_alpha.argtypes = [handle_type, c_double]
-
-        self._handle.splinter_bspline_builder_fit.restype = handle_type
-        self._handle.splinter_bspline_builder_fit.argtypes = [handle_type, handle_type, c_int, c_double]
-
-        self._handle.splinter_bspline_builder_delete.restype = c_void
-        self._handle.splinter_bspline_builder_delete.argtypes = [handle_type]
-
-        self._handle.splinter_bspline_param_init.restype = handle_type
-        self._handle.splinter_bspline_param_init.argtypes = [c_int, c_int, c_double_p, c_int, c_double_p, c_int_p, c_int_p]
-
-        self._handle.splinter_bspline_load_init.restype = handle_type
-        self._handle.splinter_bspline_load_init.argtypes = [c_char_p]
-
-        self._handle.splinter_bspline_get_knot_vector_sizes.restype = c_int_p
-        self._handle.splinter_bspline_get_knot_vector_sizes.argtypes = [handle_type]
-
-        self._handle.splinter_bspline_get_knot_vectors.restype = c_double_p
-        self._handle.splinter_bspline_get_knot_vectors.argtypes = [handle_type]
-
-        self._handle.splinter_bspline_get_num_control_points.restype = c_int
-        self._handle.splinter_bspline_get_num_control_points.argtypes = [handle_type]
-
-        self._handle.splinter_bspline_get_control_points.restype = c_double_p
-        self._handle.splinter_bspline_get_control_points.argtypes = [handle_type]
-
-        self._handle.splinter_bspline_get_knot_averages.restype = c_double_p
-        self._handle.splinter_bspline_get_knot_averages.argtypes = [handle_type]
-
-        self._handle.splinter_bspline_get_basis_degrees.restype = c_int_p
-        self._handle.splinter_bspline_get_basis_degrees.argtypes = [handle_type]
-
-        self._handle.splinter_bspline_eval_row_major.restype = c_double_p
-        self._handle.splinter_bspline_eval_row_major.argtypes = [handle_type, c_double_p, c_int]
-
-        self._handle.splinter_bspline_eval_jacobian_row_major.restype = c_double_p
-        self._handle.splinter_bspline_eval_jacobian_row_major.argtypes = [handle_type, c_double_p, c_int]
-
-        self._handle.splinter_bspline_get_dim_x.restype = c_int
-        self._handle.splinter_bspline_get_dim_x.argtypes = [handle_type]
-
-        self._handle.splinter_bspline_get_dim_y.restype = c_int
-        self._handle.splinter_bspline_get_dim_y.argtypes = [handle_type]
-
-        self._handle.splinter_bspline_save.restype = c_void
-        self._handle.splinter_bspline_save.argtypes = [handle_type, c_char_p]
-
-        self._handle.splinter_bspline_delete.restype = c_void
-        self._handle.splinter_bspline_delete.argtypes = [handle_type]
-
-        self._handle.splinter_bspline_insert_knots.restype = c_void
-        self._handle.splinter_bspline_insert_knots.argtypes = [handle_type, c_double, c_int, c_int]
-
-        self._handle.splinter_bspline_decompose_to_bezier_form.restype = c_void
-        self._handle.splinter_bspline_decompose_to_bezier_form.argtypes = [handle_type]
-
-        self._handle.splinter_bspline_copy.restype = handle_type
-        self._handle.splinter_bspline_copy.argtypes = [handle_type]
+        set_signature('splinter_bspline_builder_init', handle_type, handle_type)
+        set_signature('splinter_bspline_builder_set_degree', c_void, handle_type, c_int_p, c_int)
+        set_signature('splinter_bspline_builder_set_num_basis_functions', c_void, handle_type, c_int_p, c_int)
+        set_signature('splinter_bspline_builder_set_knot_spacing', c_void, handle_type, c_int)
+        set_signature('splinter_bspline_builder_fit', handle_type, handle_type, handle_type, c_int, c_double)
+        set_signature('splinter_bspline_builder_delete', c_void, handle_type)
+        set_signature('splinter_bspline_param_init', handle_type, c_int, c_int, c_double_p, c_int, c_double_p, c_int_p, c_int_p)
+        set_signature('splinter_bspline_load_init', handle_type, c_char_p)
+        set_signature('splinter_bspline_get_knot_vector_sizes', c_int_p, handle_type)
+        set_signature('splinter_bspline_get_knot_vectors', c_double_p, handle_type)
+        set_signature('splinter_bspline_get_num_control_points', c_int, handle_type)
+        set_signature('splinter_bspline_get_control_points', c_double_p, handle_type)
+        set_signature('splinter_bspline_get_knot_averages', c_double_p, handle_type)
+        set_signature('splinter_bspline_get_basis_degrees', c_int_p, handle_type)
+        set_signature('splinter_bspline_eval_row_major', c_double_p, handle_type, c_double_p, c_int)
+        set_signature('splinter_bspline_eval_jacobian_row_major', c_double_p, handle_type, c_double_p, c_int)
+        set_signature('splinter_bspline_get_dim_x', c_int, handle_type)
+        set_signature('splinter_bspline_get_dim_y', c_int, handle_type)
+        set_signature('splinter_bspline_save', c_void, handle_type, c_char_p)
+        set_signature('splinter_bspline_delete', c_void, handle_type)
+        set_signature('splinter_bspline_insert_knots', c_void, handle_type, c_double, c_int, c_int)
+        set_signature('splinter_bspline_decompose_to_bezier_form', c_void, handle_type)
+        set_signature('splinter_bspline_copy', handle_type, handle_type)
 
     def _locate_splinter(self) -> str:
         is_linux = platform.system() == 'Linux'
