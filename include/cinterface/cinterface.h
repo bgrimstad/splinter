@@ -174,29 +174,18 @@ SPLINTER_API void splinter_bspline_builder_set_num_basis_functions(splinter_obj_
 SPLINTER_API void splinter_bspline_builder_set_knot_spacing(splinter_obj_ptr bspline_builder_ptr, int knot_spacing);
 
 /**
- * Set the smoothing of the BSplineBuilder.
- *
- * @param bspline_builder_ptr The BSplineBuilder to set the knot spacing of.
- * @param smoothing The smoothing to use (actually an enum, see the implementation of this function for details).
- */
-SPLINTER_API void splinter_bspline_builder_set_smoothing(splinter_obj_ptr bspline_builder_ptr, int smoothing);
-
-/**
- * Set the alpha of the Builder.
- *
- * @param bspline_builder_ptr The Builder to set the alpha of.
- * @param alpha The new alpha to use (must be non-negative).
- */
-SPLINTER_API void splinter_bspline_builder_set_alpha(splinter_obj_ptr bspline_builder_ptr, double alpha);
-
-/**
  * Build the BSpline with the parameters of the Builder.
  *
  * @param bspline_builder_ptr The Builder to "build the BSpline with".
  * @param datatable_ptr The datatable to create the BSpline::Builder from.
+ * @param smoothing Smoothing type (actually an enum, see the implementation of this function for details)
+ * @param alpha Regularization/smoothing parameter (must be non-negative).
  * @return Pointer to the created BSpline.
  */
-SPLINTER_API splinter_obj_ptr splinter_bspline_builder_fit(splinter_obj_ptr bspline_builder_ptr, splinter_obj_ptr datatable_ptr);
+SPLINTER_API splinter_obj_ptr splinter_bspline_builder_fit(splinter_obj_ptr bspline_builder_ptr,
+                                                           splinter_obj_ptr datatable_ptr,
+                                                           int smoothing,
+                                                           double alpha);
 
 /**
  * Free the memory of the internal Builder

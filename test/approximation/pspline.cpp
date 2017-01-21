@@ -31,9 +31,7 @@ TEST_CASE("PSpline function" COMMON_TEXT, COMMON_TAGS "[function-value]")
                              [](const DataTable &table)
                              {
                                  BSpline bs = BSpline::Builder(table.getDimX(), table.getDimY())
-                                         .smoothing(BSpline::Smoothing::PSPLINE)
-                                         .alpha(0.03)
-                                         .fit(table);
+                                         .fit(table, BSpline::Smoothing::PSPLINE, 0.03);
                                  return (Function*) new BSpline(bs);
                              },
                              300,  // Number of points to sample at
@@ -54,11 +52,9 @@ TEST_CASE("PSpline function2" COMMON_TEXT, COMMON_TAGS "[function-value2]")
                              [](const DataTable &table)
                              {
                                  BSpline bs = BSpline::Builder(table.getDimX(), table.getDimY())
-                                         .smoothing(BSpline::Smoothing::PSPLINE)
                                          .knotSpacing(BSpline::KnotSpacing::EXPERIMENTAL)
                                          .numBasisFunctions(10)
-                                         .alpha(0.01)
-                                         .fit(table);
+                                         .fit(table, BSpline::Smoothing::PSPLINE, 0.01);
                                  return (Function*) new BSpline(bs);
                              },
                              300,  // Number of points to sample at
@@ -79,9 +75,7 @@ TEST_CASE("PSpline jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian]")
                              [](const DataTable &table)
                              {
                                  BSpline bs = BSpline::Builder(table.getDimX(), table.getDimY())
-                                         .smoothing(BSpline::Smoothing::PSPLINE)
-                                         .alpha(0.03)
-                                         .fit(table);
+                                         .fit(table, BSpline::Smoothing::PSPLINE, 0.03);
                                  return (Function*) new BSpline(bs);
                              },
                              300,  // Number of points to sample at

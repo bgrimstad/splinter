@@ -24,22 +24,23 @@ BSpline::Builder::Builder(unsigned int dim_x, unsigned int dim_y)
           _dim_y(dim_y),
           _degrees(getBSplineDegrees(_dim_x, 3)),
           _numBasisFunctions(std::vector<unsigned int>(_dim_x, 1)),
-          _knotSpacing(KnotSpacing::AS_SAMPLED),
-          _smoothing(Smoothing::NONE),
-          _alpha(0.1)
+          _knotSpacing(KnotSpacing::AS_SAMPLED)
 {
 }
 
 /*
  * Fit B-spline to data
  */
-BSpline BSpline::Builder::fit(const DataTable &data) const
+BSpline BSpline::Builder::fit(const DataTable &data, Smoothing smoothing, double alpha) const
 {
     if (data.getDimX() != _dim_x)
         throw Exception("BSpline::Builder::fit: Expected " + std::to_string(_dim_x) + " input variables.");
 
     if (data.getDimY() != _dim_y)
         throw Exception("BSpline::Builder::fit: Expected " + std::to_string(_dim_y) + " output variables.");
+
+    if (alpha < 0)
+        throw Exception("BSpline::Builder::fit: alpha must be non-negative.");
 
 #ifndef NDEBUG
     if (!data.isGridComplete())
@@ -53,7 +54,7 @@ BSpline BSpline::Builder::fit(const DataTable &data) const
     auto bspline = BSpline(_dim_x, _dim_y, knotVectors, _degrees);
 
     // Compute coefficients from samples and update B-spline
-    auto coefficients = computeControlPoints(bspline, data);
+    auto coefficients = computeControlPoints(bspline, data, smoothing, alpha);
     bspline.setControlPoints(coefficients);
 
     return bspline;
@@ -69,13 +70,16 @@ BSpline BSpline::Builder::fit(const DataTable &data) const
  * R = Regularization matrix,
  * alpha = regularization parameter.
  */
-DenseMatrix BSpline::Builder::computeControlPoints(const BSpline &bspline, const DataTable &data) const
+DenseMatrix BSpline::Builder::computeControlPoints(const BSpline &bspline,
+                                                   const DataTable &data,
+                                                   Smoothing smoothing,
+                                                   double alpha) const
 {
     SparseMatrix B = computeBasisFunctionMatrix(bspline, data);
     SparseMatrix A = B;
     DenseMatrix b = stackSamplePointValues(data);
 
-    if (_smoothing == Smoothing::IDENTITY)
+    if (smoothing == Smoothing::IDENTITY)
     {
         /*
          * Computing B-spline coefficients with a regularization term
@@ -92,9 +96,9 @@ DenseMatrix BSpline::Builder::computeControlPoints(const BSpline &bspline, const
 
         auto I = SparseMatrix(A.cols(), A.cols());
         I.setIdentity();
-        A += _alpha*I;
+        A += alpha*I;
     }
-    else if (_smoothing == Smoothing::PSPLINE)
+    else if (smoothing == Smoothing::PSPLINE)
     {
         /*
          * The P-Spline is a smooting B-spline which relaxes the interpolation constraints on the control points to allow
@@ -127,7 +131,7 @@ DenseMatrix BSpline::Builder::computeControlPoints(const BSpline &bspline, const
         SparseMatrix D = getSecondOrderFiniteDifferenceMatrix(bspline);
 
         // Left-hand side matrix
-        A = Bt*W*B + _alpha*D.transpose()*D;
+        A = Bt*W*B + alpha*D.transpose()*D;
 
         // Compute right-hand side matrices
         b = Bt*W*b;

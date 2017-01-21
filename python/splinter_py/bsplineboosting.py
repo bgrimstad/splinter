@@ -60,6 +60,10 @@ class BSplineBoosting:
         # Initialize first base learner
         self._estimators[0] = Const(np.mean(y) / self._learning_rate)
 
+        # P-spline configuration
+        EQUI_KNOTS = BSplineBuilder.KnotSpacing.EXPERIMENTAL
+        PSPLINE = BSplineBuilder.Smoothing.PSPLINE
+
         for i in range(1, self._n_estimators):
             u_hat = y - self.eval(x)
 
@@ -69,10 +73,8 @@ class BSplineBoosting:
 
             for j in range(n):
                 learners[j] = BSplineBuilder(dim_x, dim_y,
-                                             smoothing=BSplineBuilder.Smoothing.PSPLINE,
-                                             alpha=self._alpha,
-                                             knot_spacing=BSplineBuilder.KnotSpacing.EXPERIMENTAL,
-                                             num_basis_functions=20).fit(x, u_hat)
+                                             knot_spacing=EQUI_KNOTS,
+                                             num_basis_functions=20).fit(x, u_hat, smoothing=PSPLINE, alpha=self._alpha)
                 u_hat_est = learners[j].eval(x)
                 ss_res = np.sum(np.apply_along_axis(np.square, 0, u_hat - u_hat_est))
                 goodness[j] = 1 - (ss_res / ss_tot)

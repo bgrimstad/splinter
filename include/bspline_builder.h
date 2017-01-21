@@ -65,15 +65,6 @@ class SPLINTER_API BSpline::Builder
 public:
     Builder(unsigned int dim_x, unsigned int dim_y);
 
-    Builder& alpha(double alpha)
-    {
-        if (alpha < 0)
-            throw Exception("BSpline::Builder::alpha: alpha must be non-negative.");
-
-        _alpha = alpha;
-        return *this;
-    }
-
     // Set build options
 
     Builder& degree(unsigned int degree)
@@ -112,14 +103,8 @@ public:
         return *this;
     }
 
-    Builder& smoothing(Smoothing smoothing)
-    {
-        _smoothing = smoothing;
-        return *this;
-    }
-
     // Fit B-spline to data
-    BSpline fit(const DataTable &data) const;
+    BSpline fit(const DataTable &data, Smoothing smoothing = Smoothing::NONE, double alpha = .1) const;
 
 private:
     Builder();
@@ -133,15 +118,23 @@ private:
     }
 
     // Control point computations
-    DenseMatrix computeControlPoints(const BSpline &bspline, const DataTable &data) const;
+    DenseMatrix computeControlPoints(const BSpline &bspline,
+                                     const DataTable &data,
+                                     Smoothing smoothing,
+                                     double alpha) const;
+
     SparseMatrix computeBasisFunctionMatrix(const BSpline &bspline, const DataTable &data) const;
+
     DenseMatrix stackSamplePointValues(const DataTable &data) const;
+
     // P-spline control point calculation
     SparseMatrix getSecondOrderFiniteDifferenceMatrix(const BSpline &bspline) const;
 
     // Computing knots
     std::vector<std::vector<double>> computeKnotVectors(const DataTable &data) const;
-    std::vector<double> computeKnotVector(const std::vector<double> &values, unsigned int degree, unsigned int numBasisFunctions) const;
+
+    std::vector<double> computeKnotVector(const std::vector<double> &values, unsigned int degree,
+                                          unsigned int numBasisFunctions) const;
 
     // Member variables
     unsigned int _dim_x;
@@ -149,8 +142,6 @@ private:
     std::vector<unsigned int> _degrees;
     std::vector<unsigned int> _numBasisFunctions;
     KnotSpacing _knotSpacing;
-    Smoothing _smoothing;
-    double _alpha;
 };
 
 } // namespace SPLINTER

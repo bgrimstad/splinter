@@ -31,13 +31,13 @@ for i in range(11):
     y[i] = f1(i)
 
 # Cubic B-spline that interpolates the data (note that NONE is the default smoothing setting)
-b1 = splinter_py.BSplineBuilder(1, 1, smoothing=splinter_py.BSplineBuilder.Smoothing.NONE).fit(x, y)
+b1 = splinter_py.BSplineBuilder(1, 1).fit(x, y, smoothing=splinter_py.BSplineBuilder.Smoothing.NONE)
 
 # Cubic B-spline with regularization
-b2 = splinter_py.BSplineBuilder(1, 1, smoothing=splinter_py.BSplineBuilder.Smoothing.IDENTITY, alpha=0.1).fit(x, y)
+b2 = splinter_py.BSplineBuilder(1, 1).fit(x, y, smoothing=splinter_py.BSplineBuilder.Smoothing.IDENTITY, alpha=0.1)
 
 # Cubic P-spline
-b3 = splinter_py.BSplineBuilder(1, 1, smoothing=splinter_py.BSplineBuilder.Smoothing.PSPLINE, alpha=0.1).fit(x, y)
+b3 = splinter_py.BSplineBuilder(1, 1).fit(x, y, smoothing=splinter_py.BSplineBuilder.Smoothing.PSPLINE, alpha=0.1)
 
 n = 1000
 xd = [0.]*n

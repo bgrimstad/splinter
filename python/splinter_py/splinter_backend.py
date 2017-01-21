@@ -156,14 +156,14 @@ class SplinterBackend:
         self._handle.splinter_bspline_builder_set_knot_spacing.restype = c_void
         self._handle.splinter_bspline_builder_set_knot_spacing.argtypes = [handle_type, c_int]
 
-        self._handle.splinter_bspline_builder_set_smoothing.restype = c_void
-        self._handle.splinter_bspline_builder_set_smoothing.argtypes = [handle_type, c_int]
-
-        self._handle.splinter_bspline_builder_set_alpha.restype = c_void
-        self._handle.splinter_bspline_builder_set_alpha.argtypes = [handle_type, c_double]
+        # self._handle.splinter_bspline_builder_set_smoothing.restype = c_void
+        # self._handle.splinter_bspline_builder_set_smoothing.argtypes = [handle_type, c_int]
+        #
+        # self._handle.splinter_bspline_builder_set_alpha.restype = c_void
+        # self._handle.splinter_bspline_builder_set_alpha.argtypes = [handle_type, c_double]
 
         self._handle.splinter_bspline_builder_fit.restype = handle_type
-        self._handle.splinter_bspline_builder_fit.argtypes = [handle_type, handle_type]
+        self._handle.splinter_bspline_builder_fit.argtypes = [handle_type, handle_type, c_int, c_double]
 
         self._handle.splinter_bspline_builder_delete.restype = c_void
         self._handle.splinter_bspline_builder_delete.argtypes = [handle_type]

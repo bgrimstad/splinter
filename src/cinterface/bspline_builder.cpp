@@ -80,42 +80,45 @@ void splinter_bspline_builder_set_knot_spacing(splinter_obj_ptr bspline_builder_
     }
 }
 
-void splinter_bspline_builder_set_smoothing(splinter_obj_ptr bspline_builder_ptr, int smoothing)
-{
-    auto builder = get_builder(bspline_builder_ptr);
-    if (builder != nullptr)
-    {
-        switch (smoothing)
-        {
-            case 0:
-                builder->smoothing(BSpline::Smoothing::NONE);
-                break;
-            case 1:
-                builder->smoothing(BSpline::Smoothing::IDENTITY);
-                break;
-            case 2:
-                builder->smoothing(BSpline::Smoothing::PSPLINE);
-                break;
-            default:
-                set_error_string("Error: Invalid smoothing!");
-                break;
-        }
-    }
-}
+//void splinter_bspline_builder_set_smoothing(splinter_obj_ptr bspline_builder_ptr, int smoothing)
+//{
+//    auto builder = get_builder(bspline_builder_ptr);
+//    if (builder != nullptr)
+//    {
+//        switch (smoothing)
+//        {
+//            case 0:
+//                builder->smoothing(BSpline::Smoothing::NONE);
+//                break;
+//            case 1:
+//                builder->smoothing(BSpline::Smoothing::IDENTITY);
+//                break;
+//            case 2:
+//                builder->smoothing(BSpline::Smoothing::PSPLINE);
+//                break;
+//            default:
+//                set_error_string("Error: Invalid smoothing!");
+//                break;
+//        }
+//    }
+//}
+//
+//void splinter_bspline_builder_set_alpha(splinter_obj_ptr bspline_builder_ptr, double alpha)
+//{
+//    auto builder = get_builder(bspline_builder_ptr);
+//    if (builder == nullptr)
+//    {
+//        // Error string will have been set by get_builder
+//        return;
+//    }
+//
+//    builder->alpha(alpha);
+//}
 
-void splinter_bspline_builder_set_alpha(splinter_obj_ptr bspline_builder_ptr, double alpha)
-{
-    auto builder = get_builder(bspline_builder_ptr);
-    if (builder == nullptr)
-    {
-        // Error string will have been set by get_builder
-        return;
-    }
-
-    builder->alpha(alpha);
-}
-
-splinter_obj_ptr splinter_bspline_builder_fit(splinter_obj_ptr bspline_builder_ptr, splinter_obj_ptr datatable_ptr)
+splinter_obj_ptr splinter_bspline_builder_fit(splinter_obj_ptr bspline_builder_ptr,
+                                              splinter_obj_ptr datatable_ptr,
+                                              int smoothing,
+                                              double alpha)
 {
     auto builder = get_builder(bspline_builder_ptr);
     if (builder == nullptr)
@@ -125,8 +128,25 @@ splinter_obj_ptr splinter_bspline_builder_fit(splinter_obj_ptr bspline_builder_p
 
     try
     {
+        auto _smoothing = BSpline::Smoothing::NONE;
+        switch (smoothing)
+        {
+            case 0:
+                _smoothing = BSpline::Smoothing::NONE;
+                break;
+            case 1:
+                _smoothing = BSpline::Smoothing::IDENTITY;
+                break;
+            case 2:
+                _smoothing = BSpline::Smoothing::PSPLINE;
+                break;
+            default:
+                set_error_string("Error: Invalid smoothing type!");
+                break;
+        }
+
         DataTable *dataTable = get_datatable(datatable_ptr);
-        auto bspline = builder->fit(*dataTable).clone();
+        auto bspline = builder->fit(*dataTable, _smoothing, alpha).clone();
         bsplines.insert(bspline);
         return bspline;
     }

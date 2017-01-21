@@ -43,11 +43,9 @@ y = noisy_func(x)
 yd = underlying_func(xd)
 
 # Just one P-spline
-pspline = splinter_py.BSplineBuilder(1, 1,
-                                     smoothing=splinter.BSplineBuilder.Smoothing.PSPLINE,
-                                     alpha=10.0,
-                                     knot_spacing=splinter.BSplineBuilder.KnotSpacing.EXPERIMENTAL,
-                                     num_basis_functions=20).fit(x, y)
+EQUI_KNOTS = splinter_py.BSplineBuilder.KnotSpacing.EXPERIMENTAL
+PSPLINE = splinter_py.BSplineBuilder.Smoothing.PSPLINE
+pspline = splinter_py.BSplineBuilder(1, 1, knot_spacing=EQUI_KNOTS, num_basis_functions=20).fit(x, y, smoothing=PSPLINE, alpha=10.0)
 
 yd_pspline = pspline.eval(xd)
 

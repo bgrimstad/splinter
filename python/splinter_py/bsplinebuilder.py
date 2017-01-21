@@ -29,24 +29,20 @@ class BSplineBuilder:
         def is_valid(value):
             return value in range(3)
 
-    def __init__(self, dim_x, dim_y, degree: int=3, smoothing: int=Smoothing.NONE, alpha: float=0.1,
-                 knot_spacing: int=KnotSpacing.AS_SAMPLED, num_basis_functions: int=int(1e6)):
+    def __init__(self, dim_x, dim_y, degree: int=3, knot_spacing: int=KnotSpacing.AS_SAMPLED,
+                 num_basis_functions: int=int(1e6)):
         self._handle = None  # Handle for referencing the c side of this object
         self._dim_x = dim_x
         self._dim_y = dim_y
         self._num_basis_functions = [10 ** 3] * self._dim_x
 
         self._degrees = None
-        self._alpha = None
-        self._smoothing = None
         self._knot_spacing = None
         self._num_basis_functions = None
 
         f_handle_init = splinter_backend_obj.handle.splinter_bspline_builder_init
         self._handle = splinter_backend_obj.call(f_handle_init, self._dim_x, self._dim_y)
         self.degree(degree)
-        self.set_alpha(alpha)
-        self.smoothing(smoothing)
         self.knot_spacing(knot_spacing)
         self.num_basis_functions(num_basis_functions)
 
@@ -67,26 +63,6 @@ class BSplineBuilder:
 
         f_handle = splinter_backend_obj.handle.splinter_bspline_builder_set_degree
         splinter_backend_obj.call(f_handle, self._handle, list_to_c_array_of_ints(self._degrees), len(self._degrees))
-        return self
-
-    def set_alpha(self, new_alpha: float) -> 'BSplineBuilder':
-        if new_alpha < 0:
-            raise ValueError("'alpha' must be non-negative.")
-
-        self._alpha = new_alpha
-
-        f_handle = splinter_backend_obj.handle.splinter_bspline_builder_set_alpha
-        splinter_backend_obj.call(f_handle, self._handle, self._alpha)
-        return self
-
-    def smoothing(self, smoothing: int) -> 'BSplineBuilder':
-        if not BSplineBuilder.Smoothing.is_valid(smoothing):
-            raise ValueError("Invalid smoothing: " + str(smoothing))
-
-        self._smoothing = smoothing
-
-        f_handle = splinter_backend_obj.handle.splinter_bspline_builder_set_smoothing
-        splinter_backend_obj.call(f_handle, self._handle, self._smoothing)
         return self
 
     def knot_spacing(self, knot_spacing: int) -> 'BSplineBuilder':
@@ -123,10 +99,17 @@ class BSplineBuilder:
         return self
 
     # Returns a handle to the created internal BSpline object
-    def fit(self, X, Y) -> BSpline:
+    def fit(self, X, Y, smoothing: int=Smoothing.NONE, alpha: float=0.1) -> BSpline:
+
+        if alpha < 0:
+            raise ValueError("'alpha' must be non-negative")
+
+        if not BSplineBuilder.Smoothing.is_valid(smoothing):
+            raise ValueError("Invalid smoothing type: " + str(smoothing))
+
         data_table = DataTable(X, Y)
         f_handle = splinter_backend_obj.handle.splinter_bspline_builder_fit
-        bspline_handle = splinter_backend_obj.call(f_handle, self._handle, data_table._get_handle())
+        bspline_handle = splinter_backend_obj.call(f_handle, self._handle, data_table._get_handle(), smoothing, alpha)
         return BSpline(bspline_handle)
 
     def __del__(self):

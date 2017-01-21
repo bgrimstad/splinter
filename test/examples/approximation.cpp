@@ -52,9 +52,7 @@ TEST_CASE("Approximation example", COMMON_TAGS)
     // Build penalized B-spline (P-spline) that smooths the samples
     BSpline pspline = BSpline::Builder(2, 1)
             .degree(3)
-            .smoothing(BSpline::Smoothing::PSPLINE)
-            .alpha(0.03)
-            .fit(samples);
+            .fit(samples, BSpline::Smoothing::PSPLINE, 0.03);
 
     /*
      * Evaluate the splines at x = (1,1)
