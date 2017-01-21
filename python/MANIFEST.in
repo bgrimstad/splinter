@@ -1,0 +1,3 @@
+graft splinter/lib
+include version
+include LICENSE

@@ -1,14 +1,111 @@
 from setuptools import setup
+import os
+import os.path
+import sys
+
+# Version of the Python interface.
+# The dev version can be whatever, and is only used for testing uploads to PyPI.
+# Leave this as '' to signify the version is not a dev version
+# Should be reset to 0 after every minor version change
+PYTHON_INTERFACE_DEV_VERSION = '19'
+
+version_file_name = 'version'  # Name of the file where the C++ back-end version is written
+interface_package_name = 'splinter_py'  # Both the name of the project and the name of the package
+library_files_dir_name = 'lib'  # Path to the compiled library files
+
+# Get the absolute path of the directory containing this file
+setup_py_dir_path = os.path.dirname(os.path.realpath(__file__))
+os.chdir(setup_py_dir_path)  # In case this script is being run from another directory
+splinter_python_interface_path = os.path.join(setup_py_dir_path, interface_package_name)
+
+version_file_path = os.path.join(setup_py_dir_path, interface_package_name, version_file_name)
+library_files_dir_path = os.path.join(setup_py_dir_path, interface_package_name, library_files_dir_name)
+
+# Verify that the library has been built
+# If these files don't exist, it means that the `make install` step hasn't been run.
+if not (os.path.exists(version_file_path) and os.path.exists(library_files_dir_path)):
+    print("Error: It seems that SPLINTER has not been built.\n\n"
+          + "Please note that to install the Python interface of SPLINTER from source,\n"
+          + "you first need to build the library. See the guide at TODO for more information.")
+    exit(1)
+
+# Read the C++ back-end version number.
+with open(version_file_path, 'r') as version_file:
+    splinter_version_string = version_file.read()
+
+splinter_major_version, splinter_minor_version = splinter_version_string.split('-')
+
+
+if PYTHON_INTERFACE_DEV_VERSION == '':
+    python_version_string = '{}.{}'.format(splinter_major_version,
+                                           splinter_minor_version)
+else:
+    python_version_string = '{}.{}.dev{}'.format(splinter_major_version,
+                                                 splinter_minor_version,
+                                                 PYTHON_INTERFACE_DEV_VERSION)
+
+
+def get_available_backends(lib_path):
+    """
+    Gets a list of the available back-ends by looking into the lib directory.
+    If there is at least one file in the directory that is supposed to contain a library file, this function
+    assumes that the library is available.
+    :param lib_path: Path to the lib directory
+    :return: List of tuples: [(os, architecture), ...]
+    """
+    lib_versions_available = []
+    for operating_system in os.listdir(lib_path):
+        operating_system_path = os.path.join(library_files_dir_path, operating_system)
+        if os.path.isdir(operating_system_path):
+            for arch in os.listdir(os.path.join(lib_path, operating_system)):
+                arch_path = os.path.join(operating_system_path, arch)
+                if os.path.isdir(arch_path):
+                    lib_versions_available.append((operating_system, arch))
+    return lib_versions_available
+
+
+def get_backend_binary_path(lib_path, operating_system, arch):
+    dir_path = os.path.join(lib_path, operating_system, arch)
+    files = os.listdir(dir_path)
+    # Shouldn't be more than one file per directory
+    return os.path.join(dir_path, files[0])
+
+
+# Make sure all required files will be installed by adding them to the package data list
+# Add version file to the package data list
+package_data = [version_file_path]
+# Add all available library files to the package data list
+for operating_system, arch in get_available_backends(library_files_dir_path):
+    package_data.append(get_backend_binary_path(library_files_dir_path, operating_system, arch))
+
+# If the action is to upload a package, provide a list of the available back-ends so the user can verify that
+# all the wanted back-ends are included
+if len(sys.argv) >= 3 and sys.argv[2] == "upload":
+    print("Included back-ends:")
+    oss = {}
+    for operating_system, arch in get_available_backends(library_files_dir_path):
+        if operating_system not in oss:
+            oss[operating_system] = []
+        oss[operating_system].append(arch)
+    for operating_system, archs in oss.items():
+        print("{}:".format(operating_system))
+        for arch in archs:
+            print("\t{}".format(arch))
+    answer = input("Proceed? (y/n): ")
+    if answer.lower() != "y":
+        exit(0)
 
 setup(
-    name='splinter-py',
-    version='4.0.dev0',
+    name=interface_package_name,
+    version=python_version_string,
     description='A library for multivariate function approximation using splines',
     url='http://github.com/bgrimstad/splinter',
     author='Bjarne Grimstad and others',
     author_email='bjarne.grimstad@gmail.com',
     license='MPL 2.0',
     keywords=['spline', 'interpolation', 'b-spline', 'approximation'],
-    packages=['splinter'],
-    zip_safe=False
+    packages=[interface_package_name],
+    # Guessing it is not zip safe because it needs to load the shared library
+    zip_safe=False,
+    package_data={interface_package_name: package_data}
 )
