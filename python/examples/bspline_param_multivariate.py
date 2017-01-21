@@ -9,14 +9,14 @@
 import numpy as np
 from os import sys, path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-import splinter_py
+import splinterpy
 
 # Only for dev purposes
 import os.path
 if os.path.isdir("/home/bjarne/"):
-    splinter_py.load("/home/bjarne/Code/C++/splinter/build/release/libsplinter-4-0.so")
+    splinterpy.load("/home/bjarne/Code/C++/splinter/build/release/libsplinter-4-0.so")
 elif os.path.isdir("/home/anders/"):
-    splinter_py.load("/home/anders/SPLINTER/build/debug/libsplinter-4-0.so")
+    splinterpy.load("/home/anders/SPLINTER/build/debug/libsplinter-4-0.so")
 
 # B-spline built from parameters: coefficients, knot vectors and degrees
 single_knot_vector = [k for k in np.linspace(-10, 10, 21)]
@@ -30,7 +30,7 @@ for i, kv in enumerate(knot_vectors):
 
 control_points = np.linspace(0, 100, num_control_points)
 
-bs = splinter_py.BSpline.init_from_param(control_points, knot_vectors, degrees)
+bs = splinterpy.BSpline.init_from_param(control_points, knot_vectors, degrees)
 
 xd = [0, 0, 0]
 yd = bs.eval(xd)

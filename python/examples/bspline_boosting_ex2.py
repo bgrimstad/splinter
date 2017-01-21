@@ -9,14 +9,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from os import sys, path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-import splinter_py
+import splinterpy
 
 # Only for dev purposes
 import os.path
 if os.path.isdir("/home/bjarne/"):
-    splinter_py.load("/home/bjarne/Code/C++/splinter/build/release/libsplinter-4-0.so")
+    splinterpy.load("/home/bjarne/Code/C++/splinter/build/release/libsplinter-4-0.so")
 elif os.path.isdir("/home/anders/"):
-    splinter_py.load("/home/anders/SPLINTER/build/debug/libsplinter-4-0.so")
+    splinterpy.load("/home/anders/SPLINTER/build/debug/libsplinter-4-0.so")
 
 
 def underlying_func(x: np.array):
@@ -29,11 +29,11 @@ def noisy_func(x: np.array):
 
 
 print("Testing stochastic gradient boosting with B-spline learners")
-fh = splinter_py.bsplineboosting.mse
+fh = splinterpy.bsplineboosting.mse
 a = np.array([3, 4, 5])
 b = np.array([2, 3, 3])
 print(fh(a, b))
-print(splinter_py.bsplineboosting.ls(b))
+print(splinterpy.bsplineboosting.ls(b))
 
 # Sampling
 x = np.arange(0, 20, 0.1)
@@ -42,14 +42,14 @@ xd = np.arange(-2, 22, 0.01)
 yd = underlying_func(xd)
 
 # Just one P-spline
-EQUI_KNOTS = splinter_py.BSplineBuilder.KnotSpacing.EXPERIMENTAL
-PSPLINE = splinter_py.BSplineBuilder.Smoothing.PSPLINE
-pspline = splinter_py.BSplineBuilder(1, 1, knot_spacing=EQUI_KNOTS, num_basis_functions=20).fit(x, y, smoothing=PSPLINE, alpha=10.0)
+EQUI_KNOTS = splinterpy.BSplineBuilder.KnotSpacing.EXPERIMENTAL
+PSPLINE = splinterpy.BSplineBuilder.Smoothing.PSPLINE
+pspline = splinterpy.BSplineBuilder(1, 1, knot_spacing=EQUI_KNOTS, num_basis_functions=20).fit(x, y, smoothing=PSPLINE, alpha=10.0)
 
 yd_pspline = pspline.eval(xd)
 
 # Boosting
-bb = splinter_py.BSplineBoosting(learning_rate=0.05, n_estimators=200, alpha=10.0)
+bb = splinterpy.BSplineBoosting(learning_rate=0.05, n_estimators=200, alpha=10.0)
 bb.fit(x, y)
 
 # Prediction

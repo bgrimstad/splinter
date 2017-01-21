@@ -13,14 +13,14 @@ from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 from os import sys, path, remove
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-import splinter_py
+import splinterpy
 
 # Only for dev purposes
 import os.path
 if os.path.isdir("/home/bjarne/"):
-    splinter_py.load("/home/bjarne/Code/C++/splinter/build/release/libsplinter-4-0.so")
+    splinterpy.load("/home/bjarne/Code/C++/splinter/build/release/libsplinter-4-0.so")
 elif os.path.isdir("/home/anders/"):
-    splinter_py.load("/home/anders/SPLINTER/build/debug/libsplinter-4-0.so")
+    splinterpy.load("/home/anders/SPLINTER/build/debug/libsplinter-4-0.so")
 
 
 # Example with two variables
@@ -44,7 +44,7 @@ for i in range(len(x1)):
         y.append(Y[i, j])
 
 # Cubic B-spline
-bspline = splinter_py.BSplineBuilder(2, 1, degree=[1, 3]).fit(x, y, smoothing=splinter_py.BSplineBuilder.Smoothing.NONE)
+bspline = splinterpy.BSplineBuilder(2, 1, degree=[1, 3]).fit(x, y, smoothing=splinterpy.BSplineBuilder.Smoothing.NONE)
 
 Zbs = Y
 
@@ -86,7 +86,7 @@ try:
     bspline.save("test.bspline")
 
     # Create BSpline from saved BSpline
-    bspline = splinter_py.BSpline("test.bspline")
+    bspline = splinterpy.BSpline("test.bspline")
 
 finally:
     remove("test.bspline")

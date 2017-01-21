@@ -253,10 +253,10 @@ install(
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-python/
 )
 # The Python interface reads the library version from this file
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/splinter-python/splinter_py/version ${VERSION})
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/splinter-python/splinterpy/version ${VERSION})
 install(
         TARGETS ${SHARED_LIBRARY}
-        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-python/splinter_py/lib/${OS_STRING}/${ARCH}
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-python/splinterpy/lib/${OS_STRING}/${ARCH}
 )
 
 # Install the header files (including Eigen) to the header directory

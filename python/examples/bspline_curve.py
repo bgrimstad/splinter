@@ -10,21 +10,21 @@ import numpy as np
 import matplotlib.pyplot as plt
 from os import sys, path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-import splinter_py
+import splinterpy
 
 # Only for dev purposes
 import os.path
 if os.path.isdir("/home/bjarne/"):
-    splinter_py.load("/home/bjarne/Code/C++/splinter/build/release/libsplinter-4-0.so")
+    splinterpy.load("/home/bjarne/Code/C++/splinter/build/release/libsplinter-4-0.so")
 elif os.path.isdir("/home/anders/"):
-    splinter_py.load("/home/anders/SPLINTER/build/debug/libsplinter-4-0.so")
+    splinterpy.load("/home/anders/SPLINTER/build/debug/libsplinter-4-0.so")
 
 
 # Example showing a B-spline curve with a clamped knot vector
 degree = [3]
 knots = [[0, 0, 0, 0, 1, 1, 1, 1]]
 control_points = [[0, 0], [1, 1], [2, 1], [3, 0]]
-bspline_curve = splinter_py.BSpline.init_from_param(control_points, knots, degree)
+bspline_curve = splinterpy.BSpline.init_from_param(control_points, knots, degree)
 
 # Evaluate B-spline curve for u in [0, 1]
 u = np.linspace(0, 1, 1000)

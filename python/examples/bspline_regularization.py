@@ -10,14 +10,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from os import sys, path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-import splinter_py
+import splinterpy
 
 # Only for dev purposes
 import os.path
 if os.path.isdir("/home/bjarne/"):
-    splinter_py.load("/home/bjarne/Code/C++/splinter/build/release/libsplinter-4-0.so")
+    splinterpy.load("/home/bjarne/Code/C++/splinter/build/release/libsplinter-4-0.so")
 elif os.path.isdir("/home/anders/"):
-    splinter_py.load("/home/anders/SPLINTER/build/debug/libsplinter-4-0.so")
+    splinterpy.load("/home/anders/SPLINTER/build/debug/libsplinter-4-0.so")
 
 
 # Example with one variable
@@ -31,13 +31,13 @@ for i in range(11):
     y[i] = f1(i)
 
 # Cubic B-spline that interpolates the data (note that NONE is the default smoothing setting)
-b1 = splinter_py.BSplineBuilder(1, 1).fit(x, y, smoothing=splinter_py.BSplineBuilder.Smoothing.NONE)
+b1 = splinterpy.BSplineBuilder(1, 1).fit(x, y, smoothing=splinterpy.BSplineBuilder.Smoothing.NONE)
 
 # Cubic B-spline with regularization
-b2 = splinter_py.BSplineBuilder(1, 1).fit(x, y, smoothing=splinter_py.BSplineBuilder.Smoothing.IDENTITY, alpha=0.1)
+b2 = splinterpy.BSplineBuilder(1, 1).fit(x, y, smoothing=splinterpy.BSplineBuilder.Smoothing.IDENTITY, alpha=0.1)
 
 # Cubic P-spline
-b3 = splinter_py.BSplineBuilder(1, 1).fit(x, y, smoothing=splinter_py.BSplineBuilder.Smoothing.PSPLINE, alpha=0.1)
+b3 = splinterpy.BSplineBuilder(1, 1).fit(x, y, smoothing=splinterpy.BSplineBuilder.Smoothing.PSPLINE, alpha=0.1)
 
 n = 1000
 xd = [0.]*n

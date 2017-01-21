@@ -12,14 +12,14 @@ from mpl_toolkits.mplot3d import Axes3D
 from math import sin
 from os import sys, path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-import splinter_py
+import splinterpy
 
 # Only for dev purposes
 import os.path
 if os.path.isdir("/home/bjarne/"):
-    splinter_py.load("/home/bjarne/Code/C++/splinter/build/release/libsplinter-4-0.so")
+    splinterpy.load("/home/bjarne/Code/C++/splinter/build/release/libsplinter-4-0.so")
 elif os.path.isdir("/home/anders/"):
-    splinter_py.load("/home/anders/SPLINTER/build/debug/libsplinter-4-0.so")
+    splinterpy.load("/home/anders/SPLINTER/build/debug/libsplinter-4-0.so")
 
 
 # Example showing a B-spline surface f : R^2 -> R^3 with clamped knot vectors
@@ -34,7 +34,7 @@ for u in np.linspace(0, 1, len(knots[0]) - degrees[0] - 1):
     for v in np.linspace(0, 1, len(knots[1]) - degrees[1] - 1):
         control_points.append([u, v, sin(10*u) + 0.01*v])
 
-bspline_surface = splinter_py.BSpline.init_from_param(control_points, knots, degrees)
+bspline_surface = splinterpy.BSpline.init_from_param(control_points, knots, degrees)
 
 # Evaluate
 u = np.linspace(0, 1, 40)

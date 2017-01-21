@@ -10,14 +10,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from os import sys, path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-import splinter_py
+import splinterpy
 
 # Only for dev purposes
 import os.path
 if os.path.isdir("/home/bjarne/"):
-    splinter_py.load("/home/bjarne/Code/C++/splinter/build/release/libsplinter-4-0.so")
+    splinterpy.load("/home/bjarne/Code/C++/splinter/build/release/libsplinter-4-0.so")
 elif os.path.isdir("/home/anders/"):
-    splinter_py.load("/home/anders/SPLINTER/build/debug/libsplinter-4-0.so")
+    splinterpy.load("/home/anders/SPLINTER/build/debug/libsplinter-4-0.so")
 
 
 # Example with one variable
@@ -28,18 +28,18 @@ x = np.arange(0, 11, 1)
 y = np.array([f1(x_i) for x_i in x])
 
 # Piecewise constant B-spline that interpolates the data
-b0 = splinter_py.BSplineBuilder(1, 1, degree=0).fit(x, y)
+b0 = splinterpy.BSplineBuilder(1, 1, degree=0).fit(x, y)
 print(b0.get_control_points())
 print(b0.get_knot_vectors())
 
 # Linear B-spline that interpolates the data
-b1 = splinter_py.BSplineBuilder(1, 1, degree=1).fit(x, y)
+b1 = splinterpy.BSplineBuilder(1, 1, degree=1).fit(x, y)
 
 # Quadratic B-spline that interpolates the data
-b2 = splinter_py.BSplineBuilder(1, 1, degree=2).fit(x, y)
+b2 = splinterpy.BSplineBuilder(1, 1, degree=2).fit(x, y)
 
 # Cubic B-spline that interpolates the data
-b3 = splinter_py.BSplineBuilder(1, 1, degree=3).fit(x, y)
+b3 = splinterpy.BSplineBuilder(1, 1, degree=3).fit(x, y)
 
 xd = np.arange(0, 10, .01)
 yd0 = b0.eval(xd)

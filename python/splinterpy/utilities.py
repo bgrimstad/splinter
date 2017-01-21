@@ -63,6 +63,6 @@ def flatten_list(l):
 
 def get_architecture():
     arch = "x86"
-    if sizeof(ctypes.c_void_p) == 8:
+    if ctypes.sizeof(ctypes.c_void_p) == 8:
         arch = "x86-64"
     return arch
