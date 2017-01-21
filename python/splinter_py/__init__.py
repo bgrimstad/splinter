@@ -11,20 +11,30 @@ from .bspline import BSpline
 from .bsplinebuilder import BSplineBuilder
 from .bsplineboosting import BSplineBoosting
 
-from .splinter import load
+from .splinter_backend import splinter_backend_obj
 
 try:
-    load()
+    splinter_backend_obj.load()
 except Exception as e:
     print(e)
 
+__version__ = splinter_backend_obj.__version__
+
+
 __all__ = [
-    "splinter",
-    "datatable",
+    "splinter_backend.py",
+    # "datatable",
     "bspline",
     "bsplinebuilder",
     "bsplineboosting"
 ]
 
-splinter.BSplineBuilder = bsplinebuilder.BSplineBuilder
-splinter.BSplineBoosting = bsplineboosting.BSplineBoosting
+
+def load(lib_file_path: str):
+    """
+    Attempt to load the SPLINTER back-end from the file at lib_file_path.
+    lib_file_path should be the shared library file (.so on Linux, etc.)
+    :param lib_file_path:
+    :return:
+    """
+    splinter_backend_obj.load(lib_file_path)

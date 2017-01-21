@@ -6,9 +6,8 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
-from . import splinter
+from .splinter_backend import splinter_backend_obj
 from .utilities import *
-import pandas as pd
 import numpy as np
 
 
@@ -27,8 +26,8 @@ class Function(object):
             raise Exception("Attempting to evaluate function with input that is not a multiple of the dimension of the"
                             "function! {} % {} != 0".format(len(x), self._dim_x))
 
-        f_handle = splinter._get_handle().splinter_bspline_eval_row_major
-        res = splinter._call(f_handle, self._handle, (c_double * len(x))(*x), len(x))
+        f_handle = splinter_backend_obj.handle.splinter_bspline_eval_row_major
+        res = splinter_backend_obj.call(f_handle, self._handle, list_to_c_array_of_doubles(x), len(x))
 
         results = []
         # Convert from ctypes array to Python list of lists
@@ -50,9 +49,10 @@ class Function(object):
 
         num_points = len(x) // self._dim_x
 
-        f_handle = splinter._get_handle().splinter_bspline_eval_jacobian_row_major
-        jac = splinter._call(f_handle, self._handle, (c_double * len(x))(*x), len(x))
+        f_handle = splinter_backend_obj.handle.splinter_bspline_eval_jacobian_row_major
+        jac = splinter_backend_obj.call(f_handle, self._handle, list_to_c_array_of_doubles(x), len(x))
 
+        # TODO: add support for self._dim_y > 1
         # Convert from ctypes array to Python list of lists
         # jacobians is a list of the jacobians in all evaluated points
         jacobians = []
@@ -67,8 +67,8 @@ class Function(object):
 
         num_points = len(x) // self._dim_x
 
-        f_handle = splinter._get_handle().splinter_bspline_eval_hessian_row_major
-        hes = splinter._call(f_handle, self._handle, (c_double * len(x))(*x), len(x))
+        f_handle = splinter_backend_obj.handle.splinter_bspline_eval_hessian_row_major
+        hes = splinter_backend_obj.call(f_handle, self._handle, list_to_c_array_of_doubles(x), len(x))
 
         # Convert from ctypes array to Python list of list of lists
         # hessians is a list of the hessians in all points
@@ -88,7 +88,7 @@ class Function(object):
         return self._dim_y
 
     def save(self, filename):
-        splinter._call(splinter._get_handle().splinter_bspline_save, self._handle, get_c_string(filename))
+        splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_save, self._handle, get_c_string(filename))
 
     def _transform_input(self, x):
         if isinstance(x, np.ndarray):
@@ -107,5 +107,5 @@ class Function(object):
 
     def __del__(self):
         if self._handle is not None:
-            splinter._call(splinter._get_handle().splinter_bspline_delete, self._handle)
+            splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_delete, self._handle)
         self._handle = None

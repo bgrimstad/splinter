@@ -6,7 +6,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
-from . import splinter
+from .splinter_backend import splinter_backend_obj
 from .utilities import *
 
 
@@ -20,11 +20,11 @@ class DataTable:
         self.__ys = []
 
         if is_string(x_or_data):
-            self.__handle = splinter._call(splinter._get_handle().splinter_datatable_load_init, get_c_string(x_or_data))
-            self.__dim_x = splinter._call(splinter._get_handle().splinter_datatable_get_dim_x, self.__handle)
-            self.__dim_y = splinter._call(splinter._get_handle().splinter_datatable_get_dim_y, self.__handle)
+            self.__handle = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_datatable_load_init, get_c_string(x_or_data))
+            self.__dim_x = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_datatable_get_dim_x, self.__handle)
+            self.__dim_y = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_datatable_get_dim_y, self.__handle)
         else:
-            self.__handle = splinter._call(splinter._get_handle().splinter_datatable_init)
+            self.__handle = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_datatable_init)
 
             if y is None:
                 raise Exception("No y-values supplied.")
@@ -72,18 +72,18 @@ class DataTable:
 
     def get_num_samples(self):
         self.__transfer()
-        return splinter._call(splinter._get_handle().splinter_datatable_get_num_samples, self.__handle)
+        return splinter_backend_obj.call(splinter_backend_obj.handle.splinter_datatable_get_num_samples, self.__handle)
 
     # Methods below are internal use only
 
     # Transfer samples to the library
     def __transfer(self):
         if self.__num_samples > 0:
-            func_handle = splinter._get_handle().splinter_datatable_add_samples_row_major
-            splinter._call(func_handle, self.__handle,
-                           list_to_c_array_of_doubles(self.__xs), self.__dim_x,
-                           list_to_c_array_of_doubles(self.__ys), self.__dim_y,
-                           self.__num_samples)
+            func_handle = splinter_backend_obj.handle.splinter_datatable_add_samples_row_major
+            splinter_backend_obj.call(func_handle, self.__handle,
+                                      list_to_c_array_of_doubles(self.__xs), self.__dim_x,
+                                      list_to_c_array_of_doubles(self.__ys), self.__dim_y,
+                                      self.__num_samples)
 
             self.__num_samples = 0
 

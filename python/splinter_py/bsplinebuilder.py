@@ -6,11 +6,11 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
-from . import splinter
-from ctypes import *
+from .splinter_backend import splinter_backend_obj
 from .bspline import BSpline
 from .datatable import DataTable
 from typing import Union, List
+from .utilities import *
 
 
 class BSplineBuilder:
@@ -42,8 +42,8 @@ class BSplineBuilder:
         self._knot_spacing = None
         self._num_basis_functions = None
 
-        f_handle_init = splinter._get_handle().splinter_bspline_builder_init
-        self._handle = splinter._call(f_handle_init, self._dim_x, self._dim_y)
+        f_handle_init = splinter_backend_obj.handle.splinter_bspline_builder_init
+        self._handle = splinter_backend_obj.call(f_handle_init, self._dim_x, self._dim_y)
         self.degree(degree)
         self.set_alpha(alpha)
         self.smoothing(smoothing)
@@ -65,8 +65,8 @@ class BSplineBuilder:
 
         self._degrees = degrees
 
-        f_handle = splinter._get_handle().splinter_bspline_builder_set_degree
-        splinter._call(f_handle, self._handle, (c_int * len(self._degrees))(*self._degrees), len(self._degrees))
+        f_handle = splinter_backend_obj.handle.splinter_bspline_builder_set_degree
+        splinter_backend_obj.call(f_handle, self._handle, list_to_c_array_of_ints(self._degrees), len(self._degrees))
         return self
 
     def set_alpha(self, new_alpha: float) -> 'BSplineBuilder':
@@ -75,8 +75,8 @@ class BSplineBuilder:
 
         self._alpha = new_alpha
 
-        f_handle = splinter._get_handle().splinter_bspline_builder_set_alpha
-        splinter._call(f_handle, self._handle, self._alpha)
+        f_handle = splinter_backend_obj.handle.splinter_bspline_builder_set_alpha
+        splinter_backend_obj.call(f_handle, self._handle, self._alpha)
         return self
 
     def smoothing(self, smoothing: int) -> 'BSplineBuilder':
@@ -85,8 +85,8 @@ class BSplineBuilder:
 
         self._smoothing = smoothing
 
-        f_handle = splinter._get_handle().splinter_bspline_builder_set_smoothing
-        splinter._call(f_handle, self._handle, self._smoothing)
+        f_handle = splinter_backend_obj.handle.splinter_bspline_builder_set_smoothing
+        splinter_backend_obj.call(f_handle, self._handle, self._smoothing)
         return self
 
     def knot_spacing(self, knot_spacing: int) -> 'BSplineBuilder':
@@ -95,8 +95,8 @@ class BSplineBuilder:
 
         self._knot_spacing = knot_spacing
 
-        f_handle = splinter._get_handle().splinter_bspline_builder_set_knot_spacing
-        splinter._call(f_handle, self._handle, self._knot_spacing)
+        f_handle = splinter_backend_obj.handle.splinter_bspline_builder_set_knot_spacing
+        splinter_backend_obj.call(f_handle, self._handle, self._knot_spacing)
         return self
 
     def num_basis_functions(self, num_basis_functions: Union[List[int], int]) -> 'BSplineBuilder':
@@ -117,20 +117,20 @@ class BSplineBuilder:
 
         self._num_basis_functions = num_basis_functions
 
-        f_handle = splinter._get_handle().splinter_bspline_builder_set_num_basis_functions
-        splinter._call(f_handle, self._handle, (c_int * len(self._num_basis_functions))(*self._num_basis_functions),
-                       len(self._num_basis_functions))
+        f_handle = splinter_backend_obj.handle.splinter_bspline_builder_set_num_basis_functions
+        splinter_backend_obj.call(f_handle, self._handle, list_to_c_array_of_ints(self._num_basis_functions),
+                                  len(self._num_basis_functions))
         return self
 
     # Returns a handle to the created internal BSpline object
     def fit(self, X, Y) -> BSpline:
         data_table = DataTable(X, Y)
-        f_handle = splinter._get_handle().splinter_bspline_builder_fit
-        bspline_handle = splinter._call(f_handle, self._handle, data_table._get_handle())
+        f_handle = splinter_backend_obj.handle.splinter_bspline_builder_fit
+        bspline_handle = splinter_backend_obj.call(f_handle, self._handle, data_table._get_handle())
         return BSpline(bspline_handle)
 
     def __del__(self):
         if self._handle is not None:
-            f_handle = splinter._get_handle().splinter_bspline_builder_delete
-            splinter._call(f_handle, self._handle)
+            f_handle = splinter_backend_obj.handle.splinter_bspline_builder_delete
+            splinter_backend_obj.call(f_handle, self._handle)
         self._handle = None

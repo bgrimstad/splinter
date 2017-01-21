@@ -5,7 +5,6 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from . import splinter
 from .bsplinebuilder import BSplineBuilder
 import numpy as np
 
@@ -70,9 +69,9 @@ class BSplineBoosting:
 
             for j in range(n):
                 learners[j] = BSplineBuilder(dim_x, dim_y,
-                                             smoothing=splinter.BSplineBuilder.Smoothing.PSPLINE,
+                                             smoothing=BSplineBuilder.Smoothing.PSPLINE,
                                              alpha=self._alpha,
-                                             knot_spacing=splinter.BSplineBuilder.KnotSpacing.EXPERIMENTAL,
+                                             knot_spacing=BSplineBuilder.KnotSpacing.EXPERIMENTAL,
                                              num_basis_functions=20).fit(x, u_hat)
                 u_hat_est = learners[j].eval(x)
                 ss_res = np.sum(np.apply_along_axis(np.square, 0, u_hat - u_hat_est))

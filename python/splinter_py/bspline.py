@@ -6,7 +6,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
-from . import splinter
+from .splinter_backend import splinter_backend_obj
 from .function import Function
 from .utilities import *
 from typing import List, Union
@@ -23,14 +23,14 @@ class BSpline(Function):
             # If string we load the BSpline from the file
             if is_string(handle_or_filename):
                 filename = get_c_string(handle_or_filename)
-                self._handle = splinter._call(splinter._get_handle().splinter_bspline_load_init, filename)
+                self._handle = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_load_init, filename)
 
             # Else, the argument is the handle to the internal BSpline object
             else:
                 self._handle = handle_or_filename
 
-            self._dim_x = splinter._call(splinter._get_handle().splinter_bspline_get_dim_x, self._handle)
-            self._dim_y = splinter._call(splinter._get_handle().splinter_bspline_get_dim_y, self._handle)
+            self._dim_x = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_get_dim_x, self._handle)
+            self._dim_y = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_get_dim_y, self._handle)
 
     @staticmethod
     def init_from_param(control_points: ControlPointsType, knot_vectors: ListList, degrees: List[int]) -> 'BSpline':
@@ -60,14 +60,14 @@ class BSpline(Function):
         knot_vectors_c_array = list_to_c_array_of_doubles(flatten_list(knot_vectors))
         num_knots_per_vector_c_array = list_to_c_array_of_ints(list([len(vec) for vec in knot_vectors]))
         degrees_c_array = list_to_c_array_of_ints(degrees)
-        handle = splinter._call(splinter._get_handle().splinter_bspline_param_init,
-                                dim_x,
-                                dim_y,
-                                control_points_c_array,
-                                num_control_points,
-                                knot_vectors_c_array,
-                                num_knots_per_vector_c_array,
-                                degrees_c_array)
+        handle = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_param_init,
+                                           dim_x,
+                                           dim_y,
+                                           control_points_c_array,
+                                           num_control_points,
+                                           knot_vectors_c_array,
+                                           num_knots_per_vector_c_array,
+                                           degrees_c_array)
         return BSpline(handle)
 
     def get_knot_vectors(self) -> ListList:
@@ -75,10 +75,10 @@ class BSpline(Function):
         :return List of knot vectors (of possibly differing lengths)
         """
         # Get the sizes of the knot vectors first
-        knot_vector_sizes_raw = splinter._call(splinter._get_handle().splinter_bspline_get_knot_vector_sizes, self._handle)
+        knot_vector_sizes_raw = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_get_knot_vector_sizes, self._handle)
         knot_vector_sizes = c_array_to_list(knot_vector_sizes_raw, self._dim_x)
 
-        knot_vectors_raw = splinter._call(splinter._get_handle().splinter_bspline_get_knot_vectors, self._handle)
+        knot_vectors_raw = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_get_knot_vectors, self._handle)
         # Get the knot vectors as one long vector where knot vectors v1, ..., vn is laid out like this:
         # v11, ..., v1m, ..., vn1, ..., vno
         tot_size = sum(knot_vector_sizes)
@@ -98,9 +98,9 @@ class BSpline(Function):
         Get the matrix with the control points of the BSpline.
         :return Matrix (as a list of lists) with len(getCoefficients) rows and getNumOutputs columns
         """
-        control_points_raw = splinter._call(splinter._get_handle().splinter_bspline_get_control_points, self._handle)
+        control_points_raw = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_get_control_points, self._handle)
 
-        num_rows = splinter._call(splinter._get_handle().splinter_bspline_get_num_control_points, self._handle)
+        num_rows = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_get_num_control_points, self._handle)
         num_cols = self._dim_x + 1
 
         control_points_flattened = c_array_to_list(control_points_raw, num_rows * num_cols)
@@ -118,9 +118,9 @@ class BSpline(Function):
         Get the matrix with the knot averages of the BSpline.
         :return Matrix (as a list of lists) with len(getControlPoints) rows and getNumVariables columns
         """
-        knot_averages_raw = splinter._call(splinter._get_handle().splinter_bspline_get_knot_averages, self._handle)
+        knot_averages_raw = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_get_knot_averages, self._handle)
 
-        num_rows = splinter._call(splinter._get_handle().splinter_bspline_get_num_control_points, self._handle)
+        num_rows = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_get_num_control_points, self._handle)
         num_cols = self._dim_x
 
         knot_averages_flattened = c_array_to_list(knot_averages_raw, num_rows * num_cols)
@@ -137,8 +137,8 @@ class BSpline(Function):
         """
         :return List with the basis degrees of the BSpline
         """
-        num_vars = splinter._call(splinter._get_handle().splinter_bspline_get_dim_x, self._handle)
-        basis_degrees = splinter._call(splinter._get_handle().splinter_bspline_get_basis_degrees, self._handle)
+        num_vars = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_get_dim_x, self._handle)
+        basis_degrees = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_get_basis_degrees, self._handle)
 
         return c_array_to_list(basis_degrees, num_vars)
 
@@ -147,14 +147,14 @@ class BSpline(Function):
         Insert knot at 'val' to knot vector for variable 'dim'. The knot is inserted until a knot multiplicity of
         'multiplicity' is obtained.
         """
-        splinter._call(splinter._get_handle().splinter_bspline_insert_knots, self._handle, val, dim, multiplicity)
+        splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_insert_knots, self._handle, val, dim, multiplicity)
 
     def decompose_to_bezier_form(self):
         """
         Insert knots until all knots have multiplicity degree + 1. This ensures that the polynomial pieces are not
         overlapping.
         """
-        splinter._call(splinter._get_handle().splinter_bspline_decompose_to_bezier_form, self._handle)
+        splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_decompose_to_bezier_form, self._handle)
 
     def copy(self) -> 'BSpline':
         """
@@ -165,7 +165,7 @@ class BSpline(Function):
         :return: A copy of this BSpline
         """
         copy = BSpline()
-        copy._handle = splinter._call(splinter._get_handle().splinter_bspline_copy, self._handle)
+        copy._handle = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_copy, self._handle)
 
         copy._dim_x = self._dim_x
         copy._dim_y = self._dim_y

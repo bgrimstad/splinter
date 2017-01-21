@@ -241,26 +241,22 @@ install(
 )
 
 # Make the directory structure expected by the Python interface
-install(
-        FILES ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE
-        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-python/
-)
 # Python files (.py)
 install(
-        DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/python
+        DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/python/
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-python
         PATTERN "*.pyc" EXCLUDE
         PATTERN "__pycache__*" EXCLUDE
 )
-# Version file (used for deducing the name of the binary when loading it)
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/splinter-python/version ${VERSION})
 install(
-        FILES include/cinterface/cinterface.h
-        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-python/include
+        FILES ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-python/
 )
+# The Python interface reads the library version from this file
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/splinter-python/splinter_py/version ${VERSION})
 install(
         TARGETS ${SHARED_LIBRARY}
-        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-python/lib/${OS_STRING}/${ARCH}
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-python/splinter_py/lib/${OS_STRING}/${ARCH}
 )
 
 # Install the header files (including Eigen) to the header directory

@@ -9,14 +9,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from os import sys, path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-import splinter
+import splinter_py
+
 
 # Only for dev purposes
 import os.path
 if os.path.isdir("/home/bjarne/"):
-    splinter.load("/home/bjarne/Code/C++/splinter/build/release/libsplinter-4-0.so")
+    splinter_py.load("/home/bjarne/Code/C++/splinter/build/release/libsplinter-4-0.so")
 elif os.path.isdir("/home/anders/"):
-    splinter.load("/home/anders/SPLINTER/build/debug/libsplinter-4-0.so")
+    splinter_py.load("/home/anders/SPLINTER/build/debug/libsplinter-4-0.so")
 
 
 def underlying_func(x: np.array):
@@ -29,11 +30,11 @@ def noisy_func(x: np.array):
 
 
 print("Testing stochastic gradient boosting with B-spline learners")
-fh = splinter.bsplineboosting.mse
+fh = splinter_py.bsplineboosting.mse
 a = np.array([3, 4, 5])
 b = np.array([2, 3, 3])
 print(fh(a, b))
-print(splinter.bsplineboosting.ls(b))
+print(splinter_py.bsplineboosting.ls(b))
 
 # Sampling
 x = np.arange(0, 10, 0.1)
@@ -42,16 +43,16 @@ y = noisy_func(x)
 yd = underlying_func(xd)
 
 # Just one P-spline
-pspline = splinter.BSplineBuilder(1, 1,
-                                  smoothing=splinter.BSplineBuilder.Smoothing.PSPLINE,
-                                  alpha=10.0,
-                                  knot_spacing=splinter.BSplineBuilder.KnotSpacing.EXPERIMENTAL,
-                                  num_basis_functions=20).fit(x, y)
+pspline = splinter_py.BSplineBuilder(1, 1,
+                                     smoothing=splinter.BSplineBuilder.Smoothing.PSPLINE,
+                                     alpha=10.0,
+                                     knot_spacing=splinter.BSplineBuilder.KnotSpacing.EXPERIMENTAL,
+                                     num_basis_functions=20).fit(x, y)
 
 yd_pspline = pspline.eval(xd)
 
 # Boosting
-bb = splinter.BSplineBoosting(learning_rate=0.05, n_estimators=100, alpha=10.0)
+bb = splinter_py.BSplineBoosting(learning_rate=0.05, n_estimators=100, alpha=10.0)
 bb.fit(x, y)
 
 # Prediction
