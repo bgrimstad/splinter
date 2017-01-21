@@ -11,6 +11,9 @@ from .utilities import *
 
 
 class DataTable:
+    """
+    This class is only intended for internal use by the SPLINTER Python interface
+    """
     def __init__(self, x_or_data, y=None):
         self.__handle = None  # Handle to instance in the library
         self.__dim_x = None
@@ -36,7 +39,6 @@ class DataTable:
             for x, y in zip(x_or_data, y):
                 self.add_sample(x, y)
 
-    # "Public" methods (for use by end user of the library)
     def add_sample(self, x, y):
         if not isinstance(x, list):
             x = [x]
@@ -74,8 +76,13 @@ class DataTable:
         self.__transfer()
         return splinter_backend_obj.call(splinter_backend_obj.handle.splinter_datatable_get_num_samples, self.__handle)
 
-    # Methods below are internal use only
+    # Getter for the datatable for use by BSpline
+    # Will make sure all samples are transferred to the back end before returning the handle to a BSpline
+    def _get_handle(self):
+        self.__transfer()
+        return self.__handle
 
+    # Methods below are internal use by the class only
     # Transfer samples to the library
     def __transfer(self):
         if self.__num_samples > 0:
@@ -86,9 +93,3 @@ class DataTable:
                                       self.__num_samples)
 
             self.__num_samples = 0
-
-    # Getter for the datatable for use by BSpline
-    # Will make sure all samples are transferred to the back end before returning the handle to a BSpline
-    def _get_handle(self):
-        self.__transfer()
-        return self.__handle
