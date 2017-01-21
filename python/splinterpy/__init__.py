@@ -22,7 +22,7 @@ __version__ = splinter_backend_obj.__version__
 
 
 __all__ = [
-    "splinter_backend.py",
+    "splinter_backend",
     # "datatable",
     "bspline",
     "bsplinebuilder",
