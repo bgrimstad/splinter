@@ -87,10 +87,8 @@ class Function(object):
     def get_dim_y(self):
         return self._dim_y
 
-    def save(self, filename):
-        splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_save, self._handle, get_c_string(filename))
-
-    def _transform_input(self, x):
+    @staticmethod
+    def _transform_input(x):
         if isinstance(x, np.ndarray):
             x = x.tolist()
 

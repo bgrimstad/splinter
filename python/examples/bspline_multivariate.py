@@ -86,7 +86,9 @@ try:
     bspline.save("test.bspline")
 
     # Create BSpline from saved BSpline
-    bspline = splinterpy.BSpline("test.bspline")
+    bspline = splinterpy.BSpline.load("test.bspline")
+
+    print(bspline.get_basis_degrees())
 
 finally:
     remove("test.bspline")

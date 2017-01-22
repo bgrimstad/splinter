@@ -18,19 +18,11 @@ DegreesType = Union[int, List[int]]
 
 
 class BSpline(Function):
-    def __init__(self, handle_or_filename = None):
+    def __init__(self, handle=None):
         super().__init__()
 
-        if handle_or_filename is not None:
-            # If string we load the BSpline from the file
-            if is_string(handle_or_filename):
-                filename = get_c_string(handle_or_filename)
-                self._handle = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_load_init, filename)
-
-            # Else, the argument is the handle to the internal BSpline object
-            else:
-                self._handle = handle_or_filename
-
+        if handle is not None:
+            self._handle = handle
             self._dim_x = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_get_dim_x, self._handle)
             self._dim_y = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_get_dim_y, self._handle)
 
@@ -88,6 +80,20 @@ class BSpline(Function):
                                            num_knots_per_vector_c_array,
                                            degrees_c_array)
         return BSpline(handle)
+
+    def save(self, filename):
+        c_filename = get_c_string(filename)
+        splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_save, self._handle, c_filename)
+
+    @staticmethod
+    def load(filename):
+        if is_string(filename):
+            # If string, load the BSpline from the file
+            c_filename = get_c_string(filename)
+            handle = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_load_init, c_filename)
+            return BSpline(handle)
+        else:
+            return None
 
     def get_knot_vectors(self) -> ListList:
         """
