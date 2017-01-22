@@ -21,9 +21,9 @@ elif os.path.isdir("/home/anders/"):
 
 # B-spline built from parameters: coefficients, knot vectors and degrees
 control_points = [0, 1, 0, 1, 0]
-knot_vectors = [[0, 0, 1, 2, 3, 4, 4]]
-degrees = [1]
-bs = splinterpy.BSpline.init_from_param(control_points, knot_vectors, degrees)
+knot_vector = [0, 0, 1, 2, 3, 4, 4]
+degree = 1
+bs = splinterpy.BSpline.init_from_param(control_points, knot_vector, degree)
 
 xd = np.arange(0, 4, .01)
 yd = bs.eval(xd)

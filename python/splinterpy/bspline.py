@@ -13,6 +13,8 @@ from typing import List, Union
 
 ListList = List[List[float]]
 ControlPointsType = Union[ListList, List[float]]
+KnotVectorsType = Union[ListList, List[float]]
+DegreesType = Union[int, List[int]]
 
 
 class BSpline(Function):
@@ -33,7 +35,7 @@ class BSpline(Function):
             self._dim_y = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_get_dim_y, self._handle)
 
     @staticmethod
-    def init_from_param(control_points: ControlPointsType, knot_vectors: ListList, degrees: List[int]) -> 'BSpline':
+    def init_from_param(control_points: ControlPointsType, knot_vectors: KnotVectorsType, degrees: DegreesType) -> 'BSpline':
         """
         Builds B-splines given explicit parameters
         :param control_points: a list of control points in R^dim_y
@@ -41,18 +43,35 @@ class BSpline(Function):
         :param degrees: a list of dim_x degrees (each being a non-negative integer)
         :return: BSpline object
         """
-        if len(knot_vectors) != len(degrees):
-            raise ValueError("Inconsistent data: len(knot_vectors) should equal len(degrees)")
-
-        dim_x = len(degrees)
 
         if not any(control_points):
-            raise ValueError("Array of control points is empty")
+            raise ValueError("List of control points is empty")
 
-        # Handle 1-D case - create a list of lists from a list of control points
+        if not any(knot_vectors):
+            raise ValueError("List of knot vectors is empty")
+
+        # 1-D control points - create a list of lists from a list of control points
         if not any(isinstance(cp, list) for cp in control_points):
             control_points = [[cp] for cp in control_points]
 
+        # Single knot vector - create a list of knot vectors
+        if not any(isinstance(kv, list) for kv in knot_vectors):
+            knot_vectors = [knot_vectors]
+
+        # Single degree - create list of degrees
+        # NOTE: Assuming that all basis functions have the same degree
+        if not isinstance(degrees, list):
+            degrees = [degrees] * len(knot_vectors)
+
+        # Check dimensions
+        if len(knot_vectors) != len(degrees):
+            raise ValueError("Inconsistent data: len(knot_vectors) should equal len(degrees)")
+
+        if not len(set([len(cp) for cp in control_points])) == 1:
+            raise ValueError("Inconsistent data: all control points should have the same dimension")
+
+        # Set dimensions
+        dim_x = len(knot_vectors)
         dim_y = len(control_points[0])
 
         control_points_c_array = list_to_c_array_of_doubles(flatten_list(control_points))

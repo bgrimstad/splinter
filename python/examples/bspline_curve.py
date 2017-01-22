@@ -21,8 +21,8 @@ elif os.path.isdir("/home/anders/"):
 
 
 # Example showing a B-spline curve with a clamped knot vector
-degree = [3]
-knots = [[0, 0, 0, 0, 1, 1, 1, 1]]
+degree = 3
+knots = [0, 0, 0, 0, 1, 1, 1, 1]
 control_points = [[0, 0], [1, 1], [2, 1], [3, 0]]
 bspline_curve = splinterpy.BSpline.init_from_param(control_points, knots, degree)
 
