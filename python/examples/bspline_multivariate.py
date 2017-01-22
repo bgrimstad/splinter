@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
-from os import sys, path, remove
+from os import sys, path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 import splinterpy
 
@@ -79,16 +79,3 @@ fig.colorbar(surf, shrink=0.5, aspect=5)
 # TODO: plot grid using plot_wireframe()
 
 plt.show()
-
-try:
-    # Save the bspline to test.bspline
-    # The file ending doesn't matter
-    bspline.save("test.bspline")
-
-    # Create BSpline from saved BSpline
-    bspline = splinterpy.BSpline.load("test.bspline")
-
-    print(bspline.get_basis_degrees())
-
-finally:
-    remove("test.bspline")

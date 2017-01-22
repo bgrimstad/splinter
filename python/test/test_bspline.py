@@ -1,5 +1,5 @@
 import pytest
-from os import sys, path
+from os import sys, path, remove
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 import splinterpy
 
@@ -39,3 +39,22 @@ def test_bspline_construction(control_points, knot_vectors, degrees, exception):
     else:
         with pytest.raises(exception) as e:
             splinterpy.BSpline.init_from_param(control_points, knot_vectors, degrees)
+
+
+def test_bspline_save_load():
+    control_points = [0, 1, 0, 1, 0]
+    knots = [0, 0, 1, 2, 3, 4, 4]
+    degree = 1
+    bs1 = splinterpy.BSpline.init_from_param(control_points, knots, degree)
+    try:
+        # Save the bspline to test.bspline
+        # The file ending doesn't matter
+        bs1.save("test.bspline")
+
+        # Create BSpline from saved BSpline
+        bs2 = splinterpy.BSpline.load("test.bspline")
+
+        assert(all(x == y for x, y in zip(bs1.get_degrees(), bs2.get_degrees())))
+
+    finally:
+        remove("test.bspline")

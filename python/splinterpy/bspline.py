@@ -152,7 +152,7 @@ class BSpline(Function):
 
         return knot_averages
 
-    def get_basis_degrees(self) -> List[int]:
+    def get_degrees(self) -> List[int]:
         """
         :return List with the basis degrees of the BSpline
         """
