@@ -12,12 +12,12 @@ bin/
 *.depends
 *.pyc
 
-# Saved approximants (and datatable)
+# Saved splines (and datatable)
 *.bspline
-*.rbf
-*.pspline
-*.poly
 *.datatable
+
+# Python cache
+/**/.cache/
 
 # Auxiliary, temporary and log files related to LaTeX
 docs/**/*.aux

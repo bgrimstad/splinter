@@ -36,12 +36,6 @@ class BSpline(Function):
         :return: BSpline object
         """
 
-        if not any(control_points):
-            raise ValueError("List of control points is empty")
-
-        if not any(knot_vectors):
-            raise ValueError("List of knot vectors is empty")
-
         # 1-D control points - create a list of lists from a list of control points
         if not any(isinstance(cp, list) for cp in control_points):
             control_points = [[cp] for cp in control_points]
