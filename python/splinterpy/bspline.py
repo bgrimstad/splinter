@@ -120,7 +120,7 @@ class BSpline(Function):
         control_points_raw = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_get_control_points, self._handle)
 
         num_rows = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_get_num_control_points, self._handle)
-        num_cols = self._dim_x + 1
+        num_cols = self._dim_y
 
         control_points_flattened = c_array_to_list(control_points_raw, num_rows * num_cols)
 
