@@ -41,6 +41,40 @@ def test_bspline_construction(control_points, knot_vectors, degrees, exception):
             splinterpy.BSpline.init_from_param(control_points, knot_vectors, degrees)
 
 
+@pytest.mark.parametrize("control_points, knot_vectors, degrees, exception", test_param)
+def test_bspline_getters(control_points, knot_vectors, degrees, exception):
+
+    if exception:
+        return
+
+    # B-spline built from parameters: coefficients, knot vectors and degrees
+    bspline = splinterpy.BSpline.init_from_param(control_points, knot_vectors, degrees)
+
+    # Compare control points
+    control_points_get = bspline.get_control_points()
+    for i in range(len(control_points)):
+        cp = control_points[i]
+        cp_get = control_points_get[i]
+        if not isinstance(cp, list):
+            assert([cp] == cp_get)
+        else:
+            assert(cp == cp_get)
+
+    # Compare knot vectors
+    knot_vectors_get = bspline.get_knot_vectors()
+    if not any(isinstance(kv, list) for kv in knot_vectors):
+        assert(knot_vectors_get == [knot_vectors])
+    else:
+        assert(knot_vectors_get == knot_vectors)
+
+    # Compare degrees
+    degrees_get = bspline.get_degrees()
+    if not isinstance(degrees, list):
+        assert(degrees_get == [degrees])
+    else:
+        assert(degrees_get == degrees)
+
+
 def test_bspline_save_load():
     control_points = [0, 1, 0, 1, 0]
     knots = [0, 0, 1, 2, 3, 4, 4]
