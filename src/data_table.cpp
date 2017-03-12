@@ -29,11 +29,11 @@ DataTable::DataTable(bool allowDuplicates)
 }
 
 DataTable::DataTable(bool allowDuplicates, bool allowIncompleteGrid)
-    : allowDuplicates(allowDuplicates),
-      allowIncompleteGrid(allowIncompleteGrid),
-      numDuplicates(0),
-      dimX(0),
-      dimY(0)
+    : allow_duplicates(allowDuplicates),
+      allow_incomplete_grid(allowIncompleteGrid),
+      num_duplicates(0),
+      dim_x(0),
+      dim_y(0)
 {
 }
 
@@ -71,29 +71,29 @@ void DataTable::addSample(const DataPoint &sample)
 {
     if (getNumSamples() == 0)
     {
-        dimX = sample.getDimX();
-        dimY = sample.getDimY();
+        dim_x = sample.getDimX();
+        dim_y = sample.getDimY();
         initDataStructures();
     }
 
-    if (sample.getDimX() != dimX || sample.getDimY() != dimY) {
+    if (sample.getDimX() != dim_x || sample.getDimY() != dim_y) {
         throw Exception("Datatable::addSample: Dimension of new sample is inconsistent with previous samples!");
     }
 
     // Check if the sample has been added already
     if (samples.count(sample) > 0)
     {
-        if (!allowDuplicates)
+        if (!allow_duplicates)
         {
 #ifndef NDEBUG
-            std::cout << "Discarding duplicate sample because allowDuplicates is false!" << std::endl;
+            std::cout << "Discarding duplicate sample because allow_duplicates is false!" << std::endl;
             std::cout << "Initialise with DataTable(true) to set it to true." << std::endl;
 #endif // NDEBUG
 
             return;
         }
 
-        numDuplicates++;
+        num_duplicates++;
     }
 
     samples.insert(sample);
@@ -124,7 +124,7 @@ unsigned int DataTable::getNumSamplesRequired() const
 
 bool DataTable::isGridComplete() const
 {
-    return samples.size() > 0 && samples.size() - numDuplicates == getNumSamplesRequired();
+    return samples.size() > 0 && samples.size() - num_duplicates == getNumSamplesRequired();
 }
 
 void DataTable::initDataStructures()
@@ -137,7 +137,7 @@ void DataTable::initDataStructures()
 
 void DataTable::gridCompleteGuard() const
 {
-    if (!(isGridComplete() || allowIncompleteGrid))
+    if (!(isGridComplete() || allow_incomplete_grid))
     {
         throw Exception("DataTable::gridCompleteGuard: The grid is not complete yet!");
     }
@@ -170,48 +170,40 @@ std::multiset<DataPoint>::const_iterator DataTable::cend() const
 }
 
 /*
- * Get table of samples x-values,
- * i.e. table[i][j] is the value of variable i at sample j
+ * Get table of samples x-values: i.e. table[i][j] is the value of input i at sample j
  */
-std::vector< std::vector<double> > DataTable::getTableX() const
+std::vector<std::vector<double>> DataTable::getTableX() const
 {
     gridCompleteGuard();
 
-    // Initialize table
-    std::vector<std::vector<double>> table;
-    for (unsigned int i = 0; i < dimX; i++)
-    {
-        std::vector<double> xi(getNumSamples(), 0.0);
-        table.push_back(xi);
-    }
+    std::vector<std::vector<double>> table(dim_x, std::vector<double>(getNumSamples()));
 
-    // Fill table with values
-    int i = 0;
-    for (auto &sample : samples)
-    {
-        std::vector<double> x = sample.getX();
-
-        for (unsigned int j = 0; j < dimX; j++)
-        {
+    unsigned int i = 0;
+    for (auto &sample : samples) {
+        auto x = sample.getX();
+        for (unsigned int j = 0; j < dim_x; j++)
             table.at(j).at(i) = x.at(j);
-        }
         i++;
     }
 
     return table;
 }
 
-// Get vector of y-values
-std::vector<double> DataTable::getTableY() const
+/*
+ * Get table of sampled y-values: i.e. table[i][j] is the value of output i at sample j
+ */
+std::vector<std::vector<double>> DataTable::getTableY() const
 {
-    std::vector<double> y;
-    for (std::multiset<DataPoint>::const_iterator it = cbegin(); it != cend(); ++it)
-    {
-        // TODO: Update this!
-        double yv = it->getY().at(0);
-        y.push_back(yv);
+    std::vector<std::vector<double>> table(dim_y, std::vector<double>(getNumSamples()));
+    unsigned int i = 0;
+    for (const auto &sample : samples) {
+        auto y = sample.getY();
+        for (unsigned int j = 0; j < dim_y; ++j)
+            table.at(j).at(i) = y.at(j);
+        i++;
     }
-    return y;
+
+    return table;
 }
 
 DataTable operator+(const DataTable &lhs, const DataTable &rhs)

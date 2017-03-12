@@ -133,7 +133,7 @@ protected:
 
     /*
      * B-spline control points in R^(m x n),
-     * where m = numBasisFunctions and n = dimY.
+     * where m = numBasisFunctions and n = dim_y.
      * Each row is a control point.
      */
     DenseMatrix controlPoints;

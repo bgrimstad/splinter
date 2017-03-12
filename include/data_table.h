@@ -47,11 +47,11 @@ public:
     std::multiset<DataPoint>::const_iterator cend() const;
 
     unsigned int getDimX() const {
-        return dimX;
+        return dim_x;
     }
 
     unsigned int getDimY() const {
-        return dimY;
+        return dim_y;
     }
 
     unsigned int getNumSamples() const {
@@ -66,20 +66,20 @@ public:
         return grid;
     }
 
-    std::vector< std::vector<double> > getTableX() const;
+    std::vector<std::vector<double>> getTableX() const;
 
-    std::vector<double> getTableY() const;
+    std::vector<std::vector<double>> getTableY() const;
 
     bool isGridComplete() const;
 
     void save(const std::string &fileName) const;
 
 private:
-    bool allowDuplicates;
-    bool allowIncompleteGrid;
-    unsigned int numDuplicates;
-    unsigned int dimX;
-    unsigned int dimY;
+    bool allow_duplicates;
+    bool allow_incomplete_grid;
+    unsigned int num_duplicates;
+    unsigned int dim_x;
+    unsigned int dim_y;
 
     std::multiset<DataPoint> samples;
     std::vector< std::set<double> > grid;

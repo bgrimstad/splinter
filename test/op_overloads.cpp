@@ -82,10 +82,10 @@ namespace SPLINTER
 bool operator==(const DataTable &lhs, const DataTable &rhs)
 {
     return
-            lhs.allowDuplicates == rhs.allowDuplicates
-            && lhs.allowIncompleteGrid == rhs.allowIncompleteGrid
-            && lhs.numDuplicates == rhs.numDuplicates
-            && lhs.dimX == rhs.dimX
+            lhs.allow_duplicates == rhs.allow_duplicates
+            && lhs.allow_incomplete_grid == rhs.allow_incomplete_grid
+            && lhs.num_duplicates == rhs.num_duplicates
+            && lhs.dim_x == rhs.dim_x
             && lhs.samples == rhs.samples
             && lhs.grid == rhs.grid
             && lhs.getDimX() == rhs.getDimX()
@@ -172,7 +172,7 @@ std::ostream &operator<<(std::ostream &out, const DataPoint &sample) {
 
 std::ostream &operator<<(std::ostream &out, const DataTable &table)
 {
-    out << "dimX: " << table.getDimX() << std::endl;
+    out << "dim_x: " << table.getDimX() << std::endl;
     out << "numSamples: " << table.getNumSamples() << std::endl;
     //out << "samples: " << table.getSamples() << std::endl;
     out << "grid dimensions: ";
