@@ -23,10 +23,6 @@ BSpline::BSpline()
     : Function()
 {}
 
-BSpline::BSpline(unsigned int numVariables)
-    : Function(numVariables, 1)
-{}
-
 /*
  * Constructors for multivariate B-spline using explicit data
  */

@@ -213,9 +213,9 @@ DenseMatrix BSpline::Builder::stackSamplePointValues(const DataTable &data) cons
 }
 
 /*
-* Function for generating second order finite-difference matrix, which is used for penalizing the
-* (approximate) second derivative in control point calculation for P-splines.
-*/
+ * Function for generating second order finite-difference matrix, which is used for penalizing the
+ * (approximate) second derivative in control point calculation for P-splines.
+ */
 SparseMatrix BSpline::Builder::getSecondOrderFiniteDifferenceMatrix(const BSpline &bspline) const
 {
     unsigned int numVariables = bspline.getDimX();
