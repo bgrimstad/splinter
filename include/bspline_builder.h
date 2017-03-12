@@ -69,7 +69,7 @@ public:
 
     Builder& degree(unsigned int degree)
     {
-        _degrees = getBSplineDegrees(_dim_x, degree);
+        _degrees = std::vector<unsigned int>(_dim_x, degree);
         return *this;
     }
 
@@ -108,14 +108,6 @@ public:
 
 private:
     Builder();
-
-    std::vector<unsigned int> getBSplineDegrees(unsigned int numVariables, unsigned int degree)
-    {
-        // TODO: Remove this test
-        if (degree > 5)
-            throw Exception("BSpline::Builder: Only degrees in range [0, 5] are supported.");
-        return std::vector<unsigned int>(numVariables, degree);
-    }
 
     // Control point computations
     DenseMatrix computeControlPoints(const BSpline &bspline,

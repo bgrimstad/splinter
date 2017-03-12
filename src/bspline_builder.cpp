@@ -22,7 +22,7 @@ namespace SPLINTER
 BSpline::Builder::Builder(unsigned int dim_x, unsigned int dim_y)
         : _dim_x(dim_x),
           _dim_y(dim_y),
-          _degrees(getBSplineDegrees(_dim_x, 3)),
+          _degrees(std::vector<unsigned int>(_dim_x, 3)),
           _numBasisFunctions(std::vector<unsigned int>(_dim_x, 1)),
           _knotSpacing(KnotSpacing::AS_SAMPLED)
 {
