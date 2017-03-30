@@ -49,7 +49,7 @@ std::vector<unsigned int> TestFunction::getConstDegreeInt() const
     auto intDegrees = std::vector<unsigned int>(powers.rows(), 0);
 
     auto maxCoeffs = powers.rowwise().maxCoeff();
-    for (size_t i = 0; i < powers.rows(); ++i)
+    for (size_t i = 0; i < (size_t) powers.rows(); ++i)
     {
         intDegrees.at(i) = (unsigned int) std::ceil(maxCoeffs(i));
     }
