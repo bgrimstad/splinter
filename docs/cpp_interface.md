@@ -1,4 +1,4 @@
-##C++ interface
+## C++ interface
 The C++ interface is the native interface to SPLINTER. At any given time, the C++ interface will be the most comprehensive among the interfaces, exposing the most of SPLINTER's features.
 
 Below is a simple example demonstrating the use of SPLINTER. Remember to compile with a C++11 compatible compiler!
@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 }
 ```
 
-###Sampling with DataTable
+### Sampling with DataTable
 To simplify sampling in C++, SPLINTER comes with a DataTable data structure for managing and storing sample points. The following code snippet shows how DataTable can be used to manage samples. 
 ```c++
 // Create new data structure
@@ -87,8 +87,8 @@ samples.addSample(4,15);
 // since DataTable keeps the samples sorted internally.
 ```
 
-##Restrictions
-###B-splines
+## Restrictions
+### B-splines
 For the current implementation of B-splines we require that the samples you provide form a complete [grid](https://en.wikipedia.org/wiki/Regular_grid). This means that if the function you are sampling is two-dimensional with variables `x0` and `x1`, then all combinations of `x0` and `x1` must be present in the samples. This means that if you choose to sample `x1` in a new value, say 1, then you must sample `[x0 1]` for all previous values of `x0` used so far. In 2D you can visualize this as [graphing paper](https://en.wikipedia.org/wiki/Graph_paper#/media/File:Log_paper.svg), where all lines intersect. If a sample were missing, one of the intersections would be missing, and the grid would be incomplete. You can check if the grid is complete by calling `isGridComplete()` on your DataTable. This restriction will be removed in a later implementation.
 
 

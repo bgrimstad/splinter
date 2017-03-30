@@ -1,12 +1,12 @@
 
-##Basic usage
+## Basic usage
 
 The workflow to construct an approximation is simple: sample a function and construct an approximation. As the following figure illustrates, this process can be run iteratively until a satisfactory approximation has been built. To assess the accuracy of the approximation one can use existing samples for cross-validation or perform additional sampling. Note that the current version of SPLINTER only facilitates sampling and model construction. 
 
 ![Possible workflow with SPLINTER.](../assets/workflow.png)
 Figure: A possible workflow for building approximations with SPLINTER.
 
-##B-splines
+## B-splines
 The [tensor product B-spline](http://en.wikipedia.org/wiki/B-spline) is a powerful tool for multivariable function interpolation and data smoothing. It is constructed from B-spline basis functions, which are piecewise polynomial functions with a high degree of smoothness.
 
 The B-spline may approximate any sampled multivariate function. The user may construct a linear (degree 1), quadratic (degree 2), cubic (degree 3) or higher degree B-spline that smoothes or interpolates the data. The B-spline is constructed from the samples by solving a linear system. On a modern desktop computer the practical limit on the number of samples is about 100 000 when constructing a B-spline. This translates to a practical limit of 5-6 variables. Evaluation time, however, is independent of the number of samples due to the local support property of B-splines. That is, only samples neighbouring the evaluation point affect the B-spline value. Evaluation do however scale with the degree and number of variables of the B-spline.
