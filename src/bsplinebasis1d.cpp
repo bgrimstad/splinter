@@ -534,6 +534,15 @@ double BSplineBasis1D::getKnotValue(unsigned int index) const
 {
     return knots.at(index);
 }
+    
+void BSplineBasis1D::setKnotVector(const std::vector<double> & knots, bool check_knots) {
+    if(knots.size()!=this->knots.size())
+        throw std::runtime_error("Changing knot count is not allowed");
+    this->knots = knots;
+    if (check_knots && !isKnotVectorRegular(knots, degree))
+        throw Exception("BSplineBasis1D::BSplineBasis1D: Knot vector is not regular.");
+
+}
 
 unsigned int BSplineBasis1D::knotMultiplicity(double tau) const
 {

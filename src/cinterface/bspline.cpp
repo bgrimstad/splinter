@@ -206,7 +206,7 @@ int *splinter_bspline_get_basis_degrees(splinter_obj_ptr bspline_ptr)
 
             if (basis_degrees_as_array != nullptr)
             {
-                for (int i = 0; i < basis_degrees.size(); ++i)
+                for (std::size_t i = 0; i < basis_degrees.size(); ++i)
                 {
                     basis_degrees_as_array[i] = basis_degrees[i];
                 }
@@ -459,7 +459,6 @@ void splinter_bspline_insert_knots(splinter_obj_ptr bspline_ptr, double tau, uns
 void splinter_bspline_decompose_to_bezier_form(splinter_obj_ptr bspline_ptr)
 {
     auto bspline = get_bspline(bspline_ptr);
-    int *sizes = nullptr;
     if (bspline != nullptr)
     {
         try

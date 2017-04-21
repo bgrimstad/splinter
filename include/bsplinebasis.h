@@ -56,6 +56,9 @@ public:
     std::vector<double> getSupportLowerBound() const;
     std::vector<double> getSupportUpperBound() const;
 
+    // Setters
+    void setKnotVectors(std::vector< std::vector<double> > const & knots);
+
     // Support related
     SparseMatrix reduceSupport(std::vector<double>& lb, std::vector<double>& ub);
 
