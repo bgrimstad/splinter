@@ -61,11 +61,6 @@ void compareJacobianValue(TestFunction *exact,
 
 bool compareBSplines(const BSpline &left, const BSpline &right);
 
-/*
- * Computes the central difference at x. Returns a 1xN row-vector.
- */
-DenseMatrix centralDifference(const Function &approx, const DenseVector &x);
-
 DataTable sample(const Function &func, std::vector<std::vector<double>> &points);
 DataTable sample(const Function *func, std::vector<std::vector<double>> &points);
 

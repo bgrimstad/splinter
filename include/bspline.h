@@ -24,7 +24,7 @@ class SPLINTER_API BSpline : public Function
 public:
     /**
      * Builder class for construction by regression
-     * Implemented in BSplineBuilder.*
+     * Implemented in bspline_builder.*
      */
     class Builder;
     enum class Smoothing;

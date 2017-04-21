@@ -745,30 +745,4 @@ void testApproximation(std::vector<TestFunction *> funcs,
     }
 }
 
-// TODO: Works only for 1-D outputs
-DenseMatrix centralDifference(const Function &approx, const DenseVector &x)
-{
-    DenseMatrix dx(1, x.size());
-
-    double h = 1e-6; // perturbation step size
-    double hForward = 0.5*h;
-    double hBackward = 0.5*h;
-
-    for (unsigned int i = 0; i < approx.getDimX(); ++i)
-    {
-        DenseVector xForward(x);
-        xForward(i) = xForward(i) + hForward;
-
-        DenseVector xBackward(x);
-        xBackward(i) = xBackward(i) - hBackward;
-
-        double yForward = approx.eval(xForward)(0);
-        double yBackward = approx.eval(xBackward)(0);
-
-        dx(i) = (yForward - yBackward)/(hBackward + hForward);
-    }
-
-    return dx;
-}
-
 } // namespace SPLINTER
