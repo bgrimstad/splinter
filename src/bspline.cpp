@@ -85,6 +85,42 @@ DenseMatrix BSpline::evalJacobian(const DenseVector &x) const
     return controlPoints.transpose()*evalBasisJacobian(x);
 }
 
+/*
+ * Returns the Hessian evaluated at x. The Hessian is a (dimY x dimX x dimX) tensor.
+ */
+std::vector<std::vector<std::vector<double>>> BSpline::evalHessian(const std::vector<double> &x) const
+{
+    DenseVector eigX = stdToEigVec(x);
+    checkInput(eigX);
+
+    std::vector<std::vector<std::vector<double>>> hessian;
+
+    DenseMatrix identity = DenseMatrix::Identity(dimX, dimX);
+
+    DenseMatrix cpCopy = DenseMatrix(controlPoints);
+
+    for (size_t i = 0; i < dimY; ++i)
+    {
+        DenseMatrix H = DenseMatrix::Zero(1, 1);
+        DenseMatrix cp = cpCopy.col(i);
+        DenseMatrix caug = kroneckerProduct(identity, cp.transpose());
+        DenseMatrix DB = basis.evalBasisHessian(eigX);
+
+        H = caug*DB;
+
+//        std::cout << cp << std::endl;
+
+        // Fill in upper triangular of Hessian
+        for (size_t j = 0; j < dimX; ++j)
+            for (size_t k = j+1; k < dimX; ++k)
+                H(j, k) = H(k, j);
+
+        hessian.push_back(eigMatToStdVecVec(H));
+    }
+
+    return hessian;
+}
+
 // Evaluation of B-spline basis functions
 SparseVector BSpline::evalBasis(const DenseVector &x) const
 {

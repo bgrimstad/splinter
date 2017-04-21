@@ -58,10 +58,21 @@ public:
     using Function::eval;
     using Function::evalJacobian;
 
-    // Evaluation of B-spline
+    /**
+     * Returns the (dimY) function values at x
+     */
     std::vector<double> eval(const std::vector<double> &x) const override;
     DenseVector eval(const DenseVector &x) const override;
+
+    /**
+     * Returns the (dimY x dimX) Jacobian evaluated at x
+     */
     DenseMatrix evalJacobian(const DenseVector &x) const override;
+
+    /**
+     * Returns the (dimY x dimX x dimX) Hessian evaluated at x
+     */
+    std::vector<std::vector<std::vector<double>>> evalHessian(const std::vector<double> &x) const;
 
     // Evaluation of B-spline basis functions
     SparseVector evalBasis(const DenseVector &x) const;

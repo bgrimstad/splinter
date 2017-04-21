@@ -200,6 +200,7 @@ set(TEST_SRC_LIST
     test/bspline_test_utils.cpp
     test/serialization/eigentypes.cpp
     test/unit/bspline_basis_1d.cpp
+    test/unit/bspline_hessian.cpp
     test/unit/knots.cpp
     test/unit/knot_vector.cpp)
 

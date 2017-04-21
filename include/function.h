@@ -34,7 +34,7 @@ public:
     virtual ~Function() {}
 
     /**
-     * Returns the function value at x
+     * Returns the (dimY) function values at x
      */
     virtual std::vector<double> eval(const std::vector<double> &x) const = 0;
 

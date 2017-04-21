@@ -76,15 +76,14 @@ SparseVector BSplineBasis1D::evalDerivative(double x, int r) const
     int p = degree;
 
     // Continuity requirement
-    //assert(p > r);
-    if (p <= r)
+    if (p < r)
     {
         // Return zero-gradient
         SparseVector DB(getNumBasisFunctions());
         return DB;
     }
 
-    // Check for knot multiplicity here!
+    // TODO: Check for knot multiplicity here!
 
     x = supportHack(x);
 
@@ -165,7 +164,7 @@ SparseMatrix BSplineBasis1D::buildBasisMatrix(double x, unsigned int u, unsigned
 
     if (!(k >= 1 && k <= getBasisDegree()))
     {
-        throw Exception("BSplineBasis1D::buildBasisMatrix: Incorrect input paramaters!");
+        throw Exception("BSplineBasis1D::buildBasisMatrix: Incorrect input parameters!");
     }
 
 //    assert(u >= basisDegree + 1);
