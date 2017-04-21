@@ -100,6 +100,7 @@ public:
      * Setters
      */
     void setCoefficients(const DenseVector &coefficients);
+    void setKnotVectors(const std::vector<std::vector<double> > & knots);
     void setControlPoints(const DenseMatrix &controlPoints);
     void checkControlPoints() const;
 
