@@ -19,7 +19,7 @@ namespace SPLINTER
 /**
  * Class that implements the multivariate tensor product B-spline
  */
-class SPLINTER_API BSpline : public Function
+class SPLINTER_API BSpline : public Function, public Saveable
 {
 public:
     /**

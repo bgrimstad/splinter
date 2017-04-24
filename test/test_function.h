@@ -48,9 +48,6 @@ public:
         return powers;
     }
 
-    void save(const std::string &fileName) const override {}
-
-
     DenseMatrix powers;
 private:
     std::string functionString;
@@ -58,8 +55,6 @@ private:
     bool constDegree;
 
     std::function<double (const std::vector<double> &)> f;
-
-    void load(const std::string &fileName) override {}
 };
 
 } // namespace SPLINTER

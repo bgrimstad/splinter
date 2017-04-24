@@ -20,9 +20,8 @@ namespace SPLINTER
  * Interface for functions f : R^m -> R^n
  * All functions working with standard C++11 types are defined in terms of their Eigen counterparts.
  * Default implementations of Jacobian uses central differences.
- * TODO: Remove current requirement that all functions must implement save and load!
  */
-class SPLINTER_API Function : public Saveable
+class SPLINTER_API Function
 {
 public:
     Function()
