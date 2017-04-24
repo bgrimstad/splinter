@@ -65,13 +65,13 @@ void splinter_bspline_builder_set_knot_spacing(splinter_obj_ptr bspline_builder_
         switch (knot_spacing)
         {
             case 0:
-                builder->knotSpacing(BSpline::KnotSpacing::AS_SAMPLED);
+                builder->knotSpacing(KnotSpacing::AS_SAMPLED);
                 break;
             case 1:
-                builder->knotSpacing(BSpline::KnotSpacing::EQUIDISTANT);
+                builder->knotSpacing(KnotSpacing::EQUIDISTANT);
                 break;
             case 2:
-                builder->knotSpacing(BSpline::KnotSpacing::EXPERIMENTAL);
+                builder->knotSpacing(KnotSpacing::EXPERIMENTAL);
                 break;
             default:
                 set_error_string("Error: Invalid knot spacing!");

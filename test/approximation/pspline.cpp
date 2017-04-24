@@ -52,7 +52,7 @@ TEST_CASE("PSpline function2" COMMON_TEXT, COMMON_TAGS "[function-value2]")
                              [](const DataTable &table)
                              {
                                  BSpline bs = BSpline::Builder(table.getDimX(), table.getDimY())
-                                         .knotSpacing(BSpline::KnotSpacing::EXPERIMENTAL)
+                                         .knotSpacing(KnotSpacing::EXPERIMENTAL)
                                          .numBasisFunctions(10)
                                          .fit(table, BSpline::Smoothing::PSPLINE, 0.01);
                                  return (Function*) new BSpline(bs);

@@ -14,6 +14,51 @@
 namespace SPLINTER
 {
 
+// Compute all knot vectors from sample data
+std::vector<std::vector<double>> computeKnotVectors(const DataTable &data,
+                                                    std::vector<unsigned int> degrees,
+                                                    std::vector<unsigned int> num_basis_functions,
+                                                    KnotSpacing knot_spacing)
+{
+    auto dim_x = data.getDimX();
+
+    if (dim_x != degrees.size() || dim_x != num_basis_functions.size())
+        throw Exception("BSpline::Builder::computeKnotVectors: Inconsistent sizes on input vectors.");
+
+    std::vector<std::vector<double>> grid = data.getTableX();
+
+    std::vector<std::vector<double>> knotVectors;
+
+    for (unsigned int i = 0; i < dim_x; ++i)
+    {
+        // Compute knot vector
+        auto knotVec = computeKnotVector(grid.at(i), degrees.at(i), num_basis_functions.at(i), knot_spacing);
+
+        knotVectors.push_back(knotVec);
+    }
+
+    return knotVectors;
+}
+
+// Compute a single knot vector from sample grid and degree
+std::vector<double> computeKnotVector(const std::vector<double> &values,
+                                      unsigned int degree,
+                                      unsigned int num_basis_functions,
+                                      KnotSpacing knot_spacing)
+{
+    switch (knot_spacing)
+    {
+        case KnotSpacing::AS_SAMPLED:
+            return knotVectorMovingAverage(values, degree);
+        case KnotSpacing::EQUIDISTANT:
+            return knotVectorEquidistant(values, degree, num_basis_functions);
+        case KnotSpacing::EXPERIMENTAL:
+            return knotVectorEquidistantNotClamped(values, degree, num_basis_functions);
+        default:
+            return knotVectorMovingAverage(values, degree);
+    }
+}
+
 std::vector<double> knotVectorEquidistantNotClamped(const std::vector<double> &values,
                                                     unsigned int degree,
                                                     unsigned int numBasisFunctions)
