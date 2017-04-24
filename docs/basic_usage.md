@@ -13,7 +13,7 @@ The B-spline may approximate any sampled multivariate function. The user may con
 
 The following Python example shows how to build a quadratic B-spline f : R^1 -> R^1:
 ```
-bspline = splinter.BSplineBuilder(1, 1, degree=2).build(x, y)
+bspline = splinter.BSplineBuilder(1, 1, degree=2).fit(x, y)
 ```
 In this example the B-spline `bspline` is built from sample points (`x`, `y`), usually assumed to lie on a regular grid. Note that SPLINTER do accept datasets of points not lying on a regular grid, but the behavior is then experimental and currently not advised.
 
