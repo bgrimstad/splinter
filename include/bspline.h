@@ -28,7 +28,6 @@ public:
      */
     class Builder;
     enum class Smoothing;
-//    enum class KnotSpacing;
 
     /**
      * Construct B-spline from knot vectors, control points, and basis degrees
