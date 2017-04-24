@@ -19,11 +19,14 @@
 namespace SPLINTER
 {
 
+/**
+ * Constructor used by serializer
+ */
 BSpline::BSpline()
     : Function()
 {}
 
-/*
+/**
  * Constructors for multivariate B-spline using explicit data
  */
 BSpline::BSpline(
@@ -48,8 +51,8 @@ BSpline::BSpline(const std::vector<std::vector<double>> &controlPoints,
     checkControlPoints();
 }
 
-/*
- * Construct from saved data
+/**
+ * Construct B-spline from saved data
  */
 BSpline::BSpline(const char *fileName)
     : BSpline(std::string(fileName))

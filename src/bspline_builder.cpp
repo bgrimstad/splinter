@@ -48,7 +48,7 @@ BSpline BSpline::Builder::fit(const DataTable &data, Smoothing smoothing, double
 #endif // NDEBUG
 
     // Build knot vectors
-    auto knotVectors = computeKnotVectors(data);
+    auto knotVectors = computeKnotVectors(data, _degrees, _numBasisFunctions);
 
     // Build B-spline (with default coefficients)
     auto bspline = BSpline(_dim_x, _dim_y, knotVectors, _degrees);
@@ -315,19 +315,23 @@ SparseMatrix BSpline::Builder::getSecondOrderFiniteDifferenceMatrix(const BSplin
 }
 
 // Compute all knot vectors from sample data
-std::vector<std::vector<double> > BSpline::Builder::computeKnotVectors(const DataTable &data) const
+std::vector<std::vector<double>> BSpline::Builder::computeKnotVectors(const DataTable &data,
+                                                                       std::vector<unsigned int> degrees,
+                                                                       std::vector<unsigned int> num_basis_functions) const
 {
-    if (_dim_x != _degrees.size())
+    auto dim_x = data.getDimX();
+
+    if (dim_x != degrees.size() || dim_x != num_basis_functions.size())
         throw Exception("BSpline::Builder::computeKnotVectors: Inconsistent sizes on input vectors.");
 
     std::vector<std::vector<double>> grid = data.getTableX();
 
     std::vector<std::vector<double>> knotVectors;
 
-    for (unsigned int i = 0; i < _dim_x; ++i)
+    for (unsigned int i = 0; i < dim_x; ++i)
     {
         // Compute knot vector
-        auto knotVec = computeKnotVector(grid.at(i), _degrees.at(i), _numBasisFunctions.at(i));
+        auto knotVec = computeKnotVector(grid.at(i), degrees.at(i), num_basis_functions.at(i));
 
         knotVectors.push_back(knotVec);
     }
@@ -338,16 +342,16 @@ std::vector<std::vector<double> > BSpline::Builder::computeKnotVectors(const Dat
 // Compute a single knot vector from sample grid and degree
 std::vector<double> BSpline::Builder::computeKnotVector(const std::vector<double> &values,
                                                         unsigned int degree,
-                                                        unsigned int numBasisFunctions) const
+                                                        unsigned int num_basis_functions) const
 {
     switch (_knotSpacing)
     {
         case KnotSpacing::AS_SAMPLED:
             return knotVectorMovingAverage(values, degree);
         case KnotSpacing::EQUIDISTANT:
-            return knotVectorEquidistant(values, degree, numBasisFunctions);
+            return knotVectorEquidistant(values, degree, num_basis_functions);
         case KnotSpacing::EXPERIMENTAL:
-            return knotVectorEquidistantNotClamped(values, degree, numBasisFunctions);
+            return knotVectorEquidistantNotClamped(values, degree, num_basis_functions);
         default:
             return knotVectorMovingAverage(values, degree);
     }

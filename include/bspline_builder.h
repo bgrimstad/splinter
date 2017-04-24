@@ -123,10 +123,11 @@ private:
     SparseMatrix getSecondOrderFiniteDifferenceMatrix(const BSpline &bspline) const;
 
     // Computing knots
-    std::vector<std::vector<double>> computeKnotVectors(const DataTable &data) const;
+    std::vector<std::vector<double>> computeKnotVectors(const DataTable &data, std::vector<unsigned int> degrees,
+                                                        std::vector<unsigned int> num_basis_functions) const;
 
     std::vector<double> computeKnotVector(const std::vector<double> &values, unsigned int degree,
-                                          unsigned int numBasisFunctions) const;
+                                          unsigned int num_basis_functions) const;
 
     // Member variables
     unsigned int _dim_x;
