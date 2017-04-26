@@ -29,17 +29,20 @@ public:
     class Builder;
     enum class Smoothing;
 
+    typedef std::vector<std::vector<double>> knotVectors_t;
+    typedef std::vector<std::vector<double>> controlPoints_t;
+    typedef std::vector<unsigned int> degrees_t;
     /**
      * Construct B-spline from knot vectors, control points, and basis degrees
      */
     BSpline(unsigned int dimX,
             unsigned int dimY,
-            const std::vector<std::vector<double>> &knotVectors,
-            const std::vector<unsigned int> &degrees);
+            const knotVectors_t &knotVectors,
+            const degrees_t &degrees);
 
-    BSpline(const std::vector<std::vector<double>> &controlPoints,
-            const std::vector<std::vector<double>> &knotVectors,
-            const std::vector<unsigned int> &degrees);
+    BSpline(const controlPoints_t &controlPoints,
+            const knotVectors_t &knotVectors,
+            const degrees_t &degrees);
 
     /**
      * Construct B-spline from file
