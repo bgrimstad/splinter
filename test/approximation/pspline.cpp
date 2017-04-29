@@ -8,9 +8,9 @@
 */
 
 #include <Catch.h>
-#include <test_utils.h>
+#include <utils/test_utils.h>
 #include <bspline_builder.h>
-#include <test_function.h>
+#include <utils/test_function.h>
 
 using namespace SPLINTER;
 

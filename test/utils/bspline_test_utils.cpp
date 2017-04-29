@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include <bspline_test_utils.h>
-#include <test_utils.h>
+#include <utils/bspline_test_utils.h>
+#include <utils/test_utils.h>
 #include <utilities.h>
 
 namespace SPLINTER
@@ -363,7 +363,7 @@ bool domainReductionTest1()
 //    //timer.stop();
 //    // Old insertion method: 538, 536
 //    // New insertion method: > 25000!
-//    //cout << "Time (ms): " << timer.getMilliSeconds() << endl;
+//    //cout << "Time (ms): " << timer.get_milli_seconds() << endl;
 //
 //    cout << "Doing error check!" << endl;
 //    for (double i0 = lb2.at(0); i0 <= ub2.at(0); i0 += 0.1)

@@ -14,8 +14,8 @@
 #include <function.h>
 #include "definitions.h"
 #include <bspline.h>
-#include <op_overloads.h>
-#include <test_function.h>
+#include <utils/op_overloads.h>
+#include <utils/test_function.h>
 
 
 namespace SPLINTER

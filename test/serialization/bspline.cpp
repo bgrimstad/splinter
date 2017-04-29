@@ -10,7 +10,7 @@
 #include <Catch.h>
 #include <data_table.h>
 #include <bspline_builder.h>
-#include "test_utils.h"
+#include "utils/test_utils.h"
 
 using namespace SPLINTER;
 

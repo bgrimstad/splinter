@@ -10,7 +10,7 @@
 #ifndef SPLINTER_TESTFUNCTIONS_H
 #define SPLINTER_TESTFUNCTIONS_H
 
-#include <test_function.h>
+#include <utils/test_function.h>
 
 extern std::vector<std::vector<SPLINTER::TestFunction *>> testFunctions;
 

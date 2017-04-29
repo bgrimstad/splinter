@@ -8,7 +8,7 @@
 */
 
 #include <Catch.h>
-#include <test_utils.h>
+#include <utils/test_utils.h>
 #include <utilities.h>
 #include <bspline_builder.h>
 

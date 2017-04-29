@@ -188,21 +188,22 @@ set(TEST_SRC_LIST
     test/examples/approximation.cpp
     test/serialization/data_table.cpp
     test/serialization/bspline.cpp
-    test/op_overloads.h
-    test/op_overloads.cpp
-    test/test_function.h
-    test/test_function.cpp
-    test/test_functions.h
-    test/test_functions.cpp
-    test/test_utils.h
-    test/test_utils.cpp
-    test/bspline_test_utils.h
-    test/bspline_test_utils.cpp
+        test/utils/op_overloads.h
+        test/utils/op_overloads.cpp
+        test/utils/test_function.h
+        test/utils/test_function.cpp
+        test/utils/test_functions.h
+        test/utils/test_functions.cpp
+        test/utils/test_utils.h
+        test/utils/test_utils.cpp
+        test/utils/bspline_test_utils.h
+        test/utils/bspline_test_utils.cpp
     test/serialization/eigentypes.cpp
     test/unit/bspline_basis_1d.cpp
     test/unit/bspline_hessian.cpp
     test/unit/knots.cpp
-    test/unit/knot_vector.cpp)
+    test/unit/knot_vector.cpp
+        test/utils/timer.h)
 
 set(SHARED_LIBRARY ${PROJECT_NAME_LOWER}-${VERSION})
 set(STATIC_LIBRARY ${PROJECT_NAME_LOWER}-static-${VERSION})
