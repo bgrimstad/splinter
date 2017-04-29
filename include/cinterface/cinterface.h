@@ -185,7 +185,9 @@ SPLINTER_API void splinter_bspline_builder_set_knot_spacing(splinter_obj_ptr bsp
 SPLINTER_API splinter_obj_ptr splinter_bspline_builder_fit(splinter_obj_ptr bspline_builder_ptr,
                                                            splinter_obj_ptr datatable_ptr,
                                                            int smoothing,
-                                                           double alpha);
+                                                           double alpha,
+                                                           double *weights,
+                                                           int num_weights);
 
 /**
  * Free the memory of the internal Builder

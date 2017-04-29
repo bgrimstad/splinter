@@ -118,7 +118,9 @@ void splinter_bspline_builder_set_knot_spacing(splinter_obj_ptr bspline_builder_
 splinter_obj_ptr splinter_bspline_builder_fit(splinter_obj_ptr bspline_builder_ptr,
                                               splinter_obj_ptr datatable_ptr,
                                               int smoothing,
-                                              double alpha)
+                                              double alpha,
+                                              double *weights,
+                                              int num_weights)
 {
     auto builder = get_builder(bspline_builder_ptr);
     if (builder == nullptr)
@@ -146,7 +148,8 @@ splinter_obj_ptr splinter_bspline_builder_fit(splinter_obj_ptr bspline_builder_p
         }
 
         DataTable *dataTable = get_datatable(datatable_ptr);
-        auto bspline = builder->fit(*dataTable, _smoothing, alpha).clone();
+        auto _weights = get_vector(weights, num_weights);
+        auto bspline = builder->fit(*dataTable, _smoothing, alpha, _weights).clone();
         bsplines.insert(bspline);
         return bspline;
     }

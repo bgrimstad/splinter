@@ -69,7 +69,11 @@ public:
     }
 
     // Fit B-spline to data
-    BSpline fit(const DataTable &data, Smoothing smoothing = Smoothing::NONE, double alpha = .1) const;
+//    BSpline fit(const DataTable &data, Smoothing smoothing = Smoothing::NONE, double alpha = .1) const;
+    BSpline fit(const DataTable &data,
+                Smoothing smoothing = Smoothing::NONE,
+                double alpha = .1,
+                std::vector<double> weights = std::vector<double>()) const;
 
 private:
     Builder();
@@ -78,7 +82,8 @@ private:
     DenseMatrix computeControlPoints(const BSpline &bspline,
                                      const DataTable &data,
                                      Smoothing smoothing,
-                                     double alpha) const;
+                                     double alpha,
+                                     std::vector<double> weights) const;
 
     SparseMatrix computeBasisFunctionMatrix(const BSpline &bspline, const DataTable &data) const;
 
@@ -86,6 +91,9 @@ private:
 
     // P-spline control point calculation
     SparseMatrix getSecondOrderFiniteDifferenceMatrix(const BSpline &bspline) const;
+
+    // Compute weights matrix from weight vector
+    SparseMatrix computeWeightMatrix(const std::vector<double> weights) const;
 
     // Member variables
     unsigned int _dim_x;

@@ -30,14 +30,24 @@ for i in range(11):
     x[i] = i
     y[i] = f1(i)
 
-# Cubic B-spline that interpolates the data (note that NONE is the default smoothing setting)
-b1 = splinterpy.BSplineBuilder(1, 1).fit(x, y, smoothing=splinterpy.BSplineBuilder.Smoothing.NONE)
+# Add outlier
+y[5] += 100
 
-# Cubic B-spline with regularization
-b2 = splinterpy.BSplineBuilder(1, 1).fit(x, y, smoothing=splinterpy.BSplineBuilder.Smoothing.IDENTITY, alpha=0.1)
+# Set weights
+weights = [1] * len(y)
+weights[5] = 0.001
+print(weights)
 
-# Cubic P-spline
-b3 = splinterpy.BSplineBuilder(1, 1).fit(x, y, smoothing=splinterpy.BSplineBuilder.Smoothing.PSPLINE, alpha=0.1)
+# Cubic B-spline that interpolates the data
+# NOTE: the B-spline will fit to the deweighted data point since it does not have any degrees of freedom, i.e. the
+# number of control points equal the number of data points
+b1 = splinterpy.BSplineBuilder(1, 1).fit(x, y, smoothing=splinterpy.BSplineBuilder.Smoothing.NONE, weights=weights)
+
+# Cubic B-spline with regularization and weights
+b2 = splinterpy.BSplineBuilder(1, 1).fit(x, y, smoothing=splinterpy.BSplineBuilder.Smoothing.IDENTITY, alpha=0.1, weights=weights)
+
+# Cubic P-spline with weights
+b3 = splinterpy.BSplineBuilder(1, 1).fit(x, y, smoothing=splinterpy.BSplineBuilder.Smoothing.PSPLINE, alpha=0.1, weights=weights)
 
 n = 1000
 xd = [0.]*n

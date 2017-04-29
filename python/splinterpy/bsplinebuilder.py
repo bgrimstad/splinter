@@ -99,7 +99,7 @@ class BSplineBuilder:
         return self
 
     # Returns a handle to the created internal BSpline object
-    def fit(self, X, Y, smoothing: int=Smoothing.NONE, alpha: float=0.1) -> BSpline:
+    def fit(self, X, Y, smoothing: int=Smoothing.NONE, alpha: float=0.1, weights: List[float]=list()) -> BSpline:
 
         if alpha < 0:
             raise ValueError("'alpha' must be non-negative")
@@ -109,7 +109,8 @@ class BSplineBuilder:
 
         data_table = DataTable(X, Y)
         f_handle = splinter_backend_obj.handle.splinter_bspline_builder_fit
-        bspline_handle = splinter_backend_obj.call(f_handle, self._handle, data_table._get_handle(), smoothing, alpha)
+        bspline_handle = splinter_backend_obj.call(f_handle, self._handle, data_table._get_handle(), smoothing, alpha,
+                                                   list_to_c_array_of_doubles(weights), len(weights))
         return BSpline(bspline_handle)
 
     def __del__(self):
