@@ -24,11 +24,9 @@ elif os.path.isdir("/home/anders/"):
 def f1(x):
     return -1. + 2*x + 0.1*(x**2) + 10*np.random.random()
 
-x = [0.]*11
-y = [0.]*11
-for i in range(11):
-    x[i] = i
-    y[i] = f1(i)
+n = 10
+x = np.linspace(0, 10, n)
+y = [f1(xi) for xi in x]
 
 # Cubic B-spline that interpolates the data (note that NONE is the default smoothing setting)
 b1 = splinterpy.BSplineBuilder(1, 1).fit(x, y, smoothing=splinterpy.BSplineBuilder.Smoothing.NONE)
@@ -39,19 +37,13 @@ b2 = splinterpy.BSplineBuilder(1, 1).fit(x, y, smoothing=splinterpy.BSplineBuild
 # Cubic P-spline
 b3 = splinterpy.BSplineBuilder(1, 1).fit(x, y, smoothing=splinterpy.BSplineBuilder.Smoothing.PSPLINE, alpha=0.1)
 
-n = 1000
-xd = [0.]*n
-yd1 = [0.]*n
-yd2 = [0.]*n
-yd3 = [0.]*n
-for i in range(n):
-    val = i/100.
-    xd[i] = val
-    yd1[i] = b1.eval([val])
-    yd2[i] = b2.eval([val])
-    yd3[i] = b3.eval([val])
+nd = 1000
+xd = np.linspace(0, 10, nd)
+yd1 = [b1.eval(xi) for xi in xd]
+yd2 = [b2.eval(xi) for xi in xd]
+yd3 = [b3.eval(xi) for xi in xd]
 
-
+# Plot results
 plt.plot(x, y, '*', label='Data points')
 plt.plot(xd, yd1, label='Interpolating B-spline')
 plt.plot(xd, yd2, '--', label='Regularized B-spline')
