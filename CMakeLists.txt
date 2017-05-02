@@ -12,6 +12,9 @@ string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
 # Read the SPLINTER version from version file
 file(STRINGS "version" VERSION)
 
+# GCC 4.* required for Python
+#set(CMAKE_CXX_COMPILER /usr/bin/g++-4.8)
+
 # Default configuration values
 set(DEFAULT_BUILD_TYPE "Release")
 set(DEFAULT_ARCH "x86-64")
