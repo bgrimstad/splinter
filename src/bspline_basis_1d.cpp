@@ -539,7 +539,7 @@ std::vector<unsigned int> BSplineBasis1D::indexSupportedBasisFunctions(double x)
     }
 
     // Right edge case
-    if (assertNear(x, knots.back()) && knotMultiplicity(knots.back()) == degree + 1)
+    if (assertNear(x, knots.back()) && knotMultiplicity(knots.back()) == degree + 1 && supported.size() < degree + 1)
     {
         auto last_basis_func = getNumBasisFunctions()-1;
         if (find(supported.begin(), supported.end(), last_basis_func) == supported.end())
