@@ -11,13 +11,14 @@
 #define SPLINTER_JSON_PARSER_H
 
 #include "json.h"
-#include "fstream"
-#include "bspline.h"
 
 namespace SPLINTER
 {
 
+class BSpline;
+
 void save_to_json(const BSpline &bspline, const std::string &filename);
+
 BSpline load_from_json(const std::string &filename);
 
 } // namespace SPLINTER

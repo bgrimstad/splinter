@@ -353,6 +353,22 @@ SPLINTER_API int splinter_bspline_get_dim_y(splinter_obj_ptr bspline_ptr);
 SPLINTER_API void splinter_bspline_save(splinter_obj_ptr bspline_ptr, const char *filename);
 
 /**
+ * Save a BSpline to json file.
+ *
+ * @param bspline_ptr Pointer to the BSpline.
+ * @param filename File to save the BSpline to (will be overwritten!).
+ */
+SPLINTER_API void splinter_bspline_save_to_json(splinter_obj_ptr bspline_ptr, const char *filename);
+
+/**
+ * Save a BSpline to json file.
+ *
+ * @param bspline_ptr Pointer to the BSpline.
+ * @param filename File to save the BSpline to (will be overwritten!).
+ */
+SPLINTER_API splinter_obj_ptr splinter_bspline_load_from_json(const char *filename);
+
+/**
  * Free the memory used by a BSpline.
  *
  * @param bspline_ptr Pointer to the BSpline.

@@ -12,6 +12,8 @@
 
 #include "function.h"
 #include "bspline_basis.h"
+#include "json_parser.h"
+
 
 namespace SPLINTER
 {
@@ -130,7 +132,14 @@ public:
     // Insert a knot until desired knot multiplicity is obtained
     void insertKnots(double tau, unsigned int dim, unsigned int multiplicity = 1);
 
+    /**
+     * Save and load
+     */
     void save(const std::string &fileName) const override;
+
+    void save_to_json(const std::string &filename) const;
+
+    static BSpline load_from_json(const std::string &filename);
 
     std::string getDescription() const override;
 

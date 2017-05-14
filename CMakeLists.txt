@@ -13,6 +13,7 @@ string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
 file(STRINGS "version" VERSION)
 
 # GCC 4.* required for some applications
+# NOTE for Python users: if the library is compiled with GCC > 4.8 the libgcc library must be installed (conda install libgcc)
 #set(CMAKE_CXX_COMPILER /usr/bin/g++-4.8)
 
 # Default configuration values

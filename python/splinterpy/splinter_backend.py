@@ -147,6 +147,8 @@ class SplinterBackend:
         set_signature('splinter_bspline_get_dim_x', c_int, handle_type)
         set_signature('splinter_bspline_get_dim_y', c_int, handle_type)
         set_signature('splinter_bspline_save', c_void, handle_type, c_char_p)
+        set_signature('splinter_bspline_save_to_json', c_void, handle_type, c_char_p)
+        set_signature('splinter_bspline_load_from_json', handle_type, c_char_p)
         set_signature('splinter_bspline_delete', c_void, handle_type)
         set_signature('splinter_bspline_insert_knots', c_void, handle_type, c_double, c_int, c_int)
         set_signature('splinter_bspline_decompose_to_bezier_form', c_void, handle_type)

@@ -16,6 +16,7 @@
 #include <iostream>
 #include <utilities.h>
 
+
 namespace SPLINTER
 {
 
@@ -382,6 +383,14 @@ void BSpline::load(const std::string &fileName)
 {
     Serializer s(fileName);
     s.deserialize(*this);
+}
+
+void BSpline::save_to_json(const std::string &filename) const {
+    SPLINTER::save_to_json(*this, filename);
+}
+
+BSpline BSpline::load_from_json(const std::string &filename) {
+    return SPLINTER::load_from_json(filename);
 }
 
 std::string BSpline::getDescription() const

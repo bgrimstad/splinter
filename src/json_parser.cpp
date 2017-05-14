@@ -8,7 +8,9 @@
 */
 
 #include "json_parser.h"
+#include "bspline.h"
 #include "utilities.h"
+#include "fstream"
 
 
 namespace SPLINTER {

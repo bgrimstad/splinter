@@ -414,6 +414,41 @@ void splinter_bspline_save(splinter_obj_ptr bspline_ptr, const char *filename)
     }
 }
 
+void splinter_bspline_save_to_json(splinter_obj_ptr bspline_ptr, const char *filename)
+{
+    auto bspline = get_bspline(bspline_ptr);
+    if (bspline != nullptr)
+    {
+        try
+        {
+            bspline->save_to_json(filename);
+        }
+        catch(const Exception &e)
+        {
+            set_error_string(e.what());
+        }
+    }
+}
+
+splinter_obj_ptr splinter_bspline_load_from_json(const char *filename)
+{
+    splinter_obj_ptr loaded_bspline = nullptr;
+
+    try
+    {
+        loaded_bspline = (splinter_obj_ptr) new BSpline(BSpline::load_from_json(filename));
+        bsplines.insert(loaded_bspline);
+    }
+    catch (const Exception &e)
+    {
+        // Free the memory of the copy in case the exception was thrown by the insert
+        delete (BSpline *) loaded_bspline;
+        set_error_string(e.what());
+    }
+
+    return loaded_bspline;
+}
+
 void splinter_bspline_delete(splinter_obj_ptr bspline_ptr)
 {
     auto bspline = get_bspline(bspline_ptr);

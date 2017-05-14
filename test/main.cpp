@@ -13,8 +13,6 @@
 #include <utils/test_functions.h>
 #include <utils/timer.h>
 
-#include "utils/bspline_collection.h"
-#include "utilities.h"
 
 int main(int argc, char *argv[])
 {
