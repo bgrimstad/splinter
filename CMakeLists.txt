@@ -12,7 +12,7 @@ string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
 # Read the SPLINTER version from version file
 file(STRINGS "version" VERSION)
 
-# GCC 4.* required for Python
+# GCC 4.* required for some applications
 #set(CMAKE_CXX_COMPILER /usr/bin/g++-4.8)
 
 # Default configuration values
@@ -137,7 +137,7 @@ set(LIBRARY_INSTALL_DIRECTORY ${LIBRARY_INSTALL_DIRECTORY} CACHE STRING "Absolut
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${EIGEN_DIRECTORY})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/test)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/Catch)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty)
 
 set(CINTERFACE_SRC_LIST
     include/cinterface/cinterface.h
@@ -178,7 +178,9 @@ set(SRC_LIST
     src/kronecker_product.cpp
     src/serializer.cpp
     src/utilities.cpp
-)
+    src/json_parser.cpp
+    include/json_parser.h)
+
 set(TEST_SRC_LIST
     ${SRC_LIST}
     test/main.cpp
@@ -191,22 +193,25 @@ set(TEST_SRC_LIST
     test/examples/approximation.cpp
     test/serialization/data_table.cpp
     test/serialization/bspline.cpp
-        test/utils/op_overloads.h
-        test/utils/op_overloads.cpp
-        test/utils/test_function.h
-        test/utils/test_function.cpp
-        test/utils/test_functions.h
-        test/utils/test_functions.cpp
-        test/utils/test_utils.h
-        test/utils/test_utils.cpp
-        test/utils/bspline_test_utils.h
-        test/utils/bspline_test_utils.cpp
+    test/utils/op_overloads.h
+    test/utils/op_overloads.cpp
+    test/utils/test_function.h
+    test/utils/test_function.cpp
+    test/utils/test_functions.h
+    test/utils/test_functions.cpp
+    test/utils/test_utils.h
+    test/utils/test_utils.cpp
+    test/utils/bspline_test_utils.h
+    test/utils/bspline_test_utils.cpp
     test/serialization/eigentypes.cpp
     test/unit/bspline_basis_1d.cpp
     test/unit/bspline_hessian.cpp
     test/unit/knots.cpp
     test/unit/knot_vector.cpp
-        test/utils/timer.h)
+    test/unit/json_parser.cpp
+    test/utils/timer.h
+    test/utils/bspline_collection.cpp
+    test/utils/bspline_collection.h)
 
 set(SHARED_LIBRARY ${PROJECT_NAME_LOWER}-${VERSION})
 set(STATIC_LIBRARY ${PROJECT_NAME_LOWER}-static-${VERSION})

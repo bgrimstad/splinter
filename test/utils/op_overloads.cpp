@@ -115,7 +115,8 @@ bool operator==(const BSpline &lhs, const BSpline &rhs)
 {
     return
             lhs.dimX == rhs.dimX
-            && lhs.controlPoints == rhs.controlPoints
+            && lhs.dimY == rhs.dimY
+            && lhs.controlPoints.isApprox(rhs.controlPoints)
             && lhs.basis == rhs.basis
             && lhs.getNumBasisFunctionsPerVariable() == rhs.getNumBasisFunctionsPerVariable()
             && lhs.getKnotVectors() == rhs.getKnotVectors()

@@ -87,4 +87,23 @@ std::vector<double> extractUniqueSorted(const std::vector<double> &values)
     return unique;
 }
 
+std::vector<std::vector<double>> transposeVecVec(std::vector<std::vector<double>> x)
+{
+    std::vector<std::vector<double>> xt;
+    if (x.size() == 0) {
+        return xt;
+    }
+    size_t inner_dim = x.at(0).size();
+
+    for (unsigned int i = 0; i < inner_dim; ++i) {
+        std::vector<double> inner;
+        for (unsigned int j = 0; j < x.size(); ++j) {
+            auto xji = x.at(j).at(i);
+            inner.push_back(xji);
+        }
+        xt.push_back(inner);
+    }
+    return xt;
+}
+
 } // namespace SPLINTER

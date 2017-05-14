@@ -52,6 +52,8 @@ std::vector<double> linspace(double start, double stop, unsigned int num);
 
 std::vector<double> extractUniqueSorted(const std::vector<double> &values);
 
+std::vector<std::vector<double>> transposeVecVec(std::vector<std::vector<double>> x);
+
 } // namespace SPLINTER
 
 #endif // SPLINTER_UTILITIES_H
