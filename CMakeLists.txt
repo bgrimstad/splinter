@@ -38,13 +38,15 @@ else()
 endif()
 
 # Detect compiler
-message("===================================")
-message(${CMAKE_CXX_COMPILER_ID})
 string(COMPARE EQUAL "Clang"      ${CMAKE_CXX_COMPILER_ID} CLANG)
-string(COMPARE EQUAL "AppleClang" ${CMAKE_CXX_COMPILER_ID} CLANG)
+string(COMPARE EQUAL "AppleClang" ${CMAKE_CXX_COMPILER_ID} APPLECLANG)
 string(COMPARE EQUAL "GNU"        ${CMAKE_CXX_COMPILER_ID} GCC)
 string(COMPARE EQUAL "Intel"      ${CMAKE_CXX_COMPILER_ID} INTEL)
 string(COMPARE EQUAL "MSVC"       ${CMAKE_CXX_COMPILER_ID} MSVC)
+
+if (CLANG OR APPLECLANG)
+    set(CLANG 1)
+endif()
 
 # Set build type
 if(NOT CMAKE_BUILD_TYPE)
