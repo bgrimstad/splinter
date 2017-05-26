@@ -10,15 +10,12 @@ dependencies:
 compile:
     override:
         # Place here whatever commands are necessary to build your project.
-        - ls
         - mkdir build
         # Every command is run in a separate subshell so commands like 'cd' must be chained
         - cd build && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=g++-6 ..
-        - cd build && make -j32
+        - cd build && make -j8
 
 test:
     override:
         # Place here any automated test you would like to run after the build (unit tests, boot up a VM and collect output...)
-        - ls
-        - cd build && ls
         - cd build && ./splinter-test
