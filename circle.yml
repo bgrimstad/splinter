@@ -1,9 +1,11 @@
 dependencies:
     pre:
         # Install a few packages which will be needed for building the cross compiler.
+        - sudo add-apt-repository ppa:ubuntu-toolchain-r/test
         - sudo apt-get update
         - sudo apt-get install build-essential
         - sudo apt-get install cmake
+        - sudo apt-get install gcc-6 g++-6
 
 compile:
     override:
@@ -21,7 +23,7 @@ test:
         # Place here any automated test you would like to run after the build (unit tests, boot up a VM and collect output...)
         - ls
         - cd build && ls
-        - cd build && make test
+        - cd build && ./splinter-test
         # You must place something here, even it it's just testing whether the output exists.
         # - test -f $CIRCLE_ARTIFACTS/my_kernel
         # - test -f $CIRCLE_ARTIFACTS/my_image.iso
