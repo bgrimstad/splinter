@@ -1,3 +1,4 @@
+[![Build Status](https://circleci.com/gh/bgrimstad/splinter.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/bgrimstad/splinter)
 [![GitHub release](https://img.shields.io/github/release/bgrimstad/splinter.svg?style=flat-square)](https://github.com/bgrimstad/splinter/releases)
 [![license](https://img.shields.io/github/license/bgrimstad/splinter.svg?style=flat-square)]()
 
