@@ -1,7 +1,6 @@
 dependencies:
     pre:
         # Install a few packages which will be needed for building the cross compiler.
-        - cat /proc/cpuinfo
         - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
         - sudo apt-get update
         - sudo apt-get install build-essential
@@ -15,9 +14,7 @@ compile:
         - mkdir build
         # Every command is run in a separate subshell so commands like 'cd' must be chained
         - cd build && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=g++-6 ..
-        - cd build && make
-        # Copy any files you want to keep to the folder $CIRCLE_ARTIFACTS.
-        # - cp my_kernel my_image.iso $CIRCLE_ARTIFACTS/
+        - cd build && make -j32
 
 test:
     override:
@@ -25,6 +22,3 @@ test:
         - ls
         - cd build && ls
         - cd build && ./splinter-test
-        # You must place something here, even it it's just testing whether the output exists.
-        # - test -f $CIRCLE_ARTIFACTS/my_kernel
-        # - test -f $CIRCLE_ARTIFACTS/my_image.iso
