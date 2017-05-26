@@ -8,8 +8,10 @@ dependencies:
 compile:
     override:
         # Place here whatever commands are necessary to build your project.
+        - ls
         - mkdir build
         - cd build
+        - ls
         - cmake DCMAKE_BUILD_TYPE=Release ..
         - make
         # Copy any files you want to keep to the folder $CIRCLE_ARTIFACTS.
