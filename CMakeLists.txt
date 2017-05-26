@@ -108,9 +108,11 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Ox")
 
 elseif(GCC OR CLANG)
+    message("Identified compiler as GCC or Clang")
     # Treat warning return-type as error to avoid undefined behaviour
     # when a non-void function does not return a value.
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m${BITNESS} -std=c++11 -Werror=return-type")
+    message("CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wno-long-long")
 
 elseif(INTEL)
