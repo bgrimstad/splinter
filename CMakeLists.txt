@@ -38,6 +38,8 @@ else()
 endif()
 
 # Detect compiler
+message("===================================")
+message(${CMAKE_CXX_COMPILER_ID})
 string(COMPARE EQUAL "Clang"      ${CMAKE_CXX_COMPILER_ID} CLANG)
 string(COMPARE EQUAL "AppleClang" ${CMAKE_CXX_COMPILER_ID} CLANG)
 string(COMPARE EQUAL "GNU"        ${CMAKE_CXX_COMPILER_ID} GCC)
