@@ -1,0 +1,25 @@
+dependencies:
+    pre:
+        # Install a few packages which will be needed for building the cross compiler.
+        - sudo apt-get update
+        - sudo apt-get install build-essential
+        - sudo apt-get install cmake
+
+compile:
+    override:
+        # Place here whatever commands are necessary to build your project.
+        - mkdir build
+        - cd build
+        - cmake DCMAKE_BUILD_TYPE=Release ..
+        - make
+        # Copy any files you want to keep to the folder $CIRCLE_ARTIFACTS.
+        # - cp my_kernel my_image.iso $CIRCLE_ARTIFACTS/
+
+test:
+    override:
+        # Place here any automated test you would like to run after the build (unit tests, boot up a VM and collect output...)
+        - ls
+        - make test
+        # You must place something here, even it it's just testing whether the output exists.
+        # - test -f $CIRCLE_ARTIFACTS/my_kernel
+        # - test -f $CIRCLE_ARTIFACTS/my_image.iso
