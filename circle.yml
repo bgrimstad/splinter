@@ -10,10 +10,9 @@ compile:
         # Place here whatever commands are necessary to build your project.
         - ls
         - mkdir build
-        - cd build
-        - ls
-        - cmake DCMAKE_BUILD_TYPE=Release ..
-        - make
+        # Every command is run in a separate subshell so commands like 'cd' must be chained
+        - cd build & cmake DCMAKE_BUILD_TYPE=Release ..
+        - cd build & make
         # Copy any files you want to keep to the folder $CIRCLE_ARTIFACTS.
         # - cp my_kernel my_image.iso $CIRCLE_ARTIFACTS/
 
@@ -21,7 +20,8 @@ test:
     override:
         # Place here any automated test you would like to run after the build (unit tests, boot up a VM and collect output...)
         - ls
-        - make test
+        - cd build & ls
+        - cd build & make test
         # You must place something here, even it it's just testing whether the output exists.
         # - test -f $CIRCLE_ARTIFACTS/my_kernel
         # - test -f $CIRCLE_ARTIFACTS/my_image.iso
