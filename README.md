@@ -1,6 +1,9 @@
-[![Build Status](https://travis-ci.org/bgrimstad/splinter.svg?branch=master)](https://travis-ci.org/bgrimstad/splinter)
 [![GitHub release](https://img.shields.io/github/release/bgrimstad/splinter.svg?style=flat-square)](https://github.com/bgrimstad/splinter/releases)
 [![license](https://img.shields.io/github/license/bgrimstad/splinter.svg?style=flat-square)]()
+
+| **`Master branch`** | **`Develop branch`** |
+|-----------------|---------------------|
+| [![Build Status](https://travis-ci.org/bgrimstad/splinter.svg?branch=master)](https://travis-ci.org/bgrimstad/splinter) | [![Build Status](https://travis-ci.org/bgrimstad/splinter.svg?branch=develop)](https://travis-ci.org/bgrimstad/splinter) |
 
 ## SPLINTER
 SPLINTER (SPLine INTERpolation) is a library for *multivariate function approximation with splines*. The library can be used for function approximation, regression, data smoothing, data reduction, and much more. Spline approximations are represented by a speedy and numerically stable C++ implementation of the tensor product B-spline.
