@@ -164,6 +164,7 @@ set(SRC_LIST
     include/knot_utils.h
     include/knot_vector.h
     include/bspline_builder.h
+    include/bspline_utils.h
     include/data_point.h
     include/data_table.h
     include/function.h
@@ -179,6 +180,7 @@ set(SRC_LIST
     src/knot_utils.cpp
     src/knot_vector.cpp
     src/bspline_builder.cpp
+    src/bspline_utils.cpp
     src/data_point.cpp
     src/data_table.cpp
     src/function.cpp
@@ -213,6 +215,7 @@ set(TEST_SRC_LIST
     test/serialization/eigentypes.cpp
     test/unit/bspline_basis_1d.cpp
     test/unit/bspline_hessian.cpp
+    test/unit/bspline_utils.cpp
     test/unit/knots.cpp
     test/unit/knot_vector.cpp
     test/unit/json_parser.cpp

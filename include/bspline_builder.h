@@ -85,16 +85,6 @@ private:
                                      double alpha,
                                      std::vector<double> weights) const;
 
-    SparseMatrix computeBasisFunctionMatrix(const BSpline &bspline, const DataTable &data) const;
-
-    DenseMatrix stackSamplePointValues(const DataTable &data) const;
-
-    // P-spline control point calculation
-    SparseMatrix getSecondOrderFiniteDifferenceMatrix(const BSpline &bspline) const;
-
-    // Compute weights matrix from weight vector
-    SparseMatrix computeWeightMatrix(const std::vector<double> weights) const;
-
     // Member variables
     unsigned int _dim_x;
     unsigned int _dim_y;
