@@ -68,7 +68,7 @@ public:
     /**
      * Getters
      */
-    DenseVector getCoefficients()
+    DenseVector getCoefficients() const
     {
         return coefficients;
     }
