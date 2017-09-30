@@ -115,7 +115,7 @@ public:
     void checkControlPoints() const;
 
     // Linear transformation of control points (B-spline has affine invariance)
-    void updateControlPoints(const SparseMatrix &A);
+    void linear_transform(const SparseMatrix &A);
 
     // Reduce support of B-spline
     void reduceSupport(const std::vector<double> &lb, const std::vector<double> &ub, bool doRegularizeKnotVectors = true);

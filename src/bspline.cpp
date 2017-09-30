@@ -189,10 +189,10 @@ void BSpline::setControlPoints(const DenseMatrix &newControlPoints)
     checkControlPoints();
 }
 
-void BSpline::updateControlPoints(const SparseMatrix &A)
+void BSpline::linear_transform(const SparseMatrix &A)
 {
     if (A.cols() != controlPoints.rows())
-        throw Exception("BSpline::updateControlPoints: Incompatible size of linear transformation matrix.");
+        throw Exception("BSpline::linear_transform: Incompatible size of linear transformation matrix.");
     controlPoints = A*controlPoints;
 }
 
@@ -250,7 +250,7 @@ void BSpline::globalKnotRefinement()
     SparseMatrix A = basis.refineKnots();
 
     // Update control points
-    updateControlPoints(A);
+    linear_transform(A);
 }
 
 void BSpline::localKnotRefinement(const DenseVector &x)
@@ -259,7 +259,7 @@ void BSpline::localKnotRefinement(const DenseVector &x)
     SparseMatrix A = basis.refineKnotsLocally(x);
 
     // Update control points
-    updateControlPoints(A);
+    linear_transform(A);
 }
 
 void BSpline::decomposeToBezierForm()
@@ -268,7 +268,7 @@ void BSpline::decomposeToBezierForm()
     SparseMatrix A = basis.decomposeToBezierForm();
 
     // Update control points
-    updateControlPoints(A);
+    linear_transform(A);
 }
 
 // Computes knot averages: assumes that basis is initialized!
@@ -326,7 +326,7 @@ void BSpline::insertKnots(double tau, unsigned int dim, unsigned int multiplicit
     SparseMatrix A = basis.insertKnots(tau, dim, multiplicity);
 
     // Update control points
-    updateControlPoints(A);
+    linear_transform(A);
 }
 
 void BSpline::regularizeKnotVectors(const std::vector<double> &lb, const std::vector<double> &ub)
@@ -367,7 +367,7 @@ bool BSpline::removeUnsupportedBasisFunctions(const std::vector<double> &lb, con
     SparseMatrix A = basis.reduceSupport(lb, ub);
 
     // Remove unsupported control points (basis functions)
-    updateControlPoints(A);
+    linear_transform(A);
 
     return true;
 }
