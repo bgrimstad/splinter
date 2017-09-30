@@ -151,17 +151,12 @@ function build_linux {
 		
 		build_gcc_clang x86 $COMPILER
 		cp libsplinter-$SPLINTER_VERSION.so libsplinter-static-$SPLINTER_VERSION.a "$BUILD_ROOT/$OS/$COMPILER/$ARCH"
-		# MatLab for Linux only exists as 64bit, so we don't need this
-#		"$MAKE_CMD" install
-#		cp -r splinter-matlab $BUILD_ROOT
-#		cp -r splinter-python $BUILD_ROOT
 		
 		build_gcc_clang x86-64 $COMPILER
 		cp libsplinter-$SPLINTER_VERSION.so libsplinter-static-$SPLINTER_VERSION.a "$BUILD_ROOT/$OS/$COMPILER/$ARCH"
 		
 		# Have CMake create the interface directory structures, then copy them to the build root
 		"$MAKE_CMD" install
-		cp -r splinter-matlab $BUILD_ROOT
 		cp -r splinter-python $BUILD_ROOT
 		
 		copy_header_files
@@ -185,7 +180,6 @@ function build_linux {
 		
 		# Have CMake create the interface directory structures, then copy them to the build root
 		"$MAKE_CMD" install
-		cp -r splinter-matlab $BUILD_ROOT
 		cp -r splinter-python $BUILD_ROOT
 		
 		copy_header_files
@@ -224,11 +218,9 @@ function build_msvc {
 	"$MSBUILD" ALL_BUILD.vcxproj -p:Configuration=Release -maxcpucount:$NPROC
 	
 	# Install
-	mkdir -p "$BUILD_ROOT/splinter-matlab/lib/$OS/$ARCH/"
 	mkdir -p "$BUILD_ROOT/splinter-python/lib/$OS/$ARCH/"
 	mkdir -p "$BUILD_ROOT/$OS/$COMPILER/$ARCH"
-	
-	cp "Release/splinter-$SPLINTER_VERSION.dll" "$BUILD_ROOT/splinter-matlab/lib/$OS/$ARCH/"
+
 	cp "Release/splinter-$SPLINTER_VERSION.dll" "$BUILD_ROOT/splinter-python/lib/$OS/$ARCH/"
 	cp "Release/splinter-$SPLINTER_VERSION.dll" "$BUILD_ROOT/$OS/$COMPILER/$ARCH"
 	cp "Release/splinter-static-$SPLINTER_VERSION.lib" "$BUILD_ROOT/$OS/$COMPILER/$ARCH"
@@ -269,7 +261,6 @@ function build_windows {
 		
 		# Have CMake create the interface directory structures, then copy them to the build root
 		"$MAKE_CMD" install
-		cp -r splinter-matlab $BUILD_ROOT
 		cp -r splinter-python $BUILD_ROOT
 		
 		COMPILER_VERSION=$($CXX -dumpversion)
@@ -390,17 +381,8 @@ do
 	done
 done
 
-# Make an archive of splinter-matlab and splinter-python
+# Make an archive of splinter-python
 cd $BUILD_ROOT
-
-filename="splinter-matlab"
-full_filename="$RELEASE_DIR/$filename"
-files="splinter-matlab"
-echo "Creating archive $filename.tar.gz"
-$TAR -czf $full_filename.tar.gz $files > /dev/null
-
-echo "Creating archive $filename.zip"
-$ZIP -r $full_filename $files > /dev/null
 
 filename="splinter-python"
 full_filename="$RELEASE_DIR/$filename"
