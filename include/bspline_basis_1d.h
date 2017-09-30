@@ -36,7 +36,7 @@ public:
     SparseMatrix refineKnotsLocally(double x);
     SparseMatrix decomposeToBezierForm();
     SparseMatrix insertKnots(double tau, unsigned int multiplicity = 1);
-    // bool insertKnots(SparseMatrix &A, std::vector<tuple<double,int>> newKnots); // Add knots at several locations
+    // bool insert_knots(SparseMatrix &A, std::vector<tuple<double,int>> newKnots); // Add knots at several locations
 
     unsigned int knotMultiplicity(double tau) const {
         // Return the number of repetitions of tau in the knot vector

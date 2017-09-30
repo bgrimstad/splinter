@@ -32,7 +32,7 @@ TEST_CASE("DataTable can be saved and loaded", COMMON_TAGS)
     SECTION("DataTable with samples from f_1_1")
     {
         auto testFunc = getTestFunction(1, 1);
-        auto dim = testFunc->getDimX();
+        auto dim = testFunc->get_dim_x();
         auto points = multi_linspace(dim, std::pow(1000, 1.0 / dim));
         table = sample(testFunc, points);
 
@@ -45,7 +45,7 @@ TEST_CASE("DataTable can be saved and loaded", COMMON_TAGS)
     SECTION("DataTable with samples from f_2_1")
     {
         auto testFunc = getTestFunction(2, 1);
-        auto dim = testFunc->getDimX();
+        auto dim = testFunc->get_dim_x();
         auto points = multi_linspace(dim, std::pow(1000, 1.0 / dim));
         table = sample(testFunc, points);
 

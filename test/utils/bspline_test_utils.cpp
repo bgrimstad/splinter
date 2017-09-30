@@ -57,12 +57,12 @@ bool testKnotInsertion()
     BSpline bspline2_copy(bspline2);
     BSpline bspline3_copy(bspline3);
 
-    bspline1.insertKnots(0.83, 0);
-    bspline1.insertKnots(1.37, 1);
-    bspline2.insertKnots(0.83, 1);
-    bspline2.insertKnots(1.37, 0);
-    bspline3.insertKnots(0.83, 1);
-    bspline3.insertKnots(1.37, 1);
+    bspline1.insert_knots(0.83, 0);
+    bspline1.insert_knots(1.37, 1);
+    bspline2.insert_knots(0.83, 1);
+    bspline2.insert_knots(1.37, 0);
+    bspline3.insert_knots(0.83, 1);
+    bspline3.insert_knots(1.37, 1);
 
     // Sample function
     auto x0_vec = linspace(0, 2, 200);
@@ -100,15 +100,15 @@ bool testKnotInsertion()
 
 bool domainReductionTest(BSpline &bs, const BSpline &bs_orig)
 {
-    if (bs.getDimX() != 2 || bs_orig.getDimX() != 2)
+    if (bs.get_dim_x() != 2 || bs_orig.get_dim_x() != 2)
         return false;
 
     // Check for error
     if (!compareBSplines(bs, bs_orig))
         return false;
 
-    auto lb = bs.getDomainLowerBound();
-    auto ub = bs.getDomainUpperBound();
+    auto lb = bs.get_domain_lower_bound();
+    auto ub = bs.get_domain_upper_bound();
 
     bool flag = false;
     unsigned int index = 0;
@@ -128,12 +128,12 @@ bool domainReductionTest(BSpline &bs, const BSpline &bs_orig)
         auto lb2 = lb;
         auto ub2 = ub; ub2.at(index) = split;
         BSpline bs2(bs);
-        bs2.reduceSupport(lb2, ub2);
+        bs2.reduce_support(lb2, ub2);
 
         auto lb3 = lb; lb3.at(index) = split;
         auto ub3 = ub;
         BSpline bs3(bs);
-        bs3.reduceSupport(lb3, ub3);
+        bs3.reduce_support(lb3, ub3);
 
         return (domainReductionTest(bs2, bs_orig) && domainReductionTest(bs3, bs_orig));
     }
@@ -193,10 +193,10 @@ bool domainReductionTest1()
         std::vector<double> lb = {0, 0};
         std::vector<double> ub = {2, 2};
 
-        bspline1.reduceSupport(lb, ub);
-        bspline2.reduceSupport(lb, ub);
-        bspline3.reduceSupport(lb, ub);
-        bspline4.reduceSupport(lb, ub);
+        bspline1.reduce_support(lb, ub);
+        bspline2.reduce_support(lb, ub);
+        bspline3.reduce_support(lb, ub);
+        bspline4.reduce_support(lb, ub);
 
         if (!compareVectors(bspline1.eval(x1), bspline1_ref.eval(x1)))
             return false;
@@ -220,10 +220,10 @@ bool domainReductionTest1()
         std::vector<double> lb = {0, 0};
         std::vector<double> ub = {1, 1};
 
-        bspline1.reduceSupport(lb, ub);
-        bspline2.reduceSupport(lb, ub);
-        bspline3.reduceSupport(lb, ub);
-        bspline4.reduceSupport(lb, ub);
+        bspline1.reduce_support(lb, ub);
+        bspline2.reduce_support(lb, ub);
+        bspline3.reduce_support(lb, ub);
+        bspline4.reduce_support(lb, ub);
 
         if (!compareVectors(bspline1.eval(x1), bspline1_ref.eval(x1)))
             return false;
@@ -247,10 +247,10 @@ bool domainReductionTest1()
         std::vector<double> lb = {0.5, 0.5};
         std::vector<double> ub = {1, 1};
 
-        bspline1.reduceSupport(lb, ub);
-        bspline2.reduceSupport(lb, ub);
-        bspline3.reduceSupport(lb, ub);
-        bspline4.reduceSupport(lb, ub);
+        bspline1.reduce_support(lb, ub);
+        bspline2.reduce_support(lb, ub);
+        bspline3.reduce_support(lb, ub);
+        bspline4.reduce_support(lb, ub);
 
         if (!compareVectors(bspline1.eval(x1), bspline1_ref.eval(x1)))
             return false;
@@ -274,10 +274,10 @@ bool domainReductionTest1()
         std::vector<double> lb = {0.7, 0.7};
         std::vector<double> ub = {0.8, 0.8};
 
-        bspline1.reduceSupport(lb, ub);
-        bspline2.reduceSupport(lb, ub);
-        bspline3.reduceSupport(lb, ub);
-        bspline4.reduceSupport(lb, ub);
+        bspline1.reduce_support(lb, ub);
+        bspline2.reduce_support(lb, ub);
+        bspline3.reduce_support(lb, ub);
+        bspline4.reduce_support(lb, ub);
 
         if (!compareVectors(bspline1.eval(x1), bspline1_ref.eval(x1)))
             return false;
@@ -359,7 +359,7 @@ bool domainReductionTest1()
 //
 //    cout << "Reducing domain" << endl;
 //    //timer.start();
-//    bs.reduceSupport(lb2,ub2);
+//    bs.reduce_support(lb2,ub2);
 //    //timer.stop();
 //    // Old insertion method: 538, 536
 //    // New insertion method: > 25000!
@@ -433,9 +433,9 @@ bool domainReductionTest1()
 //     * x = 4 => knot inserted at 3.5
 //     */
 //    DenseVector x(1); x(0) = 1;
-//    bs.localKnotRefinement(x);
+//    bs.local_knot_refinement(x);
 //
-//    auto knots2 = bs.getKnotVectors();
+//    auto knots2 = bs.get_knot_vectors();
 //
 //    for (auto k : knots2.at(0))
 //        cout << k << ", ";

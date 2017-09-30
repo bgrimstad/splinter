@@ -17,27 +17,27 @@ DenseVector Function::eval(const DenseVector &x) const {
     return stdToEigVec(eval(eigToStdVec(x)));
 }
 
-std::vector<std::vector<double>> Function::evalJacobian(const std::vector<double> &x) const
+std::vector<std::vector<double>> Function::eval_jacobian(const std::vector<double> &x) const
 {
     auto denseX = stdToEigVec(x);
 
-    return eigMatToStdVecVec(evalJacobian(denseX));
+    return eigMatToStdVecVec(eval_jacobian(denseX));
 }
 
-DenseMatrix Function::evalJacobian(const DenseVector &x) const
+DenseMatrix Function::eval_jacobian(const DenseVector &x) const
 {
-    return centralDifference(x);
+    return central_difference(x);
 }
 
-DenseMatrix Function::centralDifference(const DenseVector &x) const
+DenseMatrix Function::central_difference(const DenseVector &x) const
 {
-    DenseMatrix Jac(dimY, dimX);
+    DenseMatrix Jac(dim_y, dim_x);
 
     double h = 1e-6; // perturbation step size
     double hForward = 0.5*h;
     double hBackward = 0.5*h;
 
-    for (unsigned int i = 0; i < dimX; ++i)
+    for (unsigned int i = 0; i < dim_x; ++i)
     {
         DenseVector xForward(x);
         xForward(i) = xForward(i) + hForward;
@@ -48,15 +48,15 @@ DenseMatrix Function::centralDifference(const DenseVector &x) const
         auto yForward = eval(xForward);
         auto yBackward = eval(xBackward);
 
-        for (unsigned int j = 0; j < dimY; ++j)
+        for (unsigned int j = 0; j < dim_y; ++j)
             Jac(j, i) = (yForward(j) - yBackward(j)) / (hBackward + hForward);
     }
 
     return Jac;
 }
 
-void Function::checkInput(const DenseVector &x) const {
-    return checkInput(eigToStdVec(x));
+void Function::check_input(const DenseVector &x) const {
+    return check_input(eigToStdVec(x));
 }
 
 

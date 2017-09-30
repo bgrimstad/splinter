@@ -246,10 +246,10 @@ double BSplineBasis1D::deBoorCoxCoeff(double x, double x_min, double x_max) cons
 SparseMatrix BSplineBasis1D::insertKnots(double tau, unsigned int multiplicity)
 {
     if (!is_supported(tau))
-        throw Exception("BSplineBasis1D::insertKnots: Cannot insert knot outside domain!");
+        throw Exception("BSplineBasis1D::insert_knots: Cannot insert knot outside domain!");
 
     if (knotMultiplicity(tau) + multiplicity > degree + 1)
-        throw Exception("BSplineBasis1D::insertKnots: Knot multiplicity is too high!");
+        throw Exception("BSplineBasis1D::insert_knots: Knot multiplicity is too high!");
 
     // New knot vector
     int index = knots.index_interval(tau);
@@ -259,7 +259,7 @@ SparseMatrix BSplineBasis1D::insertKnots(double tau, unsigned int multiplicity)
         extKnots.insert(extKnots.begin()+index+1, tau);
 
     if (!KnotVector(extKnots).is_regular(degree))
-        throw Exception("BSplineBasis1D::insertKnots: New knot vector is not regular!");
+        throw Exception("BSplineBasis1D::insert_knots: New knot vector is not regular!");
 
     // Return knot insertion matrix
     SparseMatrix A = buildKnotInsertionMatrix(extKnots);
@@ -463,7 +463,7 @@ SparseMatrix BSplineBasis1D::reduceSupport(double lb, double ub)
 {
     // Check bounds
     if (lb < knots.front() || ub > knots.back())
-        throw Exception("BSplineBasis1D::reduceSupport: Cannot increase support!");
+        throw Exception("BSplineBasis1D::reduce_support: Cannot increase support!");
 
     unsigned int k = degree + 1;
 
@@ -480,7 +480,7 @@ SparseMatrix BSplineBasis1D::reduceSupport(double lb, double ub)
         }
         else
         {
-            throw Exception("BSplineBasis1D::reduceSupport: Suggested index is negative!");
+            throw Exception("BSplineBasis1D::reduce_support: Suggested index is negative!");
         }
     }
 
@@ -498,7 +498,7 @@ SparseMatrix BSplineBasis1D::reduceSupport(double lb, double ub)
     int num_new = si.size()-k; // Number of basis functions after update
 
     if (num_old < num_new)
-        throw Exception("BSplineBasis1D::reduceSupport: Number of basis functions is increased instead of reduced!");
+        throw Exception("BSplineBasis1D::reduce_support: Number of basis functions is increased instead of reduced!");
 
     DenseMatrix Ad = DenseMatrix::Zero(num_new, num_old);
     Ad.block(0, index_lower, num_new, num_new) = DenseMatrix::Identity(num_new, num_new);

@@ -114,15 +114,15 @@ bool operator==(const DataPoint &lhs, const DataPoint &rhs)
 bool operator==(const BSpline &lhs, const BSpline &rhs)
 {
     return
-            lhs.dimX == rhs.dimX
-            && lhs.dimY == rhs.dimY
-            && lhs.controlPoints.isApprox(rhs.controlPoints)
+            lhs.dim_x == rhs.dim_x
+            && lhs.dim_y == rhs.dim_y
+            && lhs.control_points.isApprox(rhs.control_points)
             && lhs.basis == rhs.basis
-            && lhs.getNumBasisFunctionsPerVariable() == rhs.getNumBasisFunctionsPerVariable()
-            && lhs.getKnotVectors() == rhs.getKnotVectors()
-            && lhs.getBasisDegrees() == rhs.getBasisDegrees()
-            && lhs.getDomainLowerBound() == rhs.getDomainLowerBound()
-            && lhs.getDomainUpperBound() == rhs.getDomainUpperBound();
+            && lhs.get_num_basis_functions_per_variable() == rhs.get_num_basis_functions_per_variable()
+            && lhs.get_knot_vectors() == rhs.get_knot_vectors()
+            && lhs.get_basis_degrees() == rhs.get_basis_degrees()
+            && lhs.get_domain_lower_bound() == rhs.get_domain_lower_bound()
+            && lhs.get_domain_upper_bound() == rhs.get_domain_upper_bound();
 }
 
 bool operator==(const BSplineBasis &lhs, const BSplineBasis &rhs)

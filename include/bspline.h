@@ -57,7 +57,7 @@ public:
 
     // Avoid name hiding
     using Function::eval;
-    using Function::evalJacobian;
+    using Function::eval_jacobian;
 
     /**
      * Returns the (dimY) function values at x
@@ -68,69 +68,73 @@ public:
     /**
      * Returns the (dimY x dimX) Jacobian evaluated at x
      */
-    DenseMatrix evalJacobian(const DenseVector &x) const override;
+    DenseMatrix eval_jacobian(const DenseVector &x) const override;
 
     /**
      * Returns the (dimY x dimX x dimX) Hessian evaluated at x
      */
-    std::vector<std::vector<std::vector<double>>> evalHessian(const std::vector<double> &x) const;
+    std::vector<std::vector<std::vector<double>>> eval_hessian(const std::vector<double> &x) const;
 
     // Evaluation of B-spline basis functions
-    SparseVector evalBasis(const DenseVector &x) const;
-    SparseMatrix evalBasisJacobian(const DenseVector &x) const;
+    SparseVector eval_basis(const DenseVector &x) const;
+    SparseMatrix eval_basis_jacobian(const DenseVector &x) const;
 
     /**
      * Getters
      */
-    DenseMatrix getControlPoints() const
+    DenseMatrix get_control_points() const
     {
-        return controlPoints;
+        return control_points;
     }
 
-    unsigned int getNumControlPoints() const
+    unsigned int get_num_control_points() const
     {
-        return (unsigned int) controlPoints.rows();
+        return (unsigned int) control_points.rows();
     }
 
-    std::vector<unsigned int> getNumBasisFunctionsPerVariable() const;
+    std::vector<unsigned int> get_num_basis_functions_per_variable() const;
 
-    unsigned int getNumBasisFunctions() const
+    unsigned int get_num_basis_functions() const
     {
         return basis.getNumBasisFunctions();
     }
 
-//    DenseMatrix getControlPoints() const;
-    DenseMatrix getKnotAverages() const {
-        return computeKnotAverages();
+//    DenseMatrix get_control_points() const;
+    DenseMatrix get_knot_averages() const {
+        return compute_knot_averages();
     };
-    std::vector< std::vector<double>> getKnotVectors() const;
-    std::vector<unsigned int> getBasisDegrees() const;
-    std::vector<double> getDomainUpperBound() const;
-    std::vector<double> getDomainLowerBound() const;
+    std::vector< std::vector<double>> get_knot_vectors() const;
+    std::vector<unsigned int> get_basis_degrees() const;
+    std::vector<double> get_domain_upper_bound() const;
+    std::vector<double> get_domain_lower_bound() const;
 
     /**
      * Setters
      */
-    void setControlPoints(const DenseMatrix &newControlPoints);
-    void checkControlPoints() const;
+    void set_control_points(const DenseMatrix &new_control_points);
+
+    /**
+     * Manipulations to B-spline
+     */
 
     // Linear transformation of control points (B-spline has affine invariance)
     void linear_transform(const SparseMatrix &A);
 
     // Reduce support of B-spline
-    void reduceSupport(const std::vector<double> &lb, const std::vector<double> &ub, bool doRegularizeKnotVectors = true);
+    void reduce_support(const std::vector<double> &lb, const std::vector<double> &ub,
+                        bool regularize_knot_vectors = true);
 
     // Perform global knot refinement
-    void globalKnotRefinement(); // All knots in one shabang
+    void global_knot_refinement(); // All knots in one shabang
 
     // Perform a local knot refinement at x
-    void localKnotRefinement(const DenseVector &x);
+    void local_knot_refinement(const DenseVector &x);
 
     // Decompose B-spline to Bezier form
-    void decomposeToBezierForm();
+    void decompose_to_bezier();
 
     // Insert a knot until desired knot multiplicity is obtained
-    void insertKnots(double tau, unsigned int dim, unsigned int multiplicity = 1);
+    void insert_knots(double tau, unsigned int dim, unsigned int multiplicity = 1);
 
     /**
      * Save and load
@@ -141,7 +145,11 @@ public:
 
     static BSpline load_from_json(const std::string &filename);
 
-    std::string getDescription() const override;
+    /**
+     * Helper functions
+     */
+    void check_control_points() const;
+    std::string get_description() const override;
 
 protected:
     BSpline();
@@ -153,18 +161,18 @@ protected:
      * where m = numBasisFunctions and n = dim_y.
      * Each row is a control point.
      */
-    DenseMatrix controlPoints;
+    DenseMatrix control_points;
 
     // Control point computations
-    DenseMatrix computeKnotAverages() const;
+    DenseMatrix compute_knot_averages() const;
 
 private:
     // Domain reduction
-    void regularizeKnotVectors(const std::vector<double> &lb, const std::vector<double> &ub);
-    bool removeUnsupportedBasisFunctions(const std::vector<double> &lb, const std::vector<double> &ub);
+    void regularize_knot_vectors(const std::vector<double> &lb, const std::vector<double> &ub);
+    bool remove_unsupported_basis_functions(const std::vector<double> &lb, const std::vector<double> &ub);
 
     // Helper functions
-    bool isSupported(const DenseVector &x) const;
+    bool is_supported(const DenseVector &x) const;
 
     void load(const std::string &fileName) override;
 

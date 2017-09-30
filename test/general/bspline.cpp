@@ -62,7 +62,7 @@ TEST_CASE(COMMON_TEXT "construction throws", COMMON_TAGS "[construction]")
     // For m outputs and l control points, the constructor expects a vector containing l vectors of size m
     // Here, we construct a vector containing m vectors of size l,
     // which should cause the constructor to throw an exception
-    auto cp_vec = std::vector<std::vector<double>>(1, linspace(0, 100, bs.getNumBasisFunctions()));
+    auto cp_vec = std::vector<std::vector<double>>(1, linspace(0, 100, bs.get_num_basis_functions()));
 
     // Expecting constructor to throw
     REQUIRE_THROWS(BSpline(cp_vec, kv, deg));
@@ -97,7 +97,7 @@ TEST_CASE(COMMON_TEXT "knot averages", COMMON_TAGS "[knotaverages]")
     BSpline bs1 = BSpline(3, 1, kv1, deg1);
 
     // Create vector of 1-D control points
-    auto cp1_vec = linspace(0, 100, bs1.getNumBasisFunctions());
+    auto cp1_vec = linspace(0, 100, bs1.get_num_basis_functions());
     std::vector<std::vector<double>> cp1;
     for (auto cpi : cp1_vec)
         cp1.push_back({cpi});
@@ -106,8 +106,8 @@ TEST_CASE(COMMON_TEXT "knot averages", COMMON_TAGS "[knotaverages]")
     bs1 = BSpline(cp1, kv1, deg1);
 
     // Get control points and knot averages
-    auto cp1_mat = bs1.getControlPoints();
-    auto mu1_mat = bs1.getKnotAverages();
+    auto cp1_mat = bs1.get_control_points();
+    auto mu1_mat = bs1.get_knot_averages();
 
     // Build a B-spline with multidimensional control points P_i = (mu_i, cp_i), where {mu_i} are the knot averages
     DenseMatrix cp1_new = DenseMatrix::Zero(cp1_mat.rows(), mu1_mat.cols() + 1);

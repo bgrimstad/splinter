@@ -43,7 +43,7 @@ bool equalsWithinRange(double a, double b, double margin)
 
 bool compareFunctions(const Function &f1, const Function &f2)
 {
-    int dim = f1.getDimX();
+    int dim = f1.get_dim_x();
     auto start = std::vector<double>(dim);
     auto end = std::vector<double>(dim);
     auto numPoints = std::vector<unsigned int>(dim);
@@ -75,7 +75,7 @@ bool compareFunctions(const Function &exact, const Function &approx, const std::
 {
     bool equal = true;
 
-    REQUIRE(exact.getDimX() == approx.getDimX());
+    REQUIRE(exact.get_dim_x() == approx.get_dim_x());
 
     DenseVector normOneValVec(points.size());
     DenseVector normTwoValVec(points.size());
@@ -113,8 +113,8 @@ bool compareFunctions(const Function &exact, const Function &approx, const std::
 
         /*SECTION("Function approximates the Jacobian within tolerance")*/
         {
-            auto exactJacobian = exact.evalJacobian(x);
-            auto approxJacobian = approx.evalJacobian(x);
+            auto exactJacobian = exact.eval_jacobian(x);
+            auto approxJacobian = approx.eval_jacobian(x);
             auto errorJacobian = exactJacobian - approxJacobian;
 
             normOneJacVec(i) = getOneNorm(errorJacobian);
@@ -180,7 +180,7 @@ void compareFunctionValue(TestFunction *exact,
                           size_t numSamplePoints, size_t numEvalPoints,
                           double one_eps, double two_eps, double inf_eps)
 {
-    auto dim = exact->getDimX();
+    auto dim = exact->get_dim_x();
 
     auto samplePoints = multi_linspace(dim, -5, 5, std::pow(numSamplePoints, 1.0 / dim));
     auto evalPoints = multi_linspace(dim, -5, 5, std::pow(numEvalPoints, 1.0 / dim));
@@ -189,7 +189,7 @@ void compareFunctionValue(TestFunction *exact,
 
     Function *approx = approx_gen_func(table);
 
-    INFO("Approximant: " << approx->getDescription());
+    INFO("Approximant: " << approx->get_description());
     INFO("Function: " << exact->getFunctionStr());
 
     DenseVector errorVec(evalPoints.size());
@@ -258,7 +258,7 @@ void compareJacobianValue(TestFunction *exact,
                           size_t numSamplePoints, size_t numEvalPoints,
                           double one_eps, double two_eps, double inf_eps)
 {
-    auto dim = exact->getDimX();
+    auto dim = exact->get_dim_x();
 
     auto samplePoints = multi_linspace(dim, -5, 5, std::pow(numSamplePoints, 1.0 / dim));
     auto evalPoints = multi_linspace(dim, -4.95, 4.95, std::pow(numEvalPoints, 1.0 / dim));
@@ -267,7 +267,7 @@ void compareJacobianValue(TestFunction *exact,
 
     Function *approx = approx_gen_func(table);
 
-    INFO("Approximant: " << approx->getDescription());
+    INFO("Approximant: " << approx->get_description());
     INFO("Function: " << exact->getFunctionStr());
 
     DenseVector oneNormVec(evalPoints.size());
@@ -291,8 +291,8 @@ void compareJacobianValue(TestFunction *exact,
         DenseVector x = stdToEigVec(point);
 
         // Compare the central difference to the approximated jacobian
-        DenseMatrix exactValue = approx->centralDifference(x);
-        DenseMatrix approxValue = approx->evalJacobian(x);
+        DenseMatrix exactValue = approx->central_difference(x);
+        DenseMatrix approxValue = approx->eval_jacobian(x);
 
         DenseVector error = DenseVector::Zero(exactValue.cols());
         for (size_t j = 0; j < (size_t) error.size(); ++j)
@@ -353,20 +353,26 @@ void compareJacobianValue(TestFunction *exact,
     INFO("");
     INFO(std::setw(16) << std::left << "1-norm:"           << std::setw(32) << std::right << maxOneNormError);
     INFO(" at " << getDenseAsStrOneLine(maxOneNormErrorPoint));
-    INFO(std::setw(16) << std::left << "Approx value:"      << std::setw(32) << std::right << getDenseAsStrOneLine(approx->evalJacobian(maxOneNormErrorPoint)));
-    INFO(std::setw(16) << std::left << "Central difference:"     << std::setw(32) << std::right << getDenseAsStrOneLine(approx->centralDifference(maxOneNormErrorPoint)));
+    INFO(std::setw(16) << std::left << "Approx value:"      << std::setw(32) << std::right << getDenseAsStrOneLine(
+            approx->eval_jacobian(maxOneNormErrorPoint)));
+    INFO(std::setw(16) << std::left << "Central difference:"     << std::setw(32) << std::right << getDenseAsStrOneLine(
+            approx->central_difference(maxOneNormErrorPoint)));
 
     INFO("");
     INFO(std::setw(16) << std::left << "2-norm:"           << std::setw(32) << std::right << maxTwoNormError);
     INFO(" at " << getDenseAsStrOneLine(maxTwoNormErrorPoint));
-    INFO(std::setw(16) << std::left << "Approx value:"      << std::setw(32) << std::right << getDenseAsStrOneLine(approx->evalJacobian(maxTwoNormErrorPoint)));
-    INFO(std::setw(16) << std::left << "Central difference:"     << std::setw(32) << std::right << getDenseAsStrOneLine(approx->centralDifference(maxTwoNormErrorPoint)));
+    INFO(std::setw(16) << std::left << "Approx value:"      << std::setw(32) << std::right << getDenseAsStrOneLine(
+            approx->eval_jacobian(maxTwoNormErrorPoint)));
+    INFO(std::setw(16) << std::left << "Central difference:"     << std::setw(32) << std::right << getDenseAsStrOneLine(
+            approx->central_difference(maxTwoNormErrorPoint)));
 
     INFO("");
     INFO(std::setw(16) << std::left << "Inf-norm:"         << std::setw(32) << std::right << maxInfNormError);
     INFO(" at " << getDenseAsStrOneLine(maxInfNormErrorPoint));
-    INFO(std::setw(16) << std::left << "Approx value:"      << std::setw(32) << std::right << getDenseAsStrOneLine(approx->evalJacobian(maxInfNormErrorPoint)));
-    INFO(std::setw(16) << std::left << "Central difference:"     << std::setw(32) << std::right << getDenseAsStrOneLine(approx->centralDifference(maxInfNormErrorPoint)));
+    INFO(std::setw(16) << std::left << "Approx value:"      << std::setw(32) << std::right << getDenseAsStrOneLine(
+            approx->eval_jacobian(maxInfNormErrorPoint)));
+    INFO(std::setw(16) << std::left << "Central difference:"     << std::setw(32) << std::right << getDenseAsStrOneLine(
+            approx->central_difference(maxInfNormErrorPoint)));
 
     CHECK(norms(2) <= inf_eps);
     //CHECK(norms(0) / evalPoints.size() <= one_eps);
@@ -379,10 +385,10 @@ void compareJacobianValue(TestFunction *exact,
 
 bool compareBSplines(const BSpline &left, const BSpline &right)
 {
-    auto left_lb = left.getDomainLowerBound();
-    auto left_ub = left.getDomainUpperBound();
-    auto right_lb = right.getDomainLowerBound();
-    auto right_ub = right.getDomainUpperBound();
+    auto left_lb = left.get_domain_lower_bound();
+    auto left_ub = left.get_domain_upper_bound();
+    auto right_lb = right.get_domain_lower_bound();
+    auto right_ub = right.get_domain_upper_bound();
 
     REQUIRE(left_lb.size() == left_ub.size());
     REQUIRE(left_ub.size() == right_lb.size());
@@ -633,7 +639,7 @@ std::vector<TestFunction *> getNastyTestFunctions()
 
 DenseMatrix getErrorNorms(const Function *exact, const Function *approx, const std::vector<std::vector<double>> &points)
 {
-    assert(exact->getDimX() == approx->getDimX());
+    assert(exact->get_dim_x() == approx->get_dim_x());
 
     DenseVector normOneValVec(points.size());
     DenseVector normTwoValVec(points.size());
@@ -660,8 +666,8 @@ DenseMatrix getErrorNorms(const Function *exact, const Function *approx, const s
         }
 
         {
-            auto exactJacobian = exact->evalJacobian(x);
-            auto approxJacobian = approx->evalJacobian(x);
+            auto exactJacobian = exact->eval_jacobian(x);
+            auto approxJacobian = approx->eval_jacobian(x);
             auto errorJacobian = exactJacobian - approxJacobian;
 
             normOneJacVec(i) = getOneNorm(errorJacobian);
@@ -723,7 +729,7 @@ void testApproximation(std::vector<TestFunction *> funcs,
 {
     for(auto &exact : funcs) {
 
-        auto dim = exact->getDimX();
+        auto dim = exact->get_dim_x();
         CHECK(dim > 0);
         if(dim > 0) {
             auto samplePoints = multi_linspace(dim, -5, 5, std::pow(numSamplePoints, 1.0 / dim));
@@ -734,7 +740,7 @@ void testApproximation(std::vector<TestFunction *> funcs,
             Function *approx = approx_gen_func(table);
 
             INFO("Function: " << exact->getFunctionStr());
-            INFO("Approximant: " << approx->getDescription());
+            INFO("Approximant: " << approx->get_description());
 
             DenseMatrix errorNorms = getErrorNorms(exact, approx, evalPoints);
 

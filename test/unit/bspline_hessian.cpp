@@ -52,7 +52,7 @@ TEST_CASE("hessian" COMMON_TEXT, COMMON_TAGS)
     /*
      * Evaluate Hessian and compare to true Hessian
      */
-    auto hessian = bs.evalHessian({1, 1});
+    auto hessian = bs.eval_hessian({1, 1});
 
     for (size_t i = 0; i < hessian.size(); ++i) {
         for (size_t j = 0; j < hessian.at(i).size(); ++j) {

@@ -60,7 +60,7 @@ BSpline BSpline::Builder::fit(const DataTable &data,
 
     // Compute coefficients from samples and update B-spline
     auto coefficients = computeControlPoints(bspline, data, smoothing, alpha, weights);
-    bspline.setControlPoints(coefficients);
+    bspline.set_control_points(coefficients);
 
     return bspline;
 }
@@ -86,7 +86,7 @@ DenseMatrix BSpline::Builder::computeControlPoints(const BSpline &bspline,
                                                    std::vector<double> weights) const
 {
     unsigned int num_samples = data.getNumSamples();
-    unsigned int num_basis_functions = bspline.getNumBasisFunctions();
+    unsigned int num_basis_functions = bspline.get_num_basis_functions();
     SparseMatrix X = computeBasisFunctionMatrix(bspline, data);
     SparseMatrix Xt = X.transpose();
     DenseMatrix Y = stackSamplePointValues(data);

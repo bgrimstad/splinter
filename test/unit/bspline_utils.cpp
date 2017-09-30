@@ -26,7 +26,7 @@ TEST_CASE("computeSecondOrderDifferenceMatrix 1-D" COMMON_TEXT, COMMON_TAGS)
 
     auto D = computeSecondOrderFiniteDifferenceMatrix(bs);
 
-    unsigned int n = bs.getNumBasisFunctions();
+    unsigned int n = bs.get_num_basis_functions();
     SparseMatrix D_expected(n-2, n);
 
     for (unsigned int i = 0; i < n - 2; ++i)

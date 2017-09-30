@@ -20,11 +20,11 @@ void save_to_json(const BSpline &bspline, const std::string &filename)
     std::ofstream ofs(filename);
     nlohmann::json json;
 
-    auto dim_x = bspline.getDimX();
-    auto dim_y = bspline.getDimY();
-    auto control_points = eigMatToStdVecVec(bspline.getControlPoints().transpose());
-    auto knot_vectors = bspline.getKnotVectors();
-    auto degrees = bspline.getBasisDegrees();
+    auto dim_x = bspline.get_dim_x();
+    auto dim_y = bspline.get_dim_y();
+    auto control_points = eigMatToStdVecVec(bspline.get_control_points().transpose());
+    auto knot_vectors = bspline.get_knot_vectors();
+    auto degrees = bspline.get_basis_degrees();
 
     json["dim_x"] = dim_x;
     json["dim_y"] = dim_y;

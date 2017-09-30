@@ -19,13 +19,14 @@ namespace SPLINTER
 // Matrix of basis functions evaluated at samples
 SparseMatrix computeBasisFunctionMatrix(const BSpline &bspline, const DataTable &data);
 
+// Stack samples in DenseMatrix
 DenseMatrix stackSamplePointValues(const DataTable &data);
 
 // P-spline control point calculation
 SparseMatrix computeSecondOrderFiniteDifferenceMatrix(const BSpline &bspline);
 
 // Compute weights matrix from weight vector
-SparseMatrix computeWeightMatrix(const std::vector<double> weights);
+SparseMatrix computeWeightMatrix(std::vector<double> weights);
 
 } // namespace SPLINTER
 

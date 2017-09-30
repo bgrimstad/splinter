@@ -21,14 +21,14 @@ SparseMatrix computeBasisFunctionMatrix(const BSpline &bspline, const DataTable 
     // TODO: Reserve nnz per row (degree+1)
     //int nnzPrCol = bspline.basis.numSupported();
 
-    SparseMatrix A(num_samples, bspline.getNumBasisFunctions());
+    SparseMatrix A(num_samples, bspline.get_num_basis_functions());
     //A.reserve(DenseVector::Constant(num_samples, nnzPrCol)); // TODO: should reserve nnz per row!
 
     int i = 0;
     for (auto it = data.cbegin(); it != data.cend(); ++it, ++i)
     {
         DenseVector xi = stdToEigVec(it->getX());
-        SparseVector basis_values = bspline.evalBasis(xi);
+        SparseVector basis_values = bspline.eval_basis(xi);
         for (SparseVector::InnerIterator it2(basis_values); it2; ++it2)
             A.insert(i, it2.index()) = it2.value();
     }
@@ -58,11 +58,11 @@ DenseMatrix stackSamplePointValues(const DataTable &data)
  */
 SparseMatrix computeSecondOrderFiniteDifferenceMatrix(const BSpline &bspline)
 {
-    unsigned int num_variables = bspline.getDimX();
+    unsigned int num_variables = bspline.get_dim_x();
 
     // Number of (total) basis functions - defines the number of columns in D
-    unsigned int num_cols = bspline.getNumBasisFunctions();
-    std::vector<unsigned int> num_basis_functions = bspline.getNumBasisFunctionsPerVariable();
+    unsigned int num_cols = bspline.get_num_basis_functions();
+    std::vector<unsigned int> num_basis_functions = bspline.get_num_basis_functions_per_variable();
 
     // Number of basis functions (and coefficients) in each variable
     std::vector<unsigned int> dims;
@@ -154,7 +154,7 @@ SparseMatrix computeSecondOrderFiniteDifferenceMatrix(const BSpline &bspline)
     return D;
 }
 
-SparseMatrix computeWeightMatrix(const std::vector<double> weights)
+SparseMatrix computeWeightMatrix(std::vector<double> weights)
 {
     // TODO: use DiagonalMatrix here
     auto eig_weights = stdToEigVec(weights);
