@@ -30,11 +30,11 @@ public:
 
     bool operator<(const DataPoint &rhs) const; // Returns false if the two are equal
 
-    std::vector<double> getX() const {
+    std::vector<double> get_x() const {
         return x;
     }
 
-    std::vector<double> getY() const {
+    std::vector<double> get_y() const {
         return y;
     }
 

@@ -54,8 +54,11 @@ enum class KnotSpacing {
  * Computing knot vectors
  */
 std::vector<std::vector<double>> compute_knot_vectors(const DataTable &data, std::vector<unsigned int> degrees,
-                                                      std::vector<unsigned int> num_basis_functions,
                                                       KnotSpacing knot_spacing);
+
+std::vector<std::vector<double>> compute_knot_vectors(const DataTable &data, std::vector<unsigned int> degrees,
+                                                      KnotSpacing knot_spacing,
+                                                      std::vector<unsigned int> num_basis_functions);
 /**
  * Computing single knot vector
  */

@@ -135,7 +135,7 @@ SparseMatrix compute_basis_function_matrix(const BSpline &bspline, const DataTab
     int i = 0;
     for (auto it = data.cbegin(); it != data.cend(); ++it, ++i)
     {
-        DenseVector xi = std_to_eig_vec(it->getX());
+        DenseVector xi = std_to_eig_vec(it->get_x());
         SparseVector basis_values = bspline.eval_basis(xi);
         for (SparseVector::InnerIterator it2(basis_values); it2; ++it2)
             A.insert(i, it2.index()) = it2.value();
@@ -153,7 +153,7 @@ DenseMatrix stack_sample_values(const DataTable &data)
     int i = 0;
     for (auto it = data.cbegin(); it != data.cend(); ++it, ++i)
     {
-        auto y = it->getY();
+        auto y = it->get_y();
         for (unsigned int j = 0; j < data.get_dim_y(); ++j)
             B(i, j) = y.at(j);
     }

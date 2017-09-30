@@ -44,7 +44,7 @@ BSpline BSpline::Builder::fit(const DataTable &data, Smoothing smoothing, double
     }
 
     // Build knot vectors
-    auto knotVectors = compute_knot_vectors(data, _degrees, _numBasisFunctions, _knotSpacing);
+    auto knotVectors = compute_knot_vectors(data, _degrees, _knotSpacing, _numBasisFunctions);
 
     // Build B-spline (with default coefficients)
     return BSpline(_dim_x, _dim_y, knotVectors, _degrees).fit(data, smoothing, alpha, weights);
@@ -55,9 +55,8 @@ BSpline bspline_interpolator(const DataTable &data, unsigned int degree)
     auto dim_x = data.get_dim_x();
     auto dim_y = data.get_dim_y();
     auto degrees = std::vector<unsigned int>(dim_x, degree);
-    auto num_basis_functions = std::vector<unsigned int>(dim_x, 1);
     auto knot_spacing = KnotSpacing::AS_SAMPLED;
-    auto knot_vectors = compute_knot_vectors(data, degrees, num_basis_functions, knot_spacing);
+    auto knot_vectors = compute_knot_vectors(data, degrees, knot_spacing);
 
     return BSpline(dim_x, dim_y, knot_vectors, degrees).fit(data);
 }
@@ -72,9 +71,8 @@ BSpline pspline_approximator(const DataTable &data, unsigned int degree, double 
     auto dim_x = data.get_dim_x();
     auto dim_y = data.get_dim_y();
     auto degrees = std::vector<unsigned int>(dim_x, degree);
-    auto num_basis_functions = std::vector<unsigned int>(dim_x, 1);
     auto knot_spacing = KnotSpacing::AS_SAMPLED;
-    auto knot_vectors = compute_knot_vectors(data, degrees, num_basis_functions, knot_spacing);
+    auto knot_vectors = compute_knot_vectors(data, degrees, knot_spacing);
 
     return BSpline(dim_x, dim_y, knot_vectors, degrees).fit(data, BSpline::Smoothing::PSPLINE, alpha);
 }

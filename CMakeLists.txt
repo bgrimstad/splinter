@@ -194,6 +194,7 @@ set(TEST_SRC_LIST
     ${SRC_LIST}
     test/main.cpp
     test/approximation/bspline.cpp
+    test/approximation/bspline_wls.cpp
     test/approximation/pspline.cpp
     test/general/bspline.cpp
     test/general/bspline_builder.cpp

@@ -83,11 +83,11 @@ size_t Serializer::get_size(const DataPoint &obj)
 
 size_t Serializer::get_size(const DataTable &obj)
 {
-    return get_size(obj.allow_duplicates)
-           + get_size(obj.allow_incomplete_grid)
-           + get_size(obj.num_duplicates)
-           + get_size(obj.dim_x)
-           + get_size(obj.dim_y)
+    return get_size(obj._allow_duplicates)
+           + get_size(obj._allow_incomplete_grid)
+           + get_size(obj._num_duplicates)
+           + get_size(obj._dim_x)
+           + get_size(obj._dim_y)
            + get_size(obj.samples)
            + get_size(obj.grid);
 }
@@ -163,11 +163,11 @@ void Serializer::_serialize(const DataPoint &obj)
 
 void Serializer::_serialize(const DataTable &obj)
 {
-    _serialize(obj.allow_duplicates);
-    _serialize(obj.allow_incomplete_grid);
-    _serialize(obj.num_duplicates);
-    _serialize(obj.dim_x);
-    _serialize(obj.dim_y);
+    _serialize(obj._allow_duplicates);
+    _serialize(obj._allow_incomplete_grid);
+    _serialize(obj._num_duplicates);
+    _serialize(obj._dim_x);
+    _serialize(obj._dim_y);
     _serialize(obj.samples);
     _serialize(obj.grid);
 }
@@ -245,11 +245,11 @@ void Serializer::deserialize(DataPoint &obj)
 
 void Serializer::deserialize(DataTable &obj)
 {
-    deserialize(obj.allow_duplicates);
-    deserialize(obj.allow_incomplete_grid);
-    deserialize(obj.num_duplicates);
-    deserialize(obj.dim_x);
-    deserialize(obj.dim_y);
+    deserialize(obj._allow_duplicates);
+    deserialize(obj._allow_incomplete_grid);
+    deserialize(obj._num_duplicates);
+    deserialize(obj._dim_x);
+    deserialize(obj._dim_y);
     deserialize(obj.samples);
     deserialize(obj.grid);
 }

@@ -26,10 +26,10 @@ class SPLINTER_API DataTable
 {
 public:
     DataTable();
-    DataTable(bool allowDuplicates);
-    DataTable(bool allowDuplicates, bool allowIncompleteGrid);
+    DataTable(bool allow_duplicates);
+    DataTable(bool allow_duplicates, bool allow_incomplete_grid);
     DataTable(const char *fileName);
-    DataTable(const std::string &fileName); // Load DataTable from file
+    DataTable(const std::string &filename); // Load DataTable from file
 
     /*
      * Functions for adding a sample (x, y)
@@ -47,11 +47,11 @@ public:
     std::multiset<DataPoint>::const_iterator cend() const;
 
     unsigned int get_dim_x() const {
-        return dim_x;
+        return _dim_x;
     }
 
     unsigned int get_dim_y() const {
-        return dim_y;
+        return _dim_y;
     }
 
     unsigned int get_num_samples() const {
@@ -75,11 +75,11 @@ public:
     void save(const std::string &fileName) const;
 
 private:
-    bool allow_duplicates;
-    bool allow_incomplete_grid;
-    unsigned int num_duplicates;
-    unsigned int dim_x;
-    unsigned int dim_y;
+    bool _allow_duplicates;
+    bool _allow_incomplete_grid;
+    unsigned int _num_duplicates;
+    unsigned int _dim_x;
+    unsigned int _dim_y;
 
     std::multiset<DataPoint> samples;
     std::vector< std::set<double> > grid;

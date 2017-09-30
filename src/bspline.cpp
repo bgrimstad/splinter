@@ -218,7 +218,7 @@ BSpline& BSpline::fit(const DataTable &data, Smoothing smoothing, double alpha, 
         std::cout << "BSpline::Builder::fit: Building B-spline from irregular (incomplete) grid." << std::endl;
 #endif // NDEBUG
 
-    // Compute coefficients from samples and update B-spline
+    // Compute control points from samples and update B-spline
     auto coefficients = compute_control_points(*this, data, smoothing, alpha, weights);
     set_control_points(coefficients);
 

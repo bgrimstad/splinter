@@ -82,10 +82,10 @@ namespace SPLINTER
 bool operator==(const DataTable &lhs, const DataTable &rhs)
 {
     return
-            lhs.allow_duplicates == rhs.allow_duplicates
-            && lhs.allow_incomplete_grid == rhs.allow_incomplete_grid
-            && lhs.num_duplicates == rhs.num_duplicates
-            && lhs.dim_x == rhs.dim_x
+            lhs._allow_duplicates == rhs._allow_duplicates
+            && lhs._allow_incomplete_grid == rhs._allow_incomplete_grid
+            && lhs._num_duplicates == rhs._num_duplicates
+            && lhs._dim_x == rhs._dim_x
             && lhs.samples == rhs.samples
             && lhs.grid == rhs.grid
             && lhs.get_dim_x() == rhs.get_dim_x()
@@ -98,13 +98,13 @@ bool operator==(const DataPoint &lhs, const DataPoint &rhs)
 {
     for (unsigned int i = 0; i < lhs.get_dim_x(); i++)
     {
-        if (!equalsWithinRange(lhs.getX().at(i), rhs.getX().at(i)))
+        if (!equalsWithinRange(lhs.get_x().at(i), rhs.get_x().at(i)))
             return false;
     }
 
     for (unsigned int i = 0; i < lhs.get_dim_y(); i++)
     {
-        if (!equalsWithinRange(lhs.getY().at(i), rhs.getY().at(i)))
+        if (!equalsWithinRange(lhs.get_y().at(i), rhs.get_y().at(i)))
             return false;
     }
 
@@ -159,14 +159,14 @@ bool operator!=(const DataPoint &lhs, const DataPoint &rhs)
 std::ostream &operator<<(std::ostream &out, const DataPoint &sample) {
     out << "(";
     bool firstLoop = true;
-    for (auto val : sample.getX()) {
+    for (auto val : sample.get_x()) {
         if (!firstLoop) {
             out << ", ";
         }
         out << val;
         firstLoop = false;
     }
-    out << ") = (" << sample.getY() << ")";
+    out << ") = (" << sample.get_y() << ")";
 
     return out;
 }

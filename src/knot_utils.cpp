@@ -17,8 +17,17 @@ namespace SPLINTER
 // Compute all knot vectors from sample data
 std::vector<std::vector<double>> compute_knot_vectors(const DataTable &data,
                                                       std::vector<unsigned int> degrees,
-                                                      std::vector<unsigned int> num_basis_functions,
                                                       KnotSpacing knot_spacing)
+{
+    auto num_basis_functions = std::vector<unsigned int>(data.get_dim_x(), 10);
+    return compute_knot_vectors(data, degrees, knot_spacing, num_basis_functions);
+}
+
+// Compute all knot vectors from sample data
+std::vector<std::vector<double>> compute_knot_vectors(const DataTable &data,
+                                                      std::vector<unsigned int> degrees,
+                                                      KnotSpacing knot_spacing,
+                                                      std::vector<unsigned int> num_basis_functions)
 {
     auto dim_x = data.get_dim_x();
 

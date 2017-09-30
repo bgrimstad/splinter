@@ -23,17 +23,17 @@ DataTable::DataTable()
 {
 }
 
-DataTable::DataTable(bool allowDuplicates)
-    : DataTable(allowDuplicates, false)
+DataTable::DataTable(bool allow_duplicates)
+    : DataTable(allow_duplicates, false)
 {
 }
 
-DataTable::DataTable(bool allowDuplicates, bool allowIncompleteGrid)
-    : allow_duplicates(allowDuplicates),
-      allow_incomplete_grid(allowIncompleteGrid),
-      num_duplicates(0),
-      dim_x(0),
-      dim_y(0)
+DataTable::DataTable(bool allow_duplicates, bool allow_incomplete_grid)
+    : _allow_duplicates(allow_duplicates),
+      _allow_incomplete_grid(allow_incomplete_grid),
+      _num_duplicates(0),
+      _dim_x(0),
+      _dim_y(0)
 {
 }
 
@@ -42,9 +42,9 @@ DataTable::DataTable(const char *fileName)
 {
 }
 
-DataTable::DataTable(const std::string &fileName)
+DataTable::DataTable(const std::string &filename)
 {
-    load(fileName);
+    load(filename);
 }
 
 void DataTable::add_sample(double x, double y)
@@ -71,29 +71,29 @@ void DataTable::add_sample(const DataPoint &sample)
 {
     if (get_num_samples() == 0)
     {
-        dim_x = sample.get_dim_x();
-        dim_y = sample.get_dim_y();
+        _dim_x = sample.get_dim_x();
+        _dim_y = sample.get_dim_y();
         init_data_structures();
     }
 
-    if (sample.get_dim_x() != dim_x || sample.get_dim_y() != dim_y) {
+    if (sample.get_dim_x() != _dim_x || sample.get_dim_y() != _dim_y) {
         throw Exception("Datatable::add_sample: Dimension of new sample is inconsistent with previous samples!");
     }
 
     // Check if the sample has been added already
     if (samples.count(sample) > 0)
     {
-        if (!allow_duplicates)
+        if (!_allow_duplicates)
         {
 #ifndef NDEBUG
-            std::cout << "Discarding duplicate sample because allow_duplicates is false!" << std::endl;
+            std::cout << "Discarding duplicate sample because _allow_duplicates is false!" << std::endl;
             std::cout << "Initialise with DataTable(true) to set it to true." << std::endl;
 #endif // NDEBUG
 
             return;
         }
 
-        num_duplicates++;
+        _num_duplicates++;
     }
 
     samples.insert(sample);
@@ -105,7 +105,7 @@ void DataTable::record_grid_point(const DataPoint &sample)
 {
     for (unsigned int i = 0; i < get_dim_x(); i++)
     {
-        grid.at(i).insert(sample.getX().at(i));
+        grid.at(i).insert(sample.get_x().at(i));
     }
 }
 
@@ -124,7 +124,7 @@ unsigned int DataTable::get_num_samples_required() const
 
 bool DataTable::is_grid_complete() const
 {
-    return samples.size() > 0 && samples.size() - num_duplicates == get_num_samples_required();
+    return samples.size() > 0 && samples.size() - _num_duplicates == get_num_samples_required();
 }
 
 void DataTable::init_data_structures()
@@ -137,7 +137,7 @@ void DataTable::init_data_structures()
 
 void DataTable::grid_complete_guard() const
 {
-    if (!(is_grid_complete() || allow_incomplete_grid))
+    if (!(is_grid_complete() || _allow_incomplete_grid))
     {
         throw Exception("DataTable::grid_complete_guard: The grid is not complete yet!");
     }
@@ -176,12 +176,12 @@ std::vector<std::vector<double>> DataTable::get_table_x() const
 {
     grid_complete_guard();
 
-    std::vector<std::vector<double>> table(dim_x, std::vector<double>(get_num_samples()));
+    std::vector<std::vector<double>> table(_dim_x, std::vector<double>(get_num_samples()));
 
     unsigned int i = 0;
     for (auto &sample : samples) {
-        auto x = sample.getX();
-        for (unsigned int j = 0; j < dim_x; j++)
+        auto x = sample.get_x();
+        for (unsigned int j = 0; j < _dim_x; j++)
             table.at(j).at(i) = x.at(j);
         i++;
     }
@@ -194,11 +194,11 @@ std::vector<std::vector<double>> DataTable::get_table_x() const
  */
 std::vector<std::vector<double>> DataTable::get_table_y() const
 {
-    std::vector<std::vector<double>> table(dim_y, std::vector<double>(get_num_samples()));
+    std::vector<std::vector<double>> table(_dim_y, std::vector<double>(get_num_samples()));
     unsigned int i = 0;
     for (const auto &sample : samples) {
-        auto y = sample.getY();
-        for (unsigned int j = 0; j < dim_y; ++j)
+        auto y = sample.get_y();
+        for (unsigned int j = 0; j < _dim_y; ++j)
             table.at(j).at(i) = y.at(j);
         i++;
     }

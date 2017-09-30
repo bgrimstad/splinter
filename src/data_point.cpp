@@ -50,9 +50,9 @@ bool DataPoint::operator<(const DataPoint &rhs) const
 
     for (unsigned int i = 0; i < this->get_dim_x(); i++)
     {
-        if (x.at(i) < rhs.getX().at(i))
+        if (x.at(i) < rhs.get_x().at(i))
             return true;
-        else if (x.at(i) > rhs.getX().at(i))
+        else if (x.at(i) > rhs.get_x().at(i))
             return false;
     }
 
