@@ -41,10 +41,8 @@ std::vector<std::vector<double>> compute_knot_vectors(const DataTable &data,
 }
 
 // Compute a single knot vector from sample grid and degree
-std::vector<double> compute_knot_vector(const std::vector<double> &values,
-                                        unsigned int degree,
-                                        unsigned int num_basis_functions,
-                                        KnotSpacing knot_spacing)
+std::vector<double> compute_knot_vector(const std::vector<double> &values, unsigned int degree,
+                                        unsigned int num_basis_functions, KnotSpacing knot_spacing)
 {
     switch (knot_spacing)
     {
@@ -59,15 +57,14 @@ std::vector<double> compute_knot_vector(const std::vector<double> &values,
     }
 }
 
-std::vector<double> knot_vector_equidistant_not_clamped(const std::vector<double> &values,
-                                                        unsigned int degree,
-                                                        unsigned int numBasisFunctions)
+std::vector<double> knot_vector_equidistant_not_clamped(const std::vector<double> &values, unsigned int degree,
+                                                        unsigned int num_basis_functions)
 {
     // Sort and remove duplicates
     std::vector<double> unique = extract_unique_sorted(values);
 
     // Number of knots
-    unsigned int nk = numBasisFunctions + degree + 1;
+    unsigned int nk = num_basis_functions + degree + 1;
 
     // Compute (n-k-2) equidistant interior knots
     double lb = unique.front();
@@ -109,8 +106,7 @@ std::vector<double> knot_vector_equidistant_not_clamped(const std::vector<double
 * almost all knots will lie close to the left samples. Try a bucket approach, where the
 * samples are added to buckets and the knots computed as the average of these.
 */
-std::vector<double> knot_vector_moving_average(const std::vector<double> &values,
-                                               unsigned int degree)
+std::vector<double> knot_vector_moving_average(const std::vector<double> &values, unsigned int degree)
 {
     // Sort and remove duplicates
     std::vector<double> unique = extract_unique_sorted(values);
@@ -156,17 +152,16 @@ std::vector<double> knot_vector_moving_average(const std::vector<double> &values
     return knots;
 }
 
-std::vector<double> knot_vector_equidistant(const std::vector<double> &values,
-                                            unsigned int degree,
-                                            unsigned int numBasisFunctions = 0)
+std::vector<double> knot_vector_equidistant(const std::vector<double> &values, unsigned int degree,
+                                            unsigned int num_basis_functions)
 {
     // Sort and remove duplicates
     std::vector<double> unique = extract_unique_sorted(values);
 
     // Compute sizes
     unsigned int n = unique.size();
-    if (numBasisFunctions > 0)
-        n = numBasisFunctions;
+    if (num_basis_functions > 0)
+        n = num_basis_functions;
     unsigned int k = degree-1; // knots to remove
 
     // The minimum number of samples from which a free knot vector can be created

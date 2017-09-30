@@ -71,13 +71,13 @@ std::vector<double> knot_vector_moving_average(const std::vector<double> &values
  * Compute clamped, equidistant knot vector (EQUIDISTANT)
  */
 std::vector<double> knot_vector_equidistant(const std::vector<double> &values, unsigned int degree,
-                                            unsigned int numBasisFunctions);
+                                            unsigned int num_basis_functions = 0);
 
 /**
  * Construct equidistant knot vector (EXPERIMENTAL)
  */
 std::vector<double> knot_vector_equidistant_not_clamped(const std::vector<double> &values, unsigned int degree,
-                                                        unsigned int numBasisFunctions);
+                                                        unsigned int num_basis_functions);
 
 } // namespace SPLINTER
 

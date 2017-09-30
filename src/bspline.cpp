@@ -15,6 +15,8 @@
 #include <serializer.h>
 #include <iostream>
 #include <utilities.h>
+#include "bspline_utils.h"
+#include "knot_utils.h"
 
 
 namespace SPLINTER
@@ -31,23 +33,23 @@ BSpline::BSpline()
  * Constructors for multivariate B-spline using explicit data
  */
 BSpline::BSpline(
-        unsigned int dimX,
-        unsigned int dimY,
-        const std::vector<std::vector<double>> &knotVectors,
+        unsigned int dim_x,
+        unsigned int dim_y,
+        const std::vector<std::vector<double>> &knot_vectors,
         const std::vector<unsigned int> &degrees)
-    : Function(dimX, dimY),
-      basis(BSplineBasis(knotVectors, degrees)),
-      control_points(DenseMatrix::Zero(basis.get_num_basis_functions(), dimY))
+    : Function(dim_x, dim_y),
+      basis(BSplineBasis(knot_vectors, degrees)),
+      control_points(DenseMatrix::Zero(basis.get_num_basis_functions(), dim_y))
 {
     check_control_points();
 }
 
-BSpline::BSpline(const std::vector<std::vector<double>> &controlPoints,
-                 const std::vector<std::vector<double>> &knotVectors,
+BSpline::BSpline(const std::vector<std::vector<double>> &control_points,
+                 const std::vector<std::vector<double>> &knot_vectors,
                  const std::vector<unsigned int> &degrees)
-    : Function(knotVectors.size(), controlPoints.at(0).size()),
-      basis(BSplineBasis(knotVectors, degrees)),
-      control_points(std_vec_vec_to_eig_mat(controlPoints))
+    : Function(knot_vectors.size(), control_points.at(0).size()),
+      basis(BSplineBasis(knot_vectors, degrees)),
+      control_points(std_vec_vec_to_eig_mat(control_points))
 {
     check_control_points();
 }
@@ -194,6 +196,33 @@ void BSpline::linear_transform(const SparseMatrix &A)
     if (A.cols() != control_points.rows())
         throw Exception("BSpline::linear_transform: Incompatible size of linear transformation matrix.");
     control_points = A*control_points;
+}
+
+BSpline& BSpline::fit(const DataTable &data, Smoothing smoothing, double alpha, std::vector<double> weights)
+{
+    if (data.get_dim_x() != get_dim_x())
+        throw Exception("BSpline::Builder::fit_bspline: Expected " + std::to_string(get_dim_x()) + " input variables.");
+
+    if (data.get_dim_y() != get_dim_y())
+        throw Exception("BSpline::Builder::fit_bspline: Expected " + std::to_string(get_dim_y()) + " output variables.");
+
+    if (alpha < 0)
+        throw Exception("BSpline::Builder::fit_bspline: alpha must be non-negative.");
+
+    if (weights.size() > 0 && data.get_num_samples() != weights.size()) {
+        throw Exception("BSpline::Builder::fit_bspline: number of weights must equal number of data points.");
+    }
+
+#ifndef NDEBUG
+    if (!data.isGridComplete())
+        std::cout << "BSpline::Builder::fit: Building B-spline from irregular (incomplete) grid." << std::endl;
+#endif // NDEBUG
+
+    // Compute coefficients from samples and update B-spline
+    auto coefficients = compute_control_points(*this, data, smoothing, alpha, weights);
+    set_control_points(coefficients);
+
+    return *this;
 }
 
 void BSpline::check_control_points() const

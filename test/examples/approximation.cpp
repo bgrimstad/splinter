@@ -10,6 +10,7 @@
 
 #include <Catch.h>
 #include <bspline_builder.h>
+#include "utilities.h"
 #include <iostream>
 
 using namespace SPLINTER;
@@ -38,21 +39,16 @@ TEST_CASE("Approximation example", COMMON_TAGS)
         {
             // Sample function at x
             std::vector<double> x = {i*0.1, j*0.1};
-            auto y = f(x);
-
-            // Store sample
-            samples.add_sample(x, y);
+            samples.add_sample(x, f(x));
         }
     }
 
     // Build B-splines that interpolate the samples
-    BSpline bspline1 = BSpline::Builder(2, 1).degree(1).fit(samples);
-    BSpline bspline3 = BSpline::Builder(2, 1).degree(3).fit(samples);
+    BSpline bspline1 = bspline_interpolator(samples, 1);
+    BSpline bspline3 = bspline_interpolator(samples, 3);
 
     // Build penalized B-spline (P-spline) that smooths the samples
-    BSpline pspline = BSpline::Builder(2, 1)
-            .degree(3)
-            .fit(samples, BSpline::Smoothing::PSPLINE, 0.03);
+    BSpline pspline = cubic_pspline_approximator(samples, 0.03);
 
     /*
      * Evaluate the splines at x = (1,1)
@@ -66,11 +62,8 @@ TEST_CASE("Approximation example", COMMON_TAGS)
     auto y_bs3 = bspline3.eval(x).at(0);
     auto y_ps = pspline.eval(x).at(0);
 
-    // Print results
-    cout << "-----------------------------------------------------" << endl;
-    cout << "Function at x:                 " << y_f                << endl;
-    cout << "Linear B-spline at x:          " << y_bs1              << endl;
-    cout << "Cubic B-spline at x:           " << y_bs3              << endl;
-    cout << "P-spline at x:                 " << y_ps               << endl;
-    cout << "-----------------------------------------------------" << endl;
+    // Test results at x = (1, 1)
+    REQUIRE(assert_near(y_f, y_bs1, 1e-8));
+    REQUIRE(assert_near(y_f, y_bs3, 1e-8));
+    REQUIRE(assert_near(y_ps, y_bs3, 1e-3)); // Smoothed (does not interpolate)
 }

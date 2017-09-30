@@ -17,13 +17,6 @@
 namespace SPLINTER
 {
 
-// B-spline smoothing
-enum class BSpline::Smoothing {
-    NONE,       // No smoothing
-    IDENTITY,   // Regularization term alpha*c'*I*c is added to OLS objective
-    PSPLINE     // Smoothing term alpha*Delta(c,2) is added to OLS objective
-};
-
 // B-spline builder class
 class SPLINTER_API BSpline::Builder
 {
@@ -47,24 +40,24 @@ public:
         return *this;
     }
 
-    Builder& num_basis_functions(unsigned int numBasisFunctions)
+    Builder& num_basis_functions(unsigned int num_basis_functions)
     {
-        _numBasisFunctions = std::vector<unsigned int>(_dim_x, numBasisFunctions);
+        _numBasisFunctions = std::vector<unsigned int>(_dim_x, num_basis_functions);
         return *this;
     }
 
-    Builder& num_basis_functions(const std::vector<unsigned int> &numBasisFunctions)
+    Builder& num_basis_functions(const std::vector<unsigned int> &num_basis_functions)
     {
-        if (numBasisFunctions.size() != _dim_x)
+        if (num_basis_functions.size() != _dim_x)
             throw Exception("BSpline::Builder::num_basis_functions: Expected num_basis_functions vector of length "
                             + std::to_string(_dim_x) + ".");
-        _numBasisFunctions = numBasisFunctions;
+        _numBasisFunctions = num_basis_functions;
         return *this;
     }
 
-    Builder& knot_spacing(KnotSpacing knotSpacing)
+    Builder& knot_spacing(KnotSpacing knot_spacing)
     {
-        _knotSpacing = knotSpacing;
+        _knotSpacing = knot_spacing;
         return *this;
     }
 
@@ -78,13 +71,6 @@ public:
 private:
     Builder();
 
-    // Control point computations
-    DenseMatrix compute_control_points(const BSpline &bspline,
-                                       const DataTable &data,
-                                       Smoothing smoothing,
-                                       double alpha,
-                                       std::vector<double> weights) const;
-
     // Member variables
     unsigned int _dim_x;
     unsigned int _dim_y;
@@ -92,6 +78,16 @@ private:
     std::vector<unsigned int> _numBasisFunctions;
     KnotSpacing _knotSpacing;
 };
+
+
+/**
+ * Convenience functions for B-spline fitting
+ */
+BSpline bspline_interpolator(const DataTable &data, unsigned int degree = 3);
+BSpline cubic_bspline_interpolator(const DataTable &data);
+BSpline pspline_approximator(const DataTable &data, unsigned int degree = 3, double alpha = 0.1);
+BSpline cubic_pspline_approximator(const DataTable &data, double alpha = 0.1);
+
 
 } // namespace SPLINTER
 

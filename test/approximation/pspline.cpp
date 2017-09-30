@@ -31,8 +31,7 @@ TEST_CASE("PSpline function" COMMON_TEXT, COMMON_TAGS "[function-value]")
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSpline::Builder(table.get_dim_x(), table.get_dim_y())
-                                         .fit(table, BSpline::Smoothing::PSPLINE, 0.03);
+                                 BSpline bs = cubic_pspline_approximator(table, 0.03);
                                  return (Function*) new BSpline(bs);
                              },
                              300,  // Number of points to sample at
@@ -52,10 +51,13 @@ TEST_CASE("PSpline function2" COMMON_TEXT, COMMON_TAGS "[function-value]")
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSpline::Builder(table.get_dim_x(), table.get_dim_y())
-                                         .knot_spacing(KnotSpacing::EXPERIMENTAL)
-                                         .num_basis_functions(10)
-                                         .fit(table, BSpline::Smoothing::PSPLINE, 0.01);
+                                 auto dim_x = table.get_dim_x();
+                                 auto dim_y = table.get_dim_y();
+                                 auto degrees = std::vector<unsigned int>(dim_x, 3);
+                                 auto num_basis_functions = std::vector<unsigned int>(dim_x, 10);
+                                 auto knot_vectors = compute_knot_vectors(table, degrees, num_basis_functions, KnotSpacing::EXPERIMENTAL);
+
+                                 BSpline bs = BSpline(dim_x, dim_y, knot_vectors, degrees).fit(table, BSpline::Smoothing::PSPLINE, 0.01);
                                  return (Function*) new BSpline(bs);
                              },
                              300,  // Number of points to sample at
@@ -78,7 +80,7 @@ TEST_CASE("P-spline approximation of linear function", COMMON_TAGS "[function-va
     /**
      * P-spline should give a perfect fit to a linear function regardless of alpha value
      */
-    auto bs = BSpline::Builder(1, 1).fit(samples, BSpline::Smoothing::PSPLINE, 1.0);
+    auto bs = cubic_pspline_approximator(samples, 1.0);
 
     std::vector<double> xd = {1};
     auto yd = bs.eval(xd);
@@ -98,8 +100,7 @@ TEST_CASE("PSpline jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian]")
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSpline::Builder(table.get_dim_x(), table.get_dim_y())
-                                         .fit(table, BSpline::Smoothing::PSPLINE, 0.03);
+                                 auto bs = cubic_pspline_approximator(table, 0.03);
                                  return (Function*) new BSpline(bs);
                              },
                              300,  // Number of points to sample at

@@ -33,7 +33,7 @@ TEST_CASE("BSpline can be saved and loaded", COMMON_TAGS)
 
     SECTION("Linear BSpline")
     {
-        BSpline bspline = BSpline::Builder(dim_x, dim_y).degree(1).fit(table);
+        BSpline bspline = bspline_interpolator(table, 1);
         bspline.save(fileName);
         BSpline loadedBSpline(fileName);
         REQUIRE(bspline == loadedBSpline);
@@ -41,7 +41,7 @@ TEST_CASE("BSpline can be saved and loaded", COMMON_TAGS)
 
     SECTION("Quadratic BSpline")
     {
-        BSpline bspline = BSpline::Builder(dim_x, dim_y).degree(2).fit(table);
+        BSpline bspline = bspline_interpolator(table, 2);
         bspline.save(fileName);
         BSpline loadedBSpline(fileName);
         REQUIRE(bspline == loadedBSpline);
@@ -49,7 +49,7 @@ TEST_CASE("BSpline can be saved and loaded", COMMON_TAGS)
 
     SECTION("Cubic BSpline")
     {
-        BSpline bspline = BSpline::Builder(dim_x, dim_y).degree(3).fit(table);
+        BSpline bspline = bspline_interpolator(table, 3);
         bspline.save(fileName);
         BSpline loadedBSpline(fileName);
         REQUIRE(bspline == loadedBSpline);
@@ -57,7 +57,7 @@ TEST_CASE("BSpline can be saved and loaded", COMMON_TAGS)
 
     SECTION("Quartic BSpline")
     {
-        BSpline bspline = BSpline::Builder(dim_x, dim_y).degree(4).fit(table);
+        BSpline bspline = bspline_interpolator(table, 4);
         bspline.save(fileName);
         BSpline loadedBSpline(fileName);
         REQUIRE(bspline == loadedBSpline);

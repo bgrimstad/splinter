@@ -12,6 +12,7 @@
 
 #include "function.h"
 #include "bspline_basis.h"
+#include "data_table.h"
 #include "json_parser.h"
 
 
@@ -24,23 +25,31 @@ namespace SPLINTER
 class SPLINTER_API BSpline : public Function, public Saveable
 {
 public:
+
+    // B-spline smoothing
+    enum class Smoothing {
+        NONE,       // No smoothing
+        IDENTITY,   // Regularization term alpha*c'*I*c is added to OLS objective
+        PSPLINE     // Smoothing term alpha*Delta(c,2) is added to OLS objective
+    };
+
     /**
      * Builder class for construction by regression
      * Implemented in bspline_builder.*
      */
     class Builder;
-    enum class Smoothing;
+//    enum class Smoothing;
 
     /**
      * Construct B-spline from knot vectors, control points, and basis degrees
      */
-    BSpline(unsigned int dimX,
-            unsigned int dimY,
-            const std::vector<std::vector<double>> &knotVectors,
+    BSpline(unsigned int dim_x,
+            unsigned int dim_y,
+            const std::vector<std::vector<double>> &knot_vectors,
             const std::vector<unsigned int> &degrees);
 
-    BSpline(const std::vector<std::vector<double>> &controlPoints,
-            const std::vector<std::vector<double>> &knotVectors,
+    BSpline(const std::vector<std::vector<double>> &control_points,
+            const std::vector<std::vector<double>> &knot_vectors,
             const std::vector<unsigned int> &degrees);
 
     /**
@@ -120,12 +129,16 @@ public:
     // Linear transformation of control points (B-spline has affine invariance)
     void linear_transform(const SparseMatrix &A);
 
+    // Fit B-spline to sample data
+    BSpline& fit(const DataTable &data, Smoothing smoothing = Smoothing::NONE, double alpha = .1,
+                 std::vector<double> weights = std::vector<double>());
+
     // Reduce support of B-spline
     void reduce_support(const std::vector<double> &lb, const std::vector<double> &ub,
                         bool regularize_knot_vectors = true);
 
-    // Perform global knot refinement
-    void global_knot_refinement(); // All knots in one shabang
+    // Perform global knot refinement (all knots in one shabang)
+    void global_knot_refinement();
 
     // Perform a local knot refinement at x
     void local_knot_refinement(const DenseVector &x);

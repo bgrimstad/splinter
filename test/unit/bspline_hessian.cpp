@@ -47,7 +47,7 @@ TEST_CASE("hessian" COMMON_TEXT, COMMON_TAGS)
             samples.add_sample(std::vector<double>({x1_i, x2_i}),
                                std::vector<double>({f1(x1_i, x2_i), f2(x1_i, x2_i)}));
 
-    BSpline bs = BSpline::Builder(2, 2).degree(2).fit(samples);
+    BSpline bs = bspline_interpolator(samples, 2);
 
     /*
      * Evaluate Hessian and compare to true Hessian

@@ -16,6 +16,10 @@
 namespace SPLINTER
 {
 
+// Control point computations
+DenseMatrix compute_control_points(const BSpline &bspline, const DataTable &data, BSpline::Smoothing smoothing,
+                                   double alpha, std::vector<double> weights);
+
 // Matrix of basis functions evaluated at samples
 SparseMatrix compute_basis_function_matrix(const BSpline &bspline, const DataTable &data);
 
