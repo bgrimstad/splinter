@@ -14,14 +14,14 @@ namespace SPLINTER
 {
 
 DenseVector Function::eval(const DenseVector &x) const {
-    return stdToEigVec(eval(eigToStdVec(x)));
+    return std_to_eig_vec(eval(eig_to_std_vec(x)));
 }
 
 std::vector<std::vector<double>> Function::eval_jacobian(const std::vector<double> &x) const
 {
-    auto denseX = stdToEigVec(x);
+    auto denseX = std_to_eig_vec(x);
 
-    return eigMatToStdVecVec(eval_jacobian(denseX));
+    return eig_mat_to_std_vec_vec(eval_jacobian(denseX));
 }
 
 DenseMatrix Function::eval_jacobian(const DenseVector &x) const
@@ -56,7 +56,7 @@ DenseMatrix Function::central_difference(const DenseVector &x) const
 }
 
 void Function::check_input(const DenseVector &x) const {
-    return check_input(eigToStdVec(x));
+    return check_input(eig_to_std_vec(x));
 }
 
 

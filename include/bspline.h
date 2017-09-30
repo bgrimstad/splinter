@@ -96,7 +96,7 @@ public:
 
     unsigned int get_num_basis_functions() const
     {
-        return basis.getNumBasisFunctions();
+        return basis.get_num_basis_functions();
     }
 
 //    DenseMatrix get_control_points() const;
@@ -158,7 +158,7 @@ protected:
 
     /*
      * B-spline control points in R^(m x n),
-     * where m = numBasisFunctions and n = dim_y.
+     * where m = num_basis_functions and n = dim_y.
      * Each row is a control point.
      */
     DenseMatrix control_points;

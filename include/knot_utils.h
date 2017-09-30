@@ -53,38 +53,31 @@ enum class KnotSpacing {
 /**
  * Computing knot vectors
  */
-std::vector<std::vector<double>> computeKnotVectors(const DataTable &data, std::vector<unsigned int> degrees,
-                                                    std::vector<unsigned int> num_basis_functions,
-                                                    KnotSpacing knot_spacing);
+std::vector<std::vector<double>> compute_knot_vectors(const DataTable &data, std::vector<unsigned int> degrees,
+                                                      std::vector<unsigned int> num_basis_functions,
+                                                      KnotSpacing knot_spacing);
 /**
  * Computing single knot vector
- * @param values
- * @param degree
- * @param num_basis_functions
- * @return
  */
-std::vector<double> computeKnotVector(const std::vector<double> &values, unsigned int degree,
-                                      unsigned int num_basis_functions, KnotSpacing knot_spacing);
+std::vector<double> compute_knot_vector(const std::vector<double> &values, unsigned int degree,
+                                        unsigned int num_basis_functions, KnotSpacing knot_spacing);
 
 /**
  * Construct knot vector using moving average filter (AS_SAMPLED)
  */
-std::vector<double> knotVectorMovingAverage(const std::vector<double> &values,
-                                            unsigned int degree);
+std::vector<double> knot_vector_moving_average(const std::vector<double> &values, unsigned int degree);
 
 /**
  * Compute clamped, equidistant knot vector (EQUIDISTANT)
  */
-std::vector<double> knotVectorEquidistant(const std::vector<double> &values,
-                                          unsigned int degree,
-                                          unsigned int numBasisFunctions);
+std::vector<double> knot_vector_equidistant(const std::vector<double> &values, unsigned int degree,
+                                            unsigned int numBasisFunctions);
 
 /**
  * Construct equidistant knot vector (EXPERIMENTAL)
  */
-std::vector<double> knotVectorEquidistantNotClamped(const std::vector<double> &values,
-                                                    unsigned int degree,
-                                                    unsigned int numBasisFunctions);
+std::vector<double> knot_vector_equidistant_not_clamped(const std::vector<double> &values, unsigned int degree,
+                                                        unsigned int numBasisFunctions);
 
 } // namespace SPLINTER
 

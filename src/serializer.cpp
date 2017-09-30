@@ -103,14 +103,14 @@ size_t Serializer::get_size(const BSpline &obj)
 size_t Serializer::get_size(const BSplineBasis &obj)
 {
     return get_size(obj.bases)
-           + get_size(obj.numVariables);
+           + get_size(obj.num_variables);
 }
 
 size_t Serializer::get_size(const BSplineBasis1D &obj)
 {
     return get_size(obj.degree)
            + get_size(obj.knots)
-           + get_size(obj.targetNumBasisfunctions);
+           + get_size(obj.target_num_basis_functions);
 }
 
 size_t Serializer::get_size(const KnotVector &obj)
@@ -183,14 +183,14 @@ void Serializer::_serialize(const BSpline &obj)
 void Serializer::_serialize(const BSplineBasis &obj)
 {
     _serialize(obj.bases);
-    _serialize(obj.numVariables);
+    _serialize(obj.num_variables);
 }
 
 void Serializer::_serialize(const BSplineBasis1D &obj)
 {
     _serialize(obj.degree);
     _serialize(obj.knots);
-    _serialize(obj.targetNumBasisfunctions);
+    _serialize(obj.target_num_basis_functions);
 }
 
 void Serializer::_serialize(const KnotVector &obj)
@@ -265,14 +265,14 @@ void Serializer::deserialize(BSpline &obj)
 void Serializer::deserialize(BSplineBasis &obj)
 {
     deserialize(obj.bases);
-    deserialize(obj.numVariables);
+    deserialize(obj.num_variables);
 }
 
 void Serializer::deserialize(BSplineBasis1D &obj)
 {
     deserialize(obj.degree);
     deserialize(obj.knots);
-    deserialize(obj.targetNumBasisfunctions);
+    deserialize(obj.target_num_basis_functions);
 }
 
 void Serializer::deserialize(KnotVector &obj)

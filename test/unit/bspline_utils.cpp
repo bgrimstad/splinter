@@ -24,7 +24,7 @@ TEST_CASE("computeSecondOrderDifferenceMatrix 1-D" COMMON_TEXT, COMMON_TAGS)
 
     BSpline bs(1, 1, knot_vectors, degrees);
 
-    auto D = computeSecondOrderFiniteDifferenceMatrix(bs);
+    auto D = compute_second_order_finite_difference_matrix(bs);
 
     unsigned int n = bs.get_num_basis_functions();
     SparseMatrix D_expected(n-2, n);

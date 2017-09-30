@@ -34,16 +34,16 @@ BSpline BSpline::Builder::fit(const DataTable &data,
                               double alpha,
                               std::vector<double> weights) const
 {
-    if (data.getDimX() != _dim_x)
+    if (data.get_dim_x() != _dim_x)
         throw Exception("BSpline::Builder::fit: Expected " + std::to_string(_dim_x) + " input variables.");
 
-    if (data.getDimY() != _dim_y)
+    if (data.get_dim_y() != _dim_y)
         throw Exception("BSpline::Builder::fit: Expected " + std::to_string(_dim_y) + " output variables.");
 
     if (alpha < 0)
         throw Exception("BSpline::Builder::fit: alpha must be non-negative.");
 
-    if (weights.size() > 0 && data.getNumSamples() != weights.size()) {
+    if (weights.size() > 0 && data.get_num_samples() != weights.size()) {
         throw Exception("BSpline::Builder::fit: number of weights must equal number of data points.");
     }
 
@@ -53,13 +53,13 @@ BSpline BSpline::Builder::fit(const DataTable &data,
 #endif // NDEBUG
 
     // Build knot vectors
-    auto knotVectors = computeKnotVectors(data, _degrees, _numBasisFunctions, _knotSpacing);
+    auto knotVectors = compute_knot_vectors(data, _degrees, _numBasisFunctions, _knotSpacing);
 
     // Build B-spline (with default coefficients)
     auto bspline = BSpline(_dim_x, _dim_y, knotVectors, _degrees);
 
     // Compute coefficients from samples and update B-spline
-    auto coefficients = computeControlPoints(bspline, data, smoothing, alpha, weights);
+    auto coefficients = compute_control_points(bspline, data, smoothing, alpha, weights);
     bspline.set_control_points(coefficients);
 
     return bspline;
@@ -79,17 +79,17 @@ BSpline BSpline::Builder::fit(const DataTable &data,
  * The optimal control point matrix C is the solution of the linear system of equations:
  * (X'*W*X + alpha*R) C = X'*W*Y
  */
-DenseMatrix BSpline::Builder::computeControlPoints(const BSpline &bspline,
-                                                   const DataTable &data,
-                                                   Smoothing smoothing,
-                                                   double alpha,
-                                                   std::vector<double> weights) const
+DenseMatrix BSpline::Builder::compute_control_points(const BSpline &bspline,
+                                                     const DataTable &data,
+                                                     Smoothing smoothing,
+                                                     double alpha,
+                                                     std::vector<double> weights) const
 {
-    unsigned int num_samples = data.getNumSamples();
+    unsigned int num_samples = data.get_num_samples();
     unsigned int num_basis_functions = bspline.get_num_basis_functions();
-    SparseMatrix X = computeBasisFunctionMatrix(bspline, data);
+    SparseMatrix X = compute_basis_function_matrix(bspline, data);
     SparseMatrix Xt = X.transpose();
-    DenseMatrix Y = stackSamplePointValues(data);
+    DenseMatrix Y = stack_sample_values(data);
 
     // Regularization matrix
     SparseMatrix R(num_basis_functions, num_basis_functions);
@@ -114,7 +114,7 @@ DenseMatrix BSpline::Builder::computeControlPoints(const BSpline &bspline,
          */
 
         // Second order finite difference matrix
-        SparseMatrix D = computeSecondOrderFiniteDifferenceMatrix(bspline);
+        SparseMatrix D = compute_second_order_finite_difference_matrix(bspline);
         R = D.transpose()*D;
     }
 
@@ -123,7 +123,7 @@ DenseMatrix BSpline::Builder::computeControlPoints(const BSpline &bspline,
     SparseMatrix W(num_samples, num_samples);
 
     if (weights.size() > 0) {
-        W = computeWeightMatrix(weights);
+        W = compute_weight_matrix(weights);
     } else {
         W.setIdentity();
     }

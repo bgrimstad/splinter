@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
             auto y = f(x);
 
             // Store sample
-            samples.addSample(x, y);
+            samples.add_sample(x, y);
         }
     }
 
@@ -83,8 +83,8 @@ DataTable samples;
 
 // Add some samples (x, y), where y = f(x).
 // Note that the order in which the samples are added does not matter.
-samples.addSample(1, 0);
-samples.addSample(2, 5);
-samples.addSample(3, 10);
-samples.addSample(4, 15);
+samples.add_sample(1, 0);
+samples.add_sample(2, 5);
+samples.add_sample(3, 10);
+samples.add_sample(4, 15);
 ```

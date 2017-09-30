@@ -37,7 +37,7 @@ BSpline::BSpline(
         const std::vector<unsigned int> &degrees)
     : Function(dimX, dimY),
       basis(BSplineBasis(knotVectors, degrees)),
-      control_points(DenseMatrix::Zero(basis.getNumBasisFunctions(), dimY))
+      control_points(DenseMatrix::Zero(basis.get_num_basis_functions(), dimY))
 {
     check_control_points();
 }
@@ -47,7 +47,7 @@ BSpline::BSpline(const std::vector<std::vector<double>> &controlPoints,
                  const std::vector<unsigned int> &degrees)
     : Function(knotVectors.size(), controlPoints.at(0).size()),
       basis(BSplineBasis(knotVectors, degrees)),
-      control_points(stdVecVecToEigMat(controlPoints))
+      control_points(std_vec_vec_to_eig_mat(controlPoints))
 {
     check_control_points();
 }
@@ -70,7 +70,7 @@ BSpline::BSpline(const std::string &fileName)
  * Returns the function value at x
  */
 std::vector<double> BSpline::eval(const std::vector<double> &x) const {
-    return eigToStdVec(eval(stdToEigVec(x)));
+    return eig_to_std_vec(eval(std_to_eig_vec(x)));
 }
 
 DenseVector BSpline::eval(const DenseVector &x) const
@@ -94,7 +94,7 @@ DenseMatrix BSpline::eval_jacobian(const DenseVector &x) const
  */
 std::vector<std::vector<std::vector<double>>> BSpline::eval_hessian(const std::vector<double> &x) const
 {
-    DenseVector eigX = stdToEigVec(x);
+    DenseVector eigX = std_to_eig_vec(x);
     check_input(eigX);
 
     std::vector<std::vector<std::vector<double>>> hessian;
@@ -108,7 +108,7 @@ std::vector<std::vector<std::vector<double>>> BSpline::eval_hessian(const std::v
         DenseMatrix H = DenseMatrix::Zero(1, 1);
         DenseMatrix cp = cpCopy.col(i);
         DenseMatrix caug = kroneckerProduct(identity, cp.transpose());
-        DenseMatrix DB = basis.evalBasisHessian(eigX);
+        DenseMatrix DB = basis.eval_basis_hessian(eigX);
 
         H = caug*DB;
 
@@ -119,7 +119,7 @@ std::vector<std::vector<std::vector<double>>> BSpline::eval_hessian(const std::v
             for (size_t k = j+1; k < dim_x; ++k)
                 H(j, k) = H(k, j);
 
-        hessian.push_back(eigMatToStdVecVec(H));
+        hessian.push_back(eig_mat_to_std_vec_vec(H));
     }
 
     return hessian;
@@ -144,8 +144,8 @@ SparseMatrix BSpline::eval_basis_jacobian(const DenseVector &x) const
 #endif // NDEBUG
 
     //SparseMatrix Bi = basis.eval_basis_jacobian(x);       // Sparse Jacobian implementation
-    //SparseMatrix Bi = basis.evalBasisJacobian2(x);  // Sparse Jacobian implementation
-    DenseMatrix Bi = basis.evalBasisJacobianOld(x);  // Old Jacobian implementation
+    //SparseMatrix Bi = basis.eval_basis_jacobian2(x);  // Sparse Jacobian implementation
+    DenseMatrix Bi = basis.eval_basis_jacobian_old(x);  // Old Jacobian implementation
 
     return Bi.sparseView();
 }
@@ -154,28 +154,28 @@ std::vector<unsigned int> BSpline::get_num_basis_functions_per_variable() const
 {
     std::vector<unsigned int> ret;
     for (unsigned int i = 0; i < dim_x; i++)
-        ret.push_back(basis.getNumBasisFunctions(i));
+        ret.push_back(basis.get_num_basis_functions(i));
     return ret;
 }
 
 std::vector<std::vector<double>> BSpline::get_knot_vectors() const
 {
-    return basis.getKnotVectors();
+    return basis.get_knot_vectors();
 }
 
 std::vector<unsigned int> BSpline::get_basis_degrees() const
 {
-    return basis.getBasisDegrees();
+    return basis.get_basis_degrees();
 }
 
 std::vector<double> BSpline::get_domain_upper_bound() const
 {
-    return basis.getSupportUpperBound();
+    return basis.get_support_upper_bound();
 }
 
 std::vector<double> BSpline::get_domain_lower_bound() const
 {
-    return basis.getSupportLowerBound();
+    return basis.get_support_lower_bound();
 }
 
 void BSpline::set_control_points(const DenseMatrix &new_control_points)
@@ -206,7 +206,7 @@ void BSpline::check_control_points() const
 
 bool BSpline::is_supported(const DenseVector &x) const
 {
-    return basis.insideSupport(x);
+    return basis.inside_support(x);
 }
 
 void BSpline::reduce_support(const std::vector<double> &lb, const std::vector<double> &ub, bool regularize_knot_vectors)
@@ -214,8 +214,8 @@ void BSpline::reduce_support(const std::vector<double> &lb, const std::vector<do
     if (lb.size() != dim_x || ub.size() != dim_x)
         throw Exception("BSpline::reduce_support: Inconsistent vector sizes!");
 
-    std::vector<double> sl = basis.getSupportLowerBound();
-    std::vector<double> su = basis.getSupportUpperBound();
+    std::vector<double> sl = basis.get_support_lower_bound();
+    std::vector<double> su = basis.get_support_upper_bound();
 
     for (unsigned int dim = 0; dim < dim_x; dim++)
     {
@@ -247,7 +247,7 @@ void BSpline::reduce_support(const std::vector<double> &lb, const std::vector<do
 void BSpline::global_knot_refinement()
 {
     // Compute knot insertion matrix
-    SparseMatrix A = basis.refineKnots();
+    SparseMatrix A = basis.refine_knots();
 
     // Update control points
     linear_transform(A);
@@ -256,7 +256,7 @@ void BSpline::global_knot_refinement()
 void BSpline::local_knot_refinement(const DenseVector &x)
 {
     // Compute knot insertion matrix
-    SparseMatrix A = basis.refineKnotsLocally(x);
+    SparseMatrix A = basis.refine_knots_locally(x);
 
     // Update control points
     linear_transform(A);
@@ -265,7 +265,7 @@ void BSpline::local_knot_refinement(const DenseVector &x)
 void BSpline::decompose_to_bezier()
 {
     // Compute knot insertion matrix
-    SparseMatrix A = basis.decomposeToBezierForm();
+    SparseMatrix A = basis.decompose_to_bezier();
 
     // Update control points
     linear_transform(A);
@@ -278,17 +278,17 @@ DenseMatrix BSpline::compute_knot_averages() const
     std::vector<DenseVector> mu_vectors;
     for (unsigned int i = 0; i < dim_x; i++)
     {
-        std::vector<double> knots = basis.getKnotVector(i);
-        DenseVector mu = DenseVector::Zero(basis.getNumBasisFunctions(i));
+        std::vector<double> knots = basis.get_knot_vector(i);
+        DenseVector mu = DenseVector::Zero(basis.get_num_basis_functions(i));
 
-        for (unsigned int j = 0; j < basis.getNumBasisFunctions(i); j++)
+        for (unsigned int j = 0; j < basis.get_num_basis_functions(i); j++)
         {
             double knotAvg = 0;
-            for (unsigned int k = j+1; k <= j+basis.getBasisDegree(i); k++)
+            for (unsigned int k = j+1; k <= j+ basis.get_basis_degree(i); k++)
             {
                 knotAvg += knots.at(k);
             }
-            mu(j) = knotAvg/basis.getBasisDegree(i);
+            mu(j) = knotAvg/ basis.get_basis_degree(i);
         }
         mu_vectors.push_back(mu);
     }
@@ -299,7 +299,7 @@ DenseMatrix BSpline::compute_knot_averages() const
         knotOnes.push_back(DenseVector::Ones(mu_vectors.at(i).rows()));
 
     // Fill knot average matrix one column at the time
-    DenseMatrix knot_averages = DenseMatrix::Zero(basis.getNumBasisFunctions(), dim_x);
+    DenseMatrix knot_averages = DenseMatrix::Zero(basis.get_num_basis_functions(), dim_x);
 
     for (unsigned int i = 0; i < dim_x; i++)
     {
@@ -312,9 +312,9 @@ DenseMatrix BSpline::compute_knot_averages() const
             else
                 mu_ext = Eigen::kroneckerProduct(temp, knotOnes.at(j));
         }
-        if (mu_ext.rows() != basis.getNumBasisFunctions())
+        if (mu_ext.rows() != basis.get_num_basis_functions())
             throw Exception("BSpline::compute_knot_averages: Incompatible size of knot average matrix.");
-        knot_averages.block(0, i, basis.getNumBasisFunctions(), 1) = mu_ext;
+        knot_averages.block(0, i, basis.get_num_basis_functions(), 1) = mu_ext;
     }
 
     return knot_averages;
@@ -323,7 +323,7 @@ DenseMatrix BSpline::compute_knot_averages() const
 void BSpline::insert_knots(double tau, unsigned int dim, unsigned int multiplicity)
 {
     // Insert knots and compute knot insertion matrix
-    SparseMatrix A = basis.insertKnots(tau, dim, multiplicity);
+    SparseMatrix A = basis.insert_knots(tau, dim, multiplicity);
 
     // Update control points
     linear_transform(A);
@@ -337,21 +337,21 @@ void BSpline::regularize_knot_vectors(const std::vector<double> &lb, const std::
 
     for (unsigned int dim = 0; dim < dim_x; dim++)
     {
-        unsigned int multiplicityTarget = basis.getBasisDegree(dim) + 1;
+        unsigned int multiplicityTarget = basis.get_basis_degree(dim) + 1;
 
         // Inserting many knots at the time (to save number of B-spline coefficient calculations)
         // NOTE: This method generates knot insertion matrices with more nonzero elements than
         // the method that inserts one knot at the time. This causes the preallocation of
         // kronecker product matrices to become too small and the speed deteriorates drastically
         // in higher dimensions because reallocation is necessary. This can be prevented by
-        // computing the number of nonzeros when preallocating memory (see myKroneckerProduct).
-        int numKnotsLB = multiplicityTarget - basis.getKnotMultiplicity(dim, lb.at(dim));
+        // computing the number of nonzeros when preallocating memory (see my_kronecker_product).
+        int numKnotsLB = multiplicityTarget - basis.get_knot_multiplicity(dim, lb.at(dim));
         if (numKnotsLB > 0)
         {
             insert_knots(lb.at(dim), dim, numKnotsLB);
         }
 
-        int numKnotsUB = multiplicityTarget - basis.getKnotMultiplicity(dim, ub.at(dim));
+        int numKnotsUB = multiplicityTarget - basis.get_knot_multiplicity(dim, ub.at(dim));
         if (numKnotsUB > 0)
         {
             insert_knots(ub.at(dim), dim, numKnotsUB);
@@ -364,7 +364,7 @@ bool BSpline::remove_unsupported_basis_functions(const std::vector<double> &lb, 
     if (lb.size() != dim_x || ub.size() != dim_x)
         throw Exception("BSpline::remove_unsupported_basis_functions: Incompatible dimension of domain bounds.");
 
-    SparseMatrix A = basis.reduceSupport(lb, ub);
+    SparseMatrix A = basis.reduce_support(lb, ub);
 
     // Remove unsupported control points (basis functions)
     linear_transform(A);

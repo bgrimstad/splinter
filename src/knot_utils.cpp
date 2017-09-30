@@ -15,24 +15,24 @@ namespace SPLINTER
 {
 
 // Compute all knot vectors from sample data
-std::vector<std::vector<double>> computeKnotVectors(const DataTable &data,
-                                                    std::vector<unsigned int> degrees,
-                                                    std::vector<unsigned int> num_basis_functions,
-                                                    KnotSpacing knot_spacing)
+std::vector<std::vector<double>> compute_knot_vectors(const DataTable &data,
+                                                      std::vector<unsigned int> degrees,
+                                                      std::vector<unsigned int> num_basis_functions,
+                                                      KnotSpacing knot_spacing)
 {
-    auto dim_x = data.getDimX();
+    auto dim_x = data.get_dim_x();
 
     if (dim_x != degrees.size() || dim_x != num_basis_functions.size())
-        throw Exception("BSpline::Builder::computeKnotVectors: Inconsistent sizes on input vectors.");
+        throw Exception("BSpline::Builder::compute_knot_vectors: Inconsistent sizes on input vectors.");
 
-    std::vector<std::vector<double>> grid = data.getTableX();
+    std::vector<std::vector<double>> grid = data.get_table_x();
 
     std::vector<std::vector<double>> knotVectors;
 
     for (unsigned int i = 0; i < dim_x; ++i)
     {
         // Compute knot vector
-        auto knotVec = computeKnotVector(grid.at(i), degrees.at(i), num_basis_functions.at(i), knot_spacing);
+        auto knotVec = compute_knot_vector(grid.at(i), degrees.at(i), num_basis_functions.at(i), knot_spacing);
 
         knotVectors.push_back(knotVec);
     }
@@ -41,30 +41,30 @@ std::vector<std::vector<double>> computeKnotVectors(const DataTable &data,
 }
 
 // Compute a single knot vector from sample grid and degree
-std::vector<double> computeKnotVector(const std::vector<double> &values,
-                                      unsigned int degree,
-                                      unsigned int num_basis_functions,
-                                      KnotSpacing knot_spacing)
+std::vector<double> compute_knot_vector(const std::vector<double> &values,
+                                        unsigned int degree,
+                                        unsigned int num_basis_functions,
+                                        KnotSpacing knot_spacing)
 {
     switch (knot_spacing)
     {
         case KnotSpacing::AS_SAMPLED:
-            return knotVectorMovingAverage(values, degree);
+            return knot_vector_moving_average(values, degree);
         case KnotSpacing::EQUIDISTANT:
-            return knotVectorEquidistant(values, degree, num_basis_functions);
+            return knot_vector_equidistant(values, degree, num_basis_functions);
         case KnotSpacing::EXPERIMENTAL:
-            return knotVectorEquidistantNotClamped(values, degree, num_basis_functions);
+            return knot_vector_equidistant_not_clamped(values, degree, num_basis_functions);
         default:
-            return knotVectorMovingAverage(values, degree);
+            return knot_vector_moving_average(values, degree);
     }
 }
 
-std::vector<double> knotVectorEquidistantNotClamped(const std::vector<double> &values,
-                                                    unsigned int degree,
-                                                    unsigned int numBasisFunctions)
+std::vector<double> knot_vector_equidistant_not_clamped(const std::vector<double> &values,
+                                                        unsigned int degree,
+                                                        unsigned int numBasisFunctions)
 {
     // Sort and remove duplicates
-    std::vector<double> unique = extractUniqueSorted(values);
+    std::vector<double> unique = extract_unique_sorted(values);
 
     // Number of knots
     unsigned int nk = numBasisFunctions + degree + 1;
@@ -109,11 +109,11 @@ std::vector<double> knotVectorEquidistantNotClamped(const std::vector<double> &v
 * almost all knots will lie close to the left samples. Try a bucket approach, where the
 * samples are added to buckets and the knots computed as the average of these.
 */
-std::vector<double> knotVectorMovingAverage(const std::vector<double> &values,
-                                            unsigned int degree)
+std::vector<double> knot_vector_moving_average(const std::vector<double> &values,
+                                               unsigned int degree)
 {
     // Sort and remove duplicates
-    std::vector<double> unique = extractUniqueSorted(values);
+    std::vector<double> unique = extract_unique_sorted(values);
 
     // Compute sizes
     unsigned int n = unique.size();
@@ -124,7 +124,7 @@ std::vector<double> knotVectorMovingAverage(const std::vector<double> &values,
     if (n < degree+1)
     {
         std::ostringstream e;
-        e << "knotVectorMovingAverage: Only " << n
+        e << "knot_vector_moving_average: Only " << n
         << " unique interpolation points are given. A minimum of degree+1 = " << degree+1
         << " unique points are required to build a B-spline basis of degree " << degree << ".";
         throw Exception(e.str());
@@ -156,12 +156,12 @@ std::vector<double> knotVectorMovingAverage(const std::vector<double> &values,
     return knots;
 }
 
-std::vector<double> knotVectorEquidistant(const std::vector<double> &values,
-                                          unsigned int degree,
-                                          unsigned int numBasisFunctions = 0)
+std::vector<double> knot_vector_equidistant(const std::vector<double> &values,
+                                            unsigned int degree,
+                                            unsigned int numBasisFunctions = 0)
 {
     // Sort and remove duplicates
-    std::vector<double> unique = extractUniqueSorted(values);
+    std::vector<double> unique = extract_unique_sorted(values);
 
     // Compute sizes
     unsigned int n = unique.size();
@@ -173,7 +173,7 @@ std::vector<double> knotVectorEquidistant(const std::vector<double> &values,
     if (n < degree+1)
     {
         std::ostringstream e;
-        e << "knotVectorMovingAverage: Only " << n
+        e << "knot_vector_moving_average: Only " << n
         << " unique interpolation points are given. A minimum of degree+1 = " << degree+1
         << " unique points are required to build a B-spline basis of degree " << degree << ".";
         throw Exception(e.str());

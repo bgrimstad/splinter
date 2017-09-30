@@ -34,7 +34,7 @@ DataTable sampleTestFunction()
             y = sixHumpCamelBack(x);
 
             // Store sample
-            samples.addSample(x, y);
+            samples.add_sample(x, y);
         }
     }
 
@@ -45,8 +45,8 @@ bool testKnotInsertion()
 {
     DataTable samples = sampleTestFunction();
 
-    auto dim_x = samples.getDimX();
-    auto dim_y = samples.getDimY();
+    auto dim_x = samples.get_dim_x();
+    auto dim_y = samples.get_dim_y();
 
     // Build B-splines that interpolate the samples
     BSpline bspline1 = BSpline::Builder(dim_x, dim_y).degree(1).fit(samples);
@@ -78,19 +78,19 @@ bool testKnotInsertion()
             auto y1 = bspline1.eval(x);
             auto y1_copy = bspline1_copy.eval(x);
 
-            if (!compareVectors(y1, y1_copy, 1e-10))
+            if (!compare_vectors(y1, y1_copy, 1e-10))
                 return false;
 
             auto y2 = bspline2.eval(x);
             auto y2_copy = bspline2_copy.eval(x);
 
-            if (!compareVectors(y2, y2_copy, 1e-10))
+            if (!compare_vectors(y2, y2_copy, 1e-10))
                 return false;
 
             auto y3 = bspline3.eval(x);
             auto y3_copy = bspline3_copy.eval(x);
 
-            if (!compareVectors(y3, y3_copy, 1e-10))
+            if (!compare_vectors(y3, y3_copy, 1e-10))
                 return false;
         }
     }
@@ -146,8 +146,8 @@ bool runRecursiveDomainReductionTest()
     // Create new DataTable to manage samples
     DataTable samples = sampleTestFunction();
 
-    auto dim_x = samples.getDimX();
-    auto dim_y = samples.getDimY();
+    auto dim_x = samples.get_dim_x();
+    auto dim_y = samples.get_dim_y();
 
     // Build B-splines that interpolate the samples
     BSpline bspline1 = BSpline::Builder(dim_x, dim_y).degree(1).fit(samples);
@@ -175,8 +175,8 @@ bool domainReductionTest1()
     std::vector<double> x1 = {0.75, 0.75};
     std::vector<double> x2 = {0.7, 0.8};
 
-    auto dim_x = samples.getDimX();
-    auto dim_y = samples.getDimY();
+    auto dim_x = samples.get_dim_x();
+    auto dim_y = samples.get_dim_y();
 
     // Build B-splines that interpolate the samples
     BSpline bspline1_ref = BSpline::Builder(dim_x, dim_y).degree(1).fit(samples);
@@ -198,21 +198,21 @@ bool domainReductionTest1()
         bspline3.reduce_support(lb, ub);
         bspline4.reduce_support(lb, ub);
 
-        if (!compareVectors(bspline1.eval(x1), bspline1_ref.eval(x1)))
+        if (!compare_vectors(bspline1.eval(x1), bspline1_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline2.eval(x1), bspline2_ref.eval(x1)))
+        if (!compare_vectors(bspline2.eval(x1), bspline2_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline3.eval(x1), bspline3_ref.eval(x1)))
+        if (!compare_vectors(bspline3.eval(x1), bspline3_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline4.eval(x1), bspline4_ref.eval(x1)))
+        if (!compare_vectors(bspline4.eval(x1), bspline4_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline1.eval(x2), bspline1_ref.eval(x2)))
+        if (!compare_vectors(bspline1.eval(x2), bspline1_ref.eval(x2)))
             return false;
-        if (!compareVectors(bspline2.eval(x2), bspline2_ref.eval(x2)))
+        if (!compare_vectors(bspline2.eval(x2), bspline2_ref.eval(x2)))
             return false;
-        if (!compareVectors(bspline3.eval(x2), bspline3_ref.eval(x2)))
+        if (!compare_vectors(bspline3.eval(x2), bspline3_ref.eval(x2)))
             return false;
-        if (!compareVectors(bspline4.eval(x2), bspline4_ref.eval(x2)))
+        if (!compare_vectors(bspline4.eval(x2), bspline4_ref.eval(x2)))
             return false;
     }
 
@@ -225,21 +225,21 @@ bool domainReductionTest1()
         bspline3.reduce_support(lb, ub);
         bspline4.reduce_support(lb, ub);
 
-        if (!compareVectors(bspline1.eval(x1), bspline1_ref.eval(x1)))
+        if (!compare_vectors(bspline1.eval(x1), bspline1_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline2.eval(x1), bspline2_ref.eval(x1)))
+        if (!compare_vectors(bspline2.eval(x1), bspline2_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline3.eval(x1), bspline3_ref.eval(x1)))
+        if (!compare_vectors(bspline3.eval(x1), bspline3_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline4.eval(x1), bspline4_ref.eval(x1)))
+        if (!compare_vectors(bspline4.eval(x1), bspline4_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline1.eval(x2), bspline1_ref.eval(x2)))
+        if (!compare_vectors(bspline1.eval(x2), bspline1_ref.eval(x2)))
             return false;
-        if (!compareVectors(bspline2.eval(x2), bspline2_ref.eval(x2)))
+        if (!compare_vectors(bspline2.eval(x2), bspline2_ref.eval(x2)))
             return false;
-        if (!compareVectors(bspline3.eval(x2), bspline3_ref.eval(x2)))
+        if (!compare_vectors(bspline3.eval(x2), bspline3_ref.eval(x2)))
             return false;
-        if (!compareVectors(bspline4.eval(x2), bspline4_ref.eval(x2)))
+        if (!compare_vectors(bspline4.eval(x2), bspline4_ref.eval(x2)))
             return false;
     }
 
@@ -252,21 +252,21 @@ bool domainReductionTest1()
         bspline3.reduce_support(lb, ub);
         bspline4.reduce_support(lb, ub);
 
-        if (!compareVectors(bspline1.eval(x1), bspline1_ref.eval(x1)))
+        if (!compare_vectors(bspline1.eval(x1), bspline1_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline2.eval(x1), bspline2_ref.eval(x1)))
+        if (!compare_vectors(bspline2.eval(x1), bspline2_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline3.eval(x1), bspline3_ref.eval(x1)))
+        if (!compare_vectors(bspline3.eval(x1), bspline3_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline4.eval(x1), bspline4_ref.eval(x1)))
+        if (!compare_vectors(bspline4.eval(x1), bspline4_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline1.eval(x2), bspline1_ref.eval(x2)))
+        if (!compare_vectors(bspline1.eval(x2), bspline1_ref.eval(x2)))
             return false;
-        if (!compareVectors(bspline2.eval(x2), bspline2_ref.eval(x2)))
+        if (!compare_vectors(bspline2.eval(x2), bspline2_ref.eval(x2)))
             return false;
-        if (!compareVectors(bspline3.eval(x2), bspline3_ref.eval(x2)))
+        if (!compare_vectors(bspline3.eval(x2), bspline3_ref.eval(x2)))
             return false;
-        if (!compareVectors(bspline4.eval(x2), bspline4_ref.eval(x2)))
+        if (!compare_vectors(bspline4.eval(x2), bspline4_ref.eval(x2)))
             return false;
     }
 
@@ -279,21 +279,21 @@ bool domainReductionTest1()
         bspline3.reduce_support(lb, ub);
         bspline4.reduce_support(lb, ub);
 
-        if (!compareVectors(bspline1.eval(x1), bspline1_ref.eval(x1)))
+        if (!compare_vectors(bspline1.eval(x1), bspline1_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline2.eval(x1), bspline2_ref.eval(x1)))
+        if (!compare_vectors(bspline2.eval(x1), bspline2_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline3.eval(x1), bspline3_ref.eval(x1)))
+        if (!compare_vectors(bspline3.eval(x1), bspline3_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline4.eval(x1), bspline4_ref.eval(x1)))
+        if (!compare_vectors(bspline4.eval(x1), bspline4_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline1.eval(x2), bspline1_ref.eval(x2)))
+        if (!compare_vectors(bspline1.eval(x2), bspline1_ref.eval(x2)))
             return false;
-        if (!compareVectors(bspline2.eval(x2), bspline2_ref.eval(x2)))
+        if (!compare_vectors(bspline2.eval(x2), bspline2_ref.eval(x2)))
             return false;
-        if (!compareVectors(bspline3.eval(x2), bspline3_ref.eval(x2)))
+        if (!compare_vectors(bspline3.eval(x2), bspline3_ref.eval(x2)))
             return false;
-        if (!compareVectors(bspline4.eval(x2), bspline4_ref.eval(x2)))
+        if (!compare_vectors(bspline4.eval(x2), bspline4_ref.eval(x2)))
             return false;
     }
 
@@ -311,7 +311,7 @@ bool domainReductionTest1()
 ///*
 // * This example was used to test the speed difference
 // * of Eigens Kronecker product and the custom-made
-// * myKroneckerProduct() when refining a B-spline.
+// * my_kronecker_product() when refining a B-spline.
 // * Note that the Kronecker product function call
 // * have to be manually switched between test runs.
 // */
@@ -342,7 +342,7 @@ bool domainReductionTest1()
 //                    xv(3) = x3;
 //
 //                    double y = kroneckerTestFunction(xv);
-//                    table.addSample(xv,y);
+//                    table.add_sample(xv,y);
 //                }
 //            }
 //        }

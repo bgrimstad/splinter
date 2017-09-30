@@ -31,7 +31,7 @@ TEST_CASE("PSpline function" COMMON_TEXT, COMMON_TAGS "[function-value]")
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSpline::Builder(table.getDimX(), table.getDimY())
+                                 BSpline bs = BSpline::Builder(table.get_dim_x(), table.get_dim_y())
                                          .fit(table, BSpline::Smoothing::PSPLINE, 0.03);
                                  return (Function*) new BSpline(bs);
                              },
@@ -52,9 +52,9 @@ TEST_CASE("PSpline function2" COMMON_TEXT, COMMON_TAGS "[function-value]")
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSpline::Builder(table.getDimX(), table.getDimY())
-                                         .knotSpacing(KnotSpacing::EXPERIMENTAL)
-                                         .numBasisFunctions(10)
+                                 BSpline bs = BSpline::Builder(table.get_dim_x(), table.get_dim_y())
+                                         .knot_spacing(KnotSpacing::EXPERIMENTAL)
+                                         .num_basis_functions(10)
                                          .fit(table, BSpline::Smoothing::PSPLINE, 0.01);
                                  return (Function*) new BSpline(bs);
                              },
@@ -72,7 +72,7 @@ TEST_CASE("P-spline approximation of linear function", COMMON_TAGS "[function-va
     DataTable samples;
     for (int i = 0; i < x.size(); ++i)
     {
-        samples.addSample(x.at(i), y.at(i));
+        samples.add_sample(x.at(i), y.at(i));
     }
 
     /**
@@ -83,7 +83,7 @@ TEST_CASE("P-spline approximation of linear function", COMMON_TAGS "[function-va
     std::vector<double> xd = {1};
     auto yd = bs.eval(xd);
     // TODO: This test fails
-    //REQUIRE(assertNear(yd.at(0), 1., 1e-4));
+    //REQUIRE(assert_near(yd.at(0), 1., 1e-4));
     REQUIRE(true);
 }
 
@@ -98,7 +98,7 @@ TEST_CASE("PSpline jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian]")
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = BSpline::Builder(table.getDimX(), table.getDimY())
+                                 BSpline bs = BSpline::Builder(table.get_dim_x(), table.get_dim_y())
                                          .fit(table, BSpline::Smoothing::PSPLINE, 0.03);
                                  return (Function*) new BSpline(bs);
                              },

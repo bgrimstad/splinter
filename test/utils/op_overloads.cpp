@@ -88,21 +88,21 @@ bool operator==(const DataTable &lhs, const DataTable &rhs)
             && lhs.dim_x == rhs.dim_x
             && lhs.samples == rhs.samples
             && lhs.grid == rhs.grid
-            && lhs.getDimX() == rhs.getDimX()
-            && lhs.getNumSamples() == rhs.getNumSamples()
-            && lhs.getSamples() == rhs.getSamples()
-            && lhs.getGrid() == rhs.getGrid();
+            && lhs.get_dim_x() == rhs.get_dim_x()
+            && lhs.get_num_samples() == rhs.get_num_samples()
+            && lhs.get_samples() == rhs.get_samples()
+            && lhs.get_grid() == rhs.get_grid();
 }
 
 bool operator==(const DataPoint &lhs, const DataPoint &rhs)
 {
-    for (unsigned int i = 0; i < lhs.getDimX(); i++)
+    for (unsigned int i = 0; i < lhs.get_dim_x(); i++)
     {
         if (!equalsWithinRange(lhs.getX().at(i), rhs.getX().at(i)))
             return false;
     }
 
-    for (unsigned int i = 0; i < lhs.getDimY(); i++)
+    for (unsigned int i = 0; i < lhs.get_dim_y(); i++)
     {
         if (!equalsWithinRange(lhs.getY().at(i), rhs.getY().at(i)))
             return false;
@@ -128,7 +128,7 @@ bool operator==(const BSpline &lhs, const BSpline &rhs)
 bool operator==(const BSplineBasis &lhs, const BSplineBasis &rhs)
 {
     return
-            lhs.numVariables == rhs.numVariables
+            lhs.num_variables == rhs.num_variables
             && lhs.bases == rhs.bases;
 }
 
@@ -137,7 +137,7 @@ bool operator==(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs)
     return
             lhs.degree == rhs.degree
             && lhs.knots == rhs.knots
-            && lhs.targetNumBasisfunctions == rhs.targetNumBasisfunctions;
+            && lhs.target_num_basis_functions == rhs.target_num_basis_functions;
 }
 
 /*
@@ -173,12 +173,12 @@ std::ostream &operator<<(std::ostream &out, const DataPoint &sample) {
 
 std::ostream &operator<<(std::ostream &out, const DataTable &table)
 {
-    out << "dim_x: " << table.getDimX() << std::endl;
-    out << "numSamples: " << table.getNumSamples() << std::endl;
-    //out << "samples: " << table.getSamples() << std::endl;
+    out << "dim_x: " << table.get_dim_x() << std::endl;
+    out << "numSamples: " << table.get_num_samples() << std::endl;
+    //out << "samples: " << table.get_samples() << std::endl;
     out << "grid dimensions: ";
     bool firstLoop = true;
-    for (const auto &dimension : table.getGrid())
+    for (const auto &dimension : table.get_grid())
     {
         if (!firstLoop)
             out << ", ";

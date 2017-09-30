@@ -12,7 +12,7 @@
 namespace SPLINTER
 {
 
-std::vector<double> eigToStdVec(const DenseVector &vec)
+std::vector<double> eig_to_std_vec(const DenseVector &vec)
 {
     std::vector<double> stdVec(vec.size());
 
@@ -22,7 +22,7 @@ std::vector<double> eigToStdVec(const DenseVector &vec)
     return stdVec;
 }
 
-DenseVector stdToEigVec(const std::vector<double> &vec)
+DenseVector std_to_eig_vec(const std::vector<double> &vec)
 {
     DenseVector eigVec(vec.size());
     eigVec.setZero();
@@ -33,7 +33,7 @@ DenseVector stdToEigVec(const std::vector<double> &vec)
     return eigVec;
 }
 
-std::vector<std::vector<double>> eigMatToStdVecVec(const DenseMatrix &mat)
+std::vector<std::vector<double>> eig_mat_to_std_vec_vec(const DenseMatrix &mat)
 {
     std::vector<std::vector<double>> vec(mat.rows());
 
@@ -48,7 +48,7 @@ std::vector<std::vector<double>> eigMatToStdVecVec(const DenseMatrix &mat)
     return vec;
 }
 
-DenseMatrix stdVecVecToEigMat(const std::vector<std::vector<double>> &vec)
+DenseMatrix std_vec_vec_to_eig_mat(const std::vector<std::vector<double>> &vec)
 {
     size_t numRows = vec.size();
     size_t numCols = numRows > 0 ? vec.at(0).size() : 0;
@@ -77,7 +77,7 @@ std::vector<double> linspace(double start, double stop, unsigned int num)
     return ret;
 }
 
-std::vector<double> extractUniqueSorted(const std::vector<double> &values)
+std::vector<double> extract_unique_sorted(const std::vector<double> &values)
 {
     // Sort and remove duplicates
     std::vector<double> unique(values);
@@ -87,7 +87,7 @@ std::vector<double> extractUniqueSorted(const std::vector<double> &values)
     return unique;
 }
 
-std::vector<std::vector<double>> transposeVecVec(std::vector<std::vector<double>> x)
+std::vector<std::vector<double>> transpose_vec_vec(std::vector<std::vector<double>> x)
 {
     std::vector<std::vector<double>> xt;
     if (x.size() == 0) {

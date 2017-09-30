@@ -53,7 +53,7 @@ void splinter_bspline_builder_set_num_basis_functions(splinter_obj_ptr bspline_b
         {
             _num_basis_functions.at(i) = (unsigned int) num_basis_functions[i];
         }
-        builder->numBasisFunctions(_num_basis_functions);
+        builder->num_basis_functions(_num_basis_functions);
     }
 }
 
@@ -65,13 +65,13 @@ void splinter_bspline_builder_set_knot_spacing(splinter_obj_ptr bspline_builder_
         switch (knot_spacing)
         {
             case 0:
-                builder->knotSpacing(KnotSpacing::AS_SAMPLED);
+                builder->knot_spacing(KnotSpacing::AS_SAMPLED);
                 break;
             case 1:
-                builder->knotSpacing(KnotSpacing::EQUIDISTANT);
+                builder->knot_spacing(KnotSpacing::EQUIDISTANT);
                 break;
             case 2:
-                builder->knotSpacing(KnotSpacing::EXPERIMENTAL);
+                builder->knot_spacing(KnotSpacing::EXPERIMENTAL);
                 break;
             default:
                 set_error_string("Error: Invalid knot spacing!");

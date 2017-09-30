@@ -47,22 +47,22 @@ public:
         return *this;
     }
 
-    Builder& numBasisFunctions(unsigned int numBasisFunctions)
+    Builder& num_basis_functions(unsigned int numBasisFunctions)
     {
         _numBasisFunctions = std::vector<unsigned int>(_dim_x, numBasisFunctions);
         return *this;
     }
 
-    Builder& numBasisFunctions(const std::vector<unsigned int> &numBasisFunctions)
+    Builder& num_basis_functions(const std::vector<unsigned int> &numBasisFunctions)
     {
         if (numBasisFunctions.size() != _dim_x)
-            throw Exception("BSpline::Builder::numBasisFunctions: Expected numBasisFunctions vector of length "
+            throw Exception("BSpline::Builder::num_basis_functions: Expected num_basis_functions vector of length "
                             + std::to_string(_dim_x) + ".");
         _numBasisFunctions = numBasisFunctions;
         return *this;
     }
 
-    Builder& knotSpacing(KnotSpacing knotSpacing)
+    Builder& knot_spacing(KnotSpacing knotSpacing)
     {
         _knotSpacing = knotSpacing;
         return *this;
@@ -79,11 +79,11 @@ private:
     Builder();
 
     // Control point computations
-    DenseMatrix computeControlPoints(const BSpline &bspline,
-                                     const DataTable &data,
-                                     Smoothing smoothing,
-                                     double alpha,
-                                     std::vector<double> weights) const;
+    DenseMatrix compute_control_points(const BSpline &bspline,
+                                       const DataTable &data,
+                                       Smoothing smoothing,
+                                       double alpha,
+                                       std::vector<double> weights) const;
 
     // Member variables
     unsigned int _dim_x;

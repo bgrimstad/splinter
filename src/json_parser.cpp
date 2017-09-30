@@ -22,7 +22,7 @@ void save_to_json(const BSpline &bspline, const std::string &filename)
 
     auto dim_x = bspline.get_dim_x();
     auto dim_y = bspline.get_dim_y();
-    auto control_points = eigMatToStdVecVec(bspline.get_control_points().transpose());
+    auto control_points = eig_mat_to_std_vec_vec(bspline.get_control_points().transpose());
     auto knot_vectors = bspline.get_knot_vectors();
     auto degrees = bspline.get_basis_degrees();
 

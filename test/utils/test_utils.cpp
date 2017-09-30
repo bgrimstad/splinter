@@ -91,7 +91,7 @@ bool compareFunctions(const Function &exact, const Function &approx, const std::
 
     int i = 0;
     for (auto &point : points) {
-        DenseVector x = stdToEigVec(point);
+        DenseVector x = std_to_eig_vec(point);
 
 
         /*SECTION("Function approximates the value within tolerance")*/
@@ -288,7 +288,7 @@ void compareJacobianValue(TestFunction *exact,
     int i = 0;
     for (auto &point : evalPoints)
     {
-        DenseVector x = stdToEigVec(point);
+        DenseVector x = std_to_eig_vec(point);
 
         // Compare the central difference to the approximated jacobian
         DenseMatrix exactValue = approx->central_difference(x);
@@ -417,7 +417,7 @@ DataTable sample(const Function *func, std::vector<std::vector<double>> &points)
     DataTable table;
 
     for(auto &point : points) {
-        table.addSample(point, func->eval(point));
+        table.add_sample(point, func->eval(point));
     }
 
     return table;
@@ -651,7 +651,7 @@ DenseMatrix getErrorNorms(const Function *exact, const Function *approx, const s
 
     int i = 0;
     for (auto &point : points) {
-        DenseVector x = stdToEigVec(point);
+        DenseVector x = std_to_eig_vec(point);
 
         {
             DenseMatrix exactValue(1,1);

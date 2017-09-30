@@ -41,7 +41,7 @@ TEST_CASE("Approximation example", COMMON_TAGS)
             auto y = f(x);
 
             // Store sample
-            samples.addSample(x, y);
+            samples.add_sample(x, y);
         }
     }
 

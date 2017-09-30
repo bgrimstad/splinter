@@ -55,12 +55,12 @@ TEST_CASE("isKnotVectorRefinement" COMMON_TEXT, COMMON_TAGS)
     REQUIRE(knots1.is_refinement(knots2));
 }
 
-TEST_CASE("knotVectorEquidistantNotClamped" COMMON_TEXT, COMMON_TAGS)
+TEST_CASE("knot_vector_equidistant_not_clamped" COMMON_TEXT, COMMON_TAGS)
 {
     std::vector<double> values = {1, 1, 1, 2.1, 3.1, 4, 4, 4, 3.1, 2.1, 2.2};
     unsigned int degree = 3;
     unsigned int num_basis_functions = 1;
-    auto knots = knotVectorEquidistantNotClamped(values, degree, num_basis_functions);
+    auto knots = knot_vector_equidistant_not_clamped(values, degree, num_basis_functions);
     std::vector<double> correct_knots = {0.7, 1.6, 2.5, 3.4, 4.3};
 
     REQUIRE(knots.size() == correct_knots.size());

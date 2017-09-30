@@ -34,11 +34,11 @@ public:
     /*
      * Functions for adding a sample (x, y)
      */
-    void addSample(const DataPoint &sample);
-    void addSample(double x, double y);
-    void addSample(const std::vector<double> &x, double y);
-    void addSample(double x, const std::vector<double> &y);
-    void addSample(const std::vector<double> &x, const std::vector<double> &y);
+    void add_sample(const DataPoint &sample);
+    void add_sample(double x, double y);
+    void add_sample(const std::vector<double> &x, double y);
+    void add_sample(double x, const std::vector<double> &y);
+    void add_sample(const std::vector<double> &x, const std::vector<double> &y);
 
     /*
      * Getters
@@ -46,31 +46,31 @@ public:
     std::multiset<DataPoint>::const_iterator cbegin() const;
     std::multiset<DataPoint>::const_iterator cend() const;
 
-    unsigned int getDimX() const {
+    unsigned int get_dim_x() const {
         return dim_x;
     }
 
-    unsigned int getDimY() const {
+    unsigned int get_dim_y() const {
         return dim_y;
     }
 
-    unsigned int getNumSamples() const {
+    unsigned int get_num_samples() const {
         return (unsigned int) samples.size();
     }
 
-    const std::multiset<DataPoint>& getSamples() const {
+    const std::multiset<DataPoint>& get_samples() const {
         return samples;
     }
 
-    std::vector<std::set<double>> getGrid() const {
+    std::vector<std::set<double>> get_grid() const {
         return grid;
     }
 
-    std::vector<std::vector<double>> getTableX() const;
+    std::vector<std::vector<double>> get_table_x() const;
 
-    std::vector<std::vector<double>> getTableY() const;
+    std::vector<std::vector<double>> get_table_y() const;
 
-    bool isGridComplete() const;
+    bool is_grid_complete() const;
 
     void save(const std::string &fileName) const;
 
@@ -84,14 +84,14 @@ private:
     std::multiset<DataPoint> samples;
     std::vector< std::set<double> > grid;
 
-    void initDataStructures(); // Initialise grid to be a std::vector of xDim std::sets
-    unsigned int getNumSamplesRequired() const;
+    void init_data_structures(); // Initialise grid to be a std::vector of xDim std::sets
+    unsigned int get_num_samples_required() const;
 
-    void recordGridPoint(const DataPoint &sample);
+    void record_grid_point(const DataPoint &sample);
 
     // Used by functions that require the grid to be complete before they start their operation
     // This function prints a message and exits the program if the grid is not complete.
-    void gridCompleteGuard() const;
+    void grid_complete_guard() const;
 
     void load(const std::string &fileName);
 

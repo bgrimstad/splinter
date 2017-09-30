@@ -28,8 +28,8 @@ TEST_CASE("BSpline can be saved and loaded", COMMON_TAGS)
 
     const char *fileName = "test.bspline";
 
-    auto dim_x = table.getDimX();
-    auto dim_y = table.getDimY();
+    auto dim_x = table.get_dim_x();
+    auto dim_y = table.get_dim_y();
 
     SECTION("Linear BSpline")
     {

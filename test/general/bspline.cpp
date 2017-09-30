@@ -114,7 +114,7 @@ TEST_CASE(COMMON_TEXT "knot averages", COMMON_TAGS "[knotaverages]")
     cp1_new.block(0, 0, mu1_mat.rows(), mu1_mat.cols()) = mu1_mat;
     cp1_new.block(0, mu1_mat.cols(), cp1_mat.rows(), cp1_mat.cols()) = cp1_mat;
 
-    BSpline bs1_new = BSpline(eigMatToStdVecVec(cp1_new), kv1, deg1);
+    BSpline bs1_new = BSpline(eig_mat_to_std_vec_vec(cp1_new), kv1, deg1);
 
     /*
      * The new B-spline should evaluate to (x, f(x)) for any x in the B-spline support
@@ -124,9 +124,9 @@ TEST_CASE(COMMON_TEXT "knot averages", COMMON_TAGS "[knotaverages]")
     auto y = bs1_new.eval(x);
 
     for (size_t i = 0; i < x.size(); ++i)
-        REQUIRE(assertNear(x.at(i), y.at(i)));
+        REQUIRE(assert_near(x.at(i), y.at(i)));
 
-    REQUIRE(assertNear(50., y.back()));
+    REQUIRE(assert_near(50., y.back()));
 
     /*
      * Testing for many points in the range of the knot averages
@@ -141,19 +141,19 @@ TEST_CASE(COMMON_TEXT "knot averages", COMMON_TAGS "[knotaverages]")
         auto x = std::vector<double>({x0, x1, x2});
         auto y = bs1_new.eval(x);
 
-        if (!assertNear(x0, y.at(0)))
+        if (!assert_near(x0, y.at(0)))
         {
             test = false;
             break;
         }
 
-        if (!assertNear(x1, y.at(1)))
+        if (!assert_near(x1, y.at(1)))
         {
             test = false;
             break;
         }
 
-        if (!assertNear(x2, y.at(2)))
+        if (!assert_near(x2, y.at(2)))
         {
             test = false;
             break;

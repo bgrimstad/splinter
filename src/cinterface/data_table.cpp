@@ -67,7 +67,7 @@ void splinter_datatable_add_samples_row_major(splinter_obj_ptr datatable_ptr,
                 memcpy(x_vec.data(), &xs[x_dim*i], sizeof(double) * x_dim);
                 memcpy(y_vec.data(), &ys[y_dim*i], sizeof(double) * y_dim);
 
-                dataTable->addSample(x_vec, y_vec);
+                dataTable->add_sample(x_vec, y_vec);
             }
         }
         catch(const Exception &e)
@@ -92,7 +92,7 @@ void splinter_datatable_add_samples_col_major(splinter_obj_ptr datatable_ptr, do
                     vec.at(j) = x[i + j * n_samples];
                 }
 
-                dataTable->addSample(vec, x[i + x_dim * n_samples]);
+                dataTable->add_sample(vec, x[i + x_dim * n_samples]);
             }
         }
         catch(const Exception &e)
@@ -107,7 +107,7 @@ int splinter_datatable_get_dim_x(splinter_obj_ptr datatable_ptr)
     auto dataTable = get_datatable(datatable_ptr);
     if (dataTable != nullptr)
     {
-        return (int) dataTable->getDimX();
+        return (int) dataTable->get_dim_x();
     }
 
     return 0;
@@ -118,7 +118,7 @@ int splinter_datatable_get_dim_y(splinter_obj_ptr datatable_ptr)
     auto dataTable = get_datatable(datatable_ptr);
     if (dataTable != nullptr)
     {
-        return (int) dataTable->getDimY();
+        return (int) dataTable->get_dim_y();
     }
 
     return 0;
@@ -129,7 +129,7 @@ int splinter_datatable_get_num_samples(splinter_obj_ptr datatable_ptr)
     auto dataTable = get_datatable(datatable_ptr);
     if (dataTable != nullptr)
     {
-        return dataTable->getNumSamples();
+        return dataTable->get_num_samples();
     }
 
     return 0;

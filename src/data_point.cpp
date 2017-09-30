@@ -45,10 +45,10 @@ void DataPoint::setData(const std::vector<double> &x, const std::vector<double> 
 
 bool DataPoint::operator<(const DataPoint &rhs) const
 {
-    if (this->getDimX() != rhs.getDimX())
+    if (this->get_dim_x() != rhs.get_dim_x())
         throw Exception("DataPoint::operator<: Cannot compare data points of different dimensions");
 
-    for (unsigned int i = 0; i < this->getDimX(); i++)
+    for (unsigned int i = 0; i < this->get_dim_x(); i++)
     {
         if (x.at(i) < rhs.getX().at(i))
             return true;

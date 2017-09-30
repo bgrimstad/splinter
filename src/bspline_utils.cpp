@@ -14,12 +14,12 @@
 namespace SPLINTER
 {
 
-SparseMatrix computeBasisFunctionMatrix(const BSpline &bspline, const DataTable &data)
+SparseMatrix compute_basis_function_matrix(const BSpline &bspline, const DataTable &data)
 {
-    unsigned int num_samples = data.getNumSamples();
+    unsigned int num_samples = data.get_num_samples();
 
     // TODO: Reserve nnz per row (degree+1)
-    //int nnzPrCol = bspline.basis.numSupported();
+    //int nnzPrCol = bspline.basis.num_supported();
 
     SparseMatrix A(num_samples, bspline.get_num_basis_functions());
     //A.reserve(DenseVector::Constant(num_samples, nnzPrCol)); // TODO: should reserve nnz per row!
@@ -27,7 +27,7 @@ SparseMatrix computeBasisFunctionMatrix(const BSpline &bspline, const DataTable 
     int i = 0;
     for (auto it = data.cbegin(); it != data.cend(); ++it, ++i)
     {
-        DenseVector xi = stdToEigVec(it->getX());
+        DenseVector xi = std_to_eig_vec(it->getX());
         SparseVector basis_values = bspline.eval_basis(xi);
         for (SparseVector::InnerIterator it2(basis_values); it2; ++it2)
             A.insert(i, it2.index()) = it2.value();
@@ -38,15 +38,15 @@ SparseMatrix computeBasisFunctionMatrix(const BSpline &bspline, const DataTable 
     return A;
 }
 
-DenseMatrix stackSamplePointValues(const DataTable &data)
+DenseMatrix stack_sample_values(const DataTable &data)
 {
-    DenseMatrix B = DenseMatrix::Zero(data.getNumSamples(), data.getDimY());
+    DenseMatrix B = DenseMatrix::Zero(data.get_num_samples(), data.get_dim_y());
 
     int i = 0;
     for (auto it = data.cbegin(); it != data.cend(); ++it, ++i)
     {
         auto y = it->getY();
-        for (unsigned int j = 0; j < data.getDimY(); ++j)
+        for (unsigned int j = 0; j < data.get_dim_y(); ++j)
             B(i, j) = y.at(j);
     }
     return B;
@@ -56,7 +56,7 @@ DenseMatrix stackSamplePointValues(const DataTable &data)
  * Function for generating second order finite-difference matrix, which is used for penalizing the
  * (approximate) second derivative in control point calculation for P-splines.
  */
-SparseMatrix computeSecondOrderFiniteDifferenceMatrix(const BSpline &bspline)
+SparseMatrix compute_second_order_finite_difference_matrix(const BSpline &bspline)
 {
     unsigned int num_variables = bspline.get_dim_x();
 
@@ -154,10 +154,10 @@ SparseMatrix computeSecondOrderFiniteDifferenceMatrix(const BSpline &bspline)
     return D;
 }
 
-SparseMatrix computeWeightMatrix(std::vector<double> weights)
+SparseMatrix compute_weight_matrix(std::vector<double> weights)
 {
     // TODO: use DiagonalMatrix here
-    auto eig_weights = stdToEigVec(weights);
+    auto eig_weights = std_to_eig_vec(weights);
     DenseMatrix D = eig_weights.asDiagonal();
     return D.sparseView();
 }

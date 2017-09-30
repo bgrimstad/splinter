@@ -38,11 +38,11 @@ public:
         return y;
     }
 
-    unsigned int getDimX() const {
+    unsigned int get_dim_x() const {
         return (unsigned int) x.size();
     }
 
-    unsigned int getDimY() const {
+    unsigned int get_dim_y() const {
         return (unsigned int) y.size();
     }
 

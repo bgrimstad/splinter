@@ -15,12 +15,12 @@
 namespace SPLINTER
 {
 
-SparseMatrix myKroneckerProduct(const SparseMatrix &A, const SparseMatrix &B);
+SparseMatrix my_kronecker_product(const SparseMatrix &A, const SparseMatrix &B);
 
 // Apply Kronecker product on several vectors or matrices
-SparseVector kroneckerProductVectors(const std::vector<SparseVector> &vectors);
-DenseVector kroneckerProductVectors(const std::vector<DenseVector> &vectors);
-SparseMatrix kroneckerProductMatrices(const std::vector<SparseMatrix> &matrices);
+SparseVector kronecker_product_vectors(const std::vector<SparseVector> &vectors);
+DenseVector kronecker_product_vectors(const std::vector<DenseVector> &vectors);
+SparseMatrix kronecker_product_matrices(const std::vector<SparseMatrix> &matrices);
 
 } // namespace SPLINTER
 
