@@ -62,7 +62,6 @@ public:
     }
 
     // Fit B-spline to data
-//    BSpline fit(const DataTable &data, Smoothing smoothing = Smoothing::NONE, double alpha = .1) const;
     BSpline fit(const DataTable &data,
                 Smoothing smoothing = Smoothing::NONE,
                 double alpha = .1,
