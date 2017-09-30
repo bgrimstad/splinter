@@ -165,7 +165,7 @@ DenseMatrix BSpline::Builder::computeControlPoints(const BSpline &bspline,
 
         DenseMatrix Ad = A.toDense();
         DenseQR<DenseMatrix> s;
-        // DenseSVD<DenseVector> s;
+//        DenseSVD<DenseMatrix> s;
         if (!s.solve(Ad, B, C))
         {
             throw Exception("BSpline::Builder::computeBSplineCoefficients: Failed to solve for B-spline coefficients.");
