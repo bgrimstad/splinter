@@ -27,7 +27,7 @@ public:
      */
     SparseVector eval(double x) const;
     SparseVector evalDerivative(double x, int r) const;
-    SparseVector evalFirstDerivative(double x) const; // Depricated
+    SparseVector evalFirstDerivative(double x) const; // TODO: Deprecated
 
     /**
      * Knot vector related

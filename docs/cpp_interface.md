@@ -3,68 +3,72 @@ The C++ interface is the native interface to SPLINTER. At any given time, the C+
 
 Below is a simple example demonstrating the use of SPLINTER. Remember to compile with a C++11 compatible compiler!
 
+More examples can be found in the directory `/test/examples`.
+
 ```c++
 #include <iostream>
-#include "datatable.h"
+#include "bspline_builder.h"
 
 using std::cout;
 using std::endl;
 
 using namespace SPLINTER;
 
-// Six-hump camelback function
-double f(DenseVector x)
-{
-    assert(x.rows() == 2);
-    return (4 - 2.1*x(0)*x(0)
-            + (1/3.)*x(0)*x(0)*x(0)*x(0))*x(0)*x(0)
-           + x(0)*x(1)
-           + (-4 + 4*x(1)*x(1))*x(1)*x(1);
-}
-
 int main(int argc, char *argv[])
 {
+    // We want to approximate this function, known as the six-hump camelback function
+    auto f = [](std::vector<double> x) {
+        assert(x.size() == 2);
+        auto x0 = x.at(0);
+        auto x1 = x.at(1);
+        return (4 - 2.1*x0*x0 + (1/3.)*x0*x0*x0*x0)*x0*x0 + x0*x1 + (-4 + 4*x1*x1)*x1*x1;
+    };
+
     // Create new DataTable to manage samples
     DataTable samples;
 
     // Sample the function
-    DenseVector x(2);
-    double y;
-    for(int i = 0; i < 20; i++)
+    for (auto i = 0; i < 20; i++)
     {
-        for(int j = 0; j < 20; j++)
+        for(auto j = 0; j < 20; j++)
         {
             // Sample function at x
-            x(0) = i*0.1;
-            x(1) = j*0.1;
-            y = f(x);
+            std::vector<double> x = {i*0.1, j*0.1};
+            auto y = f(x);
 
             // Store sample
-            samples.addSample(x,y);
+            samples.addSample(x, y);
         }
     }
 
     // Build B-splines that interpolate the samples
-    BSpline bspline1 = BSpline::Builder(samples).degree(1).build();
-    BSpline bspline3 = BSpline::Builder(samples).degree(3).build();
+    BSpline bspline1 = BSpline::Builder(2, 1).degree(1).fit(samples);
+    BSpline bspline3 = BSpline::Builder(2, 1).degree(3).fit(samples);
 
-    // Build penalized B-spline (P-spline) that smooths the samples
-    BSpline pspline = BSpline::Builder(samples)
+    // Build degree 3 penalized B-spline (P-spline) that smooths the samples
+    // The smoothing/regularization parameter is set to 0.03
+    BSpline pspline = BSpline::Builder(2, 1)
             .degree(3)
-            .smoothing(BSpline::Smoothing::PSPLINE)
-            .alpha(0.03)
-            .build();
+            .fit(samples, BSpline::Smoothing::PSPLINE, 0.03);
 
-    /* Evaluate the approximants at x = (1,1)
-     * Note that the error will be 0 at that point (except for the P-spline, which may introduce an error
+    /*
+     * Evaluate the splines at x = (1,1)
+     * NOTE1: the error will be 0 at that point (except for the P-spline, which may introduce an error
      * in favor of a smooth approximation) because it is a point we sampled at.
+     * NOTE2: The BSpline::eval function returns an output vector (in this case of size 1)
      */
-    x(0) = 1; x(1) = 1;
+    std::vector<double> x = {1, 1};
+    auto y_f = f(x);
+    auto y_bs1 = bspline1.eval(x).at(0);
+    auto y_bs3 = bspline3.eval(x).at(0);
+    auto y_ps = pspline.eval(x).at(0);
+
+    // Print results
     cout << "-----------------------------------------------------" << endl;
-    cout << "Function at x:                 " << f(x)               << endl;
-    cout << "Linear B-spline at x:          " << bspline1.eval(x)   << endl;
-    cout << "Cubic B-spline at x:           " << bspline3.eval(x)   << endl;
-    cout << "P-spline at x:                 " << pspline.eval(x)    << endl;
+    cout << "Function at x:                 " << y_f                << endl;
+    cout << "Linear B-spline at x:          " << y_bs1              << endl;
+    cout << "Cubic B-spline at x:           " << y_bs3              << endl;
+    cout << "P-spline at x:                 " << y_ps               << endl;
     cout << "-----------------------------------------------------" << endl;
 
     return 0;
@@ -77,37 +81,10 @@ To simplify sampling in C++, SPLINTER comes with a DataTable data structure for 
 // Create new data structure
 DataTable samples; 
 
-// Add some samples (x,y), where y = f(x)
-samples.addSample(1,0);
-samples.addSample(2,5);
-samples.addSample(3,10);
-samples.addSample(4,15);
-
-// The order in which the samples are added does not matter
-// since DataTable keeps the samples sorted internally.
+// Add some samples (x, y), where y = f(x).
+// Note that the order in which the samples are added does not matter.
+samples.addSample(1, 0);
+samples.addSample(2, 5);
+samples.addSample(3, 10);
+samples.addSample(4, 15);
 ```
-
-## Restrictions
-### B-splines
-For the current implementation of B-splines we require that the samples you provide form a complete [grid](https://en.wikipedia.org/wiki/Regular_grid). This means that if the function you are sampling is two-dimensional with variables `x0` and `x1`, then all combinations of `x0` and `x1` must be present in the samples. This means that if you choose to sample `x1` in a new value, say 1, then you must sample `[x0 1]` for all previous values of `x0` used so far. In 2D you can visualize this as [graphing paper](https://en.wikipedia.org/wiki/Graph_paper#/media/File:Log_paper.svg), where all lines intersect. If a sample were missing, one of the intersections would be missing, and the grid would be incomplete. You can check if the grid is complete by calling `isGridComplete()` on your DataTable. This restriction will be removed in a later implementation.
-
-
-This is an **incomplete** grid:
-
-| x<sub>0</sub>   | x<sub>1</sub>   | y   |
-| --------------- | --------------- | --- |
-| 2.1             | 1               | -7  |
-| 2.3             | 3               | 10  |
-| 2.1             | 3               | 9.3 |
-
-
-This is a **complete** grid:
-
-| x<sub>0</sub>   | x<sub>1</sub>   | y   |
-| --------------- | --------------- | --- |
-| 2.1             | 1               | -7  |
-| 2.3             | 3               | 10  |
-| 2.1             | 3               | 9.3 |
-| 2.3             | 1               | 0   |
-
-Please note that whether the grid is complete or not only depends on the values of x, not those of y.

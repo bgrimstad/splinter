@@ -11,13 +11,16 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
-from os import sys, path, remove
+from os import sys, path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-import splinter
+import splinterpy
 
 # Only for dev purposes
-splinter.load("/home/bjarne/Code/C++/splinter/splinter/bin/Release/libsplinter-3-1.so")
-# splinter.load("/home/anders/SPLINTER/build/debug/libsplinter-3-0.so")
+import os.path
+if os.path.isdir("/home/bjarne/"):
+    splinterpy.load("/home/bjarne/Code/C++/splinter/build/release/libsplinter-4-0.so")
+elif os.path.isdir("/home/anders/"):
+    splinterpy.load("/home/anders/SPLINTER/build/debug/libsplinter-4-0.so")
 
 
 # Example with two variables
@@ -41,7 +44,7 @@ for i in range(len(x1)):
         y.append(Y[i, j])
 
 # Cubic B-spline
-bspline = splinter.BSplineBuilder(x, y, degree=[1, 3], smoothing=splinter.BSplineBuilder.Smoothing.NONE).build()
+bspline = splinterpy.BSplineBuilder(2, 1, degree=[1, 3]).fit(x, y, smoothing=splinterpy.BSplineBuilder.Smoothing.NONE)
 
 Zbs = Y
 
@@ -49,7 +52,7 @@ for i in range(len(x1)):
     for j in range(len(x2)):
         x1_ij = X1[i, j]
         x2_ij = X2[i, j]
-        Zbs[i, j] = bspline.eval([x1_ij, x2_ij])[0]
+        Zbs[i, j] = bspline.eval([x1_ij, x2_ij])
 
 # Plot f
 fig = plt.figure()
@@ -76,14 +79,3 @@ fig.colorbar(surf, shrink=0.5, aspect=5)
 # TODO: plot grid using plot_wireframe()
 
 plt.show()
-
-try:
-    # Save the bspline to test.bspline
-    # The file ending doesn't matter
-    bspline.save("test.bspline")
-
-    # Create BSpline from saved BSpline
-    bspline = splinter.BSpline("test.bspline")
-
-finally:
-    remove("test.bspline")

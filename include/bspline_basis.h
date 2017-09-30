@@ -24,7 +24,7 @@ public:
 
     // Evaluation
     SparseVector eval(const DenseVector &x) const;
-    DenseMatrix evalBasisJacobianOld(const DenseVector &x) const; // Depricated
+    DenseMatrix evalBasisJacobianOld(const DenseVector &x) const; // Deprecated
     SparseMatrix evalBasisJacobian(const DenseVector &x) const;
     SparseMatrix evalBasisJacobian2(const DenseVector &x) const; // A bit slower than evaBasisJacobianOld()
     SparseMatrix evalBasisHessian(const DenseVector &x) const;
@@ -36,8 +36,8 @@ public:
     SparseMatrix insertKnots(double tau, unsigned int dim, unsigned int multiplicity = 1);
 
     // Getters
-    BSplineBasis1D getSingleBasis(int dim);
-    std::vector< std::vector<double> > getKnotVectors() const;
+    BSplineBasis1D getSingleBasis(unsigned int dim);
+    std::vector<std::vector<double>> getKnotVectors() const;
     std::vector<double> getKnotVector(int dim) const;
 
     std::vector<unsigned int> getBasisDegrees() const;
@@ -48,7 +48,10 @@ public:
 
     unsigned int getKnotMultiplicity(unsigned int dim, double tau) const;
 
-    int supportedPrInterval() const;
+    /*
+     * Returns the maximum number of supported basis functions at any point in the B-spline domain
+     */
+    unsigned int numSupported() const;
 
     bool insideSupport(const DenseVector &x) const;
     std::vector<double> getSupportLowerBound() const;

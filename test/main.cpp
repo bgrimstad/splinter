@@ -9,14 +9,22 @@
 
 #define CATCH_CONFIG_RUNNER
 #include <Catch.h>
-#include <test_function.h>
-#include <test_functions.h>
+#include <utils/test_function.h>
+#include <utils/test_functions.h>
+#include <utils/timer.h>
+
 
 int main(int argc, char *argv[])
 {
     setupTestFunctions();
 
+    SPLINTER::Timer tim;
+    tim.start();
+
     int result = Catch::Session().run(argc, argv);
+
+    tim.stop();
+    std::cout << "Test run time: " << tim.get_milli_seconds() << " (ms)" << std::endl;
 
     tearDownTestFunctions();
 

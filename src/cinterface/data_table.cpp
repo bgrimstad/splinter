@@ -10,7 +10,11 @@
 #include "cinterface/cinterface.h"
 #include "cinterface/utilities.h"
 #include "data_table.h"
-//#include <fstream>
+
+// Used for printing debug info to files when the library is loaded from eg. Python
+#ifndef NDEBUG
+# include <fstream>
+#endif
 
 using namespace SPLINTER;
 
@@ -44,34 +48,26 @@ splinter_obj_ptr splinter_datatable_load_init(const char *filename)
     return dataTable;
 }
 
-void splinter_datatable_add_samples_row_major(splinter_obj_ptr datatable_ptr, double *x, int n_samples, int x_dim)
+void splinter_datatable_add_samples_row_major(splinter_obj_ptr datatable_ptr,
+                                              double *xs, int x_dim,
+                                              double *ys, int y_dim,
+                                              int n_samples)
 {
     auto dataTable = get_datatable(datatable_ptr);
     if (dataTable != nullptr)
     {
         try
         {
-//            std::ofstream out("test.txt");
-            DenseVector vec(x_dim);
+            std::vector<double> x_vec(x_dim, 0);
+            std::vector<double> y_vec(y_dim, 0);
+
             for (int i = 0; i < n_samples; ++i)
             {
-                int sample_start = i*(x_dim+1);
-                for (int offset = 0; offset < x_dim; ++offset)
-                {
-                    vec(offset) = x[sample_start + offset];
-                }
+                // Vectors have been initialised to appropriate sizes, so this should be safe
+                memcpy(x_vec.data(), &xs[x_dim*i], sizeof(double) * x_dim);
+                memcpy(y_vec.data(), &ys[y_dim*i], sizeof(double) * y_dim);
 
-//                out << "Adding sample: (";
-//                for(int l = 0; l < vec.size(); l++)
-//                {
-//                    if(l != 0)
-//                        out << ",";
-//                    out << vec(l);
-//                }
-//                out << ") = ";
-//                out  << x[sample_start + x_dim] << std::endl;
-
-                dataTable->addSample(vec, x[sample_start + x_dim]);
+                dataTable->addSample(x_vec, y_vec);
             }
         }
         catch(const Exception &e)
@@ -88,24 +84,13 @@ void splinter_datatable_add_samples_col_major(splinter_obj_ptr datatable_ptr, do
     {
         try
         {
-//            std::ofstream out("test.txt");
-            DenseVector vec(x_dim);
+            std::vector<double> vec(x_dim, 0);
             for (int i = 0; i < n_samples; ++i)
             {
                 for (int j = 0; j < x_dim; ++j)
                 {
-                    vec(j) = x[i + j * n_samples];
+                    vec.at(j) = x[i + j * n_samples];
                 }
-
-//                out << "Adding sample: (";
-//                for(int l = 0; l < vec.size(); l++)
-//                {
-//                    if(l != 0)
-//                        out << ",";
-//                    out << vec(l);
-//                }
-//                out << ") = ";
-//                out  << x[i + x_dim * n_samples] << std::endl;
 
                 dataTable->addSample(vec, x[i + x_dim * n_samples]);
             }
@@ -117,17 +102,27 @@ void splinter_datatable_add_samples_col_major(splinter_obj_ptr datatable_ptr, do
     }
 }
 
-int splinter_datatable_get_num_variables(splinter_obj_ptr datatable_ptr)
+int splinter_datatable_get_dim_x(splinter_obj_ptr datatable_ptr)
 {
     auto dataTable = get_datatable(datatable_ptr);
     if (dataTable != nullptr)
     {
-        return dataTable->getNumVariables();
+        return (int) dataTable->getDimX();
     }
 
     return 0;
 }
 
+int splinter_datatable_get_dim_y(splinter_obj_ptr datatable_ptr)
+{
+    auto dataTable = get_datatable(datatable_ptr);
+    if (dataTable != nullptr)
+    {
+        return (int) dataTable->getDimY();
+    }
+
+    return 0;
+}
 
 int splinter_datatable_get_num_samples(splinter_obj_ptr datatable_ptr)
 {

@@ -1,0 +1,3 @@
+graft splinter_py/lib
+include splinter_py/version
+include LICENSE

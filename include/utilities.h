@@ -27,17 +27,32 @@ bool assertNear(T x, T y, double tolAbs = 1e-8, double tolRel = 1e-8)
     return dx < err;
 }
 
-std::vector<double> denseVectorToVector(const DenseVector &denseVec);
+// Compare two vectors
+inline bool compareVectors(std::vector<double> x, std::vector<double> y, double tolAbs = 1e-8, double tolRel = 1e-8)
+{
+    if (x.size() != y.size())
+        return false;
 
-DenseVector vectorToDenseVector(const std::vector<double> &vec);
+    for (unsigned int i = 0; i < x.size(); ++i)
+        if (!assertNear(x.at(i), y.at(i), tolAbs, tolRel))
+            return false;
 
-std::vector<std::vector<double>> denseMatrixToVectorVector(const DenseMatrix &mat);
+    return true;
+}
 
-DenseMatrix vectorVectorToDenseMatrix(const std::vector<std::vector<double>> &vec);
+std::vector<double> eigToStdVec(const DenseVector &vec);
+
+DenseVector stdToEigVec(const std::vector<double> &vec);
+
+std::vector<std::vector<double>> eigMatToStdVecVec(const DenseMatrix &mat);
+
+DenseMatrix stdVecVecToEigMat(const std::vector<std::vector<double>> &vec);
 
 std::vector<double> linspace(double start, double stop, unsigned int num);
 
 std::vector<double> extractUniqueSorted(const std::vector<double> &values);
+
+std::vector<std::vector<double>> transposeVecVec(std::vector<std::vector<double>> x);
 
 } // namespace SPLINTER
 

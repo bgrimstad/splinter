@@ -375,7 +375,7 @@ unsigned int BSplineBasis::getNumBasisFunctions() const
     return prod;
 }
 
-BSplineBasis1D BSplineBasis::getSingleBasis(int dim)
+BSplineBasis1D BSplineBasis::getSingleBasis(unsigned int dim)
 {
     return bases.at(dim);
 }
@@ -408,9 +408,9 @@ std::vector<unsigned int> BSplineBasis::getNumBasisFunctionsTarget() const
     return ret;
 }
 
-int BSplineBasis::supportedPrInterval() const
+unsigned int BSplineBasis::numSupported() const
 {
-    int ret = 1;
+    unsigned int ret = 1;
     for (unsigned int dim = 0; dim < numVariables; dim++)
     {
         ret *= (bases.at(dim).getBasisDegree() + 1);

@@ -43,13 +43,10 @@ def f1(x):
     return -1. + 2*x + 0.1*(x**2) + 10*np.random.rand(1)[0]
 
 x = np.arange(0, 11, 1)
-y = np.zeros((len(x),))
-for i in range(len(x)):
-    y[i] = f1(x[i])
-data = list(zip(x, y))
+y = np.array([f1(xi) for xi in x])
 
 # Build cubic B-spline that interpolates the data
-bspline = splinter.BSplineBuilder(data, degree=3).build()
+bspline = splinter.BSplineBuilder(1, 1, degree=3).fit(x, y)
 
 # Evaluate the B-spline
 xd = np.arange(0, 10, .01)

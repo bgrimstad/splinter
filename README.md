@@ -1,10 +1,14 @@
 [![GitHub release](https://img.shields.io/github/release/bgrimstad/splinter.svg?style=flat-square)](https://github.com/bgrimstad/splinter/releases)
 [![license](https://img.shields.io/github/license/bgrimstad/splinter.svg?style=flat-square)]()
 
-## SPLINTER
-SPLINTER (SPLine INTERpolation) is a library for *multivariate function approximation with splines*. The library can be used for function approximation, regression, data smoothing, data reduction, and much more. Spline approximations are represented by a speedy C++ implementation of the tensor product B-spline.
+| **`Master branch`** | **`Develop branch`** |
+|-----------------|---------------------|
+| [![Build Status](https://travis-ci.org/bgrimstad/splinter.svg?branch=master)](https://travis-ci.org/bgrimstad/splinter) | [![Build Status](https://travis-ci.org/bgrimstad/splinter.svg?branch=develop)](https://travis-ci.org/bgrimstad/splinter) |
 
-The B-spline consists of piecewise polynomial basis functions, offering a high flexibility and smoothness. The B-spline can be fitted to data using ordinary least squares (OLS), possibly with regularization. The library also offers construction of penalized splines (P-splines).
+## SPLINTER
+SPLINTER (SPLine INTERpolation) is a library for *multivariate function approximation with splines*. The library can be used for function approximation, regression, data smoothing, data reduction, and much more. Spline approximations are represented by a speedy and numerically stable C++ implementation of the tensor product B-spline.
+
+The B-spline consists of piecewise polynomial basis functions, and allows the user to control its flexibility and smoothness. The B-spline can be fitted to data using ordinary least squares (OLS) and weighted least squares (WLS), possibly including regularization such as in penalized splines (P-splines).
 
 ![Illustration of a B-spline](assets/bspline.png)
 Figure: Illustration of a bicubic B-spline generated with the SPLINTER library.
@@ -32,6 +36,8 @@ The current goals with the library are:
 3. To improve the current code via testing
 
 The simplest way to contribute to SPLINTER is to use it and give us feedback on the experience. If you would like to contribute by coding, you can get started by picking a suitable issue from the [list of issues](https://github.com/bgrimstad/splinter/issues). The issues are labeled with the type of work (`Bug`, `Docs`, `Enhancement`, `New feature`, `Refactoring`, `Tests`) and level of difficulty (`Beginner`, `Intermediate`, `Advanced`). Some issues are also labeled as `Critical`, which means that they deserve our attention and prioritization.
+
+Note that pull requests will only be accepted if made to the `develop` branch.
 
 ### Requirements for use
 A standards compliant C++11 compiler.

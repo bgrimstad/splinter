@@ -9,7 +9,7 @@
 
 #include <Catch.h>
 #include <data_table.h>
-#include "test_utils.h"
+#include "utils/test_utils.h"
 
 using namespace SPLINTER;
 
@@ -32,8 +32,8 @@ TEST_CASE("DataTable can be saved and loaded", COMMON_TAGS)
     SECTION("DataTable with samples from f_1_1")
     {
         auto testFunc = getTestFunction(1, 1);
-        auto dim = testFunc->getNumVariables();
-        auto points = linspace(dim, std::pow(1000, 1.0/dim));
+        auto dim = testFunc->getDimX();
+        auto points = multi_linspace(dim, std::pow(1000, 1.0 / dim));
         table = sample(testFunc, points);
 
         table.save(fileName);
@@ -45,8 +45,8 @@ TEST_CASE("DataTable can be saved and loaded", COMMON_TAGS)
     SECTION("DataTable with samples from f_2_1")
     {
         auto testFunc = getTestFunction(2, 1);
-        auto dim = testFunc->getNumVariables();
-        auto points = linspace(dim, std::pow(1000, 1.0/dim));
+        auto dim = testFunc->getDimX();
+        auto points = multi_linspace(dim, std::pow(1000, 1.0 / dim));
         table = sample(testFunc, points);
 
         table.save(fileName);

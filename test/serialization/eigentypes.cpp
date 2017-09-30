@@ -9,7 +9,7 @@
 
 #include <Catch.h>
 #include <serializer.h>
-#include <op_overloads.h>
+#include <utils/op_overloads.h>
 #include <definitions.h>
 
 using namespace SPLINTER;

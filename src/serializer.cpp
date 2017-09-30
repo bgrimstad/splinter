@@ -83,10 +83,11 @@ size_t Serializer::get_size(const DataPoint &obj)
 
 size_t Serializer::get_size(const DataTable &obj)
 {
-    return get_size(obj.allowDuplicates)
-           + get_size(obj.allowIncompleteGrid)
-           + get_size(obj.numDuplicates)
-           + get_size(obj.numVariables)
+    return get_size(obj.allow_duplicates)
+           + get_size(obj.allow_incomplete_grid)
+           + get_size(obj.num_duplicates)
+           + get_size(obj.dim_x)
+           + get_size(obj.dim_y)
            + get_size(obj.samples)
            + get_size(obj.grid);
 }
@@ -94,9 +95,9 @@ size_t Serializer::get_size(const DataTable &obj)
 size_t Serializer::get_size(const BSpline &obj)
 {
     return get_size(obj.basis)
-           + get_size(obj.knotaverages)
-           + get_size(obj.coefficients)
-           + get_size(obj.numVariables);
+           + get_size(obj.controlPoints)
+           + get_size(obj.dimX)
+           + get_size(obj.dimY);
 }
 
 size_t Serializer::get_size(const BSplineBasis &obj)
@@ -162,10 +163,11 @@ void Serializer::_serialize(const DataPoint &obj)
 
 void Serializer::_serialize(const DataTable &obj)
 {
-    _serialize(obj.allowDuplicates);
-    _serialize(obj.allowIncompleteGrid);
-    _serialize(obj.numDuplicates);
-    _serialize(obj.numVariables);
+    _serialize(obj.allow_duplicates);
+    _serialize(obj.allow_incomplete_grid);
+    _serialize(obj.num_duplicates);
+    _serialize(obj.dim_x);
+    _serialize(obj.dim_y);
     _serialize(obj.samples);
     _serialize(obj.grid);
 }
@@ -173,9 +175,9 @@ void Serializer::_serialize(const DataTable &obj)
 void Serializer::_serialize(const BSpline &obj)
 {
     _serialize(obj.basis);
-    _serialize(obj.knotaverages);
-    _serialize(obj.coefficients);
-    _serialize(obj.numVariables);
+    _serialize(obj.controlPoints);
+    _serialize(obj.dimX);
+    _serialize(obj.dimY);
 }
 
 void Serializer::_serialize(const BSplineBasis &obj)
@@ -243,10 +245,11 @@ void Serializer::deserialize(DataPoint &obj)
 
 void Serializer::deserialize(DataTable &obj)
 {
-    deserialize(obj.allowDuplicates);
-    deserialize(obj.allowIncompleteGrid);
-    deserialize(obj.numDuplicates);
-    deserialize(obj.numVariables);
+    deserialize(obj.allow_duplicates);
+    deserialize(obj.allow_incomplete_grid);
+    deserialize(obj.num_duplicates);
+    deserialize(obj.dim_x);
+    deserialize(obj.dim_y);
     deserialize(obj.samples);
     deserialize(obj.grid);
 }
@@ -254,9 +257,9 @@ void Serializer::deserialize(DataTable &obj)
 void Serializer::deserialize(BSpline &obj)
 {
     deserialize(obj.basis);
-    deserialize(obj.knotaverages);
-    deserialize(obj.coefficients);
-    deserialize(obj.numVariables);
+    deserialize(obj.controlPoints);
+    deserialize(obj.dimX);
+    deserialize(obj.dimY);
 }
 
 void Serializer::deserialize(BSplineBasis &obj)

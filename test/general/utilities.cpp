@@ -7,10 +7,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include <op_overloads.h>
+#include <utils/op_overloads.h>
 #include <Catch.h>
 #include <utilities.h>
-#include <test_utils.h>
+#include <utils/test_utils.h>
 #include <limits>
 #include <iostream>
 
@@ -61,17 +61,17 @@ TEST_CASE("Eigen types to standard C++ conversion", COMMON_TAGS)
 
     SECTION("Converting between standard vector and DenseVector works correctly")
     {
-        CHECK(originalVec == vecToDense(originalVec));
-        CHECK(originalVec == denseToVec(vecToDense(originalVec)));
-        CHECK(emptyVec == denseToVec(emptyDenseVec));
-        CHECK(emptyVec == denseToVec(vecToDense(emptyVec)));
+        CHECK(originalVec == stdToEigVec(originalVec));
+        CHECK(originalVec == eigToStdVec(stdToEigVec(originalVec)));
+        CHECK(emptyVec == eigToStdVec(emptyDenseVec));
+        CHECK(emptyVec == eigToStdVec(stdToEigVec(emptyVec)));
     }
 
     SECTION("Converting between standard vector<vector<double>> and DenseMatrix works correctly")
     {
-        CHECK(originalVecVec == vectorVectorToDenseMatrix(originalVecVec));
-        CHECK(originalVecVec == denseMatrixToVectorVector(vectorVectorToDenseMatrix(originalVecVec)));
-        CHECK(emptyVecVec == vectorVectorToDenseMatrix(emptyVecVec));
-        CHECK(emptyVecVec == denseMatrixToVectorVector(vectorVectorToDenseMatrix(emptyVecVec)));
+        CHECK(originalVecVec == stdVecVecToEigMat(originalVecVec));
+        CHECK(originalVecVec == eigMatToStdVecVec(stdVecVecToEigMat(originalVecVec)));
+        CHECK(emptyVecVec == stdVecVecToEigMat(emptyVecVec));
+        CHECK(emptyVecVec == eigMatToStdVecVec(stdVecVecToEigMat(emptyVecVec)));
     }
 }

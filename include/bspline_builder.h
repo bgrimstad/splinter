@@ -10,74 +10,54 @@
 #ifndef SPLINTER_BSPLINE_BUILDER_H
 #define SPLINTER_BSPLINE_BUILDER_H
 
-#include "data_table.h"
-#include "bspline.h"
+#include <data_table.h>
+#include <knot_utils.h>
+#include <bspline.h>
 
 namespace SPLINTER
 {
 
 // B-spline smoothing
-enum class BSpline::Smoothing
-{
+enum class BSpline::Smoothing {
     NONE,       // No smoothing
     IDENTITY,   // Regularization term alpha*c'*I*c is added to OLS objective
     PSPLINE     // Smoothing term alpha*Delta(c,2) is added to OLS objective
-};
-
-// B-spline knot spacing
-/*
- * To be added:
- * AS_SAMPLED_NOT_CLAMPED   // Place knots close to sample points. Without clamps.
- * EQUIDISTANT_NOT_CLAMPED  // Equidistant knots without clamps.
- */
-enum class BSpline::KnotSpacing
-{
-    AS_SAMPLED,     // Mimic spacing of sample points (moving average). With clamps (p+1 multiplicity of end knots).
-    EQUIDISTANT,    // Equidistant knots. With clamps (p+1 multiplicity of end knots).
-    EXPERIMENTAL    // Experimental knot spacing (for testing purposes).
 };
 
 // B-spline builder class
 class SPLINTER_API BSpline::Builder
 {
 public:
-    Builder(const DataTable &data);
-
-    Builder& alpha(double alpha)
-    {
-        if (alpha < 0)
-            throw Exception("BSpline::Builder::alpha: alpha must be non-negative.");
-
-        _alpha = alpha;
-        return *this;
-    }
+    Builder(unsigned int dim_x, unsigned int dim_y);
 
     // Set build options
 
     Builder& degree(unsigned int degree)
     {
-        _degrees = getBSplineDegrees(_data.getNumVariables(), degree);
+        _degrees = std::vector<unsigned int>(_dim_x, degree);
         return *this;
     }
 
     Builder& degree(const std::vector<unsigned int> &degrees)
     {
-        if (degrees.size() != _data.getNumVariables())
-            throw Exception("BSpline::Builder: Inconsistent length on degree vector.");
+        if (degrees.size() != _dim_x)
+            throw Exception("BSpline::Builder::degree: Expected degree vector of length"
+                            + std::to_string(_dim_x) + ".");
         _degrees = degrees;
         return *this;
     }
 
     Builder& numBasisFunctions(unsigned int numBasisFunctions)
     {
-        _numBasisFunctions = std::vector<unsigned int>(_data.getNumVariables(), numBasisFunctions);
+        _numBasisFunctions = std::vector<unsigned int>(_dim_x, numBasisFunctions);
         return *this;
     }
 
     Builder& numBasisFunctions(const std::vector<unsigned int> &numBasisFunctions)
     {
-        if (numBasisFunctions.size() != _data.getNumVariables())
-            throw Exception("BSpline::Builder: Inconsistent length on numBasisFunctions vector.");
+        if (numBasisFunctions.size() != _dim_x)
+            throw Exception("BSpline::Builder::numBasisFunctions: Expected numBasisFunctions vector of length "
+                            + std::to_string(_dim_x) + ".");
         _numBasisFunctions = numBasisFunctions;
         return *this;
     }
@@ -88,44 +68,29 @@ public:
         return *this;
     }
 
-    Builder& smoothing(Smoothing smoothing)
-    {
-        _smoothing = smoothing;
-        return *this;
-    }
-
-    // Build B-spline
-    BSpline build() const;
+    // Fit B-spline to data
+//    BSpline fit(const DataTable &data, Smoothing smoothing = Smoothing::NONE, double alpha = .1) const;
+    BSpline fit(const DataTable &data,
+                Smoothing smoothing = Smoothing::NONE,
+                double alpha = .1,
+                std::vector<double> weights = std::vector<double>()) const;
 
 private:
     Builder();
 
-    std::vector<unsigned int> getBSplineDegrees(unsigned int numVariables, unsigned int degree)
-    {
-        if (degree > 5)
-            throw Exception("BSpline::Builder: Only degrees in range [0, 5] are supported.");
-        return std::vector<unsigned int>(numVariables, degree);
-    }
-
     // Control point computations
-    DenseVector computeCoefficients(const BSpline &bspline) const;
-    DenseVector computeBSplineCoefficients(const BSpline &bspline) const;
-    SparseMatrix computeBasisFunctionMatrix(const BSpline &bspline) const;
-    DenseVector getSamplePointValues() const;
-    // P-spline control point calculation
-    SparseMatrix getSecondOrderFiniteDifferenceMatrix(const BSpline &bspline) const;
-
-    // Computing knots
-    std::vector<std::vector<double>> computeKnotVectors() const;
-    std::vector<double> computeKnotVector(const std::vector<double> &values, unsigned int degree, unsigned int numBasisFunctions) const;
+    DenseMatrix computeControlPoints(const BSpline &bspline,
+                                     const DataTable &data,
+                                     Smoothing smoothing,
+                                     double alpha,
+                                     std::vector<double> weights) const;
 
     // Member variables
-    DataTable _data;
+    unsigned int _dim_x;
+    unsigned int _dim_y;
     std::vector<unsigned int> _degrees;
     std::vector<unsigned int> _numBasisFunctions;
     KnotSpacing _knotSpacing;
-    Smoothing _smoothing;
-    double _alpha;
 };
 
 } // namespace SPLINTER

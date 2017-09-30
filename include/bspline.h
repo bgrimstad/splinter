@@ -12,6 +12,8 @@
 
 #include "function.h"
 #include "bspline_basis.h"
+#include "json_parser.h"
+
 
 namespace SPLINTER
 {
@@ -19,25 +21,27 @@ namespace SPLINTER
 /**
  * Class that implements the multivariate tensor product B-spline
  */
-class SPLINTER_API BSpline : public Function
+class SPLINTER_API BSpline : public Function, public Saveable
 {
 public:
     /**
      * Builder class for construction by regression
-     * Implemented in BSplineBuilder.*
+     * Implemented in bspline_builder.*
      */
     class Builder;
     enum class Smoothing;
-    enum class KnotSpacing;
-
-    BSpline(unsigned int numVariables);
 
     /**
-     * Construct B-spline from knot vectors, coefficients, and basis degrees
+     * Construct B-spline from knot vectors, control points, and basis degrees
      */
-    BSpline(const std::vector< std::vector<double> > &knotVectors, const std::vector<unsigned int> &basisDegrees);
-    BSpline(const std::vector<double> &coefficients, const std::vector< std::vector<double> > &knotVectors, const std::vector<unsigned int> &basisDegrees);
-    BSpline(const DenseVector &coefficients, const std::vector< std::vector<double> > &knotVectors, const std::vector<unsigned int> &basisDegrees);
+    BSpline(unsigned int dimX,
+            unsigned int dimY,
+            const std::vector<std::vector<double>> &knotVectors,
+            const std::vector<unsigned int> &degrees);
+
+    BSpline(const std::vector<std::vector<double>> &controlPoints,
+            const std::vector<std::vector<double>> &knotVectors,
+            const std::vector<unsigned int> &degrees);
 
     /**
      * Construct B-spline from file
@@ -54,12 +58,22 @@ public:
     // Avoid name hiding
     using Function::eval;
     using Function::evalJacobian;
-    using Function::evalHessian;
 
-    // Evaluation of B-spline
-    double eval(const DenseVector &x) const override;
+    /**
+     * Returns the (dimY) function values at x
+     */
+    std::vector<double> eval(const std::vector<double> &x) const override;
+    DenseVector eval(const DenseVector &x) const override;
+
+    /**
+     * Returns the (dimY x dimX) Jacobian evaluated at x
+     */
     DenseMatrix evalJacobian(const DenseVector &x) const override;
-    DenseMatrix evalHessian(const DenseVector &x) const override;
+
+    /**
+     * Returns the (dimY x dimX x dimX) Hessian evaluated at x
+     */
+    std::vector<std::vector<std::vector<double>>> evalHessian(const std::vector<double> &x) const;
 
     // Evaluation of B-spline basis functions
     SparseVector evalBasis(const DenseVector &x) const;
@@ -68,19 +82,14 @@ public:
     /**
      * Getters
      */
-    DenseVector getCoefficients() const
+    DenseMatrix getControlPoints() const
     {
-        return coefficients;
-    }
-
-    unsigned int getNumCoefficients() const
-    {
-        return coefficients.size();
+        return controlPoints;
     }
 
     unsigned int getNumControlPoints() const
     {
-        return coefficients.size();
+        return (unsigned int) controlPoints.rows();
     }
 
     std::vector<unsigned int> getNumBasisFunctionsPerVariable() const;
@@ -90,7 +99,10 @@ public:
         return basis.getNumBasisFunctions();
     }
 
-    DenseMatrix getControlPoints() const;
+//    DenseMatrix getControlPoints() const;
+    DenseMatrix getKnotAverages() const {
+        return computeKnotAverages();
+    };
     std::vector< std::vector<double>> getKnotVectors() const;
     std::vector<unsigned int> getBasisDegrees() const;
     std::vector<double> getDomainUpperBound() const;
@@ -99,8 +111,7 @@ public:
     /**
      * Setters
      */
-    void setCoefficients(const DenseVector &coefficients);
-    void setControlPoints(const DenseMatrix &controlPoints);
+    void setControlPoints(const DenseMatrix &newControlPoints);
     void checkControlPoints() const;
 
     // Linear transformation of control points (B-spline has affine invariance)
@@ -121,7 +132,14 @@ public:
     // Insert a knot until desired knot multiplicity is obtained
     void insertKnots(double tau, unsigned int dim, unsigned int multiplicity = 1);
 
+    /**
+     * Save and load
+     */
     void save(const std::string &fileName) const override;
+
+    void save_to_json(const std::string &filename) const;
+
+    static BSpline load_from_json(const std::string &filename);
 
     std::string getDescription() const override;
 
@@ -131,11 +149,11 @@ protected:
     BSplineBasis basis;
 
     /*
-     * The control point matrix is P = (knotaverages, coefficients) in R^(m x n),
-     * where m = numBasisFunctions and n = numVariables + 1. Each row in P is a control point.
+     * B-spline control points in R^(m x n),
+     * where m = numBasisFunctions and n = dim_y.
+     * Each row is a control point.
      */
-    DenseVector coefficients;
-    DenseMatrix knotaverages;
+    DenseMatrix controlPoints;
 
     // Control point computations
     DenseMatrix computeKnotAverages() const;
@@ -146,7 +164,7 @@ private:
     bool removeUnsupportedBasisFunctions(const std::vector<double> &lb, const std::vector<double> &ub);
 
     // Helper functions
-    bool pointInDomain(const DenseVector &x) const;
+    bool isSupported(const DenseVector &x) const;
 
     void load(const std::string &fileName) override;
 
