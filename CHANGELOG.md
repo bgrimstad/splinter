@@ -5,9 +5,10 @@
 - Support for multidimensional control points have been added.
 - B-splines can now be saved and loaded from JSON files (thanks to the JSON library by Niels Lohmann).
 - B-splines can now be fitted using weighted least squares (WLS) to account for uncertainty in sample data.
-- SPLINTER will no longer support MATLAB - MATLAB interface has been removed 
+- SPLINTER will no longer support MATLAB - MATLAB interface has been removed.
 - SPLINTER is now using continuous integration with Travis - we have added badges that show the current build status of the develop and master branches.
 - New tests have been added.
+- Remove support for Python 2.
 
 #### Version 3.0
 - Removed class for polynomial regression (PolynomialRegression).
