@@ -131,8 +131,8 @@ std::vector<std::vector<std::vector<double>>> BSpline::eval_hessian(const std::v
 SparseVector BSpline::eval_basis(const DenseVector &x) const
 {
 #ifndef NDEBUG
-    if (!isSupported(x))
-        std::cout << "BSpline::evalBasis: Evaluation at point outside of support." << std::endl;
+    if (!is_supported(x))
+        std::cout << "BSpline::eval_basis: Evaluation at point outside of support." << std::endl;
 #endif // NDEBUG
 
     return basis.eval(x);
@@ -141,7 +141,7 @@ SparseVector BSpline::eval_basis(const DenseVector &x) const
 SparseMatrix BSpline::eval_basis_jacobian(const DenseVector &x) const
 {
 #ifndef NDEBUG
-    if (!isSupported(x))
+    if (!is_supported(x))
         std::cout << "BSpline::eval_basis_jacobian: Evaluation at point outside of support." << std::endl;
 #endif // NDEBUG
 
@@ -201,21 +201,21 @@ void BSpline::linear_transform(const SparseMatrix &A)
 BSpline& BSpline::fit(const DataTable &data, Smoothing smoothing, double alpha, std::vector<double> weights)
 {
     if (data.get_dim_x() != get_dim_x())
-        throw Exception("BSpline::Builder::fit_bspline: Expected " + std::to_string(get_dim_x()) + " input variables.");
+        throw Exception("BSpline::fit: Expected " + std::to_string(get_dim_x()) + " input variables.");
 
     if (data.get_dim_y() != get_dim_y())
-        throw Exception("BSpline::Builder::fit_bspline: Expected " + std::to_string(get_dim_y()) + " output variables.");
+        throw Exception("BSpline::fit: Expected " + std::to_string(get_dim_y()) + " output variables.");
 
     if (alpha < 0)
-        throw Exception("BSpline::Builder::fit_bspline: alpha must be non-negative.");
+        throw Exception("BSpline::fit: alpha must be non-negative.");
 
     if (weights.size() > 0 && data.get_num_samples() != weights.size()) {
-        throw Exception("BSpline::Builder::fit_bspline: number of weights must equal number of data points.");
+        throw Exception("BSpline::fit: number of weights must equal number of data points.");
     }
 
 #ifndef NDEBUG
-    if (!data.isGridComplete())
-        std::cout << "BSpline::Builder::fit: Building B-spline from irregular (incomplete) grid." << std::endl;
+    if (!data.is_grid_complete())
+        std::cout << "BSpline::fit: Building B-spline from irregular (incomplete) grid." << std::endl;
 #endif // NDEBUG
 
     // Compute control points from samples and update B-spline
