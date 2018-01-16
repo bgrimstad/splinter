@@ -55,7 +55,7 @@ surf = ax.plot_trisurf(y0, y1, y2, linewidth=0)
 # Plot control structure
 p0, p1, p2 = zip(*control_points)
 p0_mesh, p1_mesh = np.meshgrid(p0, p1)
-ax.plot_wireframe(p0_mesh, p1_mesh, p2, color='black', alpha='0.2')
+# ax.plot_wireframe(p0_mesh, p1_mesh, p2, color='black', alpha='0.2')
 ax.scatter(p0, p1, p2)
 
 plt.show()

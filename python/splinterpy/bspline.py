@@ -8,6 +8,7 @@
 
 from .splinter_backend import splinter_backend_obj
 from .function import Function
+from .datatable import DataTable
 from .utilities import *
 from typing import List, Union
 
@@ -18,6 +19,15 @@ DegreesType = Union[int, List[int]]
 
 
 class BSpline(Function):
+
+    class Smoothing:
+        # NOTE: For the moment, this enum exists also in BSplineBuilder
+        NONE, IDENTITY, PSPLINE = range(3)
+
+        @staticmethod
+        def is_valid(value):
+            return value in range(3)
+
     def __init__(self, handle=None):
         super().__init__()
 
@@ -204,3 +214,17 @@ class BSpline(Function):
         copy._dim_y = self._dim_y
 
         return copy
+
+    def fit(self, X, Y, smoothing: int=Smoothing.NONE, alpha: float=0.1, weights: List[float]=list()) -> 'BSpline':
+
+        if alpha < 0:
+            raise ValueError("'alpha' must be non-negative")
+
+        if not BSpline.Smoothing.is_valid(smoothing):
+            raise ValueError("Invalid smoothing type: " + str(smoothing))
+
+        data_table = DataTable(X, Y)
+        f_handle = splinter_backend_obj.handle.splinter_bspline_fit
+        bspline_handle = splinter_backend_obj.call(f_handle, self._handle, data_table._get_handle(), smoothing, alpha,
+                                                   list_to_c_array_of_doubles(weights), len(weights))
+        return BSpline(bspline_handle)

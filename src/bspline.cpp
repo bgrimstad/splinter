@@ -200,14 +200,17 @@ void BSpline::linear_transform(const SparseMatrix &A)
 
 BSpline& BSpline::fit(const DataTable &data, Smoothing smoothing, double alpha, std::vector<double> weights)
 {
-    if (data.get_dim_x() != get_dim_x())
+    if (data.get_dim_x() != get_dim_x()) {
         throw Exception("BSpline::fit: Expected " + std::to_string(get_dim_x()) + " input variables.");
+    }
 
-    if (data.get_dim_y() != get_dim_y())
+    if (data.get_dim_y() != get_dim_y()) {
         throw Exception("BSpline::fit: Expected " + std::to_string(get_dim_y()) + " output variables.");
+    }
 
-    if (alpha < 0)
+    if (alpha < 0) {
         throw Exception("BSpline::fit: alpha must be non-negative.");
+    }
 
     if (weights.size() > 0 && data.get_num_samples() != weights.size()) {
         throw Exception("BSpline::fit: number of weights must equal number of data points.");
@@ -215,7 +218,7 @@ BSpline& BSpline::fit(const DataTable &data, Smoothing smoothing, double alpha, 
 
 #ifndef NDEBUG
     if (!data.is_grid_complete())
-        std::cout << "BSpline::fit: Building B-spline from irregular (incomplete) grid." << std::endl;
+        std::cout << "BSpline::fit: Fitting B-spline to scattered data points (irregular grid of points)." << std::endl;
 #endif // NDEBUG
 
     // Compute control points from samples and update B-spline

@@ -401,6 +401,24 @@ SPLINTER_API void splinter_bspline_decompose_to_bezier_form(splinter_obj_ptr bsp
  */
 SPLINTER_API splinter_obj_ptr splinter_bspline_copy(splinter_obj_ptr bspline_ptr);
 
+/**
+ * Fit BSpline to data.
+ *
+ * @param bspline_ptr The BSpline to fit.
+ * @param datatable_ptr The datatable with data.
+ * @param smoothing Smoothing type (actually an enum, see the implementation of this function for details)
+ * @param alpha Regularization/smoothing parameter (must be non-negative).
+ * @param weights Weights to apply to data points.
+ * @param num_weights Number of weights.
+ * @return Pointer to the created BSpline.
+ */
+SPLINTER_API splinter_obj_ptr splinter_bspline_fit(splinter_obj_ptr bspline_ptr,
+                                                   splinter_obj_ptr datatable_ptr,
+                                                   int smoothing,
+                                                   double alpha,
+                                                   double *weights,
+                                                   int num_weights);
+
 #ifdef __cplusplus
     }
 #endif
