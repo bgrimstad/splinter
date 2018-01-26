@@ -80,7 +80,38 @@ BSpline cubic_bspline_interpolator(const DataTable &data)
 }
 
 /**
- * Create a P-spline (penalized B-spline) that smooths the sample points
+ * Create a B-spline that smooths the sample points using weight decay.
+ * @param data A table of sample points on a regular grid
+ * @param degree The degree of the B-spline basis functions
+ * @param alpha Smoothing/regularization factor
+ * @return A B-spline that smooths the sample points
+ */
+BSpline bspline_smoother(const DataTable &data, unsigned int degree, double alpha)
+{
+    auto dim_x = data.get_dim_x();
+    auto dim_y = data.get_dim_y();
+    auto degrees = std::vector<unsigned int>(dim_x, degree);
+    auto knot_spacing = KnotSpacing::AS_SAMPLED;
+    auto knot_vectors = compute_knot_vectors(data, degrees, knot_spacing);
+
+    return BSpline(dim_x, dim_y, knot_vectors, degrees).fit(data, BSpline::Smoothing::IDENTITY, alpha);
+}
+
+/**
+ * Create a cubic B-spline that smooths the sample points using weight decay.
+ * In the multivariate case, the multivariate basis functions will be products of univariate cubic basis functions,
+ * i.e. for two variables the basis functions are bi-cubic, etc.
+ * @param data A table of sample points on a regular grid
+ * @param alpha Smoothing/regularization factor
+ * @return A cubic B-spline that smooths the sample points
+ */
+BSpline cubic_bspline_smoother(const DataTable &data, double alpha)
+{
+    return bspline_smoother(data, 3, alpha);
+}
+
+/**
+ * Create a P-spline (penalized B-spline) that smooths the sample points using second-order difference weight decay.
  * @param data A table of sample points on a regular grid
  * @param degree The degree of the B-spline basis functions
  * @param alpha Smoothing/regularization factor
@@ -98,7 +129,7 @@ BSpline pspline_smoother(const DataTable &data, unsigned int degree, double alph
 }
 
 /**
- * Create a cubic P-spline (penalized B-spline) that smooths the sample points.
+ * Create a cubic P-spline (penalized B-spline) that smooths the sample points using second-order difference weight decay.
  * In the multivariate case, the multivariate basis functions will be products of univariate cubic basis functions,
  * i.e. for two variables the basis functions are bi-cubic, etc.
  * @param data A table of sample points on a regular grid
