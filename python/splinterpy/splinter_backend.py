@@ -154,6 +154,9 @@ class SplinterBackend:
         set_signature('splinter_bspline_decompose_to_bezier_form', c_void, handle_type)
         set_signature('splinter_bspline_copy', handle_type, handle_type)
         set_signature('splinter_bspline_fit', handle_type, handle_type, handle_type, c_int, c_double, c_double_p, c_int)
+        set_signature('splinter_bspline_interpolator', handle_type, handle_type, c_int)
+        set_signature('splinter_bspline_smoother', handle_type, handle_type, c_int, c_double)
+        set_signature('splinter_pspline_smoother', handle_type, handle_type, c_int, c_double)
 
 
 def _locate_splinter(self) -> str:

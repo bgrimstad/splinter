@@ -172,4 +172,56 @@ void splinter_bspline_builder_delete(splinter_obj_ptr bspline_builder_ptr)
     delete builder;
 }
 
+splinter_obj_ptr splinter_bspline_interpolator(splinter_obj_ptr datatable_ptr, int degree)
+{
+    splinter_obj_ptr bspline = nullptr;
+    DataTable *data_table = get_datatable(datatable_ptr);
+    try
+    {
+        bspline = (splinter_obj_ptr) bspline_interpolator(*data_table, degree).clone();  // TODO: unnecessary copy
+        bsplines.insert(bspline);
+    }
+    catch (const Exception &e)
+    {
+        set_error_string(e.what());
+    }
+
+    return bspline;
+}
+
+splinter_obj_ptr splinter_bspline_smoother(splinter_obj_ptr datatable_ptr, int degree, double alpha)
+{
+    splinter_obj_ptr bspline = nullptr;
+    DataTable *data_table = get_datatable(datatable_ptr);
+    try
+    {
+        bspline = (splinter_obj_ptr) bspline_smoother(*data_table, (unsigned int)degree, alpha).clone();  // TODO: unnecessary copy
+        bsplines.insert(bspline);
+    }
+    catch (const Exception &e)
+    {
+        set_error_string(e.what());
+    }
+
+    return bspline;
+}
+
+splinter_obj_ptr splinter_pspline_smoother(splinter_obj_ptr datatable_ptr, int degree, double alpha)
+{
+    splinter_obj_ptr bspline = nullptr;
+    DataTable *data_table = get_datatable(datatable_ptr);
+    try
+    {
+        bspline = (splinter_obj_ptr) pspline_smoother(*data_table, (unsigned int)degree, alpha).clone();  // TODO: unnecessary copy
+        bsplines.insert(bspline);
+    }
+    catch (const Exception &e)
+    {
+        set_error_string(e.what());
+    }
+
+    return bspline;
+}
+
+
 } // extern "C"

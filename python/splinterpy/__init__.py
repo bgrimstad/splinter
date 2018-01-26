@@ -8,7 +8,7 @@
 
 from .datatable import DataTable
 from .bspline import BSpline
-from .bsplinebuilder import BSplineBuilder
+from .bsplinebuilder import BSplineBuilder, bspline_interpolator, bspline_smoother, pspline_smoother
 from .bsplineboosting import BSplineBoosting
 
 from .splinter_backend import splinter_backend_obj

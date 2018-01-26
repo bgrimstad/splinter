@@ -24,22 +24,28 @@ elif os.path.isdir("/home/anders/"):
 def f1(x):
     return -1. + 2*x + 0.1*(x**2) + 10*np.random.rand(1)[0]
 
+
 x = np.arange(0, 11, 1)
 y = np.array([f1(x_i) for x_i in x])
 
 # Piecewise constant B-spline that interpolates the data
-b0 = splinterpy.BSplineBuilder(1, 1, degree=0).fit(x, y)
+# b0 = splinterpy.BSplineBuilder(1, 1, degree=0).fit(x, y)
+b0 = splinterpy.bspline_interpolator(x, y, 0)
+
 print(b0.get_control_points())
 print(b0.get_knot_vectors())
 
 # Linear B-spline that interpolates the data
-b1 = splinterpy.BSplineBuilder(1, 1, degree=1).fit(x, y)
+# b1 = splinterpy.BSplineBuilder(1, 1, degree=1).fit(x, y)
+b1 = splinterpy.bspline_interpolator(x, y, 1)
 
 # Quadratic B-spline that interpolates the data
-b2 = splinterpy.BSplineBuilder(1, 1, degree=2).fit(x, y)
+# b2 = splinterpy.BSplineBuilder(1, 1, degree=2).fit(x, y)
+b2 = splinterpy.bspline_interpolator(x, y, 2)
 
 # Cubic B-spline that interpolates the data
-b3 = splinterpy.BSplineBuilder(1, 1, degree=3).fit(x, y)
+# b3 = splinterpy.BSplineBuilder(1, 1, degree=3).fit(x, y)
+b3 = splinterpy.bspline_interpolator(x, y, 3)
 
 xd = np.arange(0, 10, .01)
 yd0 = b0.eval(xd)

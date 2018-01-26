@@ -196,6 +196,34 @@ SPLINTER_API splinter_obj_ptr splinter_bspline_builder_fit(splinter_obj_ptr bspl
  */
 SPLINTER_API void splinter_bspline_builder_delete(splinter_obj_ptr bspline_builder_ptr);
 
+/**
+ * Construct a BSpline that interpolates the sample points.
+ *
+ * @param datatable_ptr The datatable with sample points.
+ * @param degree The degree of the B-spline basis functions
+ * @return Pointer to the created BSpline.
+ */
+SPLINTER_API splinter_obj_ptr splinter_bspline_interpolator(splinter_obj_ptr datatable_ptr, int degree);
+
+/**
+ * Construct a BSpline that smooths the sample points using weight decay.
+ *
+ * @param datatable_ptr The datatable with sample points.
+ * @param degree The degree of the B-spline basis functions
+ * @param alpha Smoothing/regularization factor
+ * @return Pointer to the created BSpline.
+ */
+SPLINTER_API splinter_obj_ptr splinter_bspline_smoother(splinter_obj_ptr datatable_ptr, int degree, double alpha);
+
+/**
+ * Construct a BSpline that smooths the sample points using second-order difference weight decay (P-spline).
+ *
+ * @param datatable_ptr The datatable with sample points.
+ * @param degree The degree of the B-spline basis functions
+ * @param alpha Smoothing/regularization factor
+ * @return Pointer to the created BSpline (P-spline).
+ */
+SPLINTER_API splinter_obj_ptr splinter_pspline_smoother(splinter_obj_ptr datatable_ptr, int degree, double alpha);
 
 
 
