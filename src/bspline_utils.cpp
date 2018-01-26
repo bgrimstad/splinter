@@ -89,7 +89,7 @@ DenseMatrix compute_control_points(const BSpline &bspline, const DataTable &data
     // Solve equation AC = B for control points C
     DenseMatrix C;
 
-    int num_equations = A.rows();
+    long num_equations = A.rows();
     int max_num_equations = 100;
     bool solve_as_dense = (num_equations < max_num_equations);
 
@@ -115,7 +115,7 @@ DenseMatrix compute_control_points(const BSpline &bspline, const DataTable &data
 //        DenseSVD<DenseMatrix> s;
         if (!s.solve(Ad, B, C))
         {
-            throw Exception("BSpline::Builder::computeBSplineCoefficients: Failed to solve for B-spline coefficients.");
+            throw Exception("compute_control_points: Failed to solve for B-spline control points.");
         }
     }
 
@@ -181,7 +181,7 @@ SparseMatrix compute_second_order_finite_difference_matrix(const BSpline &bsplin
 
     for (unsigned int i=0; i < num_variables; ++i)
         if (num_basis_functions.at(i) < 3)
-            throw Exception("BSpline::Builder::getSecondOrderDifferenceMatrix: Need at least three coefficients/basis function per variable.");
+            throw Exception("compute_second_order_finite_difference_matrix: Need at least three coefficients/basis functions per variable.");
 
     // Number of rows in D and in each block
     int num_rows = 0;
