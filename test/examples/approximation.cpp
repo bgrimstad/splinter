@@ -48,7 +48,7 @@ TEST_CASE("Approximation example", COMMON_TAGS)
     BSpline bspline3 = bspline_interpolator(samples, 3);
 
     // Build penalized B-spline (P-spline) that smooths the samples
-    BSpline pspline = cubic_pspline_approximator(samples, 0.03);
+    BSpline pspline = cubic_pspline_smoother(samples, 0.03);
 
     /*
      * Evaluate the splines at x = (1,1)

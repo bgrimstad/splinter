@@ -86,7 +86,7 @@ BSpline cubic_bspline_interpolator(const DataTable &data)
  * @param alpha Smoothing/regularization factor
  * @return A B-spline that smooths the sample points (P-spline)
  */
-BSpline pspline_approximator(const DataTable &data, unsigned int degree, double alpha)
+BSpline pspline_smoother(const DataTable &data, unsigned int degree, double alpha)
 {
     auto dim_x = data.get_dim_x();
     auto dim_y = data.get_dim_y();
@@ -105,9 +105,9 @@ BSpline pspline_approximator(const DataTable &data, unsigned int degree, double 
  * @param alpha Smoothing/regularization factor
  * @return A cubic B-spline that smooths the sample points (cubic P-spline)
  */
-BSpline cubic_pspline_approximator(const DataTable &data, double alpha)
+BSpline cubic_pspline_smoother(const DataTable &data, double alpha)
 {
-    return pspline_approximator(data, 3, alpha);
+    return pspline_smoother(data, 3, alpha);
 }
 
 

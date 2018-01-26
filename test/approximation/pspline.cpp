@@ -31,7 +31,7 @@ TEST_CASE("PSpline function" COMMON_TEXT, COMMON_TAGS "[function-value]")
         compareFunctionValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 BSpline bs = cubic_pspline_approximator(table, 0.03);
+                                 BSpline bs = cubic_pspline_smoother(table, 0.03);
                                  return (Function*) new BSpline(bs);
                              },
                              300,  // Number of points to sample at
@@ -80,7 +80,7 @@ TEST_CASE("P-spline approximation of linear function", COMMON_TAGS "[function-va
     /**
      * P-spline should give a perfect fit to a linear function regardless of alpha value
      */
-    auto bs = cubic_pspline_approximator(samples, 1.0);
+    auto bs = cubic_pspline_smoother(samples, 1.0);
 
     std::vector<double> xd = {1};
     auto yd = bs.eval(xd);
@@ -100,7 +100,7 @@ TEST_CASE("PSpline jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian]")
         compareJacobianValue(testFunc,
                              [](const DataTable &table)
                              {
-                                 auto bs = cubic_pspline_approximator(table, 0.03);
+                                 auto bs = cubic_pspline_smoother(table, 0.03);
                                  return (Function*) new BSpline(bs);
                              },
                              300,  // Number of points to sample at

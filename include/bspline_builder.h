@@ -84,8 +84,8 @@ private:
  */
 BSpline bspline_interpolator(const DataTable &data, unsigned int degree = 3);
 BSpline cubic_bspline_interpolator(const DataTable &data);
-BSpline pspline_approximator(const DataTable &data, unsigned int degree = 3, double alpha = 0.1);
-BSpline cubic_pspline_approximator(const DataTable &data, double alpha = 0.1);
+BSpline pspline_smoother(const DataTable &data, unsigned int degree = 3, double alpha = 0.1);
+BSpline cubic_pspline_smoother(const DataTable &data, double alpha = 0.1);
 
 
 } // namespace SPLINTER
