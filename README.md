@@ -48,3 +48,5 @@ A standards compliant C++11 compiler.
 * [Python interface](docs/python_interface.md)
 * [C interface](docs/c_interface.md)
 * [Compilation](docs/compile.md)
+
+The interested reader can find a more in depth treatment of the mathematics behind SPLINTER in the [PDF user guide](docs/user_guide.pdf).
