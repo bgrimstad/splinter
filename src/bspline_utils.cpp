@@ -28,6 +28,13 @@ namespace SPLINTER
  *
  * The optimal control point matrix C is the solution of the linear system of equations:
  * (X'*W*X + alpha*R) C = X'*W*Y
+ *
+ * For performance gains, the various cases are solved as follows:
+ * 1) No regularization or weighting: XC = Y
+ * 2) Weighting, no regularization: WXC = WY
+ * 3) Regularization, no weighting: (X'X + alpha*R)C = X'Y
+ * 4) Regularization and weighting: (X'*W*X + alpha*R) C = X'*W*Y
+ *
  */
 DenseMatrix compute_control_points(const BSpline &bspline, const DataTable &data, BSpline::Smoothing smoothing,
                                    double alpha, std::vector<double> weights)
@@ -35,56 +42,59 @@ DenseMatrix compute_control_points(const BSpline &bspline, const DataTable &data
     unsigned int num_samples = data.get_num_samples();
     unsigned int num_basis_functions = bspline.get_num_basis_functions();
     SparseMatrix X = compute_basis_function_matrix(bspline, data);
-    SparseMatrix Xt = X.transpose();
     DenseMatrix Y = stack_sample_values(data);
 
-    // Regularization matrix
-    SparseMatrix R(num_basis_functions, num_basis_functions);
-
-    if (smoothing == BSpline::Smoothing::IDENTITY) {
-        /*
-         * Tikhonov regularization (or ridge regression) with the Identity matrix
-         * See: https://en.wikipedia.org/wiki/Tikhonov_regularization
-         */
-        auto I = SparseMatrix(num_basis_functions, num_basis_functions);
-        I.setIdentity();
-        R = I;
-    }
-    else if (smoothing == BSpline::Smoothing::PSPLINE)
-    {
-        /*
-         * The P-Spline is a smoothing B-spline which relaxes the interpolation constraints on the control points to allow
-         * smoother spline curves. It minimizes an objective which penalizes both deviation from sample points (to lower bias)
-         * and the magnitude of second derivatives (to lower variance).
-         *
-         * Regularization matrix is given as R = D'*D, where D is the second-order finite difference matrix
-         */
-
-        // Second order finite difference matrix
-        SparseMatrix D = compute_second_order_finite_difference_matrix(bspline);
-        R = D.transpose()*D;
-    }
+    // Left-hand side matrix
+    SparseMatrix A = X;
+    DenseMatrix B = Y;
 
     // Weight matrix
-    // NOTE: Consider using Eigen::DiagonalMatrix<double, num_samples> W()
-    SparseMatrix W(num_samples, num_samples);
-
     if (weights.size() > 0) {
-        W = compute_weight_matrix(weights);
-    } else {
-        W.setIdentity();
+        // NOTE: Consider using Eigen::DiagonalMatrix<double, num_samples> W()
+        // SparseMatrix W(num_samples, num_samples);
+        SparseMatrix W = compute_weight_matrix(weights);
+        A = W*X;
+        B = W*Y;
     }
 
-    // Left-hand side matrix
-    // NOTE2: consider changing regularization factor to (alpha/numSample)
-    SparseMatrix A = Xt*W*X;
-
+    // Regularization
     if (smoothing != BSpline::Smoothing::NONE) {
-        A += alpha*R;
-    }
+        
+        // Regularization matrix
+        SparseMatrix R(num_basis_functions, num_basis_functions);
 
-    // Compute right-hand side matrices
-    DenseMatrix B = Xt*W*Y;
+        if (smoothing == BSpline::Smoothing::IDENTITY) {
+            /*
+             * Tikhonov regularization (or ridge regression) with the Identity matrix
+             * See: https://en.wikipedia.org/wiki/Tikhonov_regularization
+             */
+            auto I = SparseMatrix(num_basis_functions, num_basis_functions);
+            I.setIdentity();
+            R = I;
+        }
+        else if (smoothing == BSpline::Smoothing::PSPLINE)
+        {
+            /*
+             * The P-Spline is a smoothing B-spline which relaxes the interpolation constraints on the control points to allow
+             * smoother spline curves. It minimizes an objective which penalizes both deviation from sample points (to lower bias)
+             * and the magnitude of second derivatives (to lower variance).
+             *
+             * Regularization matrix is given as R = D'*D, where D is the second-order finite difference matrix
+             */
+            SparseMatrix D = compute_second_order_finite_difference_matrix(bspline);
+            R = D.transpose()*D;
+        }
+        
+        SparseMatrix Xt = X.transpose();
+        
+        // Left-hand side matrix
+        // NOTE: Using eval to avoid aliasing
+        // NOTE2: consider changing regularization factor to (alpha/numSample)
+        A = (Xt*A + alpha*R).eval();
+        
+        // Right-hand side matrix
+        B = (Xt*B).eval();
+    }
 
     // Solve equation AC = B for control points C
     DenseMatrix C;
@@ -96,7 +106,7 @@ DenseMatrix compute_control_points(const BSpline &bspline, const DataTable &data
     if (!solve_as_dense)
     {
 #ifndef NDEBUG
-        std::cout << "BSpline::Builder::computeBSplineCoefficients: Computing B-spline control points using sparse solver." << std::endl;
+        std::cout << "compute_control_points: Computing B-spline control points using sparse solver." << std::endl;
 #endif // NDEBUG
 
         SparseLU<DenseMatrix> s;
@@ -107,7 +117,7 @@ DenseMatrix compute_control_points(const BSpline &bspline, const DataTable &data
     if (solve_as_dense)
     {
 #ifndef NDEBUG
-        std::cout << "BSpline::Builder::computeBSplineCoefficients: Computing B-spline control points using dense solver." << std::endl;
+        std::cout << "compute_control_points: Computing B-spline control points using dense solver." << std::endl;
 #endif // NDEBUG
 
         DenseMatrix Ad = A.toDense();
