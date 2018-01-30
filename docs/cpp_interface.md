@@ -5,7 +5,9 @@ Below is a simple example demonstrating the use of SPLINTER. Remember to compile
 
 ```c++
 #include <iostream>
-#include "datatable.h"
+#include <datatable.h>
+#include <bspline.h>
+#include <bsplinebuilder.h>
 
 using std::cout;
 using std::endl;
