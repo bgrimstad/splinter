@@ -58,15 +58,15 @@ BSpline load_from_json(const std::string &filename)
     std::vector<unsigned int> degrees;
 
     auto deg = json["degrees"];
-    for (auto it = deg.begin(); it != deg.end(); it++)
-        degrees.push_back(*it);
+    for (auto &it : deg)
+        degrees.push_back(it);
 
     for (unsigned int i = 0; i < dim_y; ++i) {
         std::vector<double> cp;
         std::string e = "control_points_" + std::to_string(i);
         auto c = json[e];
-        for (auto it = c.begin(); it != c.end(); it++)
-            cp.push_back(*it);
+        for (auto &it : c)
+            cp.push_back(it);
         control_points_as_read.push_back(cp);
     }
 
@@ -84,8 +84,8 @@ BSpline load_from_json(const std::string &filename)
         std::vector<double> knots;
         std::string e = "knot_vector_" + std::to_string(i);
         auto k = json[e];
-        for (auto it = k.begin(); it != k.end(); it++)
-            knots.push_back(*it);
+        for (auto &it : k)
+            knots.push_back(it);
         knot_vectors.push_back(knots);
     }
 
