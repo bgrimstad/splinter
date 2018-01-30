@@ -12,7 +12,6 @@
 #include "kronecker_product.h"
 #include "unsupported/Eigen/KroneckerProduct"
 #include <linear_solvers.h>
-#include <serializer.h>
 #include <iostream>
 #include <utilities.h>
 #include "bspline_utils.h"
@@ -21,13 +20,6 @@
 
 namespace SPLINTER
 {
-
-/**
- * Constructor used by serializer
- */
-BSpline::BSpline()
-    : Function()
-{}
 
 /**
  * Constructors for multivariate B-spline using explicit data
@@ -52,20 +44,6 @@ BSpline::BSpline(const std::vector<std::vector<double>> &control_points,
       control_points(std_vec_vec_to_eig_mat(control_points))
 {
     check_control_points();
-}
-
-/**
- * Construct B-spline from saved data
- */
-BSpline::BSpline(const char *fileName)
-    : BSpline(std::string(fileName))
-{
-}
-
-BSpline::BSpline(const std::string &fileName)
-    : Function()
-{
-    load(fileName);
 }
 
 /**
@@ -402,19 +380,6 @@ bool BSpline::remove_unsupported_basis_functions(const std::vector<double> &lb, 
     linear_transform(A);
 
     return true;
-}
-
-void BSpline::save(const std::string &fileName) const
-{
-    Serializer s;
-    s.serialize(*this);
-    s.saveToFile(fileName);
-}
-
-void BSpline::load(const std::string &fileName)
-{
-    Serializer s(fileName);
-    s.deserialize(*this);
 }
 
 void BSpline::save_to_json(const std::string &filename) const {

@@ -54,14 +54,6 @@ SPLINTER_API const char *splinter_get_error_string();
 SPLINTER_API splinter_obj_ptr splinter_datatable_init();
 
 /**
- * Load a datatable from file
- *
- * @param filename Name of the file to load. Must be a datatable that has previously been stored.
- * @return Pointer to the loaded DataTable.
- */
-SPLINTER_API splinter_obj_ptr splinter_datatable_load_init(const char *filename);
-
-/**
  * Add samples that are stored in row major order to the datatable.
  *
  * If x0 = [x0_0, x0_1, x0_2], x1 = [x1_0, x1_1, x1_2] are two inputs with
@@ -118,14 +110,6 @@ SPLINTER_API int splinter_datatable_get_dim_y(splinter_obj_ptr datatable_ptr);
  * @return The number of samples in the datatable.
  */
 SPLINTER_API int splinter_datatable_get_num_samples(splinter_obj_ptr datatable_ptr);
-
-/**
- * Save the datatable to file.
- *
- * @param datatable_ptr Pointer to the datatable.
- * @param filename The file to store the datatable to (will be overwritten!).
- */
-SPLINTER_API void splinter_datatable_save(splinter_obj_ptr datatable_ptr, const char *filename);
 
 /**
  * Free the memory of a datatable.
@@ -242,14 +226,6 @@ SPLINTER_API splinter_obj_ptr splinter_pspline_smoother(splinter_obj_ptr datatab
 SPLINTER_API splinter_obj_ptr splinter_bspline_param_init(int dim_x, int dim_y, double *control_points,
                                                           int num_control_points, double *knot_vectors,
                                                           int *num_knots_per_vector, unsigned int *degrees);
-
-/**
- * Load a BSpline from file.
- *
- * @param filename The file to load the BSpline from.
- * @return Pointer to the loaded BSpline.
- */
-SPLINTER_API splinter_obj_ptr splinter_bspline_load_init(const char *filename);
 
 /**
  * Get the sizes of the knot vectors that are returned by splinter_bspline_get_knot_vectors
@@ -371,14 +347,6 @@ SPLINTER_API int splinter_bspline_get_dim_x(splinter_obj_ptr bspline_ptr);
  * @param bspline_ptr Pointer to the BSpline.
  */
 SPLINTER_API int splinter_bspline_get_dim_y(splinter_obj_ptr bspline_ptr);
-
-/**
- * Save a BSpline to file.
- *
- * @param bspline_ptr Pointer to the BSpline.
- * @param filename File to save the BSpline to (will be overwritten!).
- */
-SPLINTER_API void splinter_bspline_save(splinter_obj_ptr bspline_ptr, const char *filename);
 
 /**
  * Save a BSpline to json file.

@@ -171,9 +171,8 @@ set(SRC_LIST
     include/definitions.h
     include/linear_solvers.h
     include/kronecker_product.h
-    include/serializer.h
     include/utilities.h
-    include/saveable.h
+    include/json_parser.h
     src/bspline.cpp
     src/bspline_basis.cpp
     src/bspline_basis_1d.cpp
@@ -185,10 +184,8 @@ set(SRC_LIST
     src/data_table.cpp
     src/function.cpp
     src/kronecker_product.cpp
-    src/serializer.cpp
     src/utilities.cpp
-    src/json_parser.cpp
-    include/json_parser.h)
+    src/json_parser.cpp)
 
 set(TEST_SRC_LIST
     ${SRC_LIST}
@@ -201,8 +198,6 @@ set(TEST_SRC_LIST
     test/general/data_table.cpp
     test/general/utilities.cpp
     test/examples/approximation.cpp
-    test/serialization/data_table.cpp
-    test/serialization/bspline.cpp
     test/utils/op_overloads.h
     test/utils/op_overloads.cpp
     test/utils/test_function.h
@@ -213,7 +208,6 @@ set(TEST_SRC_LIST
     test/utils/test_utils.cpp
     test/utils/bspline_test_utils.h
     test/utils/bspline_test_utils.cpp
-    test/serialization/eigentypes.cpp
     test/unit/bspline_basis_1d.cpp
     test/unit/bspline_hessian.cpp
     test/unit/bspline_utils.cpp

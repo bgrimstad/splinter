@@ -23,7 +23,7 @@ TEST_CASE("BSpline can be saved and loaded from json", COMMON_TAGS)
 
     auto col = get_bspline_collection();
 
-    for (auto bspline : col) {
+    for (const auto &bspline : col) {
         save_to_json(bspline, filename);
         BSpline loadedBspline = load_from_json(filename);
         REQUIRE(bspline == loadedBspline);

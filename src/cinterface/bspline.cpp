@@ -42,23 +42,6 @@ splinter_obj_ptr splinter_bspline_param_init(int dim_x,
     return bspline;
 }
 
-splinter_obj_ptr splinter_bspline_load_init(const char *filename)
-{
-    splinter_obj_ptr bspline = nullptr;
-
-    try
-    {
-        bspline = (splinter_obj_ptr) new BSpline(filename);
-        bsplines.insert(bspline);
-    }
-    catch (const Exception &e)
-    {
-        set_error_string(e.what());
-    }
-
-    return bspline;
-}
-
 int *splinter_bspline_get_knot_vector_sizes(splinter_obj_ptr bspline_ptr)
 {
     auto bspline = get_bspline(bspline_ptr);
@@ -396,22 +379,6 @@ int splinter_bspline_get_dim_y(splinter_obj_ptr bspline_ptr)
     }
 
     return retVal;
-}
-
-void splinter_bspline_save(splinter_obj_ptr bspline_ptr, const char *filename)
-{
-    auto bspline = get_bspline(bspline_ptr);
-    if (bspline != nullptr)
-    {
-        try
-        {
-            bspline->save(filename);
-        }
-        catch(const Exception &e)
-        {
-            set_error_string(e.what());
-        }
-    }
 }
 
 void splinter_bspline_save_to_json(splinter_obj_ptr bspline_ptr, const char *filename)

@@ -53,7 +53,6 @@ private:
     std::vector<double> y;
     void setData(const std::vector<double> &x, const std::vector<double> &y);
 
-    friend class Serializer;
 };
 
 } // namespace SPLINTER

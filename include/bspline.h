@@ -22,7 +22,7 @@ namespace SPLINTER
 /**
  * Class that implements the multivariate tensor product B-spline
  */
-class SPLINTER_API BSpline : public Function, public Saveable
+class SPLINTER_API BSpline : public Function
 {
 public:
 
@@ -51,12 +51,6 @@ public:
     BSpline(const std::vector<std::vector<double>> &control_points,
             const std::vector<std::vector<double>> &knot_vectors,
             const std::vector<unsigned int> &degrees);
-
-    /**
-     * Construct B-spline from file
-     */
-    BSpline(const char *fileName);
-    BSpline(const std::string &fileName);
 
     virtual BSpline* clone() const { return new BSpline(*this); }
 
@@ -152,8 +146,6 @@ public:
     /**
      * Save and load
      */
-    void save(const std::string &fileName) const override;
-
     void save_to_json(const std::string &filename) const;
 
     static BSpline load_from_json(const std::string &filename);
@@ -187,9 +179,6 @@ private:
     // Helper functions
     bool is_supported(const DenseVector &x) const;
 
-    void load(const std::string &fileName) override;
-
-    friend class Serializer;
     friend bool operator==(const BSpline &lhs, const BSpline &rhs);
 };
 

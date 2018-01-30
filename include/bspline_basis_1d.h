@@ -93,7 +93,6 @@ private:
     KnotVector knots;
     unsigned int target_num_basis_functions;
 
-    friend class Serializer;
     friend bool operator==(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs);
     friend bool operator!=(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs);
 };

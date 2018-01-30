@@ -80,15 +80,15 @@ def test_bspline_save_load():
     knots = [0, 0, 1, 2, 3, 4, 4]
     degree = 1
     bs1 = splinterpy.BSpline.init_from_param(control_points, knots, degree)
-    try:
-        # Save the bspline to test.bspline
-        # The file ending doesn't matter
-        bs1.save("test.bspline")
 
-        # Create BSpline from saved BSpline
-        bs2 = splinterpy.BSpline.load("test.bspline")
+    filename = "bspline.json"
+
+    try:
+        bs1.save_to_json(filename)
+
+        bs2 = splinterpy.BSpline.load_from_json(filename)
 
         assert(all(x == y for x, y in zip(bs1.get_degrees(), bs2.get_degrees())))
 
     finally:
-        remove("test.bspline")
+        remove(filename)

@@ -96,7 +96,6 @@ public:
 private:
     std::vector<double> knots;
 
-    friend class Serializer;
 };
 
 bool operator==(const KnotVector &lhs, const KnotVector &rhs);

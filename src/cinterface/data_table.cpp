@@ -31,23 +31,6 @@ splinter_obj_ptr splinter_datatable_init()
     return dataTable;
 }
 
-splinter_obj_ptr splinter_datatable_load_init(const char *filename)
-{
-    splinter_obj_ptr dataTable = nullptr;
-
-    try
-    {
-        dataTable = (splinter_obj_ptr) new DataTable(filename);
-        dataTables.insert(dataTable);
-    }
-    catch(const Exception &e)
-    {
-        set_error_string(e.what());
-    }
-
-    return dataTable;
-}
-
 void splinter_datatable_add_samples_row_major(splinter_obj_ptr datatable_ptr,
                                               double *xs, int x_dim,
                                               double *ys, int y_dim,
@@ -133,22 +116,6 @@ int splinter_datatable_get_num_samples(splinter_obj_ptr datatable_ptr)
     }
 
     return 0;
-}
-
-void splinter_datatable_save(splinter_obj_ptr datatable_ptr, const char *filename)
-{
-    auto dataTable = get_datatable(datatable_ptr);
-    if (dataTable != nullptr)
-    {
-        try
-        {
-            dataTable->save(filename);
-        }
-        catch(const Exception &e)
-        {
-            set_error_string(e.what());
-        }
-    }
 }
 
 void splinter_datatable_delete(splinter_obj_ptr datatable_ptr)

@@ -109,23 +109,21 @@ class SplinterBackend:
         c_void = None
 
         this = self
+
         def set_signature(function_name: str, return_type, *parameters):
             function = getattr(this._handle, function_name)
 
             setattr(function, 'restype', return_type)
             setattr(function, 'argtypes', list(parameters))
 
-
         set_signature('splinter_get_error', c_int)
         set_signature('splinter_get_error_string', c_char_p)
 
         set_signature('splinter_datatable_init', handle_type)
-        set_signature('splinter_datatable_load_init', handle_type, c_char_p)
         set_signature('splinter_datatable_add_samples_row_major', c_void, handle_type, c_double_p, c_int, c_double_p, c_int, c_int)
         set_signature('splinter_datatable_get_dim_x', c_int, handle_type)
         set_signature('splinter_datatable_get_dim_y', c_int, handle_type)
         set_signature('splinter_datatable_get_num_samples', c_int, handle_type)
-        set_signature('splinter_datatable_save', c_void, handle_type, c_char_p)
         set_signature('splinter_datatable_delete', c_void, handle_type)
 
         set_signature('splinter_bspline_builder_init', handle_type, handle_type)
@@ -134,8 +132,8 @@ class SplinterBackend:
         set_signature('splinter_bspline_builder_set_knot_spacing', c_void, handle_type, c_int)
         set_signature('splinter_bspline_builder_fit', handle_type, handle_type, handle_type, c_int, c_double, c_double_p, c_int)
         set_signature('splinter_bspline_builder_delete', c_void, handle_type)
+
         set_signature('splinter_bspline_param_init', handle_type, c_int, c_int, c_double_p, c_int, c_double_p, c_int_p, c_int_p)
-        set_signature('splinter_bspline_load_init', handle_type, c_char_p)
         set_signature('splinter_bspline_get_knot_vector_sizes', c_int_p, handle_type)
         set_signature('splinter_bspline_get_knot_vectors', c_double_p, handle_type)
         set_signature('splinter_bspline_get_num_control_points', c_int, handle_type)
@@ -146,7 +144,6 @@ class SplinterBackend:
         set_signature('splinter_bspline_eval_jacobian_row_major', c_double_p, handle_type, c_double_p, c_int)
         set_signature('splinter_bspline_get_dim_x', c_int, handle_type)
         set_signature('splinter_bspline_get_dim_y', c_int, handle_type)
-        set_signature('splinter_bspline_save', c_void, handle_type, c_char_p)
         set_signature('splinter_bspline_save_to_json', c_void, handle_type, c_char_p)
         set_signature('splinter_bspline_load_from_json', handle_type, c_char_p)
         set_signature('splinter_bspline_delete', c_void, handle_type)

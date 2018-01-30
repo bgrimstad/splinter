@@ -21,7 +21,6 @@ DegreesType = Union[int, List[int]]
 class BSpline(Function):
 
     class Smoothing:
-        # NOTE: For the moment, this enum exists also in BSplineBuilder
         NONE, IDENTITY, PSPLINE = range(3)
 
         @staticmethod
@@ -84,20 +83,6 @@ class BSpline(Function):
                                            num_knots_per_vector_c_array,
                                            degrees_c_array)
         return BSpline(handle)
-
-    def save(self, filename):
-        c_filename = get_c_string(filename)
-        splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_save, self._handle, c_filename)
-
-    @staticmethod
-    def load(filename):
-        if is_string(filename):
-            # If string, load the BSpline from the file
-            c_filename = get_c_string(filename)
-            handle = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_load_init, c_filename)
-            return BSpline(handle)
-        else:
-            return None
 
     def save_to_json(self, filename):
         c_filename = get_c_string(filename)

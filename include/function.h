@@ -11,7 +11,6 @@
 #define SPLINTER_FUNCTION_H
 
 #include "definitions.h"
-#include "saveable.h"
 
 namespace SPLINTER
 {
@@ -89,7 +88,6 @@ protected:
     unsigned int dim_x; // Dimension of domain (size of x)
     unsigned int dim_y; // Dimension of codomain (size of y)
 
-    friend class Serializer;
 };
 
 } // namespace SPLINTER

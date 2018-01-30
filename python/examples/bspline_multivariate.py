@@ -27,6 +27,7 @@ elif os.path.isdir("/home/anders/"):
 def f(x):
     return x[0]*x[1]
 
+
 x1 = np.arange(-5, 5, 0.25)
 x2 = np.arange(-5, 5, 0.25)
 X1, X2 = np.meshgrid(x1, x2)

@@ -28,8 +28,6 @@ public:
     DataTable();
     DataTable(bool allow_duplicates);
     DataTable(bool allow_duplicates, bool allow_incomplete_grid);
-    DataTable(const char *fileName);
-    DataTable(const std::string &filename); // Load DataTable from file
 
     /*
      * Functions for adding a sample (x, y)
@@ -72,8 +70,6 @@ public:
 
     bool is_grid_complete() const;
 
-    void save(const std::string &fileName) const;
-
 private:
     bool _allow_duplicates;
     bool _allow_incomplete_grid;
@@ -82,7 +78,7 @@ private:
     unsigned int _dim_y;
 
     std::multiset<DataPoint> samples;
-    std::vector< std::set<double> > grid;
+    std::vector<std::set<double>> grid;
 
     void init_data_structures(); // Initialise grid to be a std::vector of xDim std::sets
     unsigned int get_num_samples_required() const;
@@ -93,9 +89,6 @@ private:
     // This function prints a message and exits the program if the grid is not complete.
     void grid_complete_guard() const;
 
-    void load(const std::string &fileName);
-
-    friend class Serializer;
     friend bool operator==(const DataTable &lhs, const DataTable &rhs);
 };
 

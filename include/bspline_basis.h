@@ -13,6 +13,7 @@
 #include "definitions.h"
 #include "bspline_basis_1d.h"
 
+
 namespace SPLINTER
 {
 
@@ -64,7 +65,6 @@ private:
     std::vector<BSplineBasis1D> bases;
     unsigned int num_variables;
 
-    friend class Serializer;
     friend bool operator==(const BSplineBasis &lhs, const BSplineBasis &rhs);
 };
 

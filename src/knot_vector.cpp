@@ -10,6 +10,7 @@
 #include <knot_vector.h>
 #include <algorithm>
 
+
 namespace SPLINTER
 {
 

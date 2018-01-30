@@ -13,7 +13,7 @@
 #include <iomanip>
 #include <stdexcept>
 #include <limits>
-#include <serializer.h>
+
 
 namespace SPLINTER
 {
@@ -35,16 +35,6 @@ DataTable::DataTable(bool allow_duplicates, bool allow_incomplete_grid)
       _dim_x(0),
       _dim_y(0)
 {
-}
-
-DataTable::DataTable(const char *fileName)
-    : DataTable(std::string(fileName))
-{
-}
-
-DataTable::DataTable(const std::string &filename)
-{
-    load(filename);
 }
 
 void DataTable::add_sample(double x, double y)
@@ -141,19 +131,6 @@ void DataTable::grid_complete_guard() const
     {
         throw Exception("DataTable::grid_complete_guard: The grid is not complete yet!");
     }
-}
-
-void DataTable::save(const std::string &fileName) const
-{
-    Serializer s;
-    s.serialize(*this);
-    s.saveToFile(fileName);
-}
-
-void DataTable::load(const std::string &fileName)
-{
-    Serializer s(fileName);
-    s.deserialize(*this);
 }
 
 /*
