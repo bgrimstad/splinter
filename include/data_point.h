@@ -16,9 +16,8 @@ namespace SPLINTER
 {
 
 /*
- * DataPoint is a class representing a data point (x, y),
- * where y is the value obtained by sampling at a point x.
- * Note that x is a vector and y is a scalar.
+ * DataPoint is a class representing a data point (x, y), where y is the value obtained by sampling at a point x.
+ * Note that x and y may be a scalar or vector.
  */
 class DataPoint
 {
