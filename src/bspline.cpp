@@ -382,12 +382,12 @@ bool BSpline::remove_unsupported_basis_functions(const std::vector<double> &lb, 
     return true;
 }
 
-void BSpline::save_to_json(const std::string &filename) const {
-    SPLINTER::save_to_json(*this, filename);
+void BSpline::to_json(const std::string &filename) const {
+    SPLINTER::bspline_to_json(*this, filename);
 }
 
-BSpline BSpline::load_from_json(const std::string &filename) {
-    return SPLINTER::load_from_json(filename);
+BSpline BSpline::from_json(const std::string &filename) {
+    return SPLINTER::bspline_from_json(filename);
 }
 
 std::string BSpline::get_description() const

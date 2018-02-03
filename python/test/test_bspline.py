@@ -84,9 +84,9 @@ def test_bspline_save_load():
     filename = "bspline.json"
 
     try:
-        bs1.save_to_json(filename)
+        bs1.to_json(filename)
 
-        bs2 = splinterpy.BSpline.load_from_json(filename)
+        bs2 = splinterpy.BSpline.from_json(filename)
 
         assert(all(x == y for x, y in zip(bs1.get_degrees(), bs2.get_degrees())))
 

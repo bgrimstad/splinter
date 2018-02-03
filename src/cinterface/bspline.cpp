@@ -381,14 +381,14 @@ int splinter_bspline_get_dim_y(splinter_obj_ptr bspline_ptr)
     return retVal;
 }
 
-void splinter_bspline_save_to_json(splinter_obj_ptr bspline_ptr, const char *filename)
+void splinter_bspline_to_json(splinter_obj_ptr bspline_ptr, const char *filename)
 {
     auto bspline = get_bspline(bspline_ptr);
     if (bspline != nullptr)
     {
         try
         {
-            bspline->save_to_json(filename);
+            bspline->to_json(filename);
         }
         catch(const Exception &e)
         {
@@ -397,13 +397,13 @@ void splinter_bspline_save_to_json(splinter_obj_ptr bspline_ptr, const char *fil
     }
 }
 
-splinter_obj_ptr splinter_bspline_load_from_json(const char *filename)
+splinter_obj_ptr splinter_bspline_from_json(const char *filename)
 {
     splinter_obj_ptr loaded_bspline = nullptr;
 
     try
     {
-        loaded_bspline = (splinter_obj_ptr) new BSpline(BSpline::load_from_json(filename));
+        loaded_bspline = (splinter_obj_ptr) new BSpline(BSpline::from_json(filename));
         bsplines.insert(loaded_bspline);
     }
     catch (const Exception &e)

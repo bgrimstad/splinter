@@ -8,6 +8,7 @@
 */
 
 #include "data_table.h"
+#include "json_parser.h"
 #include <string>
 #include <fstream>
 #include <iomanip>
@@ -67,7 +68,7 @@ void DataTable::add_sample(const DataPoint &sample)
     }
 
     if (sample.get_dim_x() != _dim_x || sample.get_dim_y() != _dim_y) {
-        throw Exception("Datatable::add_sample: Dimension of new sample is inconsistent with previous samples!");
+        throw Exception("DataTable::add_sample: Dimension of new sample is inconsistent with previous samples!");
     }
 
     // Check if the sample has been added already
@@ -183,6 +184,14 @@ std::vector<std::vector<double>> DataTable::get_table_y() const
     return table;
 }
 
+void DataTable::to_json(const std::string &filename) const {
+    SPLINTER::datatable_to_json(*this, filename);
+}
+
+DataTable DataTable::from_json(const std::string &filename) {
+    return SPLINTER::datatable_from_json(filename);
+}
+
 DataTable operator+(const DataTable &lhs, const DataTable &rhs)
 {
     if(lhs.get_dim_x() != rhs.get_dim_x()) {
@@ -207,10 +216,10 @@ DataTable operator-(const DataTable &lhs, const DataTable &rhs)
     }
 
     DataTable result;
-    auto rhsSamples = rhs.get_samples();
+    auto rhs_samples = rhs.get_samples();
     // Add all samples from lhs that are not in rhs
     for(auto it = lhs.cbegin(); it != lhs.cend(); it++) {
-        if(rhsSamples.count(*it) == 0) {
+        if(rhs_samples.count(*it) == 0) {
             result.add_sample(*it);
         }
     }

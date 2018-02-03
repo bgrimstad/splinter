@@ -13,7 +13,7 @@
 namespace SPLINTER
 {
 
-std::set<splinter_obj_ptr> dataTables = std::set<splinter_obj_ptr>();
+std::set<splinter_obj_ptr> datatables = std::set<splinter_obj_ptr>();
 std::set<splinter_obj_ptr> bsplines = std::set<splinter_obj_ptr>();
 std::set<splinter_obj_ptr> bspline_builders = std::set<splinter_obj_ptr>();
 
@@ -31,7 +31,7 @@ void set_error_string(const char *new_error_string)
 /* Cast the splinter_obj_ptr to a DataTable * */
 DataTable *get_datatable(splinter_obj_ptr datatable_ptr)
 {
-    if (dataTables.count(datatable_ptr) > 0)
+    if (datatables.count(datatable_ptr) > 0)
     {
         return static_cast<DataTable *>(datatable_ptr);
     }

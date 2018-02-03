@@ -26,7 +26,7 @@ splinter_obj_ptr splinter_datatable_init()
 {
     splinter_obj_ptr dataTable = (splinter_obj_ptr) new DataTable();
 
-    dataTables.insert(dataTable);
+    datatables.insert(dataTable);
 
     return dataTable;
 }
@@ -118,12 +118,47 @@ int splinter_datatable_get_num_samples(splinter_obj_ptr datatable_ptr)
     return 0;
 }
 
+void splinter_datatable_to_json(splinter_obj_ptr datatable_ptr, const char *filename)
+{
+    auto datatable = get_datatable(datatable_ptr);
+    if (datatable != nullptr)
+    {
+        try
+        {
+            datatable->to_json(filename);
+        }
+        catch(const Exception &e)
+        {
+            set_error_string(e.what());
+        }
+    }
+}
+
+splinter_obj_ptr splinter_datatable_from_json(const char *filename)
+{
+    splinter_obj_ptr loaded_datatable = nullptr;
+
+    try
+    {
+        loaded_datatable = (splinter_obj_ptr) new DataTable(DataTable::from_json(filename));
+        datatables.insert(loaded_datatable);
+    }
+    catch (const Exception &e)
+    {
+        // Free the memory of the copy in case the exception was thrown by the insert
+        delete (DataTable *) loaded_datatable;
+        set_error_string(e.what());
+    }
+
+    return loaded_datatable;
+}
+
 void splinter_datatable_delete(splinter_obj_ptr datatable_ptr)
 {
     auto dataTable = get_datatable(datatable_ptr);
     if (dataTable != nullptr)
     {
-        dataTables.erase(datatable_ptr);
+        datatables.erase(datatable_ptr);
         delete dataTable;
     }
 }

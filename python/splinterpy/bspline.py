@@ -84,16 +84,16 @@ class BSpline(Function):
                                            degrees_c_array)
         return BSpline(handle)
 
-    def save_to_json(self, filename):
+    def to_json(self, filename):
         c_filename = get_c_string(filename)
-        splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_save_to_json, self._handle, c_filename)
+        splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_to_json, self._handle, c_filename)
 
     @staticmethod
-    def load_from_json(filename):
+    def from_json(filename):
         if is_string(filename):
             # If string, load the BSpline from the file
             c_filename = get_c_string(filename)
-            handle = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_load_from_json, c_filename)
+            handle = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_from_json, c_filename)
             return BSpline(handle)
         else:
             return None

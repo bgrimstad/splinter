@@ -70,6 +70,13 @@ public:
 
     bool is_grid_complete() const;
 
+    /**
+     * Save and load
+     */
+    void to_json(const std::string &filename) const;
+
+    static DataTable from_json(const std::string &filename);
+
 private:
     bool _allow_duplicates;
     bool _allow_incomplete_grid;
@@ -80,7 +87,9 @@ private:
     std::multiset<DataPoint> samples;
     std::vector<std::set<double>> grid;
 
-    void init_data_structures(); // Initialise grid to be a std::vector of xDim std::sets
+    // Initialise grid to be a std::vector of _dim_x sized std::sets
+    void init_data_structures();
+
     unsigned int get_num_samples_required() const;
 
     void record_grid_point(const DataPoint &sample);
@@ -90,6 +99,7 @@ private:
     void grid_complete_guard() const;
 
     friend bool operator==(const DataTable &lhs, const DataTable &rhs);
+    friend void datatable_to_json(const DataTable &data, const std::string &filename);
 };
 
 DataTable operator+(const DataTable &lhs, const DataTable &rhs);

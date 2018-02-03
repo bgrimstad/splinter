@@ -146,9 +146,9 @@ public:
     /**
      * Save and load
      */
-    void save_to_json(const std::string &filename) const;
+    void to_json(const std::string &filename) const;
 
-    static BSpline load_from_json(const std::string &filename);
+    static BSpline from_json(const std::string &filename);
 
     /**
      * Helper functions

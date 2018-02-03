@@ -112,6 +112,22 @@ SPLINTER_API int splinter_datatable_get_dim_y(splinter_obj_ptr datatable_ptr);
 SPLINTER_API int splinter_datatable_get_num_samples(splinter_obj_ptr datatable_ptr);
 
 /**
+ * Save a DataTable to json file.
+ *
+ * @param datatable_ptr Pointer to the DataTable
+ * @param filename File to save the DataTable to (will be overwritten!)
+ */
+SPLINTER_API void splinter_datatable_to_json(splinter_obj_ptr datatable_ptr, const char *filename);
+
+/**
+ * Load a DataTable from json file.
+ *
+ * @param datatable_ptr Pointer to the DataTable
+ * @param filename File to save the DataTable to (will be overwritten!)
+ */
+SPLINTER_API splinter_obj_ptr splinter_datatable_from_json(const char *filename);
+
+/**
  * Free the memory of a datatable.
  *
  * @param datatable_ptr Pointer to the datatable.
@@ -351,18 +367,18 @@ SPLINTER_API int splinter_bspline_get_dim_y(splinter_obj_ptr bspline_ptr);
 /**
  * Save a BSpline to json file.
  *
- * @param bspline_ptr Pointer to the BSpline.
- * @param filename File to save the BSpline to (will be overwritten!).
+ * @param bspline_ptr Pointer to the BSpline
+ * @param filename File to save the BSpline to (will be overwritten!)
  */
-SPLINTER_API void splinter_bspline_save_to_json(splinter_obj_ptr bspline_ptr, const char *filename);
+SPLINTER_API void splinter_bspline_to_json(splinter_obj_ptr bspline_ptr, const char *filename);
 
 /**
- * Save a BSpline to json file.
+ * Load a BSpline to json file.
  *
- * @param bspline_ptr Pointer to the BSpline.
- * @param filename File to save the BSpline to (will be overwritten!).
+ * @param bspline_ptr Pointer to the BSpline
+ * @param filename File to save the BSpline to (will be overwritten!)
  */
-SPLINTER_API splinter_obj_ptr splinter_bspline_load_from_json(const char *filename);
+SPLINTER_API splinter_obj_ptr splinter_bspline_from_json(const char *filename);
 
 /**
  * Free the memory used by a BSpline.
