@@ -133,7 +133,8 @@ class SplinterBackend:
         set_signature('splinter_bspline_builder_fit', handle_type, handle_type, handle_type, c_int, c_double, c_double_p, c_int)
         set_signature('splinter_bspline_builder_delete', c_void, handle_type)
 
-        set_signature('splinter_bspline_param_init', handle_type, c_int, c_int, c_double_p, c_int, c_double_p, c_int_p, c_int_p)
+        set_signature('splinter_bspline_from_param', handle_type, c_int, c_int, c_double_p, c_int, c_double_p, c_int_p, c_int_p)
+        set_signature('splinter_bspline_from_param_zero', handle_type, c_int, c_int, c_double_p, c_int_p, c_int_p)
         set_signature('splinter_bspline_get_knot_vector_sizes', c_int_p, handle_type)
         set_signature('splinter_bspline_get_knot_vectors', c_double_p, handle_type)
         set_signature('splinter_bspline_get_num_control_points', c_int, handle_type)

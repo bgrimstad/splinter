@@ -37,7 +37,7 @@ control_points = [0, 1, 0, 0, 1, 0]
 knot_vector = [0, 0, 0, 1, 2, 2, 3, 4, 4, 4]
 degree = 3
 
-bs = splinterpy.BSpline.init_from_param(control_points, knot_vector, degree)
+bs = splinterpy.BSpline.from_param(degree, knot_vector, control_points)
 
 
 # Compute B-spline derivative (see pp. 93-94 in the NURBS book)
@@ -146,7 +146,7 @@ masked_control_points = mask_control_points(control_points2, mask)
 print("Masked control points:", masked_control_points)
 
 # Build derivative
-bs2 = splinterpy.BSpline.init_from_param(masked_control_points, knot_vector2, degree-1)
+bs2 = splinterpy.BSpline.from_param(degree - 1, knot_vector2, masked_control_points)
 
 # Evaluate and plot results
 xd = np.arange(0, 4, .01)

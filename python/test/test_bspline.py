@@ -35,10 +35,10 @@ test_param = [
 def test_bspline_construction(control_points, knot_vectors, degrees, exception):
     # B-spline built from parameters: coefficients, knot vectors and degrees
     if not exception:
-        splinterpy.BSpline.init_from_param(control_points, knot_vectors, degrees)
+        splinterpy.BSpline.from_param(degrees, knot_vectors, control_points)
     else:
         with pytest.raises(exception) as e:
-            splinterpy.BSpline.init_from_param(control_points, knot_vectors, degrees)
+            splinterpy.BSpline.from_param(degrees, knot_vectors, control_points)
 
 
 @pytest.mark.parametrize("control_points, knot_vectors, degrees, exception", test_param)
@@ -48,7 +48,7 @@ def test_bspline_getters(control_points, knot_vectors, degrees, exception):
         return
 
     # B-spline built from parameters: coefficients, knot vectors and degrees
-    bspline = splinterpy.BSpline.init_from_param(control_points, knot_vectors, degrees)
+    bspline = splinterpy.BSpline.from_param(degrees, knot_vectors, control_points)
 
     # Compare control points
     control_points_get = bspline.get_control_points()
@@ -79,7 +79,7 @@ def test_bspline_save_load():
     control_points = [0, 1, 0, 1, 0]
     knots = [0, 0, 1, 2, 3, 4, 4]
     degree = 1
-    bs1 = splinterpy.BSpline.init_from_param(control_points, knots, degree)
+    bs1 = splinterpy.BSpline.from_param(degree, knots, control_points)
 
     filename = "bspline.json"
 

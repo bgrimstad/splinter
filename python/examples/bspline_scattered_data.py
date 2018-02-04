@@ -34,7 +34,7 @@ for u in np.linspace(0, 1, len(knots[0]) - degrees[0] - 1):
     for v in np.linspace(0, 1, len(knots[1]) - degrees[1] - 1):
         control_points.append([0])
 
-bspline = splinterpy.BSpline.init_from_param(control_points, knots, degrees)
+bspline = splinterpy.BSpline.from_param(degrees, knots, control_points)
 
 # Draw some samples randomly on D
 num_samples = 10

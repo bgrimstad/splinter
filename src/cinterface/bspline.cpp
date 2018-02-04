@@ -16,13 +16,9 @@ using namespace SPLINTER;
 extern "C"
 {
 
-splinter_obj_ptr splinter_bspline_param_init(int dim_x,
-                                             int dim_y,
-                                             double *control_points,
-                                             int num_control_points,
-                                             double *knot_vectors,
-                                             int *num_knots_per_vector,
-                                             unsigned int *degrees)
+splinter_obj_ptr splinter_bspline_from_param(unsigned int dim_x, unsigned int dim_y, double *control_points,
+                                             unsigned int num_control_points, double *knot_vectors,
+                                             unsigned int *num_knots_per_vector, unsigned int *degrees)
 {
     splinter_obj_ptr bspline = nullptr;
     auto control_points_vec_vec = get_vector_vector(control_points, dim_y, num_control_points);
@@ -32,6 +28,29 @@ splinter_obj_ptr splinter_bspline_param_init(int dim_x,
     try
     {
         bspline = (splinter_obj_ptr) new BSpline(control_points_vec_vec, knot_vectors_vec_vec, degrees_vec);
+        bsplines.insert(bspline);
+    }
+    catch (const Exception &e)
+    {
+        set_error_string(e.what());
+    }
+
+    return bspline;
+}
+
+splinter_obj_ptr splinter_bspline_from_param_zero(unsigned int dim_x,
+                                                  unsigned int dim_y,
+                                                  double *knot_vectors,
+                                                  unsigned int *num_knots_per_vector,
+                                                  unsigned int *degrees)
+{
+    splinter_obj_ptr bspline = nullptr;
+    auto knot_vectors_vec_vec = get_vector_vector(knot_vectors, num_knots_per_vector, dim_x);
+    auto degrees_vec = get_vector(degrees, dim_x);
+
+    try
+    {
+        bspline = (splinter_obj_ptr) new BSpline(dim_x, dim_y, knot_vectors_vec_vec, degrees_vec);
         bsplines.insert(bspline);
     }
     catch (const Exception &e)

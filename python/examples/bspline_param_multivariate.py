@@ -30,7 +30,7 @@ for i, kv in enumerate(knot_vectors):
 
 control_points = np.linspace(0, 100, num_control_points)
 
-bs = splinterpy.BSpline.init_from_param(control_points, knot_vectors, degrees)
+bs = splinterpy.BSpline.from_param(degrees, knot_vectors, control_points)
 
 xd = [0, 0, 0]
 yd = bs.eval(xd)

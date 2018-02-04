@@ -34,7 +34,7 @@ for u in np.linspace(0, 1, len(knots[0]) - degrees[0] - 1):
     for v in np.linspace(0, 1, len(knots[1]) - degrees[1] - 1):
         control_points.append([u, v, sin(10*u) + 0.01*v])
 
-bspline_surface = splinterpy.BSpline.init_from_param(control_points, knots, degrees)
+bspline_surface = splinterpy.BSpline.from_param(degrees, knots, control_points)
 
 # Evaluate
 u = np.linspace(0, 1, 40)

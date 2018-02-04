@@ -109,18 +109,19 @@ std::vector<NUMERICAL_TYPE> get_vector(NUMERICAL_TYPE *array, int n)
  * @return std::vector<NUMERICAL_TYPE> with the same elements as in array
  */
 template <typename NUMERICAL_TYPE>
-std::vector<std::vector<NUMERICAL_TYPE>> get_vector_vector(NUMERICAL_TYPE *array, int *num_per_row, int num_rows)
+std::vector<std::vector<NUMERICAL_TYPE>> get_vector_vector(NUMERICAL_TYPE *array, unsigned int *num_per_row,
+                                                           unsigned int num_rows)
 {
-    auto num_per_row_as_vec = std::vector<int>(num_per_row, num_per_row + num_rows);
+    auto num_per_row_as_vec = std::vector<unsigned int>(num_per_row, num_per_row + num_rows);
 
     auto vec_vec = std::vector<std::vector<NUMERICAL_TYPE>>(num_rows);
 
     int k = 0;
-    for (int i = 0; i < num_rows; ++i)
+    for (unsigned int i = 0; i < num_rows; ++i)
     {
-        int num_row_i = num_per_row_as_vec.at(i);
+        unsigned int num_row_i = num_per_row_as_vec.at(i);
         std::vector<NUMERICAL_TYPE> vec(num_row_i);
-        for (int j = 0; j < num_row_i; ++j)
+        for (unsigned int j = 0; j < num_row_i; ++j)
         {
             vec.at(j) = array[k];
             k++;
@@ -141,15 +142,16 @@ std::vector<std::vector<NUMERICAL_TYPE>> get_vector_vector(NUMERICAL_TYPE *array
  * @return std::vector<NUMERICAL_TYPE> with the same elements as in array
  */
 template <typename NUMERICAL_TYPE>
-std::vector<std::vector<NUMERICAL_TYPE>> get_vector_vector(NUMERICAL_TYPE *array, int num_per_row, int num_rows)
+std::vector<std::vector<NUMERICAL_TYPE>> get_vector_vector(NUMERICAL_TYPE *array, unsigned int num_per_row,
+                                                           unsigned int num_rows)
 {
     auto vec_vec = std::vector<std::vector<NUMERICAL_TYPE>>(num_rows);
 
-    int k = 0;
-    for (int i = 0; i < num_rows; ++i)
+    unsigned int k = 0;
+    for (unsigned int i = 0; i < num_rows; ++i)
     {
         std::vector<NUMERICAL_TYPE> vec(num_per_row);
-        for (int j = 0; j < num_per_row; ++j)
+        for (unsigned int j = 0; j < num_per_row; ++j)
         {
             vec.at(j) = array[k];
             k++;

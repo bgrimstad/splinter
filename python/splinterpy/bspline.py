@@ -36,7 +36,7 @@ class BSpline(Function):
             self._dim_y = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_get_dim_y, self._handle)
 
     @staticmethod
-    def init_from_param(control_points: ControlPointsType, knot_vectors: KnotVectorsType, degrees: DegreesType) -> 'BSpline':
+    def from_param(degrees: DegreesType, knot_vectors: KnotVectorsType, control_points: ControlPointsType) -> 'BSpline':
         """
         Builds B-splines given explicit parameters
         :param control_points: a list of control points in R^dim_y
@@ -74,7 +74,7 @@ class BSpline(Function):
         knot_vectors_c_array = list_to_c_array_of_doubles(flatten_list(knot_vectors))
         num_knots_per_vector_c_array = list_to_c_array_of_ints(list([len(vec) for vec in knot_vectors]))
         degrees_c_array = list_to_c_array_of_ints(degrees)
-        handle = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_param_init,
+        handle = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_from_param,
                                            dim_x,
                                            dim_y,
                                            control_points_c_array,

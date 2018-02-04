@@ -23,7 +23,7 @@ elif os.path.isdir("/home/anders/"):
 control_points = [0, 1, 0, 1, 0]
 knot_vector = [0, 0, 1, 2, 3, 4, 4]
 degree = 1
-bs = splinterpy.BSpline.init_from_param(control_points, knot_vector, degree)
+bs = splinterpy.BSpline.from_param(degree, knot_vector, control_points)
 
 xd = np.arange(0, 4, .01)
 yd = bs.eval(xd)

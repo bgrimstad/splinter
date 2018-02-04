@@ -24,7 +24,7 @@ elif os.path.isdir("/home/anders/"):
 degree = 3
 knots = [0, 0, 0, 0, 1, 1, 1, 1]
 control_points = [[0, 0], [1, 1], [2, 1], [3, 0]]
-bspline_curve = splinterpy.BSpline.init_from_param(control_points, knots, degree)
+bspline_curve = splinterpy.BSpline.from_param(degree, knots, control_points)
 
 # Evaluate B-spline curve for u in [0, 1]
 u = np.linspace(0, 1, 1000)
