@@ -114,7 +114,7 @@ TEST_CASE(COMMON_TEXT "knot averages", COMMON_TAGS "[knotaverages]")
     cp1_new.block(0, 0, mu1_mat.rows(), mu1_mat.cols()) = mu1_mat;
     cp1_new.block(0, mu1_mat.cols(), cp1_mat.rows(), cp1_mat.cols()) = cp1_mat;
 
-    BSpline bs1_new = BSpline(eig_mat_to_std_vec_vec(cp1_new), kv1, deg1);
+    BSpline bs1_new = BSpline(eig_to_std_mat(cp1_new), kv1, deg1);
 
     /*
      * The new B-spline should evaluate to (x, f(x)) for any x in the B-spline support

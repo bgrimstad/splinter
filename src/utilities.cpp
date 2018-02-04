@@ -33,7 +33,7 @@ DenseVector std_to_eig_vec(const std::vector<double> &vec)
     return eigVec;
 }
 
-std::vector<std::vector<double>> eig_mat_to_std_vec_vec(const DenseMatrix &mat)
+std::vector<std::vector<double>> eig_to_std_mat(const DenseMatrix &mat)
 {
     std::vector<std::vector<double>> vec(mat.rows());
 
@@ -48,7 +48,7 @@ std::vector<std::vector<double>> eig_mat_to_std_vec_vec(const DenseMatrix &mat)
     return vec;
 }
 
-DenseMatrix std_vec_vec_to_eig_mat(const std::vector<std::vector<double>> &vec)
+DenseMatrix std_to_eig_mat(const std::vector<std::vector<double>> &vec)
 {
     size_t numRows = vec.size();
     size_t numCols = numRows > 0 ? vec.at(0).size() : 0;

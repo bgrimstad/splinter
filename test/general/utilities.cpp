@@ -69,9 +69,9 @@ TEST_CASE("Eigen types to standard C++ conversion", COMMON_TAGS)
 
     SECTION("Converting between standard vector<vector<double>> and DenseMatrix works correctly")
     {
-        CHECK(originalVecVec == std_vec_vec_to_eig_mat(originalVecVec));
-        CHECK(originalVecVec == eig_mat_to_std_vec_vec(std_vec_vec_to_eig_mat(originalVecVec)));
-        CHECK(emptyVecVec == std_vec_vec_to_eig_mat(emptyVecVec));
-        CHECK(emptyVecVec == eig_mat_to_std_vec_vec(std_vec_vec_to_eig_mat(emptyVecVec)));
+        CHECK(originalVecVec == std_to_eig_mat(originalVecVec));
+        CHECK(originalVecVec == eig_to_std_mat(std_to_eig_mat(originalVecVec)));
+        CHECK(emptyVecVec == std_to_eig_mat(emptyVecVec));
+        CHECK(emptyVecVec == eig_to_std_mat(std_to_eig_mat(emptyVecVec)));
     }
 }

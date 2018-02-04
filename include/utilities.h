@@ -44,9 +44,9 @@ std::vector<double> eig_to_std_vec(const DenseVector &vec);
 
 DenseVector std_to_eig_vec(const std::vector<double> &vec);
 
-std::vector<std::vector<double>> eig_mat_to_std_vec_vec(const DenseMatrix &mat);
+std::vector<std::vector<double>> eig_to_std_mat(const DenseMatrix &mat);
 
-DenseMatrix std_vec_vec_to_eig_mat(const std::vector<std::vector<double>> &vec);
+DenseMatrix std_to_eig_mat(const std::vector<std::vector<double>> &vec);
 
 std::vector<double> linspace(double start, double stop, unsigned int num);
 

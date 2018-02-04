@@ -41,7 +41,7 @@ BSpline::BSpline(const std::vector<std::vector<double>> &control_points,
                  const std::vector<unsigned int> &degrees)
     : Function(knot_vectors.size(), control_points.at(0).size()),
       basis(BSplineBasis(knot_vectors, degrees)),
-      control_points(std_vec_vec_to_eig_mat(control_points))
+      control_points(std_to_eig_mat(control_points))
 {
     check_control_points();
 }
@@ -69,7 +69,7 @@ DenseMatrix BSpline::eval_jacobian(const DenseVector &x) const
     return control_points.transpose()* eval_basis_jacobian(x);
 }
 
-/*
+/**
  * Returns the Hessian evaluated at x. The Hessian is a (dim_y x dim_x x dim_x) tensor.
  */
 std::vector<std::vector<std::vector<double>>> BSpline::eval_hessian(const std::vector<double> &x) const
@@ -99,13 +99,15 @@ std::vector<std::vector<std::vector<double>>> BSpline::eval_hessian(const std::v
             for (size_t k = j+1; k < dim_x; ++k)
                 H(j, k) = H(k, j);
 
-        hessian.push_back(eig_mat_to_std_vec_vec(H));
+        hessian.push_back(eig_to_std_mat(H));
     }
 
     return hessian;
 }
 
-// Evaluation of B-spline basis functions
+/**
+ * Evaluation of B-spline basis functions
+ */
 SparseVector BSpline::eval_basis(const DenseVector &x) const
 {
 #ifndef NDEBUG
@@ -116,6 +118,9 @@ SparseVector BSpline::eval_basis(const DenseVector &x) const
     return basis.eval(x);
 }
 
+/**
+ * Evaluation of B-spline basis Jacobian
+ */
 SparseMatrix BSpline::eval_basis_jacobian(const DenseVector &x) const
 {
 #ifndef NDEBUG
@@ -304,9 +309,9 @@ DenseMatrix BSpline::compute_knot_averages() const
     }
 
     // Calculate vectors of ones (with same length as corresponding knot average vector)
-    std::vector<DenseVector> knotOnes;
+    std::vector<DenseVector> knot_ones;
     for (unsigned int i = 0; i < dim_x; i++)
-        knotOnes.push_back(DenseVector::Ones(mu_vectors.at(i).rows()));
+        knot_ones.push_back(DenseVector::Ones(mu_vectors.at(i).rows()));
 
     // Fill knot average matrix one column at the time
     DenseMatrix knot_averages = DenseMatrix::Zero(basis.get_num_basis_functions(), dim_x);
@@ -320,7 +325,7 @@ DenseMatrix BSpline::compute_knot_averages() const
             if (i == j)
                 mu_ext = Eigen::kroneckerProduct(temp, mu_vectors.at(j));
             else
-                mu_ext = Eigen::kroneckerProduct(temp, knotOnes.at(j));
+                mu_ext = Eigen::kroneckerProduct(temp, knot_ones.at(j));
         }
         if (mu_ext.rows() != basis.get_num_basis_functions())
             throw Exception("BSpline::compute_knot_averages: Incompatible size of knot average matrix.");
@@ -347,7 +352,7 @@ void BSpline::regularize_knot_vectors(const std::vector<double> &lb, const std::
 
     for (unsigned int dim = 0; dim < dim_x; dim++)
     {
-        unsigned int multiplicityTarget = basis.get_basis_degree(dim) + 1;
+        unsigned int multiplicity_target = basis.get_basis_degree(dim) + 1;
 
         // Inserting many knots at the time (to save number of B-spline coefficient calculations)
         // NOTE: This method generates knot insertion matrices with more nonzero elements than
@@ -355,16 +360,16 @@ void BSpline::regularize_knot_vectors(const std::vector<double> &lb, const std::
         // kronecker product matrices to become too small and the speed deteriorates drastically
         // in higher dimensions because reallocation is necessary. This can be prevented by
         // computing the number of nonzeros when preallocating memory (see my_kronecker_product).
-        int numKnotsLB = multiplicityTarget - basis.get_knot_multiplicity(dim, lb.at(dim));
-        if (numKnotsLB > 0)
+        int num_knots_lb = multiplicity_target - basis.get_knot_multiplicity(dim, lb.at(dim));
+        if (num_knots_lb > 0)
         {
-            insert_knots(lb.at(dim), dim, numKnotsLB);
+            insert_knots(lb.at(dim), dim, num_knots_lb);
         }
 
-        int numKnotsUB = multiplicityTarget - basis.get_knot_multiplicity(dim, ub.at(dim));
-        if (numKnotsUB > 0)
+        int num_knots_ub = multiplicity_target - basis.get_knot_multiplicity(dim, ub.at(dim));
+        if (num_knots_ub > 0)
         {
-            insert_knots(ub.at(dim), dim, numKnotsUB);
+            insert_knots(ub.at(dim), dim, num_knots_ub);
         }
     }
 }
