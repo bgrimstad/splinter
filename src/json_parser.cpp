@@ -90,7 +90,7 @@ BSpline bspline_from_json(const std::string &filename)
         knot_vectors.push_back(knots);
     }
 
-    return BSpline(control_points, knot_vectors, degrees);
+    return BSpline(degrees, knot_vectors, control_points);
 }
 
 void datatable_to_json(const DataTable &data, const std::string &filename)

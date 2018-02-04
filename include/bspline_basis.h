@@ -21,7 +21,7 @@ class BSplineBasis
 {
 public:
     BSplineBasis();
-    BSplineBasis(const std::vector<std::vector<double>> &knotVectors, std::vector<unsigned int> basisDegrees);
+    BSplineBasis(std::vector<unsigned int> degrees, const std::vector<std::vector<double>> &knot_vectors);
 
     // Evaluation
     SparseVector eval(const DenseVector &x) const;

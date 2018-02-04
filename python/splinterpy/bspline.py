@@ -13,9 +13,9 @@ from .utilities import *
 from typing import List, Union
 
 ListList = List[List[float]]
-ControlPointsType = Union[ListList, List[float]]
-KnotVectorsType = Union[ListList, List[float]]
 DegreesType = Union[int, List[int]]
+KnotVectorsType = Union[ListList, List[float]]
+ControlPointsType = Union[ListList, List[float]]
 
 
 class BSpline(Function):
@@ -39,9 +39,9 @@ class BSpline(Function):
     def from_param(degrees: DegreesType, knot_vectors: KnotVectorsType, control_points: ControlPointsType) -> 'BSpline':
         """
         Builds B-splines given explicit parameters
-        :param control_points: a list of control points in R^dim_y
-        :param knot_vectors: a list of dim_x knot vectors of variable size
         :param degrees: a list of dim_x degrees (each being a non-negative integer)
+        :param knot_vectors: a list of dim_x knot vectors of variable size
+        :param control_points: a list of control points in R^dim_y
         :return: BSpline object
         """
 
@@ -77,11 +77,11 @@ class BSpline(Function):
         handle = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_from_param,
                                            dim_x,
                                            dim_y,
-                                           control_points_c_array,
-                                           num_control_points,
+                                           degrees_c_array,
                                            knot_vectors_c_array,
                                            num_knots_per_vector_c_array,
-                                           degrees_c_array)
+                                           control_points_c_array,
+                                           num_control_points)
         return BSpline(handle)
 
     def to_json(self, filename):

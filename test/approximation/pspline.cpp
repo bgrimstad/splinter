@@ -57,7 +57,7 @@ TEST_CASE("PSpline function2" COMMON_TEXT, COMMON_TAGS "[function-value]")
                                  auto num_basis_functions = std::vector<unsigned int>(dim_x, 10);
                                  auto knot_vectors = compute_knot_vectors(table, degrees, KnotSpacing::EXPERIMENTAL, num_basis_functions);
 
-                                 BSpline bs = BSpline(dim_x, dim_y, knot_vectors, degrees).fit(table, BSpline::Smoothing::PSPLINE, 0.01);
+                                 BSpline bs = BSpline(degrees, knot_vectors, dim_y).fit(table, BSpline::Smoothing::PSPLINE, 0.01);
                                  return (Function*) new BSpline(bs);
                              },
                              300,  // Number of points to sample at

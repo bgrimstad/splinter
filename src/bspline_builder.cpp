@@ -46,7 +46,7 @@ BSpline BSpline::Builder::fit(const DataTable &data, Smoothing smoothing, double
     auto knotVectors = compute_knot_vectors(data, _degrees, _knotSpacing, _numBasisFunctions);
 
     // Build B-spline (with default coefficients)
-    return BSpline(_dim_x, _dim_y, knotVectors, _degrees).fit(data, smoothing, alpha, weights);
+    return BSpline(_degrees, knotVectors, _dim_y).fit(data, smoothing, alpha, weights);
 }
 
 /**
@@ -63,7 +63,7 @@ BSpline bspline_interpolator(const DataTable &data, unsigned int degree)
     auto knot_spacing = KnotSpacing::AS_SAMPLED;
     auto knot_vectors = compute_knot_vectors(data, degrees, knot_spacing);
 
-    return BSpline(dim_x, dim_y, knot_vectors, degrees).fit(data);
+    return BSpline(degrees, knot_vectors, dim_y).fit(data);
 }
 
 /**
@@ -93,7 +93,7 @@ BSpline bspline_smoother(const DataTable &data, unsigned int degree, double alph
     auto knot_spacing = KnotSpacing::AS_SAMPLED;
     auto knot_vectors = compute_knot_vectors(data, degrees, knot_spacing);
 
-    return BSpline(dim_x, dim_y, knot_vectors, degrees).fit(data, BSpline::Smoothing::IDENTITY, alpha);
+    return BSpline(degrees, knot_vectors, dim_y).fit(data, BSpline::Smoothing::IDENTITY, alpha);
 }
 
 /**
@@ -124,7 +124,7 @@ BSpline pspline_smoother(const DataTable &data, unsigned int degree, double alph
     auto knot_spacing = KnotSpacing::AS_SAMPLED;
     auto knot_vectors = compute_knot_vectors(data, degrees, knot_spacing);
 
-    return BSpline(dim_x, dim_y, knot_vectors, degrees).fit(data, BSpline::Smoothing::PSPLINE, alpha);
+    return BSpline(degrees, knot_vectors, dim_y).fit(data, BSpline::Smoothing::PSPLINE, alpha);
 }
 
 /**

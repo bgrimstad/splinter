@@ -20,7 +20,7 @@ BSplineBasis1D::BSplineBasis1D()
 {
 }
 
-BSplineBasis1D::BSplineBasis1D(const std::vector<double> &knots, unsigned int degree)
+BSplineBasis1D::BSplineBasis1D(unsigned int degree, const std::vector<double> &knots)
     : degree(degree),
       knots(KnotVector(knots)),
       target_num_basis_functions((degree+1)+2*degree+1) // Minimum p+1
@@ -153,17 +153,13 @@ SparseVector BSplineBasis1D::eval_first_derivative(double x) const
     return values;
 }
 
-// Used to evaluate basis functions - alternative to the recursive deBoorCox
+/* 
+ * Used to evaluate basis functions - alternative to the recursive deBoorCox
+ * Builds B-spline matrix R_k in R^(k,k+1), or, if diff = true, the differentiated basis matrix DR_k in R^(k,k+1).
+ */ 
 SparseMatrix BSplineBasis1D::build_basis_matrix(double x, unsigned int u, unsigned int k, bool diff) const
 {
-    /* Build B-spline Matrix
-     * R_k in R^(k,k+1)
-     * or, if diff = true, the differentiated basis matrix
-     * DR_k in R^(k,k+1)
-     */
-
-    if (!(k >= 1 && k <= get_basis_degree()))
-    {
+    if (!(k >= 1 && k <= get_basis_degree())) {
         throw Exception("BSplineBasis1D::build_basis_matrix: Incorrect input parameters!");
     }
 

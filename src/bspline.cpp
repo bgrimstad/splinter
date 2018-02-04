@@ -24,23 +24,21 @@ namespace SPLINTER
 /**
  * Constructors for multivariate B-spline using explicit data
  */
-BSpline::BSpline(
-        unsigned int dim_x,
-        unsigned int dim_y,
-        const std::vector<std::vector<double>> &knot_vectors,
-        const std::vector<unsigned int> &degrees)
-    : Function(dim_x, dim_y),
-      basis(BSplineBasis(knot_vectors, degrees)),
+BSpline::BSpline(const std::vector<unsigned int> &degrees,
+                 const std::vector<std::vector<double>> &knot_vectors,
+                 unsigned int dim_y)
+    : Function(degrees.size(), dim_y),
+      basis(BSplineBasis(degrees, knot_vectors)),
       control_points(DenseMatrix::Zero(basis.get_num_basis_functions(), dim_y))
 {
     check_control_points();
 }
 
-BSpline::BSpline(const std::vector<std::vector<double>> &control_points,
+BSpline::BSpline(const std::vector<unsigned int> &degrees,
                  const std::vector<std::vector<double>> &knot_vectors,
-                 const std::vector<unsigned int> &degrees)
+                 const std::vector<std::vector<double>> &control_points)
     : Function(knot_vectors.size(), control_points.at(0).size()),
-      basis(BSplineBasis(knot_vectors, degrees)),
+      basis(BSplineBasis(degrees, knot_vectors)),
       control_points(std_to_eig_mat(control_points))
 {
     check_control_points();

@@ -22,7 +22,7 @@ TEST_CASE("computeSecondOrderDifferenceMatrix 1-D" COMMON_TEXT, COMMON_TAGS)
     std::vector<std::vector<double>> knot_vectors = {knots};
     std::vector<unsigned int> degrees = {3};
 
-    BSpline bs(1, 1, knot_vectors, degrees);
+    BSpline bs(degrees, knot_vectors);
 
     auto D = compute_second_order_finite_difference_matrix(bs);
 

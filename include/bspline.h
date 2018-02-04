@@ -41,16 +41,16 @@ public:
 //    enum class Smoothing;
 
     /**
-     * Construct B-spline from knot vectors, control points, and basis degrees
+     * Construct B-spline from basis degree and knot vectors. Default output dimension is 1.
      */
-    BSpline(unsigned int dim_x,
-            unsigned int dim_y,
-            const std::vector<std::vector<double>> &knot_vectors,
-            const std::vector<unsigned int> &degrees);
+    BSpline(const std::vector<unsigned int> &degrees, const std::vector<std::vector<double>> &knot_vectors,
+            unsigned int dim_y = 1);
 
-    BSpline(const std::vector<std::vector<double>> &control_points,
-            const std::vector<std::vector<double>> &knot_vectors,
-            const std::vector<unsigned int> &degrees);
+    /**
+     * Construct B-spline from basis degree, knot vectors and control points.
+     */
+    BSpline(const std::vector<unsigned int> &degrees, const std::vector<std::vector<double>> &knot_vectors,
+            const std::vector<std::vector<double>> &control_points);
 
     virtual BSpline* clone() const { return new BSpline(*this); }
 

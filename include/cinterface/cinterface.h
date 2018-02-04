@@ -227,34 +227,33 @@ SPLINTER_API splinter_obj_ptr splinter_pspline_smoother(splinter_obj_ptr datatab
 /**
  * Construct a BSpline from parameters: coefficients, knot vectors and degrees.
  *
- * @param dim_x The number of variables
- * @param dim_y The number of outputs
- * @param control_points The B-spline coefficients
- * @param num_control_points Number of coefficients
- * @param knot_vectors The B-spline knot vectors
+ * @param dim_x Number of inputs (variables)
+ * @param dim_y Number of outputs
+ * @param degrees B-spline degrees
+ * @param knot_vectors B-spline knot vectors
  * @param num_knots_per_vector Number of knots per knot vector
- * @param degrees The B-spline degrees
+ * @param control_points B-spline control points
+ * @param num_control_points Number of coefficients
  * @return Pointer to the created BSpline.
  */
-SPLINTER_API splinter_obj_ptr splinter_bspline_from_param(unsigned int dim_x, unsigned int dim_y,
-                                                          double *control_points, unsigned int num_control_points,
+SPLINTER_API splinter_obj_ptr splinter_bspline_from_param(unsigned int dim_x, unsigned int dim_y, unsigned int *degrees,
                                                           double *knot_vectors, unsigned int *num_knots_per_vector,
-                                                          unsigned int *degrees);
+                                                          double *control_points, unsigned int num_control_points);
 
 
 /**
  * Construct a BSpline from parameters: knot vectors and degrees. Control points are set to zero.
  *
- * @param dim_x The number of variables
- * @param dim_y The number of outputs
- * @param knot_vectors The B-spline knot vectors
+ * @param dim_x Number of inputs (variables)
+ * @param dim_y Number of outputs
+ * @param degrees B-spline degrees
+ * @param knot_vectors B-spline knot vectors
  * @param num_knots_per_vector Number of knots per knot vector
- * @param degrees The B-spline degrees
  * @return Pointer to the created BSpline.
  */
 SPLINTER_API splinter_obj_ptr splinter_bspline_from_param_zero(unsigned int dim_x, unsigned int dim_y,
-                                                               double *knot_vectors, unsigned int *num_knots_per_vector,
-                                                               unsigned int *degrees);
+                                                               unsigned int *degrees, double *knot_vectors,
+                                                               unsigned int *num_knots_per_vector);
 
 /**
  * Get the sizes of the knot vectors that are returned by splinter_bspline_get_knot_vectors

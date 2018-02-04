@@ -16,18 +16,18 @@ using namespace SPLINTER;
 extern "C"
 {
 
-splinter_obj_ptr splinter_bspline_from_param(unsigned int dim_x, unsigned int dim_y, double *control_points,
-                                             unsigned int num_control_points, double *knot_vectors,
-                                             unsigned int *num_knots_per_vector, unsigned int *degrees)
+splinter_obj_ptr splinter_bspline_from_param(unsigned int dim_x, unsigned int dim_y, unsigned int *degrees, 
+                                             double *knot_vectors, unsigned int *num_knots_per_vector,
+                                             double *control_points, unsigned int num_control_points)
 {
     splinter_obj_ptr bspline = nullptr;
-    auto control_points_vec_vec = get_vector_vector(control_points, dim_y, num_control_points);
-    auto knot_vectors_vec_vec = get_vector_vector(knot_vectors, num_knots_per_vector, dim_x);
     auto degrees_vec = get_vector(degrees, dim_x);
+    auto knot_vectors_vec_vec = get_vector_vector(knot_vectors, num_knots_per_vector, dim_x);
+    auto control_points_vec_vec = get_vector_vector(control_points, dim_y, num_control_points);
 
     try
     {
-        bspline = (splinter_obj_ptr) new BSpline(control_points_vec_vec, knot_vectors_vec_vec, degrees_vec);
+        bspline = (splinter_obj_ptr) new BSpline(degrees_vec, knot_vectors_vec_vec, control_points_vec_vec);
         bsplines.insert(bspline);
     }
     catch (const Exception &e)
@@ -40,9 +40,9 @@ splinter_obj_ptr splinter_bspline_from_param(unsigned int dim_x, unsigned int di
 
 splinter_obj_ptr splinter_bspline_from_param_zero(unsigned int dim_x,
                                                   unsigned int dim_y,
+                                                  unsigned int *degrees,
                                                   double *knot_vectors,
-                                                  unsigned int *num_knots_per_vector,
-                                                  unsigned int *degrees)
+                                                  unsigned int *num_knots_per_vector)
 {
     splinter_obj_ptr bspline = nullptr;
     auto knot_vectors_vec_vec = get_vector_vector(knot_vectors, num_knots_per_vector, dim_x);
@@ -50,7 +50,7 @@ splinter_obj_ptr splinter_bspline_from_param_zero(unsigned int dim_x,
 
     try
     {
-        bspline = (splinter_obj_ptr) new BSpline(dim_x, dim_y, knot_vectors_vec_vec, degrees_vec);
+        bspline = (splinter_obj_ptr) new BSpline(degrees_vec, knot_vectors_vec_vec, dim_y);
         bsplines.insert(bspline);
     }
     catch (const Exception &e)

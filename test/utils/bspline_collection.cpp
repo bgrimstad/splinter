@@ -77,7 +77,7 @@ std::vector<BSpline> get_bspline_collection()
                     auto num_control_points = compute_num_control_points(knot_vectors, degrees);
                     auto control_points = get_random_control_points(num_control_points, dim_y);
 
-                    BSpline bspline(control_points, knot_vectors, degrees);
+                    BSpline bspline(degrees, knot_vectors, control_points);
                     collection.push_back(bspline);
                 }
             }

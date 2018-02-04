@@ -20,36 +20,36 @@ BSplineBasis::BSplineBasis()
 {
 }
 
-BSplineBasis::BSplineBasis(const std::vector< std::vector<double> > &knotVectors, std::vector<unsigned int> basisDegrees)
-    : num_variables(knotVectors.size())
+BSplineBasis::BSplineBasis(std::vector<unsigned int> degrees, const std::vector< std::vector<double> > &knot_vectors)
+    : num_variables(knot_vectors.size())
 {
-    if (knotVectors.size() != basisDegrees.size())
-        throw Exception("BSplineBasis::BSplineBasis: Incompatible sizes. Number of knot vectors is not equal to size of degree vector.");
+    if (knot_vectors.size() != degrees.size())
+        throw Exception("BSplineBasis::BSplineBasis: Number of knot vectors is not equal to number of degrees.");
 
     // Set univariate bases
     bases.clear();
     for (unsigned int i = 0; i < num_variables; i++)
     {
-        bases.push_back(BSplineBasis1D(knotVectors.at(i), basisDegrees.at(i)));
+        bases.push_back(BSplineBasis1D(degrees.at(i), knot_vectors.at(i)));
 
         // Adjust target number of basis functions used in e.g. refinement
         if (num_variables > 2)
         {
             // One extra knot is allowed
-            bases.at(i).set_num_basis_functions_target((basisDegrees.at(i) + 1) + 1); // Minimum degree+1
+            bases.at(i).set_num_basis_functions_target((degrees.at(i) + 1) + 1); // Minimum degree+1
         }
     }
 }
 
 SparseVector BSplineBasis::eval(const DenseVector &x) const
 {
-    // Evaluate basisfunctions for each variable i and compute the tensor product of the function values
-    std::vector<SparseVector> basisFunctionValues;
+    // Evaluate basis functions for each variable i and compute the tensor product of the function values
+    std::vector<SparseVector> basis_function_values;
 
     for (int var = 0; var < x.size(); var++)
-        basisFunctionValues.push_back(bases.at(var).eval(x(var)));
+        basis_function_values.push_back(bases.at(var).eval(x(var)));
 
-    return kronecker_product_vectors(basisFunctionValues);
+    return kronecker_product_vectors(basis_function_values);
 }
 
 // Old implementation of Jacobian

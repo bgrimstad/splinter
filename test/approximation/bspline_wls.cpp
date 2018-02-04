@@ -31,7 +31,7 @@ TEST_CASE("Weighted least squares with linear B-spline", COMMON_TAGS "[bsplinety
     auto y_true = y.at(m);
     y.at(m) = 1e5;
 
-    for (auto i = 0; i < n; ++i)
+    for (unsigned int i = 0; i < n; ++i)
         data.add_sample(x.at(i), y.at(i));
 
     // Set weights - zero weight on outlying sample
@@ -45,7 +45,7 @@ TEST_CASE("Weighted least squares with linear B-spline", COMMON_TAGS "[bsplinety
     auto num_basis_functions = std::vector<unsigned int>(1, int(n/2));
     auto knot_vectors = compute_knot_vectors(data, degrees, KnotSpacing::EQUIDISTANT, num_basis_functions);
 
-    auto bs = BSpline(1, 1, knot_vectors, degrees).fit(data, BSpline::Smoothing::NONE, 0., weights);
+    auto bs = BSpline(degrees, knot_vectors).fit(data, BSpline::Smoothing::NONE, 0., weights);
     std::vector<double> x_eval = {x.at(m)};
     auto y_eval = bs.eval(x_eval).at(0);
     REQUIRE(assert_near(y_eval, y_true));

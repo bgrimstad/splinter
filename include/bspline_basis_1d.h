@@ -20,7 +20,7 @@ class BSplineBasis1D
 {
 public:
     BSplineBasis1D();
-    BSplineBasis1D(const std::vector<double> &knots, unsigned int degree);
+    BSplineBasis1D(unsigned int degree, const std::vector<double> &knots);
 
     /**
      * Evaluation of basis functions
