@@ -54,10 +54,10 @@ yd = bspline.eval(xd)
 
 # Save BSpline to file for loading it later:
 filename = "bspline.json"
-bspline.save_to_json(filename)
+bspline.to_json(filename)
 
 # Load BSpline from file:
-loadedBSpline = splinter.BSpline(filename)
+loaded_bspline = splinter.BSpline.from_json(filename)
 ```
 Notice that if you are going to evaluate the BSpline in more than one point, it is preferred to call eval once, instead of n times.
 
