@@ -16,7 +16,7 @@ using namespace SPLINTER;
 extern "C"
 {
 
-splinter_obj_ptr splinter_bspline_from_param(unsigned int dim_x, unsigned int dim_y, unsigned int *degrees, 
+splinter_obj_ptr splinter_bspline_from_param(unsigned int dim_x, unsigned int dim_y, unsigned int *degrees,
                                              double *knot_vectors, unsigned int *num_knots_per_vector,
                                              double *control_points, unsigned int num_control_points)
 {
@@ -533,8 +533,9 @@ splinter_obj_ptr splinter_bspline_fit(splinter_obj_ptr bspline_ptr,
 
         DataTable *dataTable = get_datatable(datatable_ptr);
         auto _weights = get_vector(weights, num_weights);
-        auto new_bspline = bspline->fit(*dataTable, _smoothing, alpha, _weights).clone();
-        bsplines.insert(new_bspline);  // TODO: The original BSpline is modified!
+        auto new_bspline = bspline->clone();
+        new_bspline->fit(*dataTable, _smoothing, alpha, _weights);
+        bsplines.insert(new_bspline);
         return new_bspline;
     }
     catch (const Exception &e)

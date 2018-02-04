@@ -14,7 +14,7 @@
 
 extern std::vector<std::vector<SPLINTER::TestFunction *>> testFunctions;
 
-void setupTestFunctions();
+void setup_test_functions();
 
 void tearDownTestFunctions();
 

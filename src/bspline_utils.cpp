@@ -35,6 +35,8 @@ namespace SPLINTER
  * 3) Regularization, no weighting: (X'X + alpha*R)C = X'Y
  * 4) Regularization and weighting: (X'*W*X + alpha*R) C = X'*W*Y
  *
+ * TODO: Use existing control points C0 as starting point and compute new control points as C = DeltaC + C0
+ *
  */
 DenseMatrix compute_control_points(const BSpline &bspline, const DataTable &data, BSpline::Smoothing smoothing,
                                    double alpha, std::vector<double> weights)
