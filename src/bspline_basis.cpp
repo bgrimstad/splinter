@@ -56,7 +56,8 @@ SparseVector BSplineBasis::eval(const DenseVector &x) const
 DenseMatrix BSplineBasis::eval_basis_jacobian_old(const DenseVector &x) const
 {
     // Jacobian basis matrix
-    DenseMatrix J; J.setZero(get_num_basis_functions(), num_variables);
+    DenseMatrix J;
+    J.setZero(get_num_basis_functions(), num_variables);
 
     // Calculate partial derivatives
     for (unsigned int i = 0; i < num_variables; i++)

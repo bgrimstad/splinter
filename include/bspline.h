@@ -62,24 +62,20 @@ public:
     using Function::eval;
     using Function::eval_jacobian;
 
-    /**
-     * Returns the (dimY) function values at x
-     */
+    // Evaluate the B-spline at x. Returns vector of size (dim_y).
     std::vector<double> eval(const std::vector<double> &x) const override;
     DenseVector eval(const DenseVector &x) const override;
 
-    /**
-     * Returns the (dimY x dimX) Jacobian evaluated at x
-     */
+    // Evaluate the Jacobian at x. Returns matrix of size (dim_y, dim_x).
     DenseMatrix eval_jacobian(const DenseVector &x) const override;
 
-    /**
-     * Returns the (dimY x dimX x dimX) Hessian evaluated at x
-     */
+    // Evaluate the Hessian at x. Returns tensor of size (dim_y, dim_x, dim_x).
     std::vector<std::vector<std::vector<double>>> eval_hessian(const std::vector<double> &x) const;
 
-    // Evaluation of B-spline basis functions
+    // Evaluate B-spline basis functions at x. Returns vector of size (num_basis_functions).
     SparseVector eval_basis(const DenseVector &x) const;
+
+    // Evaluate Jacobian of B-spline basis functions at x. Returns vector of size (num_basis_functions, num_x).
     SparseMatrix eval_basis_jacobian(const DenseVector &x) const;
 
     /**
@@ -102,7 +98,6 @@ public:
         return basis.get_num_basis_functions();
     }
 
-//    DenseMatrix get_control_points() const;
     DenseMatrix get_knot_averages() const {
         return compute_knot_averages();
     };
@@ -161,11 +156,7 @@ protected:
 
     BSplineBasis basis;
 
-    /*
-     * B-spline control points in R^(m x n),
-     * where m = num_basis_functions and n = dim_y.
-     * Each row is a control point.
-     */
+    // B-spline control points of size (num_basis_functions, dim_y). Each row is a control point.
     DenseMatrix control_points;
 
     // Control point computations

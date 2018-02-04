@@ -25,7 +25,7 @@ bool KnotVector::is_regular(unsigned int degree) const
         return false;
 
     // Check multiplicity of knots
-    for (std::vector<double>::const_iterator it = cbegin(); it != cend(); ++it)
+    for (auto it = cbegin(); it != cend(); ++it)
     {
         if (count(cbegin(), cend(), *it) > degree + 1)
             return false;
@@ -49,8 +49,8 @@ bool KnotVector::is_refinement(const std::vector<double> &refined_knots) const
     }
 
     // Check that range is not changed
-    if (knots.front() != refined_knots.front()) return false;
-    if (knots.back() != refined_knots.back()) return false;
+    if (knots.front() != refined_knots.front() || knots.back() != refined_knots.back())
+        return false;
 
     return true;
 }
