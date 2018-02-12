@@ -186,10 +186,7 @@ class BSpline(Function):
 
     def copy(self) -> 'BSpline':
         """
-        Make a copy of this BSpline.
-
-        NOTE: This is a deep copy. No changes made to the copy will have effects on the original.
-
+        Make a deep copy of this BSpline. No changes made to the copy will have effects on the original.
         :return: A copy of this BSpline
         """
         copy = BSpline()
@@ -201,7 +198,15 @@ class BSpline(Function):
         return copy
 
     def fit(self, X, Y, smoothing: int=Smoothing.NONE, alpha: float=0.1, weights: List[float]=list()) -> 'BSpline':
-
+        """
+        Fit B-spline to samples (X,Y)
+        :param X: List of sample points
+        :param Y: List of corresponding sample values
+        :param smoothing: Smoothing type
+        :param alpha: Smoothing/regularization factor
+        :param weights: Sample weights (NOTE: See Issue #95
+        :return: BSpline
+        """
         if alpha < 0:
             raise ValueError("'alpha' must be non-negative")
 
