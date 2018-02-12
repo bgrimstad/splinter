@@ -36,25 +36,36 @@ class BSpline(Function):
             self._dim_y = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_get_dim_y, self._handle)
 
     @staticmethod
-    def from_param(degrees: DegreesType, knot_vectors: KnotVectorsType, control_points: ControlPointsType) -> 'BSpline':
+    def from_param(degrees: DegreesType, knot_vectors: KnotVectorsType, control_points: Union[ControlPointsType, int]) \
+            -> 'BSpline':
         """
-        Builds B-splines given explicit parameters
-        :param degrees: a list of dim_x degrees (each being a non-negative integer)
-        :param knot_vectors: a list of dim_x knot vectors of variable size
-        :param control_points: a list of control points in R^dim_y
-        :return: BSpline object
+        Build a B-spline from parameters
+        :param degrees:
+            A list of dim_x degrees (each being a non-negative integer).
+            If integer, the same degree is used for all basis functions (dim_x is taken as the number of knot vectors).
+        :param knot_vectors:
+            A list of dim_x knot vectors. The knot vectors may have different lengths.
+        :param control_points:
+            A list of control points in R^dim_y.
+            If integer, it is interpreted as the output dimension of the B-spline (control points are set to zero).
+        :return: BSpline
         """
+        # Check input types
+        if not isinstance(degrees, int) and not isinstance(degrees, list):
+            raise ValueError("Unexpected type of degrees. Must be int or list.")
 
-        # 1-D control points - create a list of lists from a list of control points
-        if not any(isinstance(cp, list) for cp in control_points):
-            control_points = [[cp] for cp in control_points]
+        if not isinstance(knot_vectors, list):
+            raise ValueError("Unexpected type of knot_vectors. Must be a list.")
 
-        # Single knot vector - create a list of knot vectors
+        if not isinstance(control_points, int) and not isinstance(control_points, list):
+            raise ValueError("Unexpected type of control_points. Must be int or list.")
+
+        # If single knot vector, create a list of lists
         if not any(isinstance(kv, list) for kv in knot_vectors):
             knot_vectors = [knot_vectors]
 
-        # Single degree - create list of degrees
-        # NOTE: Assuming that all basis functions have the same degree
+        # If a single degree - create list of degrees
+        # NOTE: Give all basis functions the same degree
         if not isinstance(degrees, list):
             degrees = [degrees] * len(knot_vectors)
 
@@ -62,27 +73,51 @@ class BSpline(Function):
         if len(knot_vectors) != len(degrees):
             raise ValueError("Inconsistent data: len(knot_vectors) should equal len(degrees)")
 
-        if not len(set([len(cp) for cp in control_points])) == 1:
-            raise ValueError("Inconsistent data: all control points should have the same dimension")
+        # Check if control points are given
+        control_points_given = isinstance(control_points, list)
+
+        if control_points_given:
+            # If 1-D control points, create a list of lists
+            if not any(isinstance(cp, list) for cp in control_points):
+                control_points = [[cp] for cp in control_points]
+
+            # Check dimension of control points
+            if not len(set([len(cp) for cp in control_points])) == 1:
+                raise ValueError("Inconsistent data: all control points should have the same dimension")
 
         # Set dimensions
         dim_x = len(knot_vectors)
-        dim_y = len(control_points[0])
+        dim_y = int(control_points) if not control_points_given else len(control_points[0])
 
-        control_points_c_array = list_to_c_array_of_doubles(flatten_list(control_points))
-        num_control_points = len(control_points)
+        if dim_y < 1:
+            raise ValueError("Output dimension must be 1 or higher")
+
+        # Create BSpline
         knot_vectors_c_array = list_to_c_array_of_doubles(flatten_list(knot_vectors))
         num_knots_per_vector_c_array = list_to_c_array_of_ints(list([len(vec) for vec in knot_vectors]))
         degrees_c_array = list_to_c_array_of_ints(degrees)
-        handle = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_from_param,
-                                           dim_x,
-                                           dim_y,
-                                           degrees_c_array,
-                                           knot_vectors_c_array,
-                                           num_knots_per_vector_c_array,
-                                           control_points_c_array,
-                                           num_control_points)
-        return BSpline(handle)
+
+        if control_points_given:
+            control_points_c_array = list_to_c_array_of_doubles(flatten_list(control_points))
+            num_control_points = len(control_points)
+
+            handle = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_from_param,
+                                               dim_x,
+                                               dim_y,
+                                               degrees_c_array,
+                                               knot_vectors_c_array,
+                                               num_knots_per_vector_c_array,
+                                               control_points_c_array,
+                                               num_control_points)
+            return BSpline(handle)
+        else:
+            handle = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_from_param_zero,
+                                               dim_x,
+                                               dim_y,
+                                               degrees_c_array,
+                                               knot_vectors_c_array,
+                                               num_knots_per_vector_c_array)
+            return BSpline(handle)
 
     def to_json(self, filename):
         c_filename = get_c_string(filename)

@@ -28,13 +28,8 @@ elif os.path.isdir("/home/anders/"):
 degrees = [3, 3]
 knots = [[0, 0, 0, 0, 1, 2, 3, 4, 5, 5, 5, 5],
          [0, 0, 0, 0, 1, 2, 3, 4, 5, 5, 5, 5]]
-
-control_points = []
-for u in np.linspace(0, 1, len(knots[0]) - degrees[0] - 1):
-    for v in np.linspace(0, 1, len(knots[1]) - degrees[1] - 1):
-        control_points.append([0])
-
-bspline = splinterpy.BSpline.from_param(degrees, knots, control_points)
+dim_y = 1
+bspline = splinterpy.BSpline.from_param(degrees, knots, dim_y)
 
 # Draw some samples randomly on D
 num_samples = 10
