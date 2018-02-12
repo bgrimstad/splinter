@@ -6,7 +6,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
-from .splinter_backend import splinter_backend_obj
+from .splinter_backend import splinter_backend_obj as backend
 from .function import Function
 from .datatable import DataTable
 from .utilities import *
@@ -32,8 +32,8 @@ class BSpline(Function):
 
         if handle is not None:
             self._handle = handle
-            self._dim_x = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_get_dim_x, self._handle)
-            self._dim_y = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_get_dim_y, self._handle)
+            self._dim_x = backend.call(backend.handle.splinter_bspline_get_dim_x, self._handle)
+            self._dim_y = backend.call(backend.handle.splinter_bspline_get_dim_y, self._handle)
 
     @staticmethod
     def from_param(degrees: DegreesType, knot_vectors: KnotVectorsType, control_points: Union[ControlPointsType, int]) \
@@ -101,34 +101,25 @@ class BSpline(Function):
             control_points_c_array = list_to_c_array_of_doubles(flatten_list(control_points))
             num_control_points = len(control_points)
 
-            handle = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_from_param,
-                                               dim_x,
-                                               dim_y,
-                                               degrees_c_array,
-                                               knot_vectors_c_array,
-                                               num_knots_per_vector_c_array,
-                                               control_points_c_array,
-                                               num_control_points)
+            handle = backend.call(backend.handle.splinter_bspline_from_param, dim_x, dim_y, degrees_c_array, 
+                                  knot_vectors_c_array, num_knots_per_vector_c_array, control_points_c_array,
+                                  num_control_points)
             return BSpline(handle)
         else:
-            handle = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_from_param_zero,
-                                               dim_x,
-                                               dim_y,
-                                               degrees_c_array,
-                                               knot_vectors_c_array,
-                                               num_knots_per_vector_c_array)
+            handle = backend.call(backend.handle.splinter_bspline_from_param_zero, dim_x, dim_y, degrees_c_array,
+                                  knot_vectors_c_array, num_knots_per_vector_c_array)
             return BSpline(handle)
 
     def to_json(self, filename):
         c_filename = get_c_string(filename)
-        splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_to_json, self._handle, c_filename)
+        backend.call(backend.handle.splinter_bspline_to_json, self._handle, c_filename)
 
     @staticmethod
     def from_json(filename):
         if is_string(filename):
             # If string, load the BSpline from the file
             c_filename = get_c_string(filename)
-            handle = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_from_json, c_filename)
+            handle = backend.call(backend.handle.splinter_bspline_from_json, c_filename)
             return BSpline(handle)
         else:
             return None
@@ -138,10 +129,10 @@ class BSpline(Function):
         :return List of knot vectors (of possibly differing lengths)
         """
         # Get the sizes of the knot vectors first
-        knot_vector_sizes_raw = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_get_knot_vector_sizes, self._handle)
+        knot_vector_sizes_raw = backend.call(backend.handle.splinter_bspline_get_knot_vector_sizes, self._handle)
         knot_vector_sizes = c_array_to_list(knot_vector_sizes_raw, self._dim_x)
 
-        knot_vectors_raw = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_get_knot_vectors, self._handle)
+        knot_vectors_raw = backend.call(backend.handle.splinter_bspline_get_knot_vectors, self._handle)
         # Get the knot vectors as one long vector where knot vectors v1, ..., vn is laid out like this:
         # v11, ..., v1m, ..., vn1, ..., vno
         tot_size = sum(knot_vector_sizes)
@@ -161,9 +152,9 @@ class BSpline(Function):
         Get the matrix with the control points of the BSpline.
         :return Matrix (as a list of lists) with len(getCoefficients) rows and getNumOutputs columns
         """
-        control_points_raw = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_get_control_points, self._handle)
+        control_points_raw = backend.call(backend.handle.splinter_bspline_get_control_points, self._handle)
 
-        num_rows = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_get_num_control_points, self._handle)
+        num_rows = backend.call(backend.handle.splinter_bspline_get_num_control_points, self._handle)
         num_cols = self._dim_y
 
         control_points_flattened = c_array_to_list(control_points_raw, num_rows * num_cols)
@@ -181,9 +172,9 @@ class BSpline(Function):
         Get the matrix with the knot averages of the BSpline.
         :return Matrix (as a list of lists) with len(getControlPoints) rows and getNumVariables columns
         """
-        knot_averages_raw = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_get_knot_averages, self._handle)
+        knot_averages_raw = backend.call(backend.handle.splinter_bspline_get_knot_averages, self._handle)
 
-        num_rows = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_get_num_control_points, self._handle)
+        num_rows = backend.call(backend.handle.splinter_bspline_get_num_control_points, self._handle)
         num_cols = self._dim_x
 
         knot_averages_flattened = c_array_to_list(knot_averages_raw, num_rows * num_cols)
@@ -200,8 +191,8 @@ class BSpline(Function):
         """
         :return List with the basis degrees of the BSpline
         """
-        num_vars = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_get_dim_x, self._handle)
-        basis_degrees = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_get_basis_degrees, self._handle)
+        num_vars = backend.call(backend.handle.splinter_bspline_get_dim_x, self._handle)
+        basis_degrees = backend.call(backend.handle.splinter_bspline_get_basis_degrees, self._handle)
 
         return c_array_to_list(basis_degrees, num_vars)
 
@@ -210,14 +201,14 @@ class BSpline(Function):
         Insert knot at 'val' to knot vector for variable 'dim'. The knot is inserted until a knot multiplicity of
         'multiplicity' is obtained.
         """
-        splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_insert_knots, self._handle, val, dim, multiplicity)
+        backend.call(backend.handle.splinter_bspline_insert_knots, self._handle, val, dim, multiplicity)
 
     def decompose_to_bezier_form(self):
         """
         Insert knots until all knots have multiplicity degree + 1. This ensures that the polynomial pieces are not
         overlapping.
         """
-        splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_decompose_to_bezier_form, self._handle)
+        backend.call(backend.handle.splinter_bspline_decompose_to_bezier_form, self._handle)
 
     def copy(self) -> 'BSpline':
         """
@@ -225,7 +216,7 @@ class BSpline(Function):
         :return: A copy of this BSpline
         """
         copy = BSpline()
-        copy._handle = splinter_backend_obj.call(splinter_backend_obj.handle.splinter_bspline_copy, self._handle)
+        copy._handle = backend.call(backend.handle.splinter_bspline_copy, self._handle)
 
         copy._dim_x = self._dim_x
         copy._dim_y = self._dim_y
@@ -249,7 +240,7 @@ class BSpline(Function):
             raise ValueError("Invalid smoothing type: " + str(smoothing))
 
         data_table = DataTable(X, Y)
-        f_handle = splinter_backend_obj.handle.splinter_bspline_fit
-        bspline_handle = splinter_backend_obj.call(f_handle, self._handle, data_table._get_handle(), smoothing, alpha,
-                                                   list_to_c_array_of_doubles(weights), len(weights))
-        return BSpline(bspline_handle)
+        f_handle = backend.handle.splinter_bspline_fit
+        handle = backend.call(f_handle, self._handle, data_table._get_handle(), smoothing, alpha,
+                              list_to_c_array_of_doubles(weights), len(weights))
+        return BSpline(handle)
