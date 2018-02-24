@@ -50,18 +50,18 @@ enum class KnotSpacing {
 /**
  * Computing knot vectors
  */
-std::vector<std::vector<double>> compute_knot_vectors(const DataTable &data, std::vector<unsigned int> degrees,
-                                                      KnotSpacing knot_spacing);
+std::vector<std::vector<double>> build_knot_vectors(const DataTable &data, std::vector<unsigned int> degrees,
+                                                    KnotSpacing knot_spacing);
 
-std::vector<std::vector<double>> compute_knot_vectors(const DataTable &data, std::vector<unsigned int> degrees,
-                                                      KnotSpacing knot_spacing,
-                                                      std::vector<unsigned int> num_basis_functions);
+std::vector<std::vector<double>> build_knot_vectors(const DataTable &data, std::vector<unsigned int> degrees,
+                                                    KnotSpacing knot_spacing,
+                                                    std::vector<unsigned int> num_basis_functions);
 
 /**
  * Computing single knot vector
  */
-std::vector<double> compute_knot_vector(const std::vector<double> &values, unsigned int degree,
-                                        unsigned int num_basis_functions, KnotSpacing knot_spacing);
+std::vector<double> build_knot_vector(const std::vector<double> &values, unsigned int degree,
+                                      unsigned int num_basis_functions, KnotSpacing knot_spacing);
 
 /**
  * Construct knot vector using moving average filter (AS_SAMPLED)

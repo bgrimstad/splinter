@@ -28,7 +28,7 @@ public:
     {
     }
 
-    explicit KnotVector(const std::vector<double> &knots)
+    KnotVector(const std::vector<double> &knots)
         : knots(std::vector<double>(knots))
     {
         // Test knots here

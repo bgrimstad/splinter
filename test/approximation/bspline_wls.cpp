@@ -43,7 +43,7 @@ TEST_CASE("Weighted least squares with linear B-spline", COMMON_TAGS "[bsplinety
     // become ill-conditioned if some of the weights are set to zero.
     auto degrees = std::vector<unsigned int>(1, 1);
     auto num_basis_functions = std::vector<unsigned int>(1, int(n/2));
-    auto knot_vectors = compute_knot_vectors(data, degrees, KnotSpacing::EQUIDISTANT, num_basis_functions);
+    auto knot_vectors = build_knot_vectors(data, degrees, KnotSpacing::EQUIDISTANT, num_basis_functions);
 
     auto bs = BSpline(degrees, knot_vectors).fit(data, BSpline::Smoothing::NONE, 0., weights);
     std::vector<double> x_eval = {x.at(m)};

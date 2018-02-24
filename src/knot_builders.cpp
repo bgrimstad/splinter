@@ -16,24 +16,24 @@ namespace SPLINTER
 {
 
 // Compute all knot vectors from sample data
-std::vector<std::vector<double>> compute_knot_vectors(const DataTable &data,
-                                                      std::vector<unsigned int> degrees,
-                                                      KnotSpacing knot_spacing)
+std::vector<std::vector<double>> build_knot_vectors(const DataTable &data,
+                                                    std::vector<unsigned int> degrees,
+                                                    KnotSpacing knot_spacing)
 {
     auto num_basis_functions = std::vector<unsigned int>(data.get_dim_x(), 10);
-    return compute_knot_vectors(data, degrees, knot_spacing, num_basis_functions);
+    return build_knot_vectors(data, degrees, knot_spacing, num_basis_functions);
 }
 
 // Compute all knot vectors from sample data
-std::vector<std::vector<double>> compute_knot_vectors(const DataTable &data,
-                                                      std::vector<unsigned int> degrees,
-                                                      KnotSpacing knot_spacing,
-                                                      std::vector<unsigned int> num_basis_functions)
+std::vector<std::vector<double>> build_knot_vectors(const DataTable &data,
+                                                    std::vector<unsigned int> degrees,
+                                                    KnotSpacing knot_spacing,
+                                                    std::vector<unsigned int> num_basis_functions)
 {
     auto dim_x = data.get_dim_x();
 
     if (dim_x != degrees.size() || dim_x != num_basis_functions.size())
-        throw Exception("BSpline::Builder::compute_knot_vectors: Inconsistent sizes on input vectors.");
+        throw Exception("BSpline::Builder::build_knot_vectors: Inconsistent sizes on input vectors.");
 
     std::vector<std::vector<double>> grid = data.get_table_x();
 
@@ -42,8 +42,7 @@ std::vector<std::vector<double>> compute_knot_vectors(const DataTable &data,
     for (unsigned int i = 0; i < dim_x; ++i)
     {
         // Compute knot vector
-        auto knot_vector = compute_knot_vector(grid.at(i), degrees.at(i), num_basis_functions.at(i), knot_spacing);
-
+        auto knot_vector = build_knot_vector(grid.at(i), degrees.at(i), num_basis_functions.at(i), knot_spacing);
         knot_vectors.push_back(knot_vector);
     }
 
@@ -51,8 +50,8 @@ std::vector<std::vector<double>> compute_knot_vectors(const DataTable &data,
 }
 
 // Compute a single knot vector from sample grid and degree
-std::vector<double> compute_knot_vector(const std::vector<double> &values, unsigned int degree,
-                                        unsigned int num_basis_functions, KnotSpacing knot_spacing)
+std::vector<double> build_knot_vector(const std::vector<double> &values, unsigned int degree,
+                                      unsigned int num_basis_functions, KnotSpacing knot_spacing)
 {
     switch (knot_spacing)
     {
