@@ -20,6 +20,9 @@ elif os.path.isdir("/home/anders/"):
     splinterpy.load("/home/anders/SPLINTER/build/debug/libsplinter-4-0.so")
 
 
+Smoothing = splinterpy.BSpline.Smoothing
+
+
 # Example with one variable
 def f1(x):
     return -1. + 2*x + 0.1*(x**2) + 10*np.random.random()
@@ -32,10 +35,10 @@ y = [f1(xi) for xi in x]
 b1 = splinterpy.bspline_interpolator(x, y, degree=3)
 
 # Cubic B-spline with regularization
-b2 = splinterpy.bspline_smoother(x, y, degree=3, alpha=0.1)
+b2 = splinterpy.bspline_smoother(x, y, degree=3, smoothing=Smoothing.IDENTITY, alpha=0.1)
 
 # Cubic P-spline
-b3 = splinterpy.pspline_smoother(x, y, degree=3, alpha=0.1)
+b3 = splinterpy.bspline_smoother(x, y, degree=3, smoothing=Smoothing.PSPLINE, alpha=0.1)
 
 nd = 1000
 xd = np.linspace(0, 10, nd)

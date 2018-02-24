@@ -197,32 +197,34 @@ SPLINTER_API void splinter_bspline_builder_delete(splinter_obj_ptr bspline_build
  * Construct a BSpline that interpolates the sample points.
  *
  * @param datatable_ptr The datatable with sample points.
- * @param degree The degree of the B-spline basis functions
+ * @param degree The degree of the B-spline basis functions.
  * @return Pointer to the created BSpline.
  */
 SPLINTER_API splinter_obj_ptr splinter_bspline_interpolator(splinter_obj_ptr datatable_ptr, int degree);
 
 /**
- * Construct a BSpline that smooths the sample points using weight decay.
+ * Construct a BSpline that smooths the sample points using regularization (weight decay).
+ *
+ * @param datatable_ptr The datatable with sample points.
+ * @param degree The degree of the B-spline basis functions.
+ * @param alpha Smoothing/regularization factor.
+ * @return Pointer to the created BSpline.
+ */
+SPLINTER_API splinter_obj_ptr splinter_bspline_smoother(splinter_obj_ptr datatable_ptr, int degree, int smoothing,
+                                                        double alpha, double *weights, unsigned int num_weights);
+
+/**
+ * Construct an unfitted (zero-valued) BSpline.
  *
  * @param datatable_ptr The datatable with sample points.
  * @param degree The degree of the B-spline basis functions
  * @param alpha Smoothing/regularization factor
  * @return Pointer to the created BSpline.
  */
-SPLINTER_API splinter_obj_ptr splinter_bspline_smoother(splinter_obj_ptr datatable_ptr, int degree, double alpha,
-                                                        double *weights, unsigned int num_weights);
-
-/**
- * Construct a BSpline that smooths the sample points using second-order difference weight decay (P-spline).
- *
- * @param datatable_ptr The datatable with sample points.
- * @param degree The degree of the B-spline basis functions
- * @param alpha Smoothing/regularization factor
- * @return Pointer to the created BSpline (P-spline).
- */
-SPLINTER_API splinter_obj_ptr splinter_pspline_smoother(splinter_obj_ptr datatable_ptr, int degree, double alpha,
-                                                        double *weights, unsigned int num_weights);
+SPLINTER_API splinter_obj_ptr splinter_bspline_unfitted(splinter_obj_ptr datatable_ptr, unsigned int *degrees, 
+                                                        unsigned int num_degrees, int knot_spacing, 
+                                                        unsigned int *num_basis_functions, 
+                                                        unsigned int num_num_basis_functions);
 
 
 

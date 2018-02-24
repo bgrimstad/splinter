@@ -79,12 +79,12 @@ std::vector<std::vector<std::vector<double>>> BSpline::eval_hessian(const std::v
 
     DenseMatrix identity = DenseMatrix::Identity(dim_x, dim_x);
 
-    DenseMatrix cpCopy = DenseMatrix(control_points);
+    DenseMatrix cp_copy = DenseMatrix(control_points);
 
     for (size_t i = 0; i < dim_y; ++i)
     {
         DenseMatrix H = DenseMatrix::Zero(1, 1);
-        DenseMatrix cp = cpCopy.col(i);
+        DenseMatrix cp = cp_copy.col(i);
         DenseMatrix caug = kroneckerProduct(identity, cp.transpose());
         DenseMatrix DB = basis.eval_basis_hessian(eigX);
 

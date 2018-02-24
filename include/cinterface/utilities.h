@@ -14,6 +14,7 @@
 #include "function.h"
 #include "cinterface.h"
 #include "bspline.h"
+#include "knot_builders.h"
 
 namespace SPLINTER
 {
@@ -38,6 +39,10 @@ BSpline *get_bspline(splinter_obj_ptr bspline_ptr);
 
 /* Check for existence of bspline_builder_ptr, then cast splinter_obj_ptr to a BSpline::Builder * */
 BSpline::Builder *get_builder(splinter_obj_ptr bspline_builder_ptr);
+
+BSpline::Smoothing resolve_smoothing(int smoothing);
+
+KnotSpacing resolve_knot_spacing(int knot_spacing);
 
 /**
  * Convert from column major to row major with point_dim number of columns.

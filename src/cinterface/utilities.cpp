@@ -100,4 +100,49 @@ double *get_row_major(double *col_major, size_t point_dim, size_t x_len)
     return row_major;
 }
 
+/**
+ * Resolve type of smoothing (see BSpline::Smoothing)
+ * @param smoothing as integer
+ * @return Smoothing
+ */
+BSpline::Smoothing resolve_smoothing(int smoothing) 
+{
+    switch (smoothing)
+    {
+        case 0:
+            return BSpline::Smoothing::NONE;
+        case 1:
+            return BSpline::Smoothing::IDENTITY;
+        case 2:
+            return BSpline::Smoothing::PSPLINE;
+        default:
+            set_error_string("Error: Invalid smoothing type!");
+            return BSpline::Smoothing::NONE;
+    }
+}
+
+/**
+ * Resolve knot spacing type (see KnotSpacing in knot_builders.h)
+ * @param knot_spacing knot spacing as integer
+ * @return KnotSpacing
+ */
+KnotSpacing resolve_knot_spacing(int knot_spacing)
+{
+    switch (knot_spacing)
+    {
+        case 0:
+            return KnotSpacing::EXPERIMENTAL;
+        case 1:
+            return KnotSpacing::AS_SAMPLED;
+        case 2:
+            return KnotSpacing::EQUIDISTANT_CLAMPED;
+        case 3:
+            return KnotSpacing::EQUIDISTANT;
+        default:
+            set_error_string("Error: Invalid knot spacing!");
+            return KnotSpacing::AS_SAMPLED;
+    }
+}
+
+
 } // namespace SPLINTER

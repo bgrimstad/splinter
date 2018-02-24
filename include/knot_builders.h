@@ -21,8 +21,16 @@ namespace SPLINTER
  */
 enum class KnotSpacing {
     /*
+     * Experimental knot spacing for testing purposes only.
+     * Currently, it computes equidistant knots on an expanded interval.
+     * NOTE: may change in the future
+     */
+    EXPERIMENTAL,
+
+    /*
      * Clamped and with knots that mimic the spacing of sample points using a moving average filter.
-     * Resulting knot vectors have p+1 multiplicity of end knots.
+     * Resulting knot vectors have p+1 multiplicity of end knots. This is the default knot spacing for B-spline
+     * interpolation and smoothing.
      * Example for samples at 0, 1, ..., 5:
      *      Then, for degree 3 the knot vector becomes: [0, 0, 0, 0, 2, 3, 5, 5, 5, 5]
      *      and for degree 1 the knot vector becomes: [0, 0, 1, 2, 3, 4, 5, 5]
@@ -35,27 +43,25 @@ enum class KnotSpacing {
      *      For degree 3: [0, 0, 0, 0, 1, 2, 3, 4, 5, 5, 5, 5]
      *      For degree 1: [0, 0, 1, 2, 3, 4, 5, 5]
      */
-    EQUIDISTANT,
+    EQUIDISTANT_CLAMPED,
 
     /*
-     * Experimental knot spacing for testing purposes only.
-     * Currently, it gives a non-clamped knot vector of equidistant knots.
-     * NOTE: may eventually become EQUIDISTANT_NOT_CLAMPED
+     * Simple knot vector with equidistant knots. Single multiplicity of end knots. Does not vary with degree.
      * Example for samples at 0, 1, ..., 5:
-     *      For any degree: [0, 1, 2, 3, 4, 5]
+     *      For degree 3: [0, 1, 2, 3, 4, 5]
+     *      For degree 1: [0, 1, 2, 3, 4, 5]
      */
-    EXPERIMENTAL
+    EQUIDISTANT
 };
 
 /**
  * Computing knot vectors
  */
-std::vector<std::vector<double>> build_knot_vectors(const DataTable &data, std::vector<unsigned int> degrees,
-                                                    KnotSpacing knot_spacing);
+std::vector<std::vector<double>> build_knot_vectors(const DataTable &data, const std::vector<unsigned int> &degrees);
 
-std::vector<std::vector<double>> build_knot_vectors(const DataTable &data, std::vector<unsigned int> degrees,
+std::vector<std::vector<double>> build_knot_vectors(const DataTable &data, const std::vector<unsigned int> &degrees,
                                                     KnotSpacing knot_spacing,
-                                                    std::vector<unsigned int> num_basis_functions);
+                                                    const std::vector<unsigned int> &num_basis_functions);
 
 /**
  * Computing single knot vector
@@ -69,16 +75,22 @@ std::vector<double> build_knot_vector(const std::vector<double> &values, unsigne
 std::vector<double> knot_vector_moving_average(const std::vector<double> &values, unsigned int degree);
 
 /**
- * Compute clamped, equidistant knot vector (EQUIDISTANT)
+ * Compute clamped, equidistant knot vector (EQUIDISTANT_CLAMPED)
  */
-std::vector<double> knot_vector_equidistant(const std::vector<double> &values, unsigned int degree,
-                                            unsigned int num_basis_functions = 0);
+std::vector<double> knot_vector_equidistant_clamped(const std::vector<double> &values, unsigned int degree,
+                                                    unsigned int num_basis_functions = 0);
 
 /**
- * Construct equidistant knot vector (EXPERIMENTAL)
+ * Construct equidistant knot vector (EQUIDISTANT)
  */
-std::vector<double> knot_vector_equidistant_not_clamped(const std::vector<double> &values, unsigned int degree,
-                                                        unsigned int num_basis_functions);
+std::vector<double> knot_vector_equidistant(const std::vector<double> &values, unsigned int degree,
+                                            unsigned int num_basis_functions);
+
+/**
+ * Construct expanded equidistant knot vector (EXPERIMENTAL)
+ */
+std::vector<double> knot_vector_expanded_equidistant(const std::vector<double> &values, unsigned int degree,
+                                                     unsigned int num_basis_functions);
 
 } // namespace SPLINTER
 

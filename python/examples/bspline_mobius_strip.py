@@ -39,7 +39,7 @@ for ui in u:
         i = i + 1
 
 # Build 3-D-valued bicubic B-spline with clamped knot vectors
-bspline = splinterpy.BSplineBuilder(2, 3, degree=3).fit(X.tolist(), Y.tolist())
+bspline = splinterpy.bspline_interpolator(X.tolist(), Y.tolist(), degree=3)
 
 # Sample B-spline and plot
 u2 = np.linspace(0, 2*pi, 100)

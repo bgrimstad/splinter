@@ -178,7 +178,7 @@ set(SRC_LIST
     src/bspline_basis_1d.cpp
     src/knot_builders.cpp
     src/knot_vector.cpp
-    src/bspline_builder.cpp
+    src/bspline_builders.cpp
     src/bspline_utils.cpp
     src/data_point.cpp
     src/data_table.cpp

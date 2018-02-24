@@ -499,12 +499,8 @@ splinter_obj_ptr splinter_bspline_copy(splinter_obj_ptr bspline_ptr) {
     return copy;
 }
 
-splinter_obj_ptr splinter_bspline_fit(splinter_obj_ptr bspline_ptr,
-                                      splinter_obj_ptr datatable_ptr,
-                                      int smoothing,
-                                      double alpha,
-                                      double *weights,
-                                      int num_weights)
+splinter_obj_ptr splinter_bspline_fit(splinter_obj_ptr bspline_ptr, splinter_obj_ptr datatable_ptr, int smoothing,
+                                      double alpha, double *weights, int num_weights)
 {
     auto bspline = get_bspline(bspline_ptr);
     if (bspline == nullptr)
@@ -514,24 +510,8 @@ splinter_obj_ptr splinter_bspline_fit(splinter_obj_ptr bspline_ptr,
 
     try
     {
-        auto _smoothing = BSpline::Smoothing::NONE;
-        switch (smoothing)
-        {
-            case 0:
-                _smoothing = BSpline::Smoothing::NONE;
-                break;
-            case 1:
-                _smoothing = BSpline::Smoothing::IDENTITY;
-                break;
-            case 2:
-                _smoothing = BSpline::Smoothing::PSPLINE;
-                break;
-            default:
-                set_error_string("Error: Invalid smoothing type!");
-                break;
-        }
-
         DataTable *dataTable = get_datatable(datatable_ptr);
+        auto _smoothing = resolve_smoothing(smoothing);
         auto _weights = get_vector(weights, num_weights);
         auto new_bspline = bspline->clone();
         new_bspline->fit(*dataTable, _smoothing, alpha, _weights);

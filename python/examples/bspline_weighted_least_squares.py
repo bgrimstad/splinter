@@ -20,6 +20,9 @@ elif os.path.isdir("/home/anders/"):
     splinterpy.load("/home/anders/SPLINTER/build/debug/libsplinter-4-0.so")
 
 
+Smoothing = splinterpy.BSpline.Smoothing
+
+
 # Example with one variable
 def f1(x):
     return -1. + 2*x + 0.1*(x**2) + 10*np.random.random()
@@ -42,10 +45,10 @@ weights[5] = 0.001
 b1 = splinterpy.bspline_interpolator(x, y, degree=3)
 
 # Cubic B-spline with regularization and weights
-b2 = splinterpy.bspline_smoother(x, y, alpha=0.1, weights=weights)
+b2 = splinterpy.bspline_smoother(x, y, smoothing=Smoothing.IDENTITY, alpha=0.1, weights=weights)
 
 # Cubic P-spline with weights
-b3 = splinterpy.pspline_smoother(x, y, alpha=0.1, weights=weights)
+b3 = splinterpy.bspline_smoother(x, y, smoothing=Smoothing.PSPLINE, alpha=0.1, weights=weights)
 
 nd = 1000
 xd = np.linspace(0, 10, nd)

@@ -5,7 +5,8 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from .bsplinebuilder import BSplineBuilder
+from .bspline import BSpline
+from .bsplinebuilder import BSplineBuilder, bspline_unfitted
 import numpy as np
 
 
@@ -61,8 +62,10 @@ class BSplineBoosting:
         self._estimators[0] = Const(np.mean(y) / self._learning_rate)
 
         # P-spline configuration
-        EQUI_KNOTS = BSplineBuilder.KnotSpacing.EXPERIMENTAL
-        PSPLINE = BSplineBuilder.Smoothing.PSPLINE
+        EQUI_KNOTS = BSpline.KnotSpacing.EXPERIMENTAL  # Expanded knot vector to allow some extrapolation
+        PSPLINE = BSpline.Smoothing.PSPLINE
+        degrees = [3] * dim_x
+        num_bf = [20] * dim_x
 
         for i in range(1, self._n_estimators):
             u_hat = y - self.eval(x)
@@ -72,9 +75,9 @@ class BSplineBoosting:
             ss_tot = np.sum(np.apply_along_axis(np.square, 0, u_hat - np.mean(u_hat)))
 
             for j in range(n):
-                learners[j] = BSplineBuilder(dim_x, dim_y,
-                                             knot_spacing=EQUI_KNOTS,
-                                             num_basis_functions=20).fit(x, u_hat, smoothing=PSPLINE, alpha=self._alpha)
+                pspline = bspline_unfitted(x, u_hat, degrees, knot_spacing=EQUI_KNOTS, num_basis_functions=num_bf)
+                learners[j] = pspline.fit(x, u_hat, smoothing=PSPLINE, alpha=self._alpha)
+
                 u_hat_est = learners[j].eval(x)
                 ss_res = np.sum(np.apply_along_axis(np.square, 0, u_hat - u_hat_est))
                 goodness[j] = 1 - (ss_res / ss_tot)

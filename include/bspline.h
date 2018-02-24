@@ -30,7 +30,7 @@ public:
     enum class Smoothing {
         NONE,       // No smoothing
         IDENTITY,   // Regularization term alpha*c'*I*c is added to OLS objective
-        PSPLINE     // Smoothing term alpha*Delta(c,2) is added to OLS objective
+        PSPLINE     // Second-order difference penalty alpha*Delta(c,2) is added to OLS objective
     };
 
     /**

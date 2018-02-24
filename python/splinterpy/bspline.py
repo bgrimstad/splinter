@@ -27,6 +27,13 @@ class BSpline(Function):
         def is_valid(value):
             return value in range(3)
 
+    class KnotSpacing:
+        EXPERIMENTAL, AS_SAMPLED, EQUIDISTANT_CLAMPED, EQUIDISTANT = range(4)
+
+        @staticmethod
+        def is_valid(value):
+            return value in range(4)
+
     def __init__(self, handle=None):
         super().__init__()
 

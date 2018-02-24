@@ -42,14 +42,15 @@ xd = np.arange(-2, 22, 0.01)
 yd = underlying_func(xd)
 
 # Just one P-spline
-EQUI_KNOTS = splinterpy.BSplineBuilder.KnotSpacing.EXPERIMENTAL
-PSPLINE = splinterpy.BSplineBuilder.Smoothing.PSPLINE
-pspline = splinterpy.BSplineBuilder(1, 1, knot_spacing=EQUI_KNOTS, num_basis_functions=20).fit(x, y, smoothing=PSPLINE, alpha=10.0)
+EQUI_KNOTS = splinterpy.BSpline.KnotSpacing.EXPERIMENTAL
+PSPLINE = splinterpy.BSpline.Smoothing.PSPLINE
+pspline = splinterpy.bspline_unfitted(x, y, degrees=[3], knot_spacing=EQUI_KNOTS, num_basis_functions=[20])\
+    .fit(x, y, smoothing=PSPLINE, alpha=10.0)
 
 yd_pspline = pspline.eval(xd)
 
 # Boosting
-bb = splinterpy.BSplineBoosting(learning_rate=0.05, n_estimators=200, alpha=10.0)
+bb = splinterpy.BSplineBoosting(learning_rate=0.05, n_estimators=100, alpha=10.0)
 bb.fit(x, y)
 
 # Prediction

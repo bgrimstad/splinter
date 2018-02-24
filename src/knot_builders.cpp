@@ -16,19 +16,17 @@ namespace SPLINTER
 {
 
 // Compute all knot vectors from sample data
-std::vector<std::vector<double>> build_knot_vectors(const DataTable &data,
-                                                    std::vector<unsigned int> degrees,
-                                                    KnotSpacing knot_spacing)
+std::vector<std::vector<double>> build_knot_vectors(const DataTable &data, const std::vector<unsigned int> &degrees)
 {
-    auto num_basis_functions = std::vector<unsigned int>(data.get_dim_x(), 10);
-    return build_knot_vectors(data, degrees, knot_spacing, num_basis_functions);
+    auto num_basis_functions = std::vector<unsigned int>(data.get_dim_x(), 10); // Not used when knot spacing is AS_SAMPLED
+    return build_knot_vectors(data, degrees, KnotSpacing::AS_SAMPLED, num_basis_functions);
 }
 
 // Compute all knot vectors from sample data
 std::vector<std::vector<double>> build_knot_vectors(const DataTable &data,
-                                                    std::vector<unsigned int> degrees,
+                                                    const std::vector<unsigned int> &degrees,
                                                     KnotSpacing knot_spacing,
-                                                    std::vector<unsigned int> num_basis_functions)
+                                                    const std::vector<unsigned int> &num_basis_functions)
 {
     auto dim_x = data.get_dim_x();
 
@@ -55,12 +53,14 @@ std::vector<double> build_knot_vector(const std::vector<double> &values, unsigne
 {
     switch (knot_spacing)
     {
+        case KnotSpacing::EXPERIMENTAL:
+            return knot_vector_expanded_equidistant(values, degree, num_basis_functions);
         case KnotSpacing::AS_SAMPLED:
             return knot_vector_moving_average(values, degree);
+        case KnotSpacing::EQUIDISTANT_CLAMPED:
+            return knot_vector_equidistant_clamped(values, degree, num_basis_functions);
         case KnotSpacing::EQUIDISTANT:
             return knot_vector_equidistant(values, degree, num_basis_functions);
-        case KnotSpacing::EXPERIMENTAL:
-            return knot_vector_equidistant_not_clamped(values, degree, num_basis_functions);
         default:
             return knot_vector_moving_average(values, degree);
     }
@@ -141,8 +141,8 @@ std::vector<double> knot_vector_moving_average(const std::vector<double> &values
     return knots;
 }
 
-std::vector<double> knot_vector_equidistant(const std::vector<double> &values, unsigned int degree,
-                                            unsigned int num_basis_functions)
+std::vector<double> knot_vector_equidistant_clamped(const std::vector<double> &values, unsigned int degree,
+                                                    unsigned int num_basis_functions)
 {
     // Sort and remove duplicates
     std::vector<double> unique = extract_unique_sorted(values);
@@ -182,8 +182,19 @@ std::vector<double> knot_vector_equidistant(const std::vector<double> &values, u
     return knots;
 }
 
-std::vector<double> knot_vector_equidistant_not_clamped(const std::vector<double> &values, unsigned int degree,
-                                                        unsigned int num_basis_functions)
+std::vector<double> knot_vector_equidistant(const std::vector<double> &values, unsigned int degree,
+                                            unsigned int num_basis_functions)
+{
+    // Sort and remove duplicates
+    std::vector<double> unique = extract_unique_sorted(values);
+
+    // Build equidistant knots
+    unsigned int nk = num_basis_functions + degree + 1;
+    return linspace(unique.front(), unique.back(), nk);
+}
+
+std::vector<double> knot_vector_expanded_equidistant(const std::vector<double> &values, unsigned int degree,
+                                                     unsigned int num_basis_functions)
 {
     // Sort and remove duplicates
     std::vector<double> unique = extract_unique_sorted(values);
@@ -191,14 +202,12 @@ std::vector<double> knot_vector_equidistant_not_clamped(const std::vector<double
     // Number of knots
     unsigned int nk = num_basis_functions + degree + 1;
 
-    // Compute (n-k-2) equidistant interior knots
+    // Expand each boundary by 10% of sample interval
     double lb = unique.front();
     double ub = unique.back();
     double delta = ub - lb;
     double expansion = 0.1; // A non-negative number
-    std::vector<double> knots = linspace(unique.front() - expansion*delta, unique.back() + expansion*delta, nk);
-
-    return knots;
+    return linspace(unique.front() - expansion*delta, unique.back() + expansion*delta, nk);
 }
 
 } // namespace SPLINTER
