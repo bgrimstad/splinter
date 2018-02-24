@@ -22,32 +22,29 @@ namespace SPLINTER
 enum class KnotSpacing {
     /*
      * Clamped and with knots that mimic the spacing of sample points using a moving average filter.
-     * p+1 multiplicity of end knots.
-     * Example:
-     *      Given sample points [0, 1, 2, 3, 4, 5]
+     * Resulting knot vectors have p+1 multiplicity of end knots.
+     * Example for samples at 0, 1, ..., 5:
      *      Then, for degree 3 the knot vector becomes: [0, 0, 0, 0, 2, 3, 5, 5, 5, 5]
      *      and for degree 1 the knot vector becomes: [0, 0, 1, 2, 3, 4, 5, 5]
      */
-            AS_SAMPLED,
+    AS_SAMPLED,
 
     /*
      * Clamped knot vector with equidistant internal knots. p+1 multiplicity of end knots.
-     * Example:
-     *      Given samples on the interval [0, 5]
+     * Example for samples at 0, 1, ..., 5:
      *      For degree 3: [0, 0, 0, 0, 1, 2, 3, 4, 5, 5, 5, 5]
      *      For degree 1: [0, 0, 1, 2, 3, 4, 5, 5]
      */
-            EQUIDISTANT,
+    EQUIDISTANT,
 
     /*
      * Experimental knot spacing for testing purposes only.
      * Currently, it gives a non-clamped knot vector of equidistant knots.
      * NOTE: may eventually become EQUIDISTANT_NOT_CLAMPED
-     * Example:
+     * Example for samples at 0, 1, ..., 5:
      *      For any degree: [0, 1, 2, 3, 4, 5]
-     *
      */
-            EXPERIMENTAL
+    EXPERIMENTAL
 };
 
 /**

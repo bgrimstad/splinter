@@ -7,9 +7,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include <knot_utils.h>
+#include <knot_builders.h>
 #include <utilities.h>
 #include <algorithm>
+
 
 namespace SPLINTER
 {
@@ -36,17 +37,17 @@ std::vector<std::vector<double>> compute_knot_vectors(const DataTable &data,
 
     std::vector<std::vector<double>> grid = data.get_table_x();
 
-    std::vector<std::vector<double>> knotVectors;
+    std::vector<std::vector<double>> knot_vectors;
 
     for (unsigned int i = 0; i < dim_x; ++i)
     {
         // Compute knot vector
-        auto knotVec = compute_knot_vector(grid.at(i), degrees.at(i), num_basis_functions.at(i), knot_spacing);
+        auto knot_vector = compute_knot_vector(grid.at(i), degrees.at(i), num_basis_functions.at(i), knot_spacing);
 
-        knotVectors.push_back(knotVec);
+        knot_vectors.push_back(knot_vector);
     }
 
-    return knotVectors;
+    return knot_vectors;
 }
 
 // Compute a single knot vector from sample grid and degree
@@ -66,28 +67,8 @@ std::vector<double> compute_knot_vector(const std::vector<double> &values, unsig
     }
 }
 
-std::vector<double> knot_vector_equidistant_not_clamped(const std::vector<double> &values, unsigned int degree,
-                                                        unsigned int num_basis_functions)
-{
-    // Sort and remove duplicates
-    std::vector<double> unique = extract_unique_sorted(values);
-
-    // Number of knots
-    unsigned int nk = num_basis_functions + degree + 1;
-
-    // Compute (n-k-2) equidistant interior knots
-    double lb = unique.front();
-    double ub = unique.back();
-    double delta = ub - lb;
-    double expansion = 0.1; // A non-negative number
-    std::vector<double> knots = linspace(unique.front() - expansion*delta, unique.back() + expansion*delta, nk);
-
-    return knots;
-}
-
 /*
-* Automatic construction of (p+1)-regular knot vector
-* using moving average.
+* Automatic construction of (p+1)-regular knot vector using moving average.
 *
 * Requirement:
 * Knot vector should be of size n+p+1.
@@ -121,9 +102,9 @@ std::vector<double> knot_vector_moving_average(const std::vector<double> &values
     std::vector<double> unique = extract_unique_sorted(values);
 
     // Compute sizes
-    unsigned int n = unique.size();
-    unsigned int k = degree-1; // knots to remove
-    unsigned int w = k + 3; // Window size
+    auto n = static_cast<unsigned int>(unique.size());
+    auto k = degree-1; // knots to remove
+    auto w = k + 3; // Window size
 
     // The minimum number of samples from which a free knot vector can be created
     if (n < degree+1)
@@ -148,15 +129,15 @@ std::vector<double> knot_vector_moving_average(const std::vector<double> &values
     }
 
     // Repeat first knot p + 1 times (for interpolation of start point)
-    for (unsigned int i = 0; i < degree + 1; ++i)
+    for (auto i = 0; i < degree + 1; ++i)
         knots.insert(knots.begin(), unique.front());
 
     // Repeat last knot p + 1 times (for interpolation of end point)
-    for (unsigned int i = 0; i < degree + 1; ++i)
+    for (auto i = 0; i < degree + 1; ++i)
         knots.insert(knots.end(), unique.back());
 
     // Number of knots in a (p+1)-regular knot vector
-    //assert(knots.size() == uniqueX.size() + degree + 1);
+    //assert(knots.size() == unique.size() + degree + 1);
 
     return knots;
 }
@@ -168,10 +149,10 @@ std::vector<double> knot_vector_equidistant(const std::vector<double> &values, u
     std::vector<double> unique = extract_unique_sorted(values);
 
     // Compute sizes
-    unsigned int n = unique.size();
+    auto n = static_cast<unsigned int>(unique.size());
     if (num_basis_functions > 0)
         n = num_basis_functions;
-    unsigned int k = degree-1; // knots to remove
+    auto k = degree-1; // knots to remove
 
     // The minimum number of samples from which a free knot vector can be created
     if (n < degree+1)
@@ -184,20 +165,39 @@ std::vector<double> knot_vector_equidistant(const std::vector<double> &values, u
     }
 
     // Compute (n-k-2) equidistant interior knots
-    unsigned int numIntKnots = std::max(n-k-2, (unsigned int)0);
-    numIntKnots = std::min((unsigned int)10, numIntKnots);
-    std::vector<double> knots = linspace(unique.front(), unique.back(), numIntKnots);
+    auto num_internal_knots = std::max(n-k-2, (unsigned int)0);
+    num_internal_knots = std::min((unsigned int)10, num_internal_knots);
+    std::vector<double> knots = linspace(unique.front(), unique.back(), num_internal_knots);
 
     // Repeat first knot p + 1 times (for interpolation of start point)
-    for (unsigned int i = 0; i < degree; ++i)
+    for (auto i = 0; i < degree; ++i)
         knots.insert(knots.begin(), unique.front());
 
     // Repeat last knot p + 1 times (for interpolation of end point)
-    for (unsigned int i = 0; i < degree; ++i)
+    for (auto i = 0; i < degree; ++i)
         knots.insert(knots.end(), unique.back());
 
     // Number of knots in a (p+1)-regular knot vector
     //assert(knots.size() == uniqueX.size() + degree + 1);
+
+    return knots;
+}
+
+std::vector<double> knot_vector_equidistant_not_clamped(const std::vector<double> &values, unsigned int degree,
+                                                        unsigned int num_basis_functions)
+{
+    // Sort and remove duplicates
+    std::vector<double> unique = extract_unique_sorted(values);
+
+    // Number of knots
+    unsigned int nk = num_basis_functions + degree + 1;
+
+    // Compute (n-k-2) equidistant interior knots
+    double lb = unique.front();
+    double ub = unique.back();
+    double delta = ub - lb;
+    double expansion = 0.1; // A non-negative number
+    std::vector<double> knots = linspace(unique.front() - expansion*delta, unique.back() + expansion*delta, nk);
 
     return knots;
 }

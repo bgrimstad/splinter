@@ -15,7 +15,7 @@
 #include <iostream>
 #include <utilities.h>
 #include "bspline_utils.h"
-#include "knot_utils.h"
+#include "knot_builders.h"
 
 
 namespace SPLINTER

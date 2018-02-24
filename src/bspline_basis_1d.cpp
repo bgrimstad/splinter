@@ -8,7 +8,7 @@
 */
 
 #include <bspline_basis_1d.h>
-#include <knot_utils.h>
+#include <knot_builders.h>
 #include <algorithm>
 #include <utilities.h>
 #include <iostream>
@@ -250,18 +250,18 @@ SparseMatrix BSplineBasis1D::insert_knots(double tau, unsigned int multiplicity)
     // New knot vector
     int index = knots.index_interval(tau);
 
-    std::vector<double> extKnots = knots.get_values();
+    std::vector<double> extended_knots = knots.get_values();
     for (unsigned int i = 0; i < multiplicity; i++)
-        extKnots.insert(extKnots.begin()+index+1, tau);
+        extended_knots.insert(extended_knots.begin()+index+1, tau);
 
-    if (!KnotVector(extKnots).is_regular(degree))
+    if (!KnotVector(extended_knots).is_regular(degree))
         throw Exception("BSplineBasis1D::insert_knots: New knot vector is not regular!");
 
     // Return knot insertion matrix
-    SparseMatrix A = build_knot_insertion_matrix(extKnots);
+    SparseMatrix A = build_knot_insertion_matrix(extended_knots);
 
     // Update knots
-    knots = KnotVector(extKnots);
+    knots = KnotVector(extended_knots);
 
     return A;
 }

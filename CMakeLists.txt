@@ -161,7 +161,7 @@ set(SRC_LIST
     include/bspline.h
     include/bspline_basis.h
     include/bspline_basis_1d.h
-    include/knot_utils.h
+    include/knot_builders.h
     include/knot_vector.h
     include/bspline_builder.h
     include/bspline_utils.h
@@ -176,7 +176,7 @@ set(SRC_LIST
     src/bspline.cpp
     src/bspline_basis.cpp
     src/bspline_basis_1d.cpp
-    src/knot_utils.cpp
+    src/knot_builders.cpp
     src/knot_vector.cpp
     src/bspline_builder.cpp
     src/bspline_utils.cpp

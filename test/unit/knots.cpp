@@ -8,7 +8,7 @@
 */
 
 #include <Catch.h>
-#include <knot_utils.h>
+#include <knot_builders.h>
 #include <knot_vector.h>
 #include <iostream>
 

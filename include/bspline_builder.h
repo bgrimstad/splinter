@@ -11,7 +11,7 @@
 #define SPLINTER_BSPLINE_BUILDER_H
 
 #include <data_table.h>
-#include <knot_utils.h>
+#include <knot_builders.h>
 #include <bspline.h>
 
 namespace SPLINTER
