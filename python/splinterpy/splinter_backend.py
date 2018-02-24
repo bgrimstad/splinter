@@ -194,4 +194,5 @@ def _locate_splinter(self) -> str:
 
         return None
 
+
 splinter_backend_obj = SplinterBackend()

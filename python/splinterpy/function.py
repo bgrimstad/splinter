@@ -95,9 +95,7 @@ class Function(object):
         if not isinstance(x, list):
             x = [x]
 
-        # See if x is on the form [[x0,x1],[x2,x3]]
-        # if not we assume it to be on the form
-        # [x0, x1, x2, x3]
+        # See if x is on the form [[x0,x1],[x2,x3]], if not we assume it to be on the form [x0, x1, x2, x3]
         if isinstance(x[0], list):
             x = flatten_list(x)
 
