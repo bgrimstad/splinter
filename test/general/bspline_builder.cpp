@@ -34,9 +34,10 @@ TEST_CASE(COMMON_TEXT "multivariate output", COMMON_TAGS "[construction]")
         table_ys.add_sample(xi, {f1(xi), f2(xi)});
     }
 
-    auto bs_y1 = cubic_bspline_interpolator(table_y1);
-    auto bs_y2 = cubic_bspline_interpolator(table_y2);
-    auto bs_ys = cubic_bspline_interpolator(table_ys);
+    unsigned int degree = 3;
+    auto bs_y1 = bspline_interpolator(table_y1, degree);
+    auto bs_y2 = bspline_interpolator(table_y2, degree);
+    auto bs_ys = bspline_interpolator(table_ys, degree);
 
     auto x_vec_test = linspace(-10, 20, 100);
 

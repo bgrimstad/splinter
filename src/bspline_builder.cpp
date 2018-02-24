@@ -52,7 +52,7 @@ BSpline BSpline::Builder::fit(const DataTable &data, Smoothing smoothing, double
 /**
  * Create a B-spline that interpolates the sample points
  * @param data A table of sample points on a regular grid
- * @param degree The degree of the B-spline basis functions
+ * @param degree The degree of the B-spline basis functions (default degree is 3 - cubic)
  * @return A B-spline that interpolates the sample points
  */
 BSpline bspline_interpolator(const DataTable &data, unsigned int degree)
@@ -67,21 +67,9 @@ BSpline bspline_interpolator(const DataTable &data, unsigned int degree)
 }
 
 /**
- * Create a cubic B-spline that interpolates the sample points
- * In the multivariate case, the multivariate basis functions will be products of univariate cubic basis functions,
- * i.e. for two variables the basis functions are bi-cubic, etc.
- * @param data A table of sample points on a regular grid
- * @return A cubic B-spline that interpolates the sample points
- */
-BSpline cubic_bspline_interpolator(const DataTable &data)
-{
-    return bspline_interpolator(data, 3);
-}
-
-/**
  * Create a B-spline that smooths the sample points using weight decay.
  * @param data A table of sample points on a regular grid
- * @param degree The degree of the B-spline basis functions
+ * @param degree The degree of the B-spline basis functions (default degree is 3 - cubic)
  * @param alpha Smoothing/regularization factor
  * @return A B-spline that smooths the sample points
  */
@@ -94,19 +82,6 @@ BSpline bspline_smoother(const DataTable &data, unsigned int degree, double alph
     auto knot_vectors = compute_knot_vectors(data, degrees, knot_spacing);
 
     return BSpline(degrees, knot_vectors, dim_y).fit(data, BSpline::Smoothing::IDENTITY, alpha);
-}
-
-/**
- * Create a cubic B-spline that smooths the sample points using weight decay.
- * In the multivariate case, the multivariate basis functions will be products of univariate cubic basis functions,
- * i.e. for two variables the basis functions are bi-cubic, etc.
- * @param data A table of sample points on a regular grid
- * @param alpha Smoothing/regularization factor
- * @return A cubic B-spline that smooths the sample points
- */
-BSpline cubic_bspline_smoother(const DataTable &data, double alpha)
-{
-    return bspline_smoother(data, 3, alpha);
 }
 
 /**
