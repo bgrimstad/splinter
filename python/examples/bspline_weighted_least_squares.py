@@ -39,13 +39,13 @@ weights[5] = 0.001
 # Cubic B-spline that interpolates the data
 # NOTE: the B-spline will fit to the deweighted data point since it does not have any degrees of freedom, i.e. the
 # number of control points equal the number of data points
-b1 = splinterpy.BSplineBuilder(1, 1).fit(x, y, smoothing=splinterpy.BSplineBuilder.Smoothing.NONE, weights=weights)
+b1 = splinterpy.bspline_interpolator(x, y, degree=3)
 
 # Cubic B-spline with regularization and weights
-b2 = splinterpy.BSplineBuilder(1, 1).fit(x, y, smoothing=splinterpy.BSplineBuilder.Smoothing.IDENTITY, alpha=0.1, weights=weights)
+b2 = splinterpy.bspline_smoother(x, y, alpha=0.1, weights=weights)
 
 # Cubic P-spline with weights
-b3 = splinterpy.BSplineBuilder(1, 1).fit(x, y, smoothing=splinterpy.BSplineBuilder.Smoothing.PSPLINE, alpha=0.1, weights=weights)
+b3 = splinterpy.pspline_smoother(x, y, alpha=0.1, weights=weights)
 
 nd = 1000
 xd = np.linspace(0, 10, nd)

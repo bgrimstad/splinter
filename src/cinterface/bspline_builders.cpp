@@ -7,7 +7,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include "bspline_builder.h"
+#include "bspline_builders.h"
 #include "cinterface/cinterface.h"
 #include "cinterface/utilities.h"
 
@@ -189,13 +189,16 @@ splinter_obj_ptr splinter_bspline_interpolator(splinter_obj_ptr datatable_ptr, i
     return bspline;
 }
 
-splinter_obj_ptr splinter_bspline_smoother(splinter_obj_ptr datatable_ptr, int degree, double alpha)
+splinter_obj_ptr splinter_bspline_smoother(splinter_obj_ptr datatable_ptr, int degree, double alpha, double *weights, 
+                                           unsigned int num_weights)
 {
     splinter_obj_ptr bspline = nullptr;
     DataTable *data_table = get_datatable(datatable_ptr);
+    auto _weights = get_vector(weights, num_weights);
     try
     {
-        bspline = (splinter_obj_ptr) bspline_smoother(*data_table, (unsigned int)degree, alpha).clone();  // TODO: unnecessary copy
+        // TODO: Fix unnecessary copy
+        bspline = (splinter_obj_ptr) bspline_smoother(*data_table, (unsigned int)degree, alpha, _weights).clone();
         bsplines.insert(bspline);
     }
     catch (const Exception &e)
@@ -206,13 +209,16 @@ splinter_obj_ptr splinter_bspline_smoother(splinter_obj_ptr datatable_ptr, int d
     return bspline;
 }
 
-splinter_obj_ptr splinter_pspline_smoother(splinter_obj_ptr datatable_ptr, int degree, double alpha)
+splinter_obj_ptr splinter_pspline_smoother(splinter_obj_ptr datatable_ptr, int degree, double alpha, double *weights, 
+                                           unsigned int num_weights)
 {
     splinter_obj_ptr bspline = nullptr;
     DataTable *data_table = get_datatable(datatable_ptr);
+    auto _weights = get_vector(weights, num_weights);
     try
     {
-        bspline = (splinter_obj_ptr) pspline_smoother(*data_table, (unsigned int)degree, alpha).clone();  // TODO: unnecessary copy
+        // TODO: Fix unnecessary copy
+        bspline = (splinter_obj_ptr) pspline_smoother(*data_table, (unsigned int)degree, alpha, _weights).clone();
         bsplines.insert(bspline);
     }
     catch (const Exception &e)

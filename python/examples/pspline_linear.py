@@ -25,8 +25,7 @@ x = np.linspace(0, 10, 11)
 y = 1*x + 1
 
 # Piecewise constant B-spline that interpolates the data
-PSPLINE = splinterpy.BSplineBuilder.Smoothing.PSPLINE
-bs = splinterpy.BSplineBuilder(1, 1, degree=3).fit(x, y, smoothing=PSPLINE, alpha=1.0)
+bs = splinterpy.pspline_smoother(x, y, degree=3, alpha=1.0)
 
 xd = np.arange(0, 10, .01)
 yd = bs.eval(xd)

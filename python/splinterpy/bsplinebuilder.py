@@ -131,7 +131,7 @@ def bspline_interpolator(X, Y, degree: int=3) -> BSpline:
     return BSpline(bspline_handle)
 
 
-def bspline_smoother(X, Y, degree: int=3, alpha: float=0.1) -> BSpline:
+def bspline_smoother(X, Y, degree: int=3, alpha: float=0.1, weights: List[float]=list()) -> BSpline:
 
     if degree < 0:
         raise ValueError("'degree' must be non-negative")
@@ -141,11 +141,12 @@ def bspline_smoother(X, Y, degree: int=3, alpha: float=0.1) -> BSpline:
 
     data_table = DataTable(X, Y)
     f_handle = splinter_backend_obj.handle.splinter_bspline_smoother
-    bspline_handle = splinter_backend_obj.call(f_handle, data_table._get_handle(), degree, alpha)
+    bspline_handle = splinter_backend_obj.call(f_handle, data_table._get_handle(), degree, alpha,
+                                               list_to_c_array_of_doubles(weights), len(weights))
     return BSpline(bspline_handle)
 
 
-def pspline_smoother(X, Y, degree: int=3, alpha: float=0.1) -> BSpline:
+def pspline_smoother(X, Y, degree: int=3, alpha: float=0.1, weights: List[float]=list()) -> BSpline:
 
     if degree < 0:
         raise ValueError("'degree' must be non-negative")
@@ -155,6 +156,7 @@ def pspline_smoother(X, Y, degree: int=3, alpha: float=0.1) -> BSpline:
 
     data_table = DataTable(X, Y)
     f_handle = splinter_backend_obj.handle.splinter_pspline_smoother
-    bspline_handle = splinter_backend_obj.call(f_handle, data_table._get_handle(), degree, alpha)
+    bspline_handle = splinter_backend_obj.call(f_handle, data_table._get_handle(), degree, alpha,
+                                               list_to_c_array_of_doubles(weights), len(weights))
     return BSpline(bspline_handle)
 

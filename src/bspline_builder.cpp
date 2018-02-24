@@ -7,7 +7,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include "bspline_builder.h"
+#include "bspline_builders.h"
 
 
 namespace SPLINTER
@@ -49,12 +49,6 @@ BSpline BSpline::Builder::fit(const DataTable &data, Smoothing smoothing, double
     return BSpline(_degrees, knotVectors, _dim_y).fit(data, smoothing, alpha, weights);
 }
 
-/**
- * Create a B-spline that interpolates the sample points
- * @param data A table of sample points on a regular grid
- * @param degree The degree of the B-spline basis functions (default degree is 3 - cubic)
- * @return A B-spline that interpolates the sample points
- */
 BSpline bspline_interpolator(const DataTable &data, unsigned int degree)
 {
     auto dim_x = data.get_dim_x();
@@ -66,14 +60,7 @@ BSpline bspline_interpolator(const DataTable &data, unsigned int degree)
     return BSpline(degrees, knot_vectors, dim_y).fit(data);
 }
 
-/**
- * Create a B-spline that smooths the sample points using weight decay.
- * @param data A table of sample points on a regular grid
- * @param degree The degree of the B-spline basis functions (default degree is 3 - cubic)
- * @param alpha Smoothing/regularization factor
- * @return A B-spline that smooths the sample points
- */
-BSpline bspline_smoother(const DataTable &data, unsigned int degree, double alpha)
+BSpline bspline_smoother(const DataTable &data, unsigned int degree, double alpha, std::vector<double> weights)
 {
     auto dim_x = data.get_dim_x();
     auto dim_y = data.get_dim_y();
@@ -81,17 +68,10 @@ BSpline bspline_smoother(const DataTable &data, unsigned int degree, double alph
     auto knot_spacing = KnotSpacing::AS_SAMPLED;
     auto knot_vectors = build_knot_vectors(data, degrees, knot_spacing);
 
-    return BSpline(degrees, knot_vectors, dim_y).fit(data, BSpline::Smoothing::IDENTITY, alpha);
+    return BSpline(degrees, knot_vectors, dim_y).fit(data, BSpline::Smoothing::IDENTITY, alpha, weights);
 }
 
-/**
- * Create a P-spline (penalized B-spline) that smooths the sample points using second-order difference weight decay.
- * @param data A table of sample points on a regular grid
- * @param degree The degree of the B-spline basis functions
- * @param alpha Smoothing/regularization factor
- * @return A B-spline that smooths the sample points (P-spline)
- */
-BSpline pspline_smoother(const DataTable &data, unsigned int degree, double alpha)
+BSpline pspline_smoother(const DataTable &data, unsigned int degree, double alpha, std::vector<double> weights)
 {
     auto dim_x = data.get_dim_x();
     auto dim_y = data.get_dim_y();
@@ -99,20 +79,7 @@ BSpline pspline_smoother(const DataTable &data, unsigned int degree, double alph
     auto knot_spacing = KnotSpacing::AS_SAMPLED;
     auto knot_vectors = build_knot_vectors(data, degrees, knot_spacing);
 
-    return BSpline(degrees, knot_vectors, dim_y).fit(data, BSpline::Smoothing::PSPLINE, alpha);
-}
-
-/**
- * Create a cubic P-spline (penalized B-spline) that smooths the sample points using second-order difference weight decay.
- * In the multivariate case, the multivariate basis functions will be products of univariate cubic basis functions,
- * i.e. for two variables the basis functions are bi-cubic, etc.
- * @param data A table of sample points on a regular grid
- * @param alpha Smoothing/regularization factor
- * @return A cubic B-spline that smooths the sample points (cubic P-spline)
- */
-BSpline cubic_pspline_smoother(const DataTable &data, double alpha)
-{
-    return pspline_smoother(data, 3, alpha);
+    return BSpline(degrees, knot_vectors, dim_y).fit(data, BSpline::Smoothing::PSPLINE, alpha, weights);
 }
 
 

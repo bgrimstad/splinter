@@ -8,7 +8,7 @@
 */
 
 #include <Catch.h>
-#include <bspline_builder.h>
+#include <bspline_builders.h>
 #include <utilities.h>
 
 using namespace SPLINTER;

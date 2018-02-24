@@ -9,7 +9,7 @@
 
 #include <Catch.h>
 #include <utils/test_utils.h>
-#include <bspline_builder.h>
+#include <bspline_builders.h>
 #include <utils/test_function.h>
 #include <utilities.h>
 
@@ -24,7 +24,7 @@ TEST_CASE("PSpline function" COMMON_TEXT, COMMON_TAGS "[function-value]")
 {
     auto pspline_builder = [](const DataTable &table)
     {
-        BSpline bs = cubic_pspline_smoother(table, 0.03);
+        BSpline bs = pspline_smoother(table, 3, 0.03);
         return (Function*) new BSpline(bs);
     };
 
@@ -81,7 +81,7 @@ TEST_CASE("P-spline approximation of linear function", COMMON_TAGS "[function-va
     /**
      * P-spline should give a perfect fit to a linear function regardless of alpha value
      */
-    auto bs = cubic_pspline_smoother(samples, 1.0);
+    auto bs = pspline_smoother(samples, 3, 1.0);
 
     std::vector<double> xd = {1};
     auto yd = bs.eval(xd);
@@ -94,7 +94,7 @@ TEST_CASE("PSpline jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian]")
 {
     auto pspline_builder = [](const DataTable &table)
     {
-        auto bs = cubic_pspline_smoother(table, 0.03);
+        auto bs = pspline_smoother(table, 3, 0.03);
         return (Function*) new BSpline(bs);
     };
 

@@ -210,7 +210,8 @@ SPLINTER_API splinter_obj_ptr splinter_bspline_interpolator(splinter_obj_ptr dat
  * @param alpha Smoothing/regularization factor
  * @return Pointer to the created BSpline.
  */
-SPLINTER_API splinter_obj_ptr splinter_bspline_smoother(splinter_obj_ptr datatable_ptr, int degree, double alpha);
+SPLINTER_API splinter_obj_ptr splinter_bspline_smoother(splinter_obj_ptr datatable_ptr, int degree, double alpha,
+                                                        double *weights, unsigned int num_weights);
 
 /**
  * Construct a BSpline that smooths the sample points using second-order difference weight decay (P-spline).
@@ -220,7 +221,8 @@ SPLINTER_API splinter_obj_ptr splinter_bspline_smoother(splinter_obj_ptr datatab
  * @param alpha Smoothing/regularization factor
  * @return Pointer to the created BSpline (P-spline).
  */
-SPLINTER_API splinter_obj_ptr splinter_pspline_smoother(splinter_obj_ptr datatable_ptr, int degree, double alpha);
+SPLINTER_API splinter_obj_ptr splinter_pspline_smoother(splinter_obj_ptr datatable_ptr, int degree, double alpha,
+                                                        double *weights, unsigned int num_weights);
 
 
 

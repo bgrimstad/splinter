@@ -45,7 +45,7 @@ for i in range(len(x1)):
         y.append(Y[i, j])
 
 # Cubic B-spline
-bspline = splinterpy.BSplineBuilder(2, 1, degree=[1, 3]).fit(x, y, smoothing=splinterpy.BSplineBuilder.Smoothing.NONE)
+bspline = splinterpy.bspline_interpolator(x, y, degree=3)
 
 Zbs = Y
 

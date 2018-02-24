@@ -150,7 +150,7 @@ set(CINTERFACE_SRC_LIST
     include/cinterface/cinterface.h
     include/cinterface/utilities.h
     src/cinterface/bspline.cpp
-    src/cinterface/bspline_builder.cpp
+    src/cinterface/bspline_builders.cpp
     src/cinterface/cinterface.cpp
     src/cinterface/data_table.cpp
     src/cinterface/utilities.cpp
@@ -163,7 +163,7 @@ set(SRC_LIST
     include/bspline_basis_1d.h
     include/knot_builders.h
     include/knot_vector.h
-    include/bspline_builder.h
+    include/bspline_builders.h
     include/bspline_utils.h
     include/data_point.h
     include/data_table.h

@@ -17,6 +17,11 @@
 namespace SPLINTER
 {
 
+/**
+ * Convenience functions for B-spline fitting
+ */
+
+
 // B-spline builder class
 class SPLINTER_API BSpline::Builder
 {
@@ -80,12 +85,36 @@ private:
 
 
 /**
- * Convenience functions for B-spline fitting
+ * Create a B-spline that interpolates the sample points
+ * @param data A table of sample points on a regular grid
+ * @param degree The degree of the B-spline basis functions (default degree is 3 - cubic)
+ * @return A B-spline that interpolates the sample points
  */
 BSpline bspline_interpolator(const DataTable &data, unsigned int degree = 3);
-BSpline bspline_smoother(const DataTable &data, unsigned int degree = 3, double alpha = 0.1);
-BSpline pspline_smoother(const DataTable &data, unsigned int degree = 3, double alpha = 0.1);
-BSpline cubic_pspline_smoother(const DataTable &data, double alpha = 0.1);
+
+
+/**
+ * Create a B-spline that smooths the sample points using weight decay.
+ * @param data A table of sample points on a regular grid
+ * @param degree The degree of the B-spline basis functions (default degree is 3 - cubic)
+ * @param alpha Smoothing/regularization factor
+ * @param weights Sample weights
+ * @return A B-spline that smooths the sample points
+ */
+BSpline bspline_smoother(const DataTable &data, unsigned int degree = 3, double alpha = 0.1,
+                         std::vector<double> weights = std::vector<double>());
+
+
+/**
+ * Create a P-spline (penalized B-spline) that smooths the sample points using second-order difference weight decay.
+ * @param data A table of sample points on a regular grid
+ * @param degree The degree of the B-spline basis functions
+ * @param alpha Smoothing/regularization factor
+ * @param weights Sample weights
+ * @return A B-spline that smooths the sample points (P-spline)
+ */
+BSpline pspline_smoother(const DataTable &data, unsigned int degree = 3, double alpha = 0.1,
+                         std::vector<double> weights = std::vector<double>());
 
 
 } // namespace SPLINTER

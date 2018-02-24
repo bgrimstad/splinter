@@ -29,13 +29,13 @@ x = np.linspace(0, 10, n)
 y = [f1(xi) for xi in x]
 
 # Cubic B-spline that interpolates the data (note that NONE is the default smoothing setting)
-b1 = splinterpy.BSplineBuilder(1, 1).fit(x, y, smoothing=splinterpy.BSplineBuilder.Smoothing.NONE)
+b1 = splinterpy.bspline_interpolator(x, y, degree=3)
 
 # Cubic B-spline with regularization
-b2 = splinterpy.BSplineBuilder(1, 1).fit(x, y, smoothing=splinterpy.BSplineBuilder.Smoothing.IDENTITY, alpha=0.1)
+b2 = splinterpy.bspline_smoother(x, y, degree=3, alpha=0.1)
 
 # Cubic P-spline
-b3 = splinterpy.BSplineBuilder(1, 1).fit(x, y, smoothing=splinterpy.BSplineBuilder.Smoothing.PSPLINE, alpha=0.1)
+b3 = splinterpy.pspline_smoother(x, y, degree=3, alpha=0.1)
 
 nd = 1000
 xd = np.linspace(0, 10, nd)
