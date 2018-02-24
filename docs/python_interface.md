@@ -46,7 +46,7 @@ x = np.arange(0, 11, 1)
 y = np.array([f1(xi) for xi in x])
 
 # Build cubic B-spline that interpolates the data
-bspline = splinter.BSplineBuilder(1, 1, degree=3).fit(x, y)
+bspline = splinter.bspline_interpolator(x, y, degree=3)
 
 # Evaluate the B-spline
 xd = np.arange(0, 10, .01)

@@ -6,7 +6,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from .bspline import BSpline
-from .bsplinebuilder import BSplineBuilder, bspline_unfitted
+from .bsplinebuilders import bspline_unfitted
 import numpy as np
 
 

@@ -41,18 +41,8 @@ int main(int argc, char **argv)
                 printf("%s\n", splinter_get_error_string());
         }
 
-        splinter_obj_ptr bspline_builder = splinter_bspline_builder_init(datatable);
-        if (splinter_get_error()) {
-                printf("%s\n", splinter_get_error_string());
-        }
-        
         unsigned int degrees[2] = {3, 3};
-        splinter_bspline_builder_set_degree(bspline_builder, degrees, 2);
-        if (splinter_get_error()) {
-                printf("%s\n", splinter_get_error_string());
-        }
-
-        splinter_obj_ptr bspline = splinter_bspline_builder_build(bspline_builder);
+        splinter_obj_ptr bspline_builder = splinter_splinter_bspline_interpolator(datatable, degrees);
         if (splinter_get_error()) {
                 printf("%s\n", splinter_get_error_string());
         }

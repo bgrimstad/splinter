@@ -8,7 +8,7 @@
 
 from .datatable import DataTable
 from .bspline import BSpline
-from .bsplinebuilder import BSplineBuilder, bspline_interpolator, bspline_smoother, bspline_unfitted
+from .bsplinebuilders import bspline_interpolator, bspline_smoother, bspline_unfitted
 from .bsplineboosting import BSplineBoosting
 
 from .splinter_backend import splinter_backend_obj
@@ -24,7 +24,7 @@ __version__ = splinter_backend_obj.__version__
 __all__ = [
     "splinter_backend",
     "bspline",
-    "bsplinebuilder",
+    "bsplinebuilders.py",
     "bsplineboosting"
 ]
 

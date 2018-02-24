@@ -24,7 +24,6 @@ namespace SPLINTER
 // Keep a list of objects so we avoid performing operations on objects that don't exist
 extern std::set<splinter_obj_ptr> datatables;
 extern std::set<splinter_obj_ptr> bsplines;
-extern std::set<splinter_obj_ptr> bspline_builders;
 
 extern int splinter_last_func_call_error; // Tracks the success of the last function call
 extern const char *splinter_error_string; // Error string (if the last function call resulted in an error)
@@ -37,11 +36,10 @@ DataTable *get_datatable(splinter_obj_ptr datatable_ptr);
 /* Check for existence of bspline_ptr, then cast splinter_obj_ptr to a BSpline * */
 BSpline *get_bspline(splinter_obj_ptr bspline_ptr);
 
-/* Check for existence of bspline_builder_ptr, then cast splinter_obj_ptr to a BSpline::Builder * */
-BSpline::Builder *get_builder(splinter_obj_ptr bspline_builder_ptr);
-
+// Convert int to Smoothing
 BSpline::Smoothing resolve_smoothing(int smoothing);
 
+// Convert int to KnotSpacing
 KnotSpacing resolve_knot_spacing(int knot_spacing);
 
 /**

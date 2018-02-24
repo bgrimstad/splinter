@@ -15,7 +15,7 @@ from math import sqrt, pi, cos, sin
 # Only for dev purposes
 import os.path
 if os.path.isdir("/home/bjarne/"):
-    splinterpy.load("/home/bjarne/Code/C++/splinter/build/release/libsplinter-4-0.so")
+    splinterpy.load("/home/bjarne/Code/C++/splinter/build/debug/libsplinter-4-0.so")
 elif os.path.isdir("/home/anders/"):
     splinterpy.load("/home/anders/SPLINTER/build/debug/libsplinter-4-0.so")
 

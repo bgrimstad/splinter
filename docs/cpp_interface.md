@@ -7,7 +7,7 @@ More examples can be found in the directory `/test/examples`.
 
 ```c++
 #include <iostream>
-#include "bspline_builder.h"
+#include "bspline_builders.h"
 
 using std::cout;
 using std::endl;
@@ -42,14 +42,12 @@ int main(int argc, char *argv[])
     }
 
     // Build B-splines that interpolate the samples
-    BSpline bspline1 = BSpline::Builder(2, 1).degree(1).fit(samples);
-    BSpline bspline3 = BSpline::Builder(2, 1).degree(3).fit(samples);
+    BSpline bspline1 = bspline_interpolator(samples, 1);
+    BSpline bspline3 = bspline_interpolator(samples, 3);
 
     // Build degree 3 penalized B-spline (P-spline) that smooths the samples
     // The smoothing/regularization parameter is set to 0.03
-    BSpline pspline = BSpline::Builder(2, 1)
-            .degree(3)
-            .fit(samples, BSpline::Smoothing::PSPLINE, 0.03);
+    BSpline pspline = bspline_smoother(samples, 3, BSpline::Smoothing::PSPLINE, 0.03);
 
     /*
      * Evaluate the splines at x = (1,1)

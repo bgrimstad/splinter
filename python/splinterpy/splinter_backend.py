@@ -126,13 +126,6 @@ class SplinterBackend:
         set_signature('splinter_datatable_get_num_samples', c_int, handle_type)
         set_signature('splinter_datatable_delete', c_void, handle_type)
 
-        set_signature('splinter_bspline_builder_init', handle_type, handle_type)
-        set_signature('splinter_bspline_builder_set_degree', c_void, handle_type, c_int_p, c_int)
-        set_signature('splinter_bspline_builder_set_num_basis_functions', c_void, handle_type, c_int_p, c_int)
-        set_signature('splinter_bspline_builder_set_knot_spacing', c_void, handle_type, c_int)
-        set_signature('splinter_bspline_builder_fit', handle_type, handle_type, handle_type, c_int, c_double, c_double_p, c_int)
-        set_signature('splinter_bspline_builder_delete', c_void, handle_type)
-
         set_signature('splinter_bspline_from_param', handle_type, c_int, c_int, c_int_p, c_double_p, c_int_p, c_double_p, c_int)
         set_signature('splinter_bspline_from_param_zero', handle_type, c_int, c_int, c_int_p, c_double_p, c_int_p)
         set_signature('splinter_bspline_get_knot_vector_sizes', c_int_p, handle_type)
@@ -152,6 +145,7 @@ class SplinterBackend:
         set_signature('splinter_bspline_decompose_to_bezier_form', c_void, handle_type)
         set_signature('splinter_bspline_copy', handle_type, handle_type)
         set_signature('splinter_bspline_fit', handle_type, handle_type, handle_type, c_int, c_double, c_double_p, c_int)
+
         set_signature('splinter_bspline_interpolator', handle_type, handle_type, c_int)
         set_signature('splinter_bspline_smoother', handle_type, handle_type, c_int, c_int, c_double, c_double_p, c_int)
         set_signature('splinter_bspline_unfitted', handle_type, handle_type, c_int_p, c_int, c_int, c_int_p, c_int)

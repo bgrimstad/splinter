@@ -15,7 +15,6 @@ namespace SPLINTER
 
 std::set<splinter_obj_ptr> datatables = std::set<splinter_obj_ptr>();
 std::set<splinter_obj_ptr> bsplines = std::set<splinter_obj_ptr>();
-std::set<splinter_obj_ptr> bspline_builders = std::set<splinter_obj_ptr>();
 
 // 1 if the last function call caused an error, 0 else
 int splinter_last_func_call_error = 0;
@@ -50,19 +49,6 @@ BSpline *get_bspline(splinter_obj_ptr bspline_ptr)
     }
 
     set_error_string("Invalid reference to BSpline: Maybe it has been deleted?");
-
-    return nullptr;
-}
-
-/* Check for existence of bspline_builder_ptr, then cast splinter_obj_ptr to a BSpline::Builder * */
-BSpline::Builder *get_builder(splinter_obj_ptr bspline_builder_ptr)
-{
-    if (bspline_builders.count(bspline_builder_ptr) > 0)
-    {
-        return static_cast<BSpline::Builder *>(bspline_builder_ptr);
-    }
-
-    set_error_string("Invalid reference to BSpline::Builder: Maybe it has been deleted?");
 
     return nullptr;
 }
@@ -105,7 +91,7 @@ double *get_row_major(double *col_major, size_t point_dim, size_t x_len)
  * @param smoothing as integer
  * @return Smoothing
  */
-BSpline::Smoothing resolve_smoothing(int smoothing) 
+BSpline::Smoothing resolve_smoothing(int smoothing)
 {
     switch (smoothing)
     {

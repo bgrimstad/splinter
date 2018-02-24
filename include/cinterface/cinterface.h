@@ -137,62 +137,6 @@ SPLINTER_API void splinter_datatable_delete(splinter_obj_ptr datatable_ptr);
 
 
 
-
-/**
- * Create a new BSpline::Builder.
- *
- * @param dim_x Dimension of domain (number of inputs)
- * @param dim_y Dimension of codomain (number of outputs)
- * @return Pointer to the created BSplineBuilder.
- */
-SPLINTER_API splinter_obj_ptr splinter_bspline_builder_init(int dim_x, int dim_y);
-
-/**
- * Set the degree of the BSplineBuilder.
- *
- * @param bspline_builder_ptr The BSplineBuilder to set the degree of.
- * @param degrees Array of degrees (must be of the same dimension as the BSplineBuilder).
- * @param n Dimension of degrees
- */
-SPLINTER_API void splinter_bspline_builder_set_degree(splinter_obj_ptr bspline_builder_ptr, unsigned int *degrees, int n);
-
-/**
- * Set the number of basis functions of the BSplineBuilder.
- *
- * @param bspline_builder_ptr The BSplineBuilder to set the number of basis function for.
- * @param num_basis_functions Array of numbers denoting the number of basis functions in corresponding dimensions.
- * @param n Size of num_basis_functions (must match the dimension of bspline_builder_ptr).
- */
-SPLINTER_API void splinter_bspline_builder_set_num_basis_functions(splinter_obj_ptr bspline_builder_ptr, int *num_basis_functions, int n);
-
-/**
- * Set the knot spacing of the BSplineBuilder.
- *
- * @param bspline_builder_ptr The BSplineBuilder to set the knot spacing of.
- * @param knot_spacing The knot spacing (actually an enum, see the implementation of this function for details).
- */
-SPLINTER_API void splinter_bspline_builder_set_knot_spacing(splinter_obj_ptr bspline_builder_ptr, int knot_spacing);
-
-/**
- * Build the BSpline with the parameters of the Builder.
- *
- * @param bspline_builder_ptr The Builder to "build the BSpline with".
- * @param datatable_ptr The datatable to create the BSpline::Builder from.
- * @param smoothing Smoothing type (actually an enum, see the implementation of this function for details)
- * @param alpha Regularization/smoothing parameter (must be non-negative).
- * @return Pointer to the created BSpline.
- */
-SPLINTER_API splinter_obj_ptr splinter_bspline_builder_fit(splinter_obj_ptr bspline_builder_ptr,
-                                                           splinter_obj_ptr datatable_ptr, int smoothing, double alpha,
-                                                           double *weights, int num_weights);
-
-/**
- * Free the memory of the internal Builder
- *
- * @param bspline_builder_ptr Pointer to the Builder.
- */
-SPLINTER_API void splinter_bspline_builder_delete(splinter_obj_ptr bspline_builder_ptr);
-
 /**
  * Construct a BSpline that interpolates the sample points.
  *
@@ -221,9 +165,9 @@ SPLINTER_API splinter_obj_ptr splinter_bspline_smoother(splinter_obj_ptr datatab
  * @param alpha Smoothing/regularization factor
  * @return Pointer to the created BSpline.
  */
-SPLINTER_API splinter_obj_ptr splinter_bspline_unfitted(splinter_obj_ptr datatable_ptr, unsigned int *degrees, 
-                                                        unsigned int num_degrees, int knot_spacing, 
-                                                        unsigned int *num_basis_functions, 
+SPLINTER_API splinter_obj_ptr splinter_bspline_unfitted(splinter_obj_ptr datatable_ptr, unsigned int *degrees,
+                                                        unsigned int num_degrees, int knot_spacing,
+                                                        unsigned int *num_basis_functions,
                                                         unsigned int num_num_basis_functions);
 
 

@@ -22,68 +22,6 @@ namespace SPLINTER
  */
 
 
-// B-spline builder class
-class SPLINTER_API BSpline::Builder
-{
-public:
-    Builder(unsigned int dim_x, unsigned int dim_y);
-
-    // Set build options
-
-    Builder& degree(unsigned int degree)
-    {
-        _degrees = std::vector<unsigned int>(_dim_x, degree);
-        return *this;
-    }
-
-    Builder& degree(const std::vector<unsigned int> &degrees)
-    {
-        if (degrees.size() != _dim_x)
-            throw Exception("BSpline::Builder::degree: Expected degree vector of length"
-                            + std::to_string(_dim_x) + ".");
-        _degrees = degrees;
-        return *this;
-    }
-
-    Builder& num_basis_functions(unsigned int num_basis_functions)
-    {
-        _numBasisFunctions = std::vector<unsigned int>(_dim_x, num_basis_functions);
-        return *this;
-    }
-
-    Builder& num_basis_functions(const std::vector<unsigned int> &num_basis_functions)
-    {
-        if (num_basis_functions.size() != _dim_x)
-            throw Exception("BSpline::Builder::num_basis_functions: Expected num_basis_functions vector of length "
-                            + std::to_string(_dim_x) + ".");
-        _numBasisFunctions = num_basis_functions;
-        return *this;
-    }
-
-    Builder& knot_spacing(KnotSpacing knot_spacing)
-    {
-        _knotSpacing = knot_spacing;
-        return *this;
-    }
-
-    // Fit B-spline to data
-    BSpline fit(const DataTable &data,
-                Smoothing smoothing = Smoothing::NONE,
-                double alpha = .1,
-                std::vector<double> weights = std::vector<double>()) const;
-
-private:
-    Builder();
-
-    // Member variables
-    unsigned int _dim_x;
-    unsigned int _dim_y;
-    std::vector<unsigned int> _degrees;
-    std::vector<unsigned int> _numBasisFunctions;
-    KnotSpacing _knotSpacing;
-};
-
-
 /**
  * Create a B-spline that interpolates the sample points.
  * @param data A table of sample points on a regular grid.
