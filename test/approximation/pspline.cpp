@@ -22,16 +22,17 @@ using namespace SPLINTER;
 
 TEST_CASE("PSpline function" COMMON_TEXT, COMMON_TAGS "[function-value]")
 {
+    auto pspline_builder = [](const DataTable &table)
+    {
+        BSpline bs = cubic_pspline_smoother(table, 0.03);
+        return (Function*) new BSpline(bs);
+    };
+
     for (auto testFunc : getPolynomialFunctions())
     {
         double one_eps = 0.35;
         double two_eps = 0.1;
         double inf_eps = 0.1;
-
-        auto pspline_builder = [](const DataTable &table) {
-            BSpline bs = cubic_pspline_smoother(table, 0.03);
-            return (Function*) new BSpline(bs);
-        };
 
         compareFunctionValue(testFunc, pspline_builder,
                              300,  // Number of points to sample at
@@ -42,23 +43,22 @@ TEST_CASE("PSpline function" COMMON_TEXT, COMMON_TAGS "[function-value]")
 
 TEST_CASE("PSpline function2" COMMON_TEXT, COMMON_TAGS "[function-value]")
 {
+    auto pspline_builder = [](const DataTable &table) {
+        auto dim_x = table.get_dim_x();
+        auto dim_y = table.get_dim_y();
+        auto degrees = std::vector<unsigned int>(dim_x, 3);
+        auto num_basis_functions = std::vector<unsigned int>(dim_x, 10);
+        auto knot_vectors = build_knot_vectors(table, degrees, KnotSpacing::EXPERIMENTAL, num_basis_functions);
+
+        BSpline bs = BSpline(degrees, knot_vectors, dim_y).fit(table, BSpline::Smoothing::PSPLINE, 0.01);
+        return (Function*) new BSpline(bs);
+    };
+
     for (auto test_func : getPolynomialFunctions())
     {
         double one_eps = 0.8;
         double two_eps = 0.1;
         double inf_eps = 0.1;
-
-        auto pspline_builder = [](const DataTable &table) {
-            auto dim_x = table.get_dim_x();
-            auto dim_y = table.get_dim_y();
-            auto degrees = std::vector<unsigned int>(dim_x, 3);
-            auto num_basis_functions = std::vector<unsigned int>(dim_x, 10);
-            auto knot_vectors = build_knot_vectors(table, degrees, KnotSpacing::EXPERIMENTAL,
-                                                   num_basis_functions);
-
-            BSpline bs = BSpline(degrees, knot_vectors, dim_y).fit(table, BSpline::Smoothing::PSPLINE, 0.01);
-            return (Function*) new BSpline(bs);
-        };
 
         compareFunctionValue(test_func, pspline_builder,
                              300,  // Number of points to sample at
@@ -92,16 +92,17 @@ TEST_CASE("P-spline approximation of linear function", COMMON_TAGS "[function-va
 
 TEST_CASE("PSpline jacobian" COMMON_TEXT, COMMON_TAGS "[jacobian]")
 {
+    auto pspline_builder = [](const DataTable &table)
+    {
+        auto bs = cubic_pspline_smoother(table, 0.03);
+        return (Function*) new BSpline(bs);
+    };
+
     for (auto testFunc : getPolynomialFunctions())
     {
         double one_eps = 6e-6;
         double two_eps = 6e-6;
         double inf_eps = 6e-5;
-
-        auto pspline_builder = [](const DataTable &table) {
-            auto bs = cubic_pspline_smoother(table, 0.03);
-            return (Function*) new BSpline(bs);
-        };
 
         compareJacobianValue(testFunc, pspline_builder,
                              300,  // Number of points to sample at
