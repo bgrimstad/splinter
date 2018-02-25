@@ -128,11 +128,11 @@ std::vector<double> knot_vector_moving_average(const std::vector<double> &values
     }
 
     // Repeat first knot p + 1 times (for interpolation of start point)
-    for (auto i = 0; i < degree + 1; ++i)
+    for (auto i = 0u; i < degree + 1; ++i)
         knots.insert(knots.begin(), unique.front());
 
     // Repeat last knot p + 1 times (for interpolation of end point)
-    for (auto i = 0; i < degree + 1; ++i)
+    for (auto i = 0u; i < degree + 1; ++i)
         knots.insert(knots.end(), unique.back());
 
     // Number of knots in a (p+1)-regular knot vector
@@ -169,11 +169,11 @@ std::vector<double> knot_vector_equidistant_clamped(const std::vector<double> &v
     std::vector<double> knots = linspace(unique.front(), unique.back(), num_internal_knots);
 
     // Repeat first knot p + 1 times (for interpolation of start point)
-    for (auto i = 0; i < degree; ++i)
+    for (auto i = 0u; i < degree; ++i)
         knots.insert(knots.begin(), unique.front());
 
     // Repeat last knot p + 1 times (for interpolation of end point)
-    for (auto i = 0; i < degree; ++i)
+    for (auto i = 0u; i < degree; ++i)
         knots.insert(knots.end(), unique.back());
 
     // Number of knots in a (p+1)-regular knot vector

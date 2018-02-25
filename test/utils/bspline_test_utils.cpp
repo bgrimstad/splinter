@@ -45,9 +45,6 @@ bool testKnotInsertion()
 {
     DataTable samples = sampleTestFunction();
 
-    auto dim_x = samples.get_dim_x();
-    auto dim_y = samples.get_dim_y();
-
     // Build B-splines that interpolate the samples
     BSpline bspline1 = bspline_interpolator(samples, 1);
     BSpline bspline2 = bspline_interpolator(samples, 2);
@@ -146,9 +143,6 @@ bool runRecursiveDomainReductionTest()
     // Create new DataTable to manage samples
     DataTable samples = sampleTestFunction();
 
-    auto dim_x = samples.get_dim_x();
-    auto dim_y = samples.get_dim_y();
-
     // Build B-splines that interpolate the samples
     BSpline bspline1 = bspline_interpolator(samples, 1);
     BSpline bspline2 = bspline_interpolator(samples, 2);
@@ -174,9 +168,6 @@ bool domainReductionTest1()
 
     std::vector<double> x1 = {0.75, 0.75};
     std::vector<double> x2 = {0.7, 0.8};
-
-    auto dim_x = samples.get_dim_x();
-    auto dim_y = samples.get_dim_y();
 
     // Build B-splines that interpolate the samples
     BSpline bspline1_ref = bspline_interpolator(samples, 1);

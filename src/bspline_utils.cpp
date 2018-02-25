@@ -41,7 +41,6 @@ namespace SPLINTER
 DenseMatrix compute_control_points(const BSpline &bspline, const DataTable &data, BSpline::Smoothing smoothing,
                                    double alpha, std::vector<double> weights)
 {
-    unsigned int num_samples = data.get_num_samples();
     unsigned int num_basis_functions = bspline.get_num_basis_functions();
     SparseMatrix X = compute_basis_function_matrix(bspline, data);
     DenseMatrix Y = stack_sample_values(data);
