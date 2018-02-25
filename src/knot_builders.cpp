@@ -157,7 +157,7 @@ std::vector<double> knot_vector_equidistant_clamped(const std::vector<double> &v
     if (n < degree+1)
     {
         std::ostringstream e;
-        e << "knot_vector_moving_average: Only " << n
+        e << "knot_vector_equidistant_clamped: Only " << n
         << " unique interpolation points are given. A minimum of degree+1 = " << degree+1
         << " unique points are required to build a B-spline basis of degree " << degree << ".";
         throw Exception(e.str());
