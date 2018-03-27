@@ -7,7 +7,7 @@ class SplinterConan(ConanFile):
     version         = "3.0"     
     description     = "Conan package for bgrimstad splinter."           
     url             = "https://github.com/bgrimstad/splinter"
-    license         = "MIT"                                         
+    license         = "MPL"                                         
     settings        = "arch", "build_type", "compiler", "os"
     generators      = "cmake"
     options         = {"shared": [True, False]} 
