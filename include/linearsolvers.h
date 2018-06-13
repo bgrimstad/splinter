@@ -11,13 +11,13 @@
 #define SPLINTER_LINEARSOLVER_H
 
 #include "definitions.h"
-#ifdef __GNUC__
+#if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wno-ignored-attributes"
 #endif
 #include "Eigen/IterativeLinearSolvers"
 #include "Eigen/SparseQR"
-#ifdef __GNUC__
+#if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic pop
 #endif
 
