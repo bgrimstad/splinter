@@ -28,8 +28,15 @@
 # include <stdexcept>
 
 # include <vector>
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wno-ignored-attributes"
+#endif
 # include <Eigen/Dense>
 # include <Eigen/Sparse>
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
 
 namespace SPLINTER
 {

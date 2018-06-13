@@ -14,6 +14,7 @@
 #include <stdexcept>
 #include <limits>
 #include <serializer.h>
+#include <initializer_list>
 
 namespace SPLINTER
 {
