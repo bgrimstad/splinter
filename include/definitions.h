@@ -30,7 +30,7 @@
 # include <vector>
 #if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wno-ignored-attributes"
+#pragma GCC diagnostic ignored "-Wignored-attributes"
 #endif
 # include <Eigen/Dense>
 # include <Eigen/Sparse>
