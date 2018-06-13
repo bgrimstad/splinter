@@ -27,20 +27,8 @@ TEST_CASE("DataTable initializer_list bahaviour", COMMON_TAGS)
 	{
 		table_ref.addSample(sample);
 	}
-	auto table_iter = table.cbegin();
-	auto table_ref_iter = table.cend();
-	for(;;)
-	{
-		if(table_iter == table.cend() || table_ref_iter == table_ref.cend())
-		{
-			CHECK(table_iter == table.cend());
-			CHECK(table_ref_iter == table_ref.cend());
-			break;
-		}
-		CHECK((*table_iter) == (*table_ref_iter));
-		++table_iter;
-		++table_ref_iter;
-	}
+	bool result = table.getSamples() == table_ref.getSamples();
+	CHECK(result);
 }
 
 TEST_CASE("DataTable set operations", COMMON_TAGS) {
