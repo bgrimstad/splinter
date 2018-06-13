@@ -27,11 +27,19 @@ TEST_CASE("DataTable initializer_list bahaviour", COMMON_TAGS)
 	{
 		table_ref.addSample(sample);
 	}
-	for(int i = 0; i < table.getGrid().size(); i++)
+	auto table_iter = table.cbegin();
+	auto table_ref_iter = table.cend();
+	for(;;)
 	{
-		auto& sample = table.getGrid()[i];
-		auto& sample_ref = table.getGrid()[i];
-		CHECK(sample == sample_ref);
+		if(table_iter == table.cend() || table_ref_iter == table_ref.cend())
+		{
+			CHECK(table_iter == table.cend());
+			CHECK(table_ref_iter == table_ref.cend());
+			break;
+		}
+		CHECK((*table_iter) == (*table_ref_iter));
+		++table_iter;
+		++table_ref_iter;
 	}
 }
 
