@@ -94,6 +94,14 @@ void DataTable::addSample(const DataPoint &sample)
     recordGridPoint(sample);
 }
 
+void DataTable::addSample(std::initializer_list<DataPoint> samples)
+{
+	for (auto& sample : samples)
+	{
+		addSample(sample);
+	}
+}
+
 void DataTable::recordGridPoint(const DataPoint &sample)
 {
     for (unsigned int i = 0; i < getNumVariables(); i++)
