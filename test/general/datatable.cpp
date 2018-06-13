@@ -29,8 +29,8 @@ TEST_CASE("DataTable initializer_list bahaviour", COMMON_TAGS)
 	}
 	for(int i = 0; i < table.getGrid().size(); i++)
 	{
-		auto&& sample = table.getGrid()[i];
-		auto&& sample_ref = table.getGrid()[i];
+		auto& sample = table.getGrid()[i];
+		auto& sample_ref = table.getGrid()[i];
 		CHECK(sample == sample_ref);
 	}
 }
