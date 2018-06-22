@@ -14,6 +14,7 @@
 #include <stdexcept>
 #include <limits>
 #include <serializer.h>
+#include <initializer_list>
 
 namespace SPLINTER
 {
@@ -92,6 +93,14 @@ void DataTable::addSample(const DataPoint &sample)
     samples.insert(sample);
 
     recordGridPoint(sample);
+}
+
+void DataTable::addSample(std::initializer_list<DataPoint> samples)
+{
+	for (auto& sample : samples)
+	{
+		addSample(sample);
+	}
 }
 
 void DataTable::recordGridPoint(const DataPoint &sample)
