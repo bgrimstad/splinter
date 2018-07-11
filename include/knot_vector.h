@@ -81,15 +81,15 @@ public:
         return knots.cend();
     }
 
-    const double at(unsigned int i) const {
+    double at(unsigned int i) const {
         return knots.at(i);
     }
 
-    const double front() const {
+    double front() const {
         return knots.front();
     }
 
-    const double back() const {
+    double back() const {
         return knots.back();
     }
 
