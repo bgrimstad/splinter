@@ -98,6 +98,11 @@ public:
         return basis.get_num_basis_functions();
     }
 
+    unsigned int get_num_supported() const
+    {
+        return basis.num_supported();
+    }
+
     DenseMatrix get_knot_averages() const {
         return compute_knot_averages();
     };

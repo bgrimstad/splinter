@@ -86,15 +86,13 @@ DenseMatrix compute_control_points(const BSpline &bspline, const DataTable &data
             R = D.transpose()*D;
         }
         
-        SparseMatrix Xt = X.transpose();
-        
         // Left-hand side matrix
         // NOTE: Using eval to avoid aliasing
         // NOTE2: consider changing regularization factor to (alpha/numSample)
-        A = (Xt*A + alpha*R).eval();
+        A = (X.transpose()*A + alpha*R).eval();
         
         // Right-hand side matrix
-        B = (Xt*B).eval();
+        B = (X.transpose()*B).eval();
     }
 
     // Solve equation AC = B for control points C
@@ -137,11 +135,22 @@ SparseMatrix compute_basis_function_matrix(const BSpline &bspline, const DataTab
 {
     unsigned int num_samples = data.get_num_samples();
 
-    // TODO: Reserve nnz per row (degree+1)
-    //int nnzPrCol = bspline.basis.num_supported();
-
     SparseMatrix A(num_samples, bspline.get_num_basis_functions());
-    //A.reserve(DenseVector::Constant(num_samples, nnzPrCol)); // TODO: should reserve nnz per row!
+
+    // Reserve memory for A.
+    // Assume ColMajor storage order, in which case the inner vectors of SparseMatrix are columns.
+    // If the storage order ever changes, change the reserve statement to:
+    //     A.reserve( Eigen::VectorXi::Constant( num_samples, bspline.get_num_supported() ) );
+    static_assert( A.IsRowMajor == false );
+    // Although the number of non-zero elements per row equals bspline.get_num_supported(),
+    // SparseMatrix::reserve requires a vector of size SparseMatrix::cols() a an argument;
+    Eigen::VectorXi reserve_sizes( A.cols() );
+    // Assuming that non-zero elements in A are distributed randomly, the average number of non-zero elements per column is:
+    const double average_nnz_per_col = num_samples * bspline.get_num_supported() / bspline.get_num_basis_functions();
+    // Add safety margin of sqrt(N), but don't exceed num_samples ( which otherwise would happen if e.g. bspline.get_num_supported() == bspline.get_num_basis_functions() )
+    const int reserve_col_size = std::min( static_cast<int>( average_nnz_per_col + sqrt( average_nnz_per_col ) ), static_cast<int>(num_samples) );
+    reserve_sizes.fill( reserve_col_size );
+    A.reserve( reserve_sizes );
 
     int i = 0;
     for (auto it = data.cbegin(); it != data.cend(); ++it, ++i)
