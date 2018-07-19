@@ -35,6 +35,8 @@ public:
      */
     void add_sample(const DataPoint &sample);
 
+    void add_sample(std::initializer_list<DataPoint> samples);
+
     template <class Tx, class Ty>
     void add_sample(Tx x, Ty y) {
         return add_sample(DataPoint(x, y));

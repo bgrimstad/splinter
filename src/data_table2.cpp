@@ -8,13 +8,13 @@
 */
 
 #include "data_table2.h"
-#include "json_parser.h"
 #include <set>
 #include <string>
 #include <fstream>
 #include <iomanip>
 #include <stdexcept>
 #include <limits>
+#include <initializer_list>
 
 
 namespace SPLINTER
@@ -39,6 +39,14 @@ void DataTable2::add_sample(const DataPoint &sample)
     }
 
     samples.emplace_back(sample);
+}
+
+void DataTable2::add_sample(std::initializer_list<DataPoint> samples)
+{
+    for (auto& sample : samples)
+    {
+        add_sample(sample);
+    }
 }
 
 /*

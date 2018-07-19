@@ -12,8 +12,8 @@
 
 #include <set>
 #include "data_point.h"
-
 #include <ostream>
+
 
 namespace SPLINTER
 {
