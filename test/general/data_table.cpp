@@ -17,6 +17,20 @@ using namespace SPLINTER;
 #define COMMON_TAGS "[general][datatable]"
 
 
+TEST_CASE("DataTable initializer_list bahaviour", COMMON_TAGS)
+{
+	std::vector<DataPoint> list{ { 1, 1 },{ 1, 1 } };
+	DataTable table;
+	DataTable table_ref;
+	table.addSample({ { 1,1 },{ 1,1 } });
+	for (auto& sample : list)
+	{
+		table_ref.addSample(sample);
+	}
+	bool result = table.getSamples() == table_ref.getSamples();
+	CHECK(result);
+}
+
 TEST_CASE("DataTable set operations", COMMON_TAGS) {
     int dim = 2;
     auto func = getTestFunction(dim, 2);

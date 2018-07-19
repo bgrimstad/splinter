@@ -62,11 +62,17 @@ endif()
 # Set bitness
 if(${ARCH} STREQUAL "x86-64")
     set(BITNESS "64")
+    set(BITNESS_FLAG "-m${BITNESS}")
 elseif(${ARCH} STREQUAL "x86")
     set(BITNESS "32")
+    set(BITNESS_FLAG "-m${BITNESS}")
+elseif(${ARCH} STREQUAL "armv8")
+    set(BITNESS "64")
+    set(BITNESS_FLAG "")
 else()
     set(BITNESS "32")
     set(ARCH "x86")
+    set(BITNESS_FLAG "-m${BITNESS}")
     message("Unknown architecture selected, defaulting to x86")
 endif()
 
@@ -113,12 +119,12 @@ elseif(GCC OR CLANG)
     message("Identified compiler as GCC or Clang")
     # Treat warning return-type as error to avoid undefined behaviour
     # when a non-void function does not return a value.
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m${BITNESS} -std=c++11 -Werror=return-type")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${BITNESS_FLAG} -std=c++11 -Werror=return-type")
     message("CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wno-long-long")
 
 elseif(INTEL)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m${BITNESS} -std=c++11")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${BITNESS_FLAG} -std=c++11")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
 endif()
 
@@ -314,7 +320,7 @@ if(DOXYGEN_FOUND)
     ${PROJECT_BINARY_DIR}/Doxyfile
     COMMENT "Generating API documentation with Doxygen"
     VERBATIM)
-    
+
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL DEBUG)

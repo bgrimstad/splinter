@@ -39,6 +39,7 @@ public:
     void addSample(const std::vector<double> &x, double y);
     void addSample(double x, const std::vector<double> &y);
     void addSample(const std::vector<double> &x, const std::vector<double> &y);
+    void addSample(std::initializer_list<DataPoint> samples);
 
     /*
      * Getters
