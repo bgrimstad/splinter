@@ -14,6 +14,7 @@
 #include <iomanip>
 #include <stdexcept>
 #include <limits>
+#include <initializer_list>
 
 
 namespace SPLINTER
@@ -90,6 +91,14 @@ void DataTable::add_sample(const DataPoint &sample)
     samples.insert(sample);
 
     record_grid_point(sample);
+}
+
+void DataTable::add_sample(std::initializer_list<DataPoint> samples)
+{
+	for (auto& sample : samples)
+	{
+		add_sample(sample);
+	}
 }
 
 void DataTable::record_grid_point(const DataPoint &sample)
