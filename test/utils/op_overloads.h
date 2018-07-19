@@ -15,6 +15,7 @@
 #include <set>
 #include <data_point.h>
 #include <data_table.h>
+#include <data_table2.h>
 #include <bspline.h>
 
 
@@ -43,6 +44,7 @@ namespace SPLINTER
  * Comparison operators (==)
  */
 bool operator==(const DataTable &lhs, const DataTable &rhs);
+bool operator==(const DataTable2 &lhs, const DataTable2 &rhs);
 bool operator==(const DataPoint &lhs, const DataPoint &rhs);
 bool operator==(const BSpline &lhs, const BSpline &rhs);
 bool operator==(const BSplineBasis &lhs, const BSplineBasis &rhs);
@@ -98,6 +100,7 @@ bool operator!=(const DataPoint &lhs, const DataPoint &rhs);
  */
 std::ostream &operator<<(std::ostream &out, const DataPoint &sample);
 std::ostream &operator<<(std::ostream &out, const DataTable &table);
+std::ostream &operator<<(std::ostream &out, const DataTable2 &table);
 template <class T>
 std::ostream &operator<<(std::ostream &out, const std::vector<T> &obj);
 template <class T>

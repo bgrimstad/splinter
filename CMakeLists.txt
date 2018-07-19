@@ -167,6 +167,7 @@ set(SRC_LIST
     include/bspline_utils.h
     include/data_point.h
     include/data_table.h
+    include/data_table2.h
     include/function.h
     include/definitions.h
     include/linear_solvers.h
@@ -182,6 +183,7 @@ set(SRC_LIST
     src/bspline_utils.cpp
     src/data_point.cpp
     src/data_table.cpp
+    src/data_table2.cpp
     src/function.cpp
     src/kronecker_product.cpp
     src/utilities.cpp
@@ -196,6 +198,7 @@ set(TEST_SRC_LIST
     test/general/bspline.cpp
     test/general/bspline_builder.cpp
     test/general/data_table.cpp
+    test/general/data_table2.cpp
     test/general/utilities.cpp
     test/examples/approximation.cpp
     test/utils/op_overloads.h

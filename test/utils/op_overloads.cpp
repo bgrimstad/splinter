@@ -9,6 +9,7 @@
 
 #include <utils/op_overloads.h>
 #include <utils/test_utils.h>
+#include <utilities.h>
 
 
 /*
@@ -94,17 +95,26 @@ bool operator==(const DataTable &lhs, const DataTable &rhs)
             && lhs.get_grid() == rhs.get_grid();
 }
 
+bool operator==(const DataTable2 &lhs, const DataTable2 &rhs)
+{
+    // NOTE: requires equal ordering of samples and an equal number of samples
+    return  lhs._dim_x == rhs._dim_x
+            && lhs._dim_y == rhs._dim_y
+            && lhs.samples == rhs.samples
+            && lhs.get_num_samples() == rhs.get_num_samples();
+}
+
 bool operator==(const DataPoint &lhs, const DataPoint &rhs)
 {
     for (unsigned int i = 0; i < lhs.get_dim_x(); i++)
     {
-        if (!equalsWithinRange(lhs.get_x().at(i), rhs.get_x().at(i)))
+        if (!assert_near(lhs.get_x().at(i), rhs.get_x().at(i)))
             return false;
     }
 
     for (unsigned int i = 0; i < lhs.get_dim_y(); i++)
     {
-        if (!equalsWithinRange(lhs.get_y().at(i), rhs.get_y().at(i)))
+        if (!assert_near(lhs.get_y().at(i), rhs.get_y().at(i)))
             return false;
     }
 
@@ -186,6 +196,29 @@ std::ostream &operator<<(std::ostream &out, const DataTable &table)
 
         out << dimension.size();
         firstLoop = false;
+    }
+
+    return out;
+}
+
+std::ostream &operator<<(std::ostream &out, const DataTable2 &table)
+{
+    out << "DataTable (";
+    out << "dim_x: " << table.get_dim_x();
+    out << ", dim_y: " << table.get_dim_y();
+    out << ", num_samples: " << table.get_num_samples();
+    out << ")" << std::endl;
+    out << "--------------------------------------------------------" << std::endl;
+
+    for (auto &point : table.get_samples()) {
+        for (auto x : point.get_x()) {
+            out << x << ", ";
+        }
+        out << " : ";
+        for (auto y : point.get_y()) {
+            out << y << ", ";
+        }
+        out << std::endl;
     }
 
     return out;
