@@ -17,7 +17,7 @@ using namespace SPLINTER;
 #define COMMON_TAGS "[general][datatable]"
 
 
-TEST_CASE("DataTable initializer_list bahaviour", COMMON_TAGS)
+TEST_CASE("DataTable initializer_list behaviour", COMMON_TAGS)
 {
 	std::vector<DataPoint> list{ { 1, 1 }, { 1, 1 } };
 	DataTable table;
