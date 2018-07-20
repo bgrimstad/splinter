@@ -34,13 +34,6 @@ public:
     };
 
     /**
-     * Builder class for construction by regression
-     * Implemented in bspline_builder.*
-     */
-    class Builder;
-//    enum class Smoothing;
-
-    /**
      * Construct B-spline from basis degree and knot vectors. Default output dimension is 1.
      */
     BSpline(const std::vector<unsigned int> &degrees, const std::vector<std::vector<double>> &knot_vectors,
