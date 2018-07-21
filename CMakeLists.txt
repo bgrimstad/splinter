@@ -201,7 +201,7 @@ set(TEST_SRC_LIST
     test/approximation/pspline.cpp
     test/general/bspline.cpp
     test/general/bspline_builder.cpp
-    test/general/data_table.cpp
+    test/unit/data_table.cpp
     test/general/utilities.cpp
     test/examples/approximation.cpp
     test/utils/op_overloads.h
