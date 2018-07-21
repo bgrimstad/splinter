@@ -8,10 +8,10 @@
 */
 
 #include "bspline_basis.h"
-#include "kronecker_product.h"
 #include "unsupported/Eigen/KroneckerProduct"
-
+#include "kronecker_product.h"
 #include <iostream>
+
 
 namespace SPLINTER
 {
@@ -26,7 +26,7 @@ BSplineBasis::BSplineBasis(std::vector<unsigned int> degrees, const std::vector<
     bases.clear();
     for (unsigned int i = 0; i < num_variables; i++)
     {
-        bases.push_back(BSplineBasis1D(degrees.at(i), knot_vectors.at(i)));
+        bases.emplace_back(BSplineBasis1D(degrees.at(i), knot_vectors.at(i)));
 
         // Adjust target number of basis functions used in e.g. refinement
         if (num_variables > 2)
@@ -116,10 +116,12 @@ SparseMatrix BSplineBasis::eval_basis_jacobian(const DenseVector &x) const
 
         // Fill out column i
         for (int k = 0; k < Ji.outerSize(); ++k)
-        for (SparseVector::InnerIterator it(Ji, k); it; ++it)
         {
-            if (it.value() != 0)
-                J.insert(it.row(), i) = it.value();
+            for (SparseVector::InnerIterator it(Ji, k); it; ++it)
+            {
+                if (it.value() != 0)
+                    J.insert(it.row(), i) = it.value();
+            }
         }
         //J.block(0,i,Ji.rows(),1) = bi.block(0,0,Ji.rows(),1);
     }
@@ -215,13 +217,15 @@ SparseMatrix BSplineBasis::eval_basis_hessian(const DenseVector &x) const
 
             // Fill out column
             for (int k = 0; k < Hi.outerSize(); ++k)
-            for (SparseMatrix::InnerIterator it(Hi,k); it; ++it)
             {
-                if (it.value() != 0)
+                for (SparseMatrix::InnerIterator it(Hi, k); it; ++it)
                 {
-                    int row = i* get_num_basis_functions()+it.row();
-                    int col = j;
-                    H.insert(row,col) = it.value();
+                    if (it.value() != 0)
+                    {
+                        int row = i * get_num_basis_functions() + it.row();
+                        int col = j;
+                        H.insert(row, col) = it.value();
+                    }
                 }
             }
         }

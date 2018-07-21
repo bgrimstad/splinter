@@ -25,7 +25,7 @@ public:
      * Evaluation of basis functions
      */
     SparseVector eval(double x) const;
-    SparseVector eval_derivative(double x, int r) const;
+    SparseVector eval_derivative(double x, unsigned int r) const;
     SparseVector eval_first_derivative(double x) const; // TODO: Deprecated
 
     /**
