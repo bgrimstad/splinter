@@ -16,19 +16,19 @@
 namespace SPLINTER
 {
 
-DataTable sampleTestFunction();
+DataTable sample_test_function();
 
 /*
  * Test knot insertion
  */
-bool testKnotInsertion();
+bool test_knot_insertion();
 
 /*
  * Methods for B-spline domain reduction testing
  */
-bool domainReductionTest(BSpline &bs, const BSpline &bs_orig);
-bool runRecursiveDomainReductionTest();
-bool domainReductionTest1();
+bool domain_reduction_test(BSpline &bs, const BSpline &bs_orig);
+bool run_recursive_domain_reduction_test();
+bool domain_reduction_test1();
 
 } // namespace SPLINTER
 

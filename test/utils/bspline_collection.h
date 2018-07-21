@@ -15,8 +15,6 @@
 
 namespace SPLINTER {
 
-std::vector<double> get_random_vector(unsigned int length, unsigned int seed);
-
 std::vector<std::vector<double>> get_random_control_points(unsigned int num_points, unsigned int dim_y);
 
 unsigned int compute_num_control_points(std::vector<std::vector<double>> knot_vectors, std::vector<unsigned int> degrees);

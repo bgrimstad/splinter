@@ -10,6 +10,7 @@
 #include <Catch.h>
 #include <iostream>
 #include <utils/test_utils.h>
+#include <utils/test_function_utils.h>
 #include <data_table.h>
 #include <utilities.h>
 #include <utils/data_table_collection.h>

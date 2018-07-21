@@ -16,6 +16,7 @@ using namespace SPLINTER;
 #define COMMON_TAGS "[general][bspline]"
 #define COMMON_TEXT "BSpline "
 
+
 TEST_CASE(COMMON_TEXT "construction multivariate", COMMON_TAGS "[construction]")
 {
     // Build a tensor product B-spline f : R -> R
@@ -70,18 +71,18 @@ TEST_CASE(COMMON_TEXT "construction throws", COMMON_TAGS "[construction]")
 
 TEST_CASE(COMMON_TEXT "domain reduction", COMMON_TAGS "[subdivision]")
 {
-    REQUIRE(domainReductionTest1());
+    REQUIRE(domain_reduction_test1());
 }
 
 TEST_CASE(COMMON_TEXT "recursive subdivision", COMMON_TAGS "[subdivision]")
 {
     // TODO: The current code for comparing BSplines require identical bounds which fails in this test.
-    //REQUIRE(runRecursiveDomainReductionTest());
+    //REQUIRE(run_recursive_domain_reduction_test());
 }
 
 TEST_CASE(COMMON_TEXT "knot insertion", COMMON_TAGS "[knotinsertion]")
 {
-    REQUIRE(testKnotInsertion());
+    REQUIRE(test_knot_insertion());
 }
 
 TEST_CASE(COMMON_TEXT "knot averages", COMMON_TAGS "[knotaverages]")

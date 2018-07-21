@@ -9,25 +9,10 @@
 
 #include "bspline_collection.h"
 #include "utilities.h"
-#include <random>
+#include <utils/test_utils.h>
+
 
 namespace SPLINTER {
-
-std::vector<double> get_random_vector(unsigned int length, unsigned int seed)
-{
-    // Random number generator (using normal distribution)
-    std::default_random_engine generator(seed); // Seeded to be reproducible
-    double mean = 0.;
-    double stddev = 10.;
-    std::normal_distribution<double> distribution(mean, stddev);
-
-    std::vector<double> random_vector;
-    for (unsigned int i = 0; i < length; ++i) {
-        random_vector.push_back(distribution(generator));
-    }
-
-    return random_vector;
-}
 
 std::vector<std::vector<double>> get_random_control_points(unsigned int num_points, unsigned int dim_y)
 {

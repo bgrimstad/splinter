@@ -10,8 +10,8 @@
 
 #include "data_table_collection.h"
 #include "utilities.h"
-#include "bspline_collection.h"
 #include "test_utils.h"
+#include "test_function_utils.h"
 
 
 namespace SPLINTER {

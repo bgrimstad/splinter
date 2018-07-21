@@ -9,6 +9,7 @@
 
 #include <Catch.h>
 #include <utils/test_utils.h>
+#include <utils/test_function_utils.h>
 #include <utilities.h>
 #include <bspline_builders.h>
 

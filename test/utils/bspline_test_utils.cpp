@@ -9,12 +9,13 @@
 
 #include <utils/bspline_test_utils.h>
 #include <utils/test_utils.h>
+#include <utils/test_function_utils.h>
 #include <utilities.h>
 
 namespace SPLINTER
 {
 
-DataTable sampleTestFunction()
+DataTable sample_test_function()
 {
     DataTable samples;
 
@@ -31,7 +32,7 @@ DataTable sampleTestFunction()
             // Sample function at x
             x.at(0) = x0;
             x.at(1) = x1;
-            y = sixHumpCamelBack(x);
+            y = six_hump_camel_back(x);
 
             // Store sample
             samples.add_sample(x, y);
@@ -41,9 +42,9 @@ DataTable sampleTestFunction()
     return samples;
 }
 
-bool testKnotInsertion()
+bool test_knot_insertion()
 {
-    DataTable samples = sampleTestFunction();
+    DataTable samples = sample_test_function();
 
     // Build B-splines that interpolate the samples
     BSpline bspline1 = bspline_interpolator(samples, 1);
@@ -95,7 +96,7 @@ bool testKnotInsertion()
     return true;
 }
 
-bool domainReductionTest(BSpline &bs, const BSpline &bs_orig)
+bool domain_reduction_test(BSpline &bs, const BSpline &bs_orig)
 {
     if (bs.get_dim_x() != 2 || bs_orig.get_dim_x() != 2)
         return false;
@@ -132,16 +133,16 @@ bool domainReductionTest(BSpline &bs, const BSpline &bs_orig)
         BSpline bs3(bs);
         bs3.reduce_support(lb3, ub3);
 
-        return (domainReductionTest(bs2, bs_orig) && domainReductionTest(bs3, bs_orig));
+        return (domain_reduction_test(bs2, bs_orig) && domain_reduction_test(bs3, bs_orig));
     }
 
     return true;
 }
 
-bool runRecursiveDomainReductionTest()
+bool run_recursive_domain_reduction_test()
 {
     // Create new DataTable to manage samples
-    DataTable samples = sampleTestFunction();
+    DataTable samples = sample_test_function();
 
     // Build B-splines that interpolate the samples
     BSpline bspline1 = bspline_interpolator(samples, 1);
@@ -149,22 +150,22 @@ bool runRecursiveDomainReductionTest()
     BSpline bspline3 = bspline_interpolator(samples, 3);
     BSpline bspline4 = bspline_interpolator(samples, 4);
 
-    if (!domainReductionTest(bspline1, bspline1))
+    if (!domain_reduction_test(bspline1, bspline1))
         return false;
-    if (!domainReductionTest(bspline2, bspline2))
+    if (!domain_reduction_test(bspline2, bspline2))
         return false;
-    if (!domainReductionTest(bspline3, bspline3))
+    if (!domain_reduction_test(bspline3, bspline3))
         return false;
-    if (!domainReductionTest(bspline4, bspline4))
+    if (!domain_reduction_test(bspline4, bspline4))
         return false;
 
     return true;
 }
 
-bool domainReductionTest1()
+bool domain_reduction_test1()
 {
     // Create new DataTable to manage samples
-    DataTable samples = sampleTestFunction();
+    DataTable samples = sample_test_function();
 
     std::vector<double> x1 = {0.75, 0.75};
     std::vector<double> x2 = {0.7, 0.8};
