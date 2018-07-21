@@ -35,16 +35,16 @@ SparseVector BSplineBasis1D::eval(double x) const
 
     x = support_hack(x);
 
-    auto indexSupported = index_supported_basis_functions(x);
+    auto index_supported = index_supported_basis_functions(x);
 
-    values.reserve(indexSupported.size());
+    values.reserve(index_supported.size());
 
     // Evaluate nonzero basis functions
-    for (auto it = indexSupported.begin(); it != indexSupported.end(); ++it)
+    for (auto i : index_supported)
     {
-        double val = de_boor_cox(x, *it, degree);
+        double val = de_boor_cox(x, i, degree);
         if (fabs(val) > 1e-12)
-            values.insert(*it) = val;
+            values.insert(i) = val;
     }
 
     // Alternative evaluation using basis matrix
