@@ -11,7 +11,7 @@
 #define SPLINTER_UTILITIES_H
 
 #include <vector>
-#include <stdlib.h> // std::abs etc
+#include <cstdlib> // For std::abs, etc.
 #include <definitions.h>
 
 namespace SPLINTER
