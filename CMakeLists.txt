@@ -204,7 +204,6 @@ set(TEST_SRC_LIST
     test/general/bspline.cpp
     test/general/bspline_builder.cpp
     test/general/data_table.cpp
-    test/general/data_table2.cpp
     test/general/utilities.cpp
     test/examples/approximation.cpp
     test/utils/op_overloads.h
@@ -225,7 +224,9 @@ set(TEST_SRC_LIST
     test/unit/json_parser.cpp
     test/utils/timer.h
     test/utils/bspline_collection.cpp
-    test/utils/bspline_collection.h)
+    test/utils/bspline_collection.h
+    test/utils/data_table_collection.cpp
+    test/utils/data_table_collection.h)
 
 set(SHARED_LIBRARY ${PROJECT_NAME_LOWER}-${VERSION})
 set(STATIC_LIBRARY ${PROJECT_NAME_LOWER}-static-${VERSION})
@@ -238,9 +239,12 @@ set(TEST "${PROJECT_NAME_LOWER}-test")
 add_library(${SHARED_LIBRARY} SHARED ${SRC_LIST})
 add_library(${STATIC_LIBRARY} STATIC ${SRC_LIST})
 
-# Testing executable
+# Create test executable
 add_executable(${TEST} ${TEST_SRC_LIST})
 target_link_libraries(${TEST} ${STATIC_LIBRARY})
+
+# Copy test resources
+file(COPY test/resources/ DESTINATION ${CMAKE_BINARY_DIR}/test-resources)
 
 # Make the directory structure expected by the Python interface
 # Python files (.py)
