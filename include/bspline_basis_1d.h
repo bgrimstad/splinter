@@ -19,7 +19,6 @@ namespace SPLINTER
 class BSplineBasis1D
 {
 public:
-    BSplineBasis1D();
     BSplineBasis1D(unsigned int degree, const std::vector<double> &knots);
 
     /**
@@ -75,6 +74,10 @@ public:
     }
 
 private:
+    unsigned int degree;
+    KnotVector knots;
+    unsigned int target_num_basis_functions;
+
     // DeBoorCox algorithm for evaluating basis functions
     double de_boor_cox(double x, unsigned int i, unsigned int k) const;
     double de_boor_cox_coeff(double x, double x_min, double x_max) const;
@@ -88,11 +91,7 @@ private:
      */
     SparseMatrix build_knot_insertion_matrix(const std::vector<double> &refined_knots) const;
 
-    // Member variables
-    unsigned int degree;
-    KnotVector knots;
-    unsigned int target_num_basis_functions;
-
+    // Operators
     friend bool operator==(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs);
     friend bool operator!=(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs);
 };
