@@ -106,14 +106,14 @@ private:
     bool do_solve(const SparseMatrix &A, const rhs &b, rhs &x) const
     {
         // Init BiCGSTAB solver (requires square matrices)
-        Eigen::BiCGSTAB<SparseMatrix> sparseSolver(A);
+        Eigen::BiCGSTAB<SparseMatrix> sparse_solver(A);
 
-        if (sparseSolver.info() == Eigen::Success)
+        if (sparse_solver.info() == Eigen::Success)
         {
             // Solve LSE
-            x = sparseSolver.solve(b);
+            x = sparse_solver.solve(b);
 
-            return sparseSolver.info() == Eigen::Success;
+            return sparse_solver.info() == Eigen::Success;
         }
 
         return false;
@@ -127,18 +127,18 @@ private:
     bool do_solve(const SparseMatrix &A, const rhs &b, rhs &x) const
     {
         // Init SparseLU solver (requires square matrices)
-        Eigen::SparseLU<SparseMatrix> sparseSolver;
+        Eigen::SparseLU<SparseMatrix> sparse_solver;
         // Compute the ordering permutation vector from the structural pattern of A
-        sparseSolver.analyzePattern(A);
+        sparse_solver.analyzePattern(A);
         // Compute the numerical factorization
-        sparseSolver.factorize(A);
+        sparse_solver.factorize(A);
 
-        if (sparseSolver.info() == Eigen::Success)
+        if (sparse_solver.info() == Eigen::Success)
         {
             // Solve LSE
-            x = sparseSolver.solve(b);
+            x = sparse_solver.solve(b);
 
-            return sparseSolver.info() == Eigen::Success;
+            return sparse_solver.info() == Eigen::Success;
         }
 
         return false;
@@ -152,16 +152,16 @@ private:
     bool do_solve(const SparseMatrix &A, const rhs &b, rhs &x) const
     {
         // Init SparseQR solver (works with rectangular matrices)
-        Eigen::SparseQR<SparseMatrix, Eigen::COLAMDOrdering<int>> sparseSolver;
-        sparseSolver.analyzePattern(A);
-        sparseSolver.factorize(A);
+        Eigen::SparseQR<SparseMatrix, Eigen::COLAMDOrdering<int>> sparse_solver;
+        sparse_solver.analyzePattern(A);
+        sparse_solver.factorize(A);
 
-        if (sparseSolver.info() == Eigen::Success)
+        if (sparse_solver.info() == Eigen::Success)
         {
             // Solve LSE
-            x = sparseSolver.solve(b);
+            x = sparse_solver.solve(b);
 
-            return sparseSolver.info() == Eigen::Success;
+            return sparse_solver.info() == Eigen::Success;
         }
 
         return false;
