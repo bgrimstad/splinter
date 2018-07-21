@@ -20,7 +20,7 @@ namespace SPLINTER
 class BSplineBasis
 {
 public:
-    BSplineBasis();
+    BSplineBasis() {};
     BSplineBasis(std::vector<unsigned int> degrees, const std::vector<std::vector<double>> &knot_vectors);
 
     // Evaluation
