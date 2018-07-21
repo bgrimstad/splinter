@@ -10,12 +10,12 @@
 #ifndef SPLINTER_DATA_TABLE_COLLECTION_H
 #define SPLINTER_DATA_TABLE_COLLECTION_H
 
-#include "data_table2.h"
+#include "data_table.h"
 #include <vector>
 
 namespace SPLINTER {
 
-std::vector<DataTable2> get_data_table_collection();
+std::vector<DataTable> get_data_table_collection();
 
 } // namespace SPLINTER
 

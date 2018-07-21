@@ -11,7 +11,7 @@
 #include <iostream>
 #include <utils/test_utils.h>
 #include <data_table.h>
-#include <data_table2.h>
+#include <utilities.h>
 #include <utils/data_table_collection.h>
 
 
@@ -21,68 +21,68 @@ using namespace SPLINTER;
 #define COMMON_TAGS "[general][datatable]"
 
 
-DataTable create_datatable_old_format() {
-    int dim = 2;
-    auto func = getTestFunction(dim, 2);
+//DataTable create_datatable_old_format() {
+//    int dim = 2;
+//    auto func = getTestFunction(dim, 2);
+//
+//    std::vector<double> start = {0, 0};
+//    std::vector<double> end = {9.0, 4.0};
+//    std::vector<unsigned int> num_points = {10, 5};
+//
+//    // Range [0.0, 9.0] x [0.0, 4.0], 50 points total
+//    auto points = multi_linspace(start, end, num_points);
+//
+//    DataTable table;
+//
+//    for(auto &p : points) {
+//        table.add_sample(p, func->eval(p));
+//    }
+//
+//    return table;
+//}
 
-    std::vector<double> start = {0, 0};
-    std::vector<double> end = {9.0, 4.0};
-    std::vector<unsigned int> num_points = {10, 5};
+//DataTable2 copy_datatable(DataTable table) {
+//
+//    DataTable2 new_table;
+//
+//    for (auto &point : table.get_samples()) {
+//        new_table.add_sample(point);
+//    }
+//
+//    return new_table;
+//}
 
-    // Range [0.0, 9.0] x [0.0, 4.0], 50 points total
-    auto points = multi_linspace(start, end, num_points);
-
-    DataTable table;
-
-    for(auto &p : points) {
-        table.add_sample(p, func->eval(p));
-    }
-
-    return table;
-}
-
-DataTable2 copy_datatable(DataTable table) {
-
-    DataTable2 new_table;
-
-    for (auto &point : table.get_samples()) {
-        new_table.add_sample(point);
-    }
-
-    return new_table;
-}
-
-bool compare_datatables(DataTable table1, DataTable2 table2) {
-
-    if (table1.get_dim_x() != table2.get_dim_x()) {
-        return false;
-    }
-
-    if (table1.get_dim_y() != table2.get_dim_y()) {
-        return false;
-    }
-
-    if (table1.get_num_samples() != table2.get_num_samples()) {
-        return false;
-    }
-
-    auto it1 = table1.cbegin();
-    auto it2 = table2.cbegin();
-
-    while (it1 != table1.cend()) {
-        auto p1 = *it1;
-        auto p2 = *it2;
-
-        if (p1 != p2) {
-            return false;
-        }
-
-        ++it1;
-        ++it2;
-    }
-
-    return true;
-}
+//bool compare_datatables(DataTable table1, DataTable2 table2) {
+//
+//    if (table1.get_dim_x() != table2.get_dim_x()) {
+//        return false;
+//    }
+//
+//    if (table1.get_dim_y() != table2.get_dim_y()) {
+//        return false;
+//    }
+//
+//    if (table1.get_num_samples() != table2.get_num_samples()) {
+//        return false;
+//    }
+//
+//    auto it1 = table1.cbegin();
+//    auto it2 = table2.cbegin();
+//
+//    while (it1 != table1.cend()) {
+//        auto p1 = *it1;
+//        auto p2 = *it2;
+//
+//        if (p1 != p2) {
+//            return false;
+//        }
+//
+//        ++it1;
+//        ++it2;
+//    }
+//
+//    return true;
+//}
 
 TEST_CASE("DataTable save data tables", COMMON_TAGS) {
     auto collection = get_data_table_collection();
@@ -101,7 +101,7 @@ TEST_CASE("DataTable save data tables", COMMON_TAGS) {
         table.to_json(filename);
 
         // Load table and compare
-        auto new_table = DataTable2::from_json(filename);
+        auto new_table = DataTable::from_json(filename);
         CHECK(new_table == table);
 
         // Delete saved file
@@ -129,17 +129,17 @@ TEST_CASE("DataTable load data tables", COMMON_TAGS) {
                                + std::string(".json");
 
         // Old format
-        auto loaded_table_old_format = DataTable2::from_json(dir_old_format + filename);
+        auto loaded_table_old_format = DataTable::from_json(dir_old_format + filename);
         CHECK((loaded_table_old_format.get_dim_x() == dim_x && loaded_table_old_format.get_dim_y() == dim_y));
 
         // New format
-        auto loaded_table = DataTable2::from_json(dir + filename);
+        auto loaded_table = DataTable::from_json(dir + filename);
         CHECK((loaded_table.get_dim_x() == dim_x && loaded_table.get_dim_y() == dim_y));
     }
 }
 
-TEST_CASE("DataTable2 add samples", COMMON_TAGS) {
-    DataTable2 table, table2, table3;
+TEST_CASE("DataTable add samples", COMMON_TAGS) {
+    DataTable table, table2, table3, table4, table5;
 
     DataPoint x1({1, 2}, 3);
     DataPoint x2({1.1, 2}, 3);
@@ -160,12 +160,31 @@ TEST_CASE("DataTable2 add samples", COMMON_TAGS) {
 
     CHECK(table == table2);
     CHECK(!(table == table3));
+
+    // Using vectors
+    std::vector<double> x1_vec = {0.1};
+    std::vector<double> x2_vec = {0.2};
+    std::vector<double> x3_vec = {0.3};
+
+    std::vector<double> y1_vec = {0.1, 0.2};
+    std::vector<double> y2_vec = {0.2, 0.3};
+    std::vector<double> y3_vec = {0.3, 0.4};
+
+    table4.add_sample(x1_vec.at(0), y1_vec);
+    table4.add_sample(x2_vec.at(0), y2_vec);
+    table4.add_sample(x3_vec.at(0), y3_vec);
+
+    table5.add_sample(x1_vec, y1_vec);
+    table5.add_sample(x2_vec, y2_vec);
+    table5.add_sample(x3_vec, y3_vec);
+
+    CHECK(table4 == table5);
 }
 
 TEST_CASE("DataTable initializer_list behaviour", COMMON_TAGS)
 {
     std::vector<DataPoint> list{ { 1, 1 }, { 1, 1 } };
-    DataTable2 table, table_ref;
+    DataTable table, table_ref;
     table.add_sample({ { 1,1 }, { 1,1 } });
     for (auto& sample : list)
     {
@@ -175,48 +194,50 @@ TEST_CASE("DataTable initializer_list behaviour", COMMON_TAGS)
 }
 
 
-TEST_CASE("DataTable2 addition", COMMON_TAGS) {
+TEST_CASE("DataTable copy constructor", COMMON_TAGS) {
     int dim = 2;
     auto func = getTestFunction(dim, 2);
 
     std::vector<double> start = {0, 0};
     std::vector<double> end = {9.0, 4.0};
-    std::vector<unsigned int> num_points = {10, 5};
+    std::vector<unsigned int> num_points = {1000, 1000};
+    unsigned int num_samples = 1000*1000;
 
     // range1 is from 0.0,0.0 to 9.0,4.0, 50 points total
     auto points = multi_linspace(start, end, num_points);
 
-    DataTable table, table2;
+    DataTable table;
 
     for(auto &p : points) {
         table.add_sample(p, func->eval(p));
-        table2.add_sample(p, func->eval(p));
     }
 
-    for (auto &sample : table.get_samples())
-    {
-        for (auto x : sample.get_x()) {
-            std::cout << x << ", ";
+    CHECK(table.get_num_samples() == num_samples);
+
+    auto table2 = DataTable(table);
+    CHECK(table == table2);
+}
+
+TEST_CASE("DataTable is_grid_complete", COMMON_TAGS) {
+
+    auto x1 = linspace(0, 1.0, 10);
+    auto x2 = linspace(0, 1.0, 10);
+
+    DataTable table, table2;
+
+    int counter = 0;
+    for(auto &x1_i : x1) {
+        for (auto &x2_i : x2) {
+            table.add_sample({x1_i, x2_i}, 0.);
+            // Do not add all samples to table2
+            if (counter != 1) {
+                table2.add_sample({x1_i, x2_i}, 0.);
+            }
+
+            ++counter;
         }
-        std::cout << " : ";
-        for (auto y : sample.get_y()) {
-            std::cout << y << ", ";
-        }
-        std::cout << std::endl;
     }
 
-    DataPoint x1({1, 2}, 3);
-    DataPoint x2({1.1, 2}, 3);
-    DataPoint x3({1.1, 2.2}, 3);
-
-    std::vector<DataPoint> table3, table4;
-    table3.emplace_back(x1);
-    table3.emplace_back(x2);
-    table3.emplace_back(x3);
-    table4.emplace_back(x1);
-    table4.emplace_back(x2);
-//    table4.emplace_back(x3);
-
-    CHECK(table3 == table4);
-
+    REQUIRE(table.is_grid_complete());
+    REQUIRE(!table2.is_grid_complete());
 }

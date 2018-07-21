@@ -16,9 +16,9 @@
 
 namespace SPLINTER {
 
-std::vector<DataTable2> get_data_table_collection()
+std::vector<DataTable> get_data_table_collection()
 {
-    std::vector<DataTable2> collection;
+    std::vector<DataTable> collection;
 
     double x_start = -10;
     double x_stop = 10;
@@ -29,7 +29,7 @@ std::vector<DataTable2> get_data_table_collection()
     for (unsigned int dim_x = 1; dim_x <= 3; dim_x++) {
         for (unsigned int dim_y = 1; dim_y <= 3; dim_y++) {
             // New DataTable
-            auto table = DataTable2();
+            auto table = DataTable();
 
             // Create grid to sample on
             auto x_start_vector = std::vector<double>(dim_x, x_start);

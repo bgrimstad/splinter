@@ -10,7 +10,6 @@
 #include "json_parser.h"
 #include "bspline.h"
 #include "data_table.h"
-#include "data_table2.h"
 #include "utilities.h"
 #include "fstream"
 
@@ -99,14 +98,9 @@ void datatable_to_json(const DataTable &data, const std::string &filename)
     std::ofstream ofs(filename);
     nlohmann::json json;
 
-    auto allow_duplicates = data._allow_duplicates;
-    auto allow_incomplete_grid = data._allow_incomplete_grid;
     auto num_samples = data.get_num_samples();
-    auto samples = data.samples;
-    auto grid = data.grid;
+    auto samples = data.get_samples();
 
-    json["allow_duplicates"] = allow_duplicates;
-    json["allow_incomplete_grid"] = allow_incomplete_grid;
     json["num_samples"] = num_samples;
 
     unsigned int i = 0;
@@ -127,60 +121,9 @@ DataTable datatable_from_json(const std::string &filename)
     nlohmann::json json;
     ifs >> json;
 
-    bool allow_duplicates = json["allow_duplicates"];
-    bool allow_incomplete_grid = json["allow_incomplete_grid"];
     unsigned int num_samples = json["num_samples"];
 
-    auto data_table = DataTable(allow_duplicates, allow_incomplete_grid);
-
-    for (unsigned int i = 0; i < num_samples; ++i) {
-        std::vector<double> x;
-        std::vector<double> y;
-        std::string str_x = "x_" + std::to_string(i);
-        std::string str_y = "y_" + std::to_string(i);
-        auto x_read = json[str_x];
-        auto y_read = json[str_y];
-        for (auto &it_x : x_read)
-            x.push_back(it_x);
-        for (auto &it_y : y_read)
-            y.push_back(it_y);
-        data_table.add_sample(x, y);
-    }
-
-    return data_table;
-}
-
-void datatable2_to_json(const DataTable2 &data, const std::string &filename)
-{
-    std::ofstream ofs(filename);
-    nlohmann::json json;
-
-    auto num_samples = data.get_num_samples();
-    auto samples = data.get_samples();
-
-    json["num_samples"] = num_samples;
-
-    unsigned int i = 0;
-    for (const auto &sample : samples) {
-        std::string str_x = "x_" + std::to_string(i);
-        std::string str_y = "y_" + std::to_string(i);
-        json[str_x] = sample.get_x();
-        json[str_y] = sample.get_y();
-        i++;
-    }
-
-    ofs << json;
-}
-
-DataTable2 datatable2_from_json(const std::string &filename)
-{
-    std::ifstream ifs(filename);
-    nlohmann::json json;
-    ifs >> json;
-
-    unsigned int num_samples = json["num_samples"];
-
-    auto data_table = DataTable2();
+    auto data_table = DataTable();
 
     for (unsigned int i = 0; i < num_samples; ++i) {
         std::vector<double> x;

@@ -82,21 +82,6 @@ namespace SPLINTER
  */
 bool operator==(const DataTable &lhs, const DataTable &rhs)
 {
-    return
-            lhs._allow_duplicates == rhs._allow_duplicates
-            && lhs._allow_incomplete_grid == rhs._allow_incomplete_grid
-            && lhs._num_duplicates == rhs._num_duplicates
-            && lhs._dim_x == rhs._dim_x
-            && lhs._dim_y == rhs._dim_y
-            && lhs.samples == rhs.samples
-            && lhs.grid == rhs.grid
-            && lhs.get_num_samples() == rhs.get_num_samples()
-            && lhs.get_samples() == rhs.get_samples()
-            && lhs.get_grid() == rhs.get_grid();
-}
-
-bool operator==(const DataTable2 &lhs, const DataTable2 &rhs)
-{
     // NOTE: requires equal ordering of samples and an equal number of samples
     return  lhs._dim_x == rhs._dim_x
             && lhs._dim_y == rhs._dim_y
@@ -182,26 +167,6 @@ std::ostream &operator<<(std::ostream &out, const DataPoint &sample) {
 }
 
 std::ostream &operator<<(std::ostream &out, const DataTable &table)
-{
-    out << "dim_x: " << table.get_dim_x() << std::endl;
-    out << "dim_y: " << table.get_dim_x() << std::endl;
-    out << "num_samples: " << table.get_num_samples() << std::endl;
-    //out << "samples: " << table.get_samples() << std::endl;
-    out << "grid dimensions: ";
-    bool firstLoop = true;
-    for (const auto &dimension : table.get_grid())
-    {
-        if (!firstLoop)
-            out << ", ";
-
-        out << dimension.size();
-        firstLoop = false;
-    }
-
-    return out;
-}
-
-std::ostream &operator<<(std::ostream &out, const DataTable2 &table)
 {
     out << "DataTable (";
     out << "dim_x: " << table.get_dim_x();

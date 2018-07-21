@@ -12,32 +12,28 @@
 namespace SPLINTER
 {
 
-DataPoint::DataPoint()
-{
-}
-
 DataPoint::DataPoint(double x, double y)
 {
-    setData(std::vector<double>(1, x),
-            std::vector<double>(1, y));
+    set_data(std::vector<double>(1, x),
+             std::vector<double>(1, y));
 }
 
 DataPoint::DataPoint(const std::vector<double> &x, double y)
 {
-    setData(x, std::vector<double>(1, y));
+    set_data(x, std::vector<double>(1, y));
 }
 
 DataPoint::DataPoint(double x, const std::vector<double> &y)
 {
-    setData(std::vector<double>(1, x), y);
+    set_data(std::vector<double>(1, x), y);
 }
 
 DataPoint::DataPoint(const std::vector<double> &x, const std::vector<double> &y)
 {
-    setData(x, y);
+    set_data(x, y);
 }
 
-void DataPoint::setData(const std::vector<double> &x, const std::vector<double> &y)
+void DataPoint::set_data(const std::vector<double> &x, const std::vector<double> &y)
 {
     this->x = x;
     this->y = y;

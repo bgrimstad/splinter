@@ -17,16 +17,12 @@ namespace SPLINTER
 
 class BSpline;
 class DataTable;
-class DataTable2;
 
 void bspline_to_json(const BSpline &bspline, const std::string &filename);
 BSpline bspline_from_json(const std::string &filename);
 
 void datatable_to_json(const DataTable &data, const std::string &filename);
 DataTable datatable_from_json(const std::string &filename);
-
-void datatable2_to_json(const DataTable2 &data, const std::string &filename);
-DataTable2 datatable2_from_json(const std::string &filename);
 
 } // namespace SPLINTER
 
