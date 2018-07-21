@@ -16,16 +16,21 @@
 namespace SPLINTER
 {
 
-// Matrix of basis functions evaluated at samples
-SparseMatrix computeBasisFunctionMatrix(const BSpline &bspline, const DataTable &data);
+// Control point computations
+DenseMatrix compute_control_points(const BSpline &bspline, const DataTable &data, BSpline::Smoothing smoothing,
+                                   double alpha, std::vector<double> weights);
 
-DenseMatrix stackSamplePointValues(const DataTable &data);
+// Matrix of basis functions evaluated at samples
+SparseMatrix compute_basis_function_matrix(const BSpline &bspline, const DataTable &data);
+
+// Stack samples in DenseMatrix
+DenseMatrix stack_sample_values(const DataTable &data);
 
 // P-spline control point calculation
-SparseMatrix computeSecondOrderFiniteDifferenceMatrix(const BSpline &bspline);
+SparseMatrix compute_second_order_finite_difference_matrix(const BSpline &bspline);
 
 // Compute weights matrix from weight vector
-SparseMatrix computeWeightMatrix(const std::vector<double> weights);
+SparseMatrix compute_weight_matrix(std::vector<double> weights);
 
 } // namespace SPLINTER
 

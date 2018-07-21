@@ -30,15 +30,15 @@ class LinearSolver
 public:
     bool solve(const lhs &A, const rhs &b, rhs &x) const
     {
-        if (!consistentData(A, b))
+        if (!consistent_data(A, b))
             throw Exception("LinearSolver::solve: Inconsistent matrix dimensions!");
 
-        bool success = doSolve(A, b, x);
+        bool success = do_solve(A, b, x);
 
         if (!success)
             throw Exception("LinearSolver::solve: Solver did not converge to acceptable tolerance!");
 
-//        if (!validSolution(A, b, x))
+//        if (!valid_solution(A, b, x))
 //            throw Exception("LinearSolver::solve: Invalid solution!");
 
         return true;
@@ -48,14 +48,14 @@ public:
 private:
     double tol = 1e-12; // Relative error tolerance
 
-    virtual bool doSolve(const lhs &A, const rhs &b, rhs &x) const = 0;
+    virtual bool do_solve(const lhs &A, const rhs &b, rhs &x) const = 0;
 
-    bool consistentData(const lhs &A, const rhs &b) const
+    bool consistent_data(const lhs &A, const rhs &b) const
     {
         return A.rows() == b.rows();
     }
 
-    bool validSolution(const lhs &A, const rhs &b, const rhs &x) const
+    bool valid_solution(const lhs &A, const rhs &b, const rhs &x) const
     {
         //return b.isApprox(A*x);
         double err = (A*x - b).norm() / b.norm();
@@ -68,7 +68,7 @@ template<class rhs = DenseVector>
 class DenseSVD : public LinearSolver<DenseMatrix, rhs>
 {
 private:
-    bool doSolve(const DenseMatrix &A, const rhs &b, rhs &x) const
+    bool do_solve(const DenseMatrix &A, const rhs &b, rhs &x) const
     {
         // Solve linear system
         Eigen::JacobiSVD<DenseMatrix> svd(A, Eigen::ComputeThinU | Eigen::ComputeThinV);
@@ -81,7 +81,7 @@ template<class rhs = DenseVector>
 class DenseQR : public LinearSolver<DenseMatrix, rhs>
 {
 private:
-    bool doSolve(const DenseMatrix &A, const rhs &b, rhs &x) const
+    bool do_solve(const DenseMatrix &A, const rhs &b, rhs &x) const
     {
         //x = A.colPivHouseholderQr().solve(b);
 
@@ -103,7 +103,7 @@ template<class rhs = DenseVector>
 class SparseBiCG : public LinearSolver<SparseMatrix, rhs>
 {
 private:
-    bool doSolve(const SparseMatrix &A, const rhs &b, rhs &x) const
+    bool do_solve(const SparseMatrix &A, const rhs &b, rhs &x) const
     {
         // Init BiCGSTAB solver (requires square matrices)
         Eigen::BiCGSTAB<SparseMatrix> sparseSolver(A);
@@ -124,7 +124,7 @@ template<class rhs = DenseVector>
 class SparseLU : public LinearSolver<SparseMatrix, rhs>
 {
 private:
-    bool doSolve(const SparseMatrix &A, const rhs &b, rhs &x) const
+    bool do_solve(const SparseMatrix &A, const rhs &b, rhs &x) const
     {
         // Init SparseLU solver (requires square matrices)
         Eigen::SparseLU<SparseMatrix> sparseSolver;
@@ -149,7 +149,7 @@ template<class rhs = DenseVector>
 class SparseQR : public LinearSolver<SparseMatrix, rhs>
 {
 private:
-    bool doSolve(const SparseMatrix &A, const rhs &b, rhs &x) const
+    bool do_solve(const SparseMatrix &A, const rhs &b, rhs &x) const
     {
         // Init SparseQR solver (works with rectangular matrices)
         Eigen::SparseQR<SparseMatrix, Eigen::COLAMDOrdering<int>> sparseSolver;

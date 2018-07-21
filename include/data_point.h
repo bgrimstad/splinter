@@ -16,9 +16,8 @@ namespace SPLINTER
 {
 
 /*
- * DataPoint is a class representing a data point (x, y),
- * where y is the value obtained by sampling at a point x.
- * Note that x is a vector and y is a scalar.
+ * DataPoint is a class representing a data point (x, y), where y is the value obtained by sampling at a point x.
+ * Note that x and y may be a scalar or vector.
  */
 class DataPoint
 {
@@ -28,32 +27,33 @@ public:
     DataPoint(double x, const std::vector<double> &y);
     DataPoint(const std::vector<double> &x, const std::vector<double> &y);
 
-    bool operator<(const DataPoint &rhs) const; // Returns false if the two are equal
-
-    std::vector<double> getX() const {
+    /**
+     * Getters
+     */
+    std::vector<double> get_x() const {
         return x;
     }
 
-    std::vector<double> getY() const {
+    std::vector<double> get_y() const {
         return y;
     }
 
-    unsigned int getDimX() const {
+    unsigned int get_dim_x() const {
         return (unsigned int) x.size();
     }
 
-    unsigned int getDimY() const {
+    unsigned int get_dim_y() const {
         return (unsigned int) y.size();
     }
 
+    bool operator<(const DataPoint &rhs) const; // Returns false if the two are equal
+
 private:
-    DataPoint();
+    DataPoint() {};
 
     std::vector<double> x;
     std::vector<double> y;
-    void setData(const std::vector<double> &x, const std::vector<double> &y);
-
-    friend class Serializer;
+    void set_data(const std::vector<double> &x, const std::vector<double> &y);
 };
 
 } // namespace SPLINTER

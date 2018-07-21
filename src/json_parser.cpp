@@ -9,22 +9,23 @@
 
 #include "json_parser.h"
 #include "bspline.h"
+#include "data_table.h"
 #include "utilities.h"
 #include "fstream"
 
 
 namespace SPLINTER {
 
-void save_to_json(const BSpline &bspline, const std::string &filename)
+void bspline_to_json(const BSpline &bspline, const std::string &filename)
 {
     std::ofstream ofs(filename);
     nlohmann::json json;
 
-    auto dim_x = bspline.getDimX();
-    auto dim_y = bspline.getDimY();
-    auto control_points = eigMatToStdVecVec(bspline.getControlPoints().transpose());
-    auto knot_vectors = bspline.getKnotVectors();
-    auto degrees = bspline.getBasisDegrees();
+    auto dim_x = bspline.get_dim_x();
+    auto dim_y = bspline.get_dim_y();
+    auto control_points = eig_to_std_mat(bspline.get_control_points().transpose());
+    auto knot_vectors = bspline.get_knot_vectors();
+    auto degrees = bspline.get_basis_degrees();
 
     json["dim_x"] = dim_x;
     json["dim_y"] = dim_y;
@@ -43,7 +44,7 @@ void save_to_json(const BSpline &bspline, const std::string &filename)
     ofs << json;
 }
 
-BSpline load_from_json(const std::string &filename)
+BSpline bspline_from_json(const std::string &filename)
 {
     std::ifstream ifs(filename);
     nlohmann::json json;
@@ -58,15 +59,15 @@ BSpline load_from_json(const std::string &filename)
     std::vector<unsigned int> degrees;
 
     auto deg = json["degrees"];
-    for (auto it = deg.begin(); it != deg.end(); it++)
-        degrees.push_back(*it);
+    for (auto &it : deg)
+        degrees.push_back(it);
 
     for (unsigned int i = 0; i < dim_y; ++i) {
         std::vector<double> cp;
         std::string e = "control_points_" + std::to_string(i);
         auto c = json[e];
-        for (auto it = c.begin(); it != c.end(); it++)
-            cp.push_back(*it);
+        for (auto &it : c)
+            cp.push_back(it);
         control_points_as_read.push_back(cp);
     }
 
@@ -84,12 +85,61 @@ BSpline load_from_json(const std::string &filename)
         std::vector<double> knots;
         std::string e = "knot_vector_" + std::to_string(i);
         auto k = json[e];
-        for (auto it = k.begin(); it != k.end(); it++)
-            knots.push_back(*it);
+        for (auto &it : k)
+            knots.push_back(it);
         knot_vectors.push_back(knots);
     }
 
-    return BSpline(control_points, knot_vectors, degrees);
+    return BSpline(degrees, knot_vectors, control_points);
+}
+
+void datatable_to_json(const DataTable &data, const std::string &filename)
+{
+    std::ofstream ofs(filename);
+    nlohmann::json json;
+
+    auto num_samples = data.get_num_samples();
+    auto samples = data.get_samples();
+
+    json["num_samples"] = num_samples;
+
+    unsigned int i = 0;
+    for (const auto &sample : samples) {
+        std::string str_x = "x_" + std::to_string(i);
+        std::string str_y = "y_" + std::to_string(i);
+        json[str_x] = sample.get_x();
+        json[str_y] = sample.get_y();
+        i++;
+    }
+
+    ofs << json;
+}
+
+DataTable datatable_from_json(const std::string &filename)
+{
+    std::ifstream ifs(filename);
+    nlohmann::json json;
+    ifs >> json;
+
+    unsigned int num_samples = json["num_samples"];
+
+    auto data_table = DataTable();
+
+    for (unsigned int i = 0; i < num_samples; ++i) {
+        std::vector<double> x;
+        std::vector<double> y;
+        std::string str_x = "x_" + std::to_string(i);
+        std::string str_y = "y_" + std::to_string(i);
+        auto x_read = json[str_x];
+        auto y_read = json[str_y];
+        for (auto &it_x : x_read)
+            x.push_back(it_x);
+        for (auto &it_y : y_read)
+            y.push_back(it_y);
+        data_table.add_sample(x, y);
+    }
+
+    return data_table;
 }
 
 } // namespace SPLINTER

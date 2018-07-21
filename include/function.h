@@ -11,7 +11,6 @@
 #define SPLINTER_FUNCTION_H
 
 #include "definitions.h"
-#include "saveable.h"
 
 namespace SPLINTER
 {
@@ -28,7 +27,7 @@ public:
         : Function(1, 1) {}
 
     Function(unsigned int m, unsigned int n)
-        : dimX(m), dimY(n) {}
+        : dim_x(m), dim_y(n) {}
 
     virtual ~Function() {}
 
@@ -42,54 +41,53 @@ public:
     /**
      * Returns the (dimY x dimX) Jacobian evaluated at x
      */
-    virtual DenseMatrix evalJacobian(const DenseVector &x) const;
+    virtual DenseMatrix eval_jacobian(const DenseVector &x) const;
 
     /**
      * Returns the (dimY x dimX) Jacobian evaluated at x
      */
-    std::vector<std::vector<double>> evalJacobian(const std::vector<double> &x) const;
+    std::vector<std::vector<double>> eval_jacobian(const std::vector<double> &x) const;
 
     /**
      * Get dimensions
      */
-    inline unsigned int getDimX() const
+    inline unsigned int get_dim_x() const
     {
-        return dimX;
+        return dim_x;
     }
 
-    inline unsigned int getDimY() const
+    inline unsigned int get_dim_y() const
     {
-        return dimY;
+        return dim_y;
     }
 
     /**
      * Check input
      */
-    void checkInput(const std::vector<double> &x) const {
-        if (x.size() != dimX)
-            throw Exception("Function::checkInput: Wrong dimension on evaluation point x.");
+    void check_input(const std::vector<double> &x) const {
+        if (x.size() != dim_x)
+            throw Exception("Function::check_input: Wrong dimension on evaluation point x.");
     }
 
-    void checkInput(const DenseVector &x) const;
+    void check_input(const DenseVector &x) const;
 
     /**
      * Returns the central difference at x
      */
-    DenseMatrix centralDifference(const DenseVector &x) const;
+    DenseMatrix central_difference(const DenseVector &x) const;
 
     /**
      * Description of function.
      */
-    virtual std::string getDescription() const
+    virtual std::string get_description() const
     {
         return "";
     }
 
 protected:
-    unsigned int dimX; // Dimension of domain (size of x)
-    unsigned int dimY; // Dimension of codomain (size of y)
+    unsigned int dim_x; // Dimension of domain (size of x)
+    unsigned int dim_y; // Dimension of codomain (size of y)
 
-    friend class Serializer;
 };
 
 } // namespace SPLINTER

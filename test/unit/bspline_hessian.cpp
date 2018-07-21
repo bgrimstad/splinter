@@ -8,7 +8,7 @@
 */
 
 #include <Catch.h>
-#include <bspline_builder.h>
+#include <bspline_builders.h>
 #include <utilities.h>
 
 using namespace SPLINTER;
@@ -44,22 +44,22 @@ TEST_CASE("hessian" COMMON_TEXT, COMMON_TAGS)
     DataTable samples;
     for (auto x1_i : x1_vec)
         for (auto x2_i : x2_vec)
-            samples.addSample(std::vector<double>({x1_i, x2_i}),
-                              std::vector<double>({f1(x1_i, x2_i), f2(x1_i, x2_i)}));
+            samples.add_sample(std::vector<double>({x1_i, x2_i}),
+                               std::vector<double>({f1(x1_i, x2_i), f2(x1_i, x2_i)}));
 
-    BSpline bs = BSpline::Builder(2, 2).degree(2).fit(samples);
+    BSpline bs = bspline_interpolator(samples, 2);
 
     /*
      * Evaluate Hessian and compare to true Hessian
      */
-    auto hessian = bs.evalHessian({1, 1});
+    auto hessian = bs.eval_hessian({1, 1});
 
     for (size_t i = 0; i < hessian.size(); ++i) {
         for (size_t j = 0; j < hessian.at(i).size(); ++j) {
             for (size_t k = 0; k < hessian.at(i).at(j).size(); ++k) {
                 double Hijk_calc = hessian.at(i).at(j).at(k);
                 double Hijk_true = hessian_true.at(i)(j, k);
-                REQUIRE(assertNear(Hijk_calc, Hijk_true));
+                REQUIRE(assert_near(Hijk_calc, Hijk_true));
             }
         }
     }

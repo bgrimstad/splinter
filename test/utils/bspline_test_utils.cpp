@@ -34,7 +34,7 @@ DataTable sampleTestFunction()
             y = sixHumpCamelBack(x);
 
             // Store sample
-            samples.addSample(x, y);
+            samples.add_sample(x, y);
         }
     }
 
@@ -45,24 +45,21 @@ bool testKnotInsertion()
 {
     DataTable samples = sampleTestFunction();
 
-    auto dim_x = samples.getDimX();
-    auto dim_y = samples.getDimY();
-
     // Build B-splines that interpolate the samples
-    BSpline bspline1 = BSpline::Builder(dim_x, dim_y).degree(1).fit(samples);
-    BSpline bspline2 = BSpline::Builder(dim_x, dim_y).degree(2).fit(samples);
-    BSpline bspline3 = BSpline::Builder(dim_x, dim_y).degree(3).fit(samples);
+    BSpline bspline1 = bspline_interpolator(samples, 1);
+    BSpline bspline2 = bspline_interpolator(samples, 2);
+    BSpline bspline3 = bspline_interpolator(samples, 3);
 
     BSpline bspline1_copy(bspline1);
     BSpline bspline2_copy(bspline2);
     BSpline bspline3_copy(bspline3);
 
-    bspline1.insertKnots(0.83, 0);
-    bspline1.insertKnots(1.37, 1);
-    bspline2.insertKnots(0.83, 1);
-    bspline2.insertKnots(1.37, 0);
-    bspline3.insertKnots(0.83, 1);
-    bspline3.insertKnots(1.37, 1);
+    bspline1.insert_knots(0.83, 0);
+    bspline1.insert_knots(1.37, 1);
+    bspline2.insert_knots(0.83, 1);
+    bspline2.insert_knots(1.37, 0);
+    bspline3.insert_knots(0.83, 1);
+    bspline3.insert_knots(1.37, 1);
 
     // Sample function
     auto x0_vec = linspace(0, 2, 200);
@@ -78,19 +75,19 @@ bool testKnotInsertion()
             auto y1 = bspline1.eval(x);
             auto y1_copy = bspline1_copy.eval(x);
 
-            if (!compareVectors(y1, y1_copy, 1e-10))
+            if (!compare_vectors(y1, y1_copy, 1e-10))
                 return false;
 
             auto y2 = bspline2.eval(x);
             auto y2_copy = bspline2_copy.eval(x);
 
-            if (!compareVectors(y2, y2_copy, 1e-10))
+            if (!compare_vectors(y2, y2_copy, 1e-10))
                 return false;
 
             auto y3 = bspline3.eval(x);
             auto y3_copy = bspline3_copy.eval(x);
 
-            if (!compareVectors(y3, y3_copy, 1e-10))
+            if (!compare_vectors(y3, y3_copy, 1e-10))
                 return false;
         }
     }
@@ -100,15 +97,15 @@ bool testKnotInsertion()
 
 bool domainReductionTest(BSpline &bs, const BSpline &bs_orig)
 {
-    if (bs.getDimX() != 2 || bs_orig.getDimX() != 2)
+    if (bs.get_dim_x() != 2 || bs_orig.get_dim_x() != 2)
         return false;
 
     // Check for error
     if (!compareBSplines(bs, bs_orig))
         return false;
 
-    auto lb = bs.getDomainLowerBound();
-    auto ub = bs.getDomainUpperBound();
+    auto lb = bs.get_domain_lower_bound();
+    auto ub = bs.get_domain_upper_bound();
 
     bool flag = false;
     unsigned int index = 0;
@@ -128,12 +125,12 @@ bool domainReductionTest(BSpline &bs, const BSpline &bs_orig)
         auto lb2 = lb;
         auto ub2 = ub; ub2.at(index) = split;
         BSpline bs2(bs);
-        bs2.reduceSupport(lb2, ub2);
+        bs2.reduce_support(lb2, ub2);
 
         auto lb3 = lb; lb3.at(index) = split;
         auto ub3 = ub;
         BSpline bs3(bs);
-        bs3.reduceSupport(lb3, ub3);
+        bs3.reduce_support(lb3, ub3);
 
         return (domainReductionTest(bs2, bs_orig) && domainReductionTest(bs3, bs_orig));
     }
@@ -146,14 +143,11 @@ bool runRecursiveDomainReductionTest()
     // Create new DataTable to manage samples
     DataTable samples = sampleTestFunction();
 
-    auto dim_x = samples.getDimX();
-    auto dim_y = samples.getDimY();
-
     // Build B-splines that interpolate the samples
-    BSpline bspline1 = BSpline::Builder(dim_x, dim_y).degree(1).fit(samples);
-    BSpline bspline2 = BSpline::Builder(dim_x, dim_y).degree(2).fit(samples);
-    BSpline bspline3 = BSpline::Builder(dim_x, dim_y).degree(3).fit(samples);
-    BSpline bspline4 = BSpline::Builder(dim_x, dim_y).degree(4).fit(samples);
+    BSpline bspline1 = bspline_interpolator(samples, 1);
+    BSpline bspline2 = bspline_interpolator(samples, 2);
+    BSpline bspline3 = bspline_interpolator(samples, 3);
+    BSpline bspline4 = bspline_interpolator(samples, 4);
 
     if (!domainReductionTest(bspline1, bspline1))
         return false;
@@ -175,44 +169,41 @@ bool domainReductionTest1()
     std::vector<double> x1 = {0.75, 0.75};
     std::vector<double> x2 = {0.7, 0.8};
 
-    auto dim_x = samples.getDimX();
-    auto dim_y = samples.getDimY();
-
     // Build B-splines that interpolate the samples
-    BSpline bspline1_ref = BSpline::Builder(dim_x, dim_y).degree(1).fit(samples);
-    BSpline bspline2_ref = BSpline::Builder(dim_x, dim_y).degree(2).fit(samples);
-    BSpline bspline3_ref = BSpline::Builder(dim_x, dim_y).degree(3).fit(samples);
-    BSpline bspline4_ref = BSpline::Builder(dim_x, dim_y).degree(4).fit(samples);
+    BSpline bspline1_ref = bspline_interpolator(samples, 1);
+    BSpline bspline2_ref = bspline_interpolator(samples, 2);
+    BSpline bspline3_ref = bspline_interpolator(samples, 3);
+    BSpline bspline4_ref = bspline_interpolator(samples, 4);
 
-    BSpline bspline1 = BSpline::Builder(dim_x, dim_y).degree(1).fit(samples);
-    BSpline bspline2 = BSpline::Builder(dim_x, dim_y).degree(2).fit(samples);
-    BSpline bspline3 = BSpline::Builder(dim_x, dim_y).degree(3).fit(samples);
-    BSpline bspline4 = BSpline::Builder(dim_x, dim_y).degree(4).fit(samples);
+    BSpline bspline1 = bspline_interpolator(samples, 1);
+    BSpline bspline2 = bspline_interpolator(samples, 2);
+    BSpline bspline3 = bspline_interpolator(samples, 3);
+    BSpline bspline4 = bspline_interpolator(samples, 4);
 
     {
         std::vector<double> lb = {0, 0};
         std::vector<double> ub = {2, 2};
 
-        bspline1.reduceSupport(lb, ub);
-        bspline2.reduceSupport(lb, ub);
-        bspline3.reduceSupport(lb, ub);
-        bspline4.reduceSupport(lb, ub);
+        bspline1.reduce_support(lb, ub);
+        bspline2.reduce_support(lb, ub);
+        bspline3.reduce_support(lb, ub);
+        bspline4.reduce_support(lb, ub);
 
-        if (!compareVectors(bspline1.eval(x1), bspline1_ref.eval(x1)))
+        if (!compare_vectors(bspline1.eval(x1), bspline1_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline2.eval(x1), bspline2_ref.eval(x1)))
+        if (!compare_vectors(bspline2.eval(x1), bspline2_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline3.eval(x1), bspline3_ref.eval(x1)))
+        if (!compare_vectors(bspline3.eval(x1), bspline3_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline4.eval(x1), bspline4_ref.eval(x1)))
+        if (!compare_vectors(bspline4.eval(x1), bspline4_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline1.eval(x2), bspline1_ref.eval(x2)))
+        if (!compare_vectors(bspline1.eval(x2), bspline1_ref.eval(x2)))
             return false;
-        if (!compareVectors(bspline2.eval(x2), bspline2_ref.eval(x2)))
+        if (!compare_vectors(bspline2.eval(x2), bspline2_ref.eval(x2)))
             return false;
-        if (!compareVectors(bspline3.eval(x2), bspline3_ref.eval(x2)))
+        if (!compare_vectors(bspline3.eval(x2), bspline3_ref.eval(x2)))
             return false;
-        if (!compareVectors(bspline4.eval(x2), bspline4_ref.eval(x2)))
+        if (!compare_vectors(bspline4.eval(x2), bspline4_ref.eval(x2)))
             return false;
     }
 
@@ -220,26 +211,26 @@ bool domainReductionTest1()
         std::vector<double> lb = {0, 0};
         std::vector<double> ub = {1, 1};
 
-        bspline1.reduceSupport(lb, ub);
-        bspline2.reduceSupport(lb, ub);
-        bspline3.reduceSupport(lb, ub);
-        bspline4.reduceSupport(lb, ub);
+        bspline1.reduce_support(lb, ub);
+        bspline2.reduce_support(lb, ub);
+        bspline3.reduce_support(lb, ub);
+        bspline4.reduce_support(lb, ub);
 
-        if (!compareVectors(bspline1.eval(x1), bspline1_ref.eval(x1)))
+        if (!compare_vectors(bspline1.eval(x1), bspline1_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline2.eval(x1), bspline2_ref.eval(x1)))
+        if (!compare_vectors(bspline2.eval(x1), bspline2_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline3.eval(x1), bspline3_ref.eval(x1)))
+        if (!compare_vectors(bspline3.eval(x1), bspline3_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline4.eval(x1), bspline4_ref.eval(x1)))
+        if (!compare_vectors(bspline4.eval(x1), bspline4_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline1.eval(x2), bspline1_ref.eval(x2)))
+        if (!compare_vectors(bspline1.eval(x2), bspline1_ref.eval(x2)))
             return false;
-        if (!compareVectors(bspline2.eval(x2), bspline2_ref.eval(x2)))
+        if (!compare_vectors(bspline2.eval(x2), bspline2_ref.eval(x2)))
             return false;
-        if (!compareVectors(bspline3.eval(x2), bspline3_ref.eval(x2)))
+        if (!compare_vectors(bspline3.eval(x2), bspline3_ref.eval(x2)))
             return false;
-        if (!compareVectors(bspline4.eval(x2), bspline4_ref.eval(x2)))
+        if (!compare_vectors(bspline4.eval(x2), bspline4_ref.eval(x2)))
             return false;
     }
 
@@ -247,26 +238,26 @@ bool domainReductionTest1()
         std::vector<double> lb = {0.5, 0.5};
         std::vector<double> ub = {1, 1};
 
-        bspline1.reduceSupport(lb, ub);
-        bspline2.reduceSupport(lb, ub);
-        bspline3.reduceSupport(lb, ub);
-        bspline4.reduceSupport(lb, ub);
+        bspline1.reduce_support(lb, ub);
+        bspline2.reduce_support(lb, ub);
+        bspline3.reduce_support(lb, ub);
+        bspline4.reduce_support(lb, ub);
 
-        if (!compareVectors(bspline1.eval(x1), bspline1_ref.eval(x1)))
+        if (!compare_vectors(bspline1.eval(x1), bspline1_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline2.eval(x1), bspline2_ref.eval(x1)))
+        if (!compare_vectors(bspline2.eval(x1), bspline2_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline3.eval(x1), bspline3_ref.eval(x1)))
+        if (!compare_vectors(bspline3.eval(x1), bspline3_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline4.eval(x1), bspline4_ref.eval(x1)))
+        if (!compare_vectors(bspline4.eval(x1), bspline4_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline1.eval(x2), bspline1_ref.eval(x2)))
+        if (!compare_vectors(bspline1.eval(x2), bspline1_ref.eval(x2)))
             return false;
-        if (!compareVectors(bspline2.eval(x2), bspline2_ref.eval(x2)))
+        if (!compare_vectors(bspline2.eval(x2), bspline2_ref.eval(x2)))
             return false;
-        if (!compareVectors(bspline3.eval(x2), bspline3_ref.eval(x2)))
+        if (!compare_vectors(bspline3.eval(x2), bspline3_ref.eval(x2)))
             return false;
-        if (!compareVectors(bspline4.eval(x2), bspline4_ref.eval(x2)))
+        if (!compare_vectors(bspline4.eval(x2), bspline4_ref.eval(x2)))
             return false;
     }
 
@@ -274,26 +265,26 @@ bool domainReductionTest1()
         std::vector<double> lb = {0.7, 0.7};
         std::vector<double> ub = {0.8, 0.8};
 
-        bspline1.reduceSupport(lb, ub);
-        bspline2.reduceSupport(lb, ub);
-        bspline3.reduceSupport(lb, ub);
-        bspline4.reduceSupport(lb, ub);
+        bspline1.reduce_support(lb, ub);
+        bspline2.reduce_support(lb, ub);
+        bspline3.reduce_support(lb, ub);
+        bspline4.reduce_support(lb, ub);
 
-        if (!compareVectors(bspline1.eval(x1), bspline1_ref.eval(x1)))
+        if (!compare_vectors(bspline1.eval(x1), bspline1_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline2.eval(x1), bspline2_ref.eval(x1)))
+        if (!compare_vectors(bspline2.eval(x1), bspline2_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline3.eval(x1), bspline3_ref.eval(x1)))
+        if (!compare_vectors(bspline3.eval(x1), bspline3_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline4.eval(x1), bspline4_ref.eval(x1)))
+        if (!compare_vectors(bspline4.eval(x1), bspline4_ref.eval(x1)))
             return false;
-        if (!compareVectors(bspline1.eval(x2), bspline1_ref.eval(x2)))
+        if (!compare_vectors(bspline1.eval(x2), bspline1_ref.eval(x2)))
             return false;
-        if (!compareVectors(bspline2.eval(x2), bspline2_ref.eval(x2)))
+        if (!compare_vectors(bspline2.eval(x2), bspline2_ref.eval(x2)))
             return false;
-        if (!compareVectors(bspline3.eval(x2), bspline3_ref.eval(x2)))
+        if (!compare_vectors(bspline3.eval(x2), bspline3_ref.eval(x2)))
             return false;
-        if (!compareVectors(bspline4.eval(x2), bspline4_ref.eval(x2)))
+        if (!compare_vectors(bspline4.eval(x2), bspline4_ref.eval(x2)))
             return false;
     }
 
@@ -311,7 +302,7 @@ bool domainReductionTest1()
 ///*
 // * This example was used to test the speed difference
 // * of Eigens Kronecker product and the custom-made
-// * myKroneckerProduct() when refining a B-spline.
+// * my_kronecker_product() when refining a B-spline.
 // * Note that the Kronecker product function call
 // * have to be manually switched between test runs.
 // */
@@ -342,7 +333,7 @@ bool domainReductionTest1()
 //                    xv(3) = x3;
 //
 //                    double y = kroneckerTestFunction(xv);
-//                    table.addSample(xv,y);
+//                    table.add_sample(xv,y);
 //                }
 //            }
 //        }
@@ -359,7 +350,7 @@ bool domainReductionTest1()
 //
 //    cout << "Reducing domain" << endl;
 //    //timer.start();
-//    bs.reduceSupport(lb2,ub2);
+//    bs.reduce_support(lb2,ub2);
 //    //timer.stop();
 //    // Old insertion method: 538, 536
 //    // New insertion method: > 25000!
@@ -433,9 +424,9 @@ bool domainReductionTest1()
 //     * x = 4 => knot inserted at 3.5
 //     */
 //    DenseVector x(1); x(0) = 1;
-//    bs.localKnotRefinement(x);
+//    bs.local_knot_refinement(x);
 //
-//    auto knots2 = bs.getKnotVectors();
+//    auto knots2 = bs.get_knot_vectors();
 //
 //    for (auto k : knots2.at(0))
 //        cout << k << ", ";

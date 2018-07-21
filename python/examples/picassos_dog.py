@@ -15,7 +15,7 @@ import splinterpy
 # Only for dev purposes
 import os.path
 if os.path.isdir("/home/bjarne/"):
-    splinterpy.load("/home/bjarne/Code/C++/splinter/build/release/libsplinter-4-0.so")
+    splinterpy.load("/home/bjarne/Code/splinter/build/debug/libsplinter-4-0.so")
 elif os.path.isdir("/home/anders/"):
     splinterpy.load("/home/anders/SPLINTER/build/debug/libsplinter-4-0.so")
 
@@ -45,7 +45,7 @@ knot_vector = [0, 0, 0, 0,
                8, 8, 8, 8,
                9, 9, 9, 9]
 degree = 3
-bs = splinterpy.BSpline.init_from_param(control_points, knot_vector, degree)
+bs = splinterpy.BSpline.from_param(degree, knot_vector, control_points)
 
 u = np.arange(knot_vector[0], knot_vector[-1], .01)
 p = bs.eval(u)

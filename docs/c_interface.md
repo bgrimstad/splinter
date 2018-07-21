@@ -1,5 +1,5 @@
 ## C interface
-As part of making the MATLAB and Python interface we have also made a C interface to the library. The MATLAB and Python interfaces make all their calls through this interface, but you can still use it if you want to. Note that almost all functions emulate object oriented languages by taking a splinter_obj_ptr as the first argument, and then the rest of the arguments after that.
+As part of making the Python interface we have also made a C interface to the library. Note that almost all functions emulate object oriented languages by taking a splinter_obj_ptr as the first argument, and then the rest of the arguments after that.
 splinter_obj_ptr is currently defined as
 ```c
 typedef void *splinter_obj_ptr;
@@ -41,18 +41,8 @@ int main(int argc, char **argv)
                 printf("%s\n", splinter_get_error_string());
         }
 
-        splinter_obj_ptr bspline_builder = splinter_bspline_builder_init(datatable);
-        if (splinter_get_error()) {
-                printf("%s\n", splinter_get_error_string());
-        }
-        
         unsigned int degrees[2] = {3, 3};
-        splinter_bspline_builder_set_degree(bspline_builder, degrees, 2);
-        if (splinter_get_error()) {
-                printf("%s\n", splinter_get_error_string());
-        }
-
-        splinter_obj_ptr bspline = splinter_bspline_builder_build(bspline_builder);
+        splinter_obj_ptr bspline_builder = splinter_splinter_bspline_interpolator(datatable, degrees);
         if (splinter_get_error()) {
                 printf("%s\n", splinter_get_error_string());
         }

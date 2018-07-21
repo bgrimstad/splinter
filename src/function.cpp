@@ -14,49 +14,49 @@ namespace SPLINTER
 {
 
 DenseVector Function::eval(const DenseVector &x) const {
-    return stdToEigVec(eval(eigToStdVec(x)));
+    return std_to_eig_vec(eval(eig_to_std_vec(x)));
 }
 
-std::vector<std::vector<double>> Function::evalJacobian(const std::vector<double> &x) const
+std::vector<std::vector<double>> Function::eval_jacobian(const std::vector<double> &x) const
 {
-    auto denseX = stdToEigVec(x);
+    auto eig_x = std_to_eig_vec(x);
 
-    return eigMatToStdVecVec(evalJacobian(denseX));
+    return eig_to_std_mat(eval_jacobian(eig_x));
 }
 
-DenseMatrix Function::evalJacobian(const DenseVector &x) const
+DenseMatrix Function::eval_jacobian(const DenseVector &x) const
 {
-    return centralDifference(x);
+    return central_difference(x);
 }
 
-DenseMatrix Function::centralDifference(const DenseVector &x) const
+DenseMatrix Function::central_difference(const DenseVector &x) const
 {
-    DenseMatrix Jac(dimY, dimX);
+    DenseMatrix jacobian(dim_y, dim_x);
 
     double h = 1e-6; // perturbation step size
-    double hForward = 0.5*h;
-    double hBackward = 0.5*h;
+    double h_forward = 0.5*h;
+    double h_backward = 0.5*h;
 
-    for (unsigned int i = 0; i < dimX; ++i)
+    for (unsigned int i = 0; i < dim_x; ++i)
     {
-        DenseVector xForward(x);
-        xForward(i) = xForward(i) + hForward;
+        DenseVector x_forward(x);
+        x_forward(i) = x_forward(i) + h_forward;
 
-        DenseVector xBackward(x);
-        xBackward(i) = xBackward(i) - hBackward;
+        DenseVector x_backward(x);
+        x_backward(i) = x_backward(i) - h_backward;
 
-        auto yForward = eval(xForward);
-        auto yBackward = eval(xBackward);
+        auto y_forward = eval(x_forward);
+        auto y_backward = eval(x_backward);
 
-        for (unsigned int j = 0; j < dimY; ++j)
-            Jac(j, i) = (yForward(j) - yBackward(j)) / (hBackward + hForward);
+        for (unsigned int j = 0; j < dim_y; ++j)
+            jacobian(j, i) = (y_forward(j) - y_backward(j)) / (h_backward + h_forward);
     }
 
-    return Jac;
+    return jacobian;
 }
 
-void Function::checkInput(const DenseVector &x) const {
-    return checkInput(eigToStdVec(x));
+void Function::check_input(const DenseVector &x) const {
+    return check_input(eig_to_std_vec(x));
 }
 
 

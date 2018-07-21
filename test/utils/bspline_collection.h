@@ -10,7 +10,7 @@
 #ifndef SPLINTER_BSPLINE_COLLECTION_H
 #define SPLINTER_BSPLINE_COLLECTION_H
 
-#include "bspline_builder.h"
+#include "bspline_builders.h"
 #include <vector>
 
 namespace SPLINTER {

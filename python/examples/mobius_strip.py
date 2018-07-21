@@ -15,7 +15,7 @@ from math import sqrt, pi, cos, sin
 # Only for dev purposes
 import os.path
 if os.path.isdir("/home/bjarne/"):
-    splinterpy.load("/home/bjarne/Code/C++/splinter/build/release/libsplinter-4-0.so")
+    splinterpy.load("/home/bjarne/Code/splinter/build/debug/libsplinter-4-0.so")
 elif os.path.isdir("/home/anders/"):
     splinterpy.load("/home/anders/SPLINTER/build/debug/libsplinter-4-0.so")
 
@@ -39,7 +39,7 @@ for ui in u:
         i = i + 1
 
 # Build 3-D-valued bicubic B-spline with clamped knot vectors
-bspline = splinterpy.BSplineBuilder(2, 3, degree=3).fit(X.tolist(), Y.tolist())
+bspline = splinterpy.bspline_interpolator(X.tolist(), Y.tolist(), degree=3)
 
 # Sample B-spline and plot
 u2 = np.linspace(0, 2*pi, 100)

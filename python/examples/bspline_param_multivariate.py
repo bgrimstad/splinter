@@ -14,7 +14,7 @@ import splinterpy
 # Only for dev purposes
 import os.path
 if os.path.isdir("/home/bjarne/"):
-    splinterpy.load("/home/bjarne/Code/C++/splinter/build/release/libsplinter-4-0.so")
+    splinterpy.load("/home/bjarne/Code/splinter/build/debug/libsplinter-4-0.so")
 elif os.path.isdir("/home/anders/"):
     splinterpy.load("/home/anders/SPLINTER/build/debug/libsplinter-4-0.so")
 
@@ -30,12 +30,20 @@ for i, kv in enumerate(knot_vectors):
 
 control_points = np.linspace(0, 100, num_control_points)
 
-bs = splinterpy.BSpline.init_from_param(control_points, knot_vectors, degrees)
+bs = splinterpy.BSpline.from_param(degrees, knot_vectors, control_points.tolist())
 
+# Evaluate B-spline
 xd = [0, 0, 0]
 yd = bs.eval(xd)
 print(yd)
 
+# Get B-spline properties
 knot_averages = bs.get_knot_averages()
 control_points = bs.get_control_points()
 print(knot_averages)
+
+# Build B-spline with zero control points
+bs_zero = splinterpy.BSpline.from_param(degrees, knot_vectors, 1)
+
+# Evaluate B-spline (should return zero)
+print(bs_zero.eval(xd))

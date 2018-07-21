@@ -18,7 +18,7 @@ import splinterpy
 # Only for dev purposes
 import os.path
 if os.path.isdir("/home/bjarne/"):
-    splinterpy.load("/home/bjarne/Code/C++/splinter/build/release/libsplinter-4-0.so")
+    splinterpy.load("/home/bjarne/Code/splinter/build/debug/libsplinter-4-0.so")
 elif os.path.isdir("/home/anders/"):
     splinterpy.load("/home/anders/SPLINTER/build/debug/libsplinter-4-0.so")
 
@@ -26,6 +26,7 @@ elif os.path.isdir("/home/anders/"):
 # Example with two variables
 def f(x):
     return x[0]*x[1]
+
 
 x1 = np.arange(-5, 5, 0.25)
 x2 = np.arange(-5, 5, 0.25)
@@ -44,7 +45,7 @@ for i in range(len(x1)):
         y.append(Y[i, j])
 
 # Cubic B-spline
-bspline = splinterpy.BSplineBuilder(2, 1, degree=[1, 3]).fit(x, y, smoothing=splinterpy.BSplineBuilder.Smoothing.NONE)
+bspline = splinterpy.bspline_interpolator(x, y, degree=3)
 
 Zbs = Y
 

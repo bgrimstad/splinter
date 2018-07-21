@@ -8,27 +8,155 @@
 */
 
 #include "bspline_utils.h"
+#include <linear_solvers.h>
 #include <iostream>
 #include <utilities.h>
 
 namespace SPLINTER
 {
 
-SparseMatrix computeBasisFunctionMatrix(const BSpline &bspline, const DataTable &data)
+/**
+ * Find coefficients of B-spline by solving:
+ * min ||W*X*C - W*Y||^2 + alpha*||R||^2,
+ * where
+ * X = (m x n) matrix of n basis functions evaluated at m sample points,
+ * Y = vector of m sample points y-values (or x-values when calculating knot averages),
+ * C = B-spline coefficients (or knot averages),
+ * R = Regularization matrix (n x n),
+ * alpha = regularization parameter,
+ * W = Diagonal weight matrix (m x m).
+ *
+ * The optimal control point matrix C is the solution of the linear system of equations:
+ * (X'*W*X + alpha*R) C = X'*W*Y
+ *
+ * For performance gains, the various cases are solved as follows:
+ * 1) No regularization or weighting: XC = Y
+ * 2) Weighting, no regularization: WXC = WY
+ * 3) Regularization, no weighting: (X'X + alpha*R)C = X'Y
+ * 4) Regularization and weighting: (X'*W*X + alpha*R) C = X'*W*Y
+ *
+ * TODO: Use existing control points C0 as starting point and compute new control points as C = DeltaC + C0
+ *
+ */
+DenseMatrix compute_control_points(const BSpline &bspline, const DataTable &data, BSpline::Smoothing smoothing,
+                                   double alpha, std::vector<double> weights)
 {
-    unsigned int num_samples = data.getNumSamples();
+    unsigned int num_basis_functions = bspline.get_num_basis_functions();
+    SparseMatrix X = compute_basis_function_matrix(bspline, data);
+    DenseMatrix Y = stack_sample_values(data);
 
-    // TODO: Reserve nnz per row (degree+1)
-    //int nnzPrCol = bspline.basis.numSupported();
+    // Left-hand side matrix
+    SparseMatrix A = X;
+    DenseMatrix B = Y;
 
-    SparseMatrix A(num_samples, bspline.getNumBasisFunctions());
-    //A.reserve(DenseVector::Constant(num_samples, nnzPrCol)); // TODO: should reserve nnz per row!
+    // Weight matrix
+    if (weights.size() > 0) {
+        // NOTE: Consider using Eigen::DiagonalMatrix<double, num_samples> W()
+        // SparseMatrix W(num_samples, num_samples);
+        SparseMatrix W = compute_weight_matrix(weights);
+        A = W*X;
+        B = W*Y;
+    }
+
+    // Regularization
+    if (smoothing != BSpline::Smoothing::NONE) {
+        
+        // Regularization matrix
+        SparseMatrix R(num_basis_functions, num_basis_functions);
+
+        if (smoothing == BSpline::Smoothing::IDENTITY) {
+            /*
+             * Tikhonov regularization (or ridge regression) with the Identity matrix
+             * See: https://en.wikipedia.org/wiki/Tikhonov_regularization
+             */
+            auto I = SparseMatrix(num_basis_functions, num_basis_functions);
+            I.setIdentity();
+            R = I;
+        }
+        else if (smoothing == BSpline::Smoothing::PSPLINE)
+        {
+            /*
+             * The P-Spline is a smoothing B-spline which relaxes the interpolation constraints on the control points to allow
+             * smoother spline curves. It minimizes an objective which penalizes both deviation from sample points (to lower bias)
+             * and the magnitude of second derivatives (to lower variance).
+             *
+             * Regularization matrix is given as R = D'*D, where D is the second-order finite difference matrix
+             */
+            SparseMatrix D = compute_second_order_finite_difference_matrix(bspline);
+            R = D.transpose()*D;
+        }
+        
+        // Left-hand side matrix
+        // NOTE: Using eval to avoid aliasing
+        // NOTE2: consider changing regularization factor to (alpha/numSample)
+        A = (X.transpose()*A + alpha*R).eval();
+        
+        // Right-hand side matrix
+        B = (X.transpose()*B).eval();
+    }
+
+    // Solve equation AC = B for control points C
+    DenseMatrix C;
+
+    long num_equations = A.rows();
+    int max_num_equations = 100;
+    bool solve_as_dense = (num_equations < max_num_equations);
+
+    if (!solve_as_dense)
+    {
+#ifndef NDEBUG
+        std::cout << "compute_control_points: Computing B-spline control points using sparse solver." << std::endl;
+#endif // NDEBUG
+
+        SparseLU<DenseMatrix> s;
+
+        solve_as_dense = !s.solve(A, B, C);
+    }
+
+    if (solve_as_dense)
+    {
+#ifndef NDEBUG
+        std::cout << "compute_control_points: Computing B-spline control points using dense solver." << std::endl;
+#endif // NDEBUG
+
+        DenseMatrix Ad = A.toDense();
+        DenseQR<DenseMatrix> s;
+//        DenseSVD<DenseMatrix> s;
+        if (!s.solve(Ad, B, C))
+        {
+            throw Exception("compute_control_points: Failed to solve for B-spline control points.");
+        }
+    }
+
+    return C;
+}
+
+SparseMatrix compute_basis_function_matrix(const BSpline &bspline, const DataTable &data)
+{
+    unsigned int num_samples = data.get_num_samples();
+
+    SparseMatrix A(num_samples, bspline.get_num_basis_functions());
+
+    // Reserve memory for A.
+    // Assume ColMajor storage order, in which case the inner vectors of SparseMatrix are columns.
+    // If the storage order ever changes, change the reserve statement to:
+    //     A.reserve( Eigen::VectorXi::Constant( num_samples, bspline.get_num_supported() ) );
+    static_assert( A.IsRowMajor == false );
+    // Although the number of non-zero elements per row equals bspline.get_num_supported(),
+    // SparseMatrix::reserve requires a vector of size SparseMatrix::cols() a an argument;
+    Eigen::VectorXi reserve_sizes( A.cols() );
+    // Assuming that non-zero elements in A are distributed randomly, the average number of non-zero elements per column is:
+    const double average_nnz_per_col = num_samples * bspline.get_num_supported() / bspline.get_num_basis_functions();
+    // Add safety margin of sqrt(N), but don't exceed num_samples ( which otherwise would happen if e.g. bspline.get_num_supported() == bspline.get_num_basis_functions() )
+    const int reserve_col_size = std::min( static_cast<int>( average_nnz_per_col + sqrt( average_nnz_per_col ) ), static_cast<int>(num_samples) );
+    reserve_sizes.fill( reserve_col_size );
+    A.reserve( reserve_sizes );
 
     int i = 0;
     for (auto it = data.cbegin(); it != data.cend(); ++it, ++i)
     {
-        DenseVector xi = stdToEigVec(it->getX());
-        SparseVector basis_values = bspline.evalBasis(xi);
+        DenseVector xi = std_to_eig_vec(it->get_x());
+        SparseVector basis_values = bspline.eval_basis(xi);
         for (SparseVector::InnerIterator it2(basis_values); it2; ++it2)
             A.insert(i, it2.index()) = it2.value();
     }
@@ -38,15 +166,15 @@ SparseMatrix computeBasisFunctionMatrix(const BSpline &bspline, const DataTable 
     return A;
 }
 
-DenseMatrix stackSamplePointValues(const DataTable &data)
+DenseMatrix stack_sample_values(const DataTable &data)
 {
-    DenseMatrix B = DenseMatrix::Zero(data.getNumSamples(), data.getDimY());
+    DenseMatrix B = DenseMatrix::Zero(data.get_num_samples(), data.get_dim_y());
 
     int i = 0;
     for (auto it = data.cbegin(); it != data.cend(); ++it, ++i)
     {
-        auto y = it->getY();
-        for (unsigned int j = 0; j < data.getDimY(); ++j)
+        auto y = it->get_y();
+        for (unsigned int j = 0; j < data.get_dim_y(); ++j)
             B(i, j) = y.at(j);
     }
     return B;
@@ -56,13 +184,13 @@ DenseMatrix stackSamplePointValues(const DataTable &data)
  * Function for generating second order finite-difference matrix, which is used for penalizing the
  * (approximate) second derivative in control point calculation for P-splines.
  */
-SparseMatrix computeSecondOrderFiniteDifferenceMatrix(const BSpline &bspline)
+SparseMatrix compute_second_order_finite_difference_matrix(const BSpline &bspline)
 {
-    unsigned int num_variables = bspline.getDimX();
+    unsigned int num_variables = bspline.get_dim_x();
 
     // Number of (total) basis functions - defines the number of columns in D
-    unsigned int num_cols = bspline.getNumBasisFunctions();
-    std::vector<unsigned int> num_basis_functions = bspline.getNumBasisFunctionsPerVariable();
+    unsigned int num_cols = bspline.get_num_basis_functions();
+    std::vector<unsigned int> num_basis_functions = bspline.get_num_basis_functions_per_variable();
 
     // Number of basis functions (and coefficients) in each variable
     std::vector<unsigned int> dims;
@@ -73,7 +201,7 @@ SparseMatrix computeSecondOrderFiniteDifferenceMatrix(const BSpline &bspline)
 
     for (unsigned int i=0; i < num_variables; ++i)
         if (num_basis_functions.at(i) < 3)
-            throw Exception("BSpline::Builder::getSecondOrderDifferenceMatrix: Need at least three coefficients/basis function per variable.");
+            throw Exception("compute_second_order_finite_difference_matrix: Need at least three coefficients/basis functions per variable.");
 
     // Number of rows in D and in each block
     int num_rows = 0;
@@ -154,10 +282,10 @@ SparseMatrix computeSecondOrderFiniteDifferenceMatrix(const BSpline &bspline)
     return D;
 }
 
-SparseMatrix computeWeightMatrix(const std::vector<double> weights)
+SparseMatrix compute_weight_matrix(std::vector<double> weights)
 {
     // TODO: use DiagonalMatrix here
-    auto eig_weights = stdToEigVec(weights);
+    auto eig_weights = std_to_eig_vec(weights);
     DenseMatrix D = eig_weights.asDiagonal();
     return D.sparseView();
 }

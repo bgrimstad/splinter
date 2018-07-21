@@ -20,7 +20,7 @@ using namespace SPLINTER;
 std::vector<std::vector<TestFunction *>> testFunctions = std::vector<std::vector<TestFunction *>>();
 
 
-void setupTestFunctions() {
+void setup_test_functions() {
     // f_x_y: function of x variables and y degrees
 
     // Functions of one variable

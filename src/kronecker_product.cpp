@@ -20,7 +20,7 @@ namespace SPLINTER
  * See: https://forum.kde.org/viewtopic.php?f=74&t=106955&p=309990&hilit=kronecker#p309990
  * When Eigen update their implementation, and officially support it, we switch to that.
  */
-SparseMatrix myKroneckerProduct(const SparseMatrix &A, const SparseMatrix &B)
+SparseMatrix my_kronecker_product(const SparseMatrix &A, const SparseMatrix &B)
 {
     SparseMatrix AB(A.rows()*B.rows(), A.cols()*B.cols());
 
@@ -94,7 +94,7 @@ SparseMatrix myKroneckerProduct(const SparseMatrix &A, const SparseMatrix &B)
     return AB;
 }
 
-SparseVector kroneckerProductVectors(const std::vector<SparseVector> &vectors)
+SparseVector kronecker_product_vectors(const std::vector<SparseVector> &vectors)
 {
     // Create two temp matrices
     SparseMatrix temp1(1,1);
@@ -120,7 +120,7 @@ SparseVector kroneckerProductVectors(const std::vector<SparseVector> &vectors)
     return temp1;
 }
 
-DenseVector kroneckerProductVectors(const std::vector<DenseVector> &vectors)
+DenseVector kronecker_product_vectors(const std::vector<DenseVector> &vectors)
 {
     // Create two temp matrices
     DenseVector temp1(1);
@@ -146,7 +146,7 @@ DenseVector kroneckerProductVectors(const std::vector<DenseVector> &vectors)
     return temp1;
 }
 
-SparseMatrix kroneckerProductMatrices(const std::vector<SparseMatrix> &matrices)
+SparseMatrix kronecker_product_matrices(const std::vector<SparseMatrix> &matrices)
 {
     // Create two temp matrices
     SparseMatrix temp1(1,1);

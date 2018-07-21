@@ -13,6 +13,18 @@ The B-spline consists of piecewise polynomial basis functions, and allows the us
 ![Illustration of a B-spline](assets/bspline.png)
 Figure: Illustration of a bicubic B-spline generated with the SPLINTER library.
 
+### Requirements for use
+A standards compliant C++11 compiler.
+
+### Guides
+* [Basic usage](docs/basic_usage.md)
+* [C++ interface](docs/cpp_interface.md)
+* [Python interface](docs/python_interface.md)
+* [C interface](docs/c_interface.md)
+* [Compilation](docs/compile.md)
+
+The interested reader can find a more in depth treatment of the mathematics behind SPLINTER in the [PDF user guide](docs/user_guide.pdf).
+
 ### Sharing
 SPLINTER is the result of several years of development towards a fast and general library for multivariate function approximation. The initial intention with the library was to build splines for use in mathematical programming (nonlinear optimization). Thus, some effort has been put into functionality that supports this, e.g. Jacobian and Hessian computations for the B-spline.
 
@@ -39,13 +51,8 @@ The simplest way to contribute to SPLINTER is to use it and give us feedback on 
 
 Note that pull requests will only be accepted if made to the `develop` branch.
 
-### Requirements for use
-A standards compliant C++11 compiler.
+### Active maintainers
 
-### Guides
-* [Basic usage](docs/basic_usage.md)
-* [C++ interface](docs/cpp_interface.md)
-* [MATLAB interface](docs/matlab_interface.md)
-* [Python interface](docs/python_interface.md)
-* [C interface](docs/c_interface.md)
-* [Compilation](docs/compile.md)
+SPLINTER is currently being maintained by
+* Bjarne Grimstad ([bgrimstad](https://github.com/bgrimstad))
+* Anders Wenhaug ([gablank](https://github.com/gablank))

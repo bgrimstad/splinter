@@ -8,7 +8,7 @@
 */
 
 #include <Catch.h>
-#include <bspline_builder.h>
+#include <bspline_builders.h>
 #include <utilities.h>
 
 using namespace SPLINTER;
@@ -29,14 +29,15 @@ TEST_CASE(COMMON_TEXT "multivariate output", COMMON_TAGS "[construction]")
 
     for (auto xi : x_vec)
     {
-        table_y1.addSample(xi, f1(xi));
-        table_y2.addSample(xi, f2(xi));
-        table_ys.addSample(xi, {f1(xi), f2(xi)});
+        table_y1.add_sample(xi, f1(xi));
+        table_y2.add_sample(xi, f2(xi));
+        table_ys.add_sample(xi, {f1(xi), f2(xi)});
     }
 
-    auto bs_y1 = BSpline::Builder(1, 1).degree(3).fit(table_y1);
-    auto bs_y2 = BSpline::Builder(1, 1).degree(3).fit(table_y2);
-    auto bs_ys = BSpline::Builder(1, 2).degree(3).fit(table_ys);
+    unsigned int degree = 3;
+    auto bs_y1 = bspline_interpolator(table_y1, degree);
+    auto bs_y2 = bspline_interpolator(table_y2, degree);
+    auto bs_ys = bspline_interpolator(table_ys, degree);
 
     auto x_vec_test = linspace(-10, 20, 100);
 
@@ -47,7 +48,7 @@ TEST_CASE(COMMON_TEXT "multivariate output", COMMON_TAGS "[construction]")
         auto y2 = bs_y2.eval(xi_);
         auto ys = bs_ys.eval(xi_);
 
-        assert(assertNear(y1.at(0), ys.at(0)));
-        assert(assertNear(y2.at(0), ys.at(1)));
+        assert(assert_near(y1.at(0), ys.at(0)));
+        assert(assert_near(y2.at(0), ys.at(1)));
     }
 }

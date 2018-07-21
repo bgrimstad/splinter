@@ -13,9 +13,8 @@
 namespace SPLINTER
 {
 
-std::set<splinter_obj_ptr> dataTables = std::set<splinter_obj_ptr>();
+std::set<splinter_obj_ptr> datatables = std::set<splinter_obj_ptr>();
 std::set<splinter_obj_ptr> bsplines = std::set<splinter_obj_ptr>();
-std::set<splinter_obj_ptr> bspline_builders = std::set<splinter_obj_ptr>();
 
 // 1 if the last function call caused an error, 0 else
 int splinter_last_func_call_error = 0;
@@ -31,7 +30,7 @@ void set_error_string(const char *new_error_string)
 /* Cast the splinter_obj_ptr to a DataTable * */
 DataTable *get_datatable(splinter_obj_ptr datatable_ptr)
 {
-    if (dataTables.count(datatable_ptr) > 0)
+    if (datatables.count(datatable_ptr) > 0)
     {
         return static_cast<DataTable *>(datatable_ptr);
     }
@@ -50,19 +49,6 @@ BSpline *get_bspline(splinter_obj_ptr bspline_ptr)
     }
 
     set_error_string("Invalid reference to BSpline: Maybe it has been deleted?");
-
-    return nullptr;
-}
-
-/* Check for existence of bspline_builder_ptr, then cast splinter_obj_ptr to a BSpline::Builder * */
-BSpline::Builder *get_builder(splinter_obj_ptr bspline_builder_ptr)
-{
-    if (bspline_builders.count(bspline_builder_ptr) > 0)
-    {
-        return static_cast<BSpline::Builder *>(bspline_builder_ptr);
-    }
-
-    set_error_string("Invalid reference to BSpline::Builder: Maybe it has been deleted?");
 
     return nullptr;
 }
@@ -99,5 +85,50 @@ double *get_row_major(double *col_major, size_t point_dim, size_t x_len)
 
     return row_major;
 }
+
+/**
+ * Resolve type of smoothing (see BSpline::Smoothing)
+ * @param smoothing as integer
+ * @return Smoothing
+ */
+BSpline::Smoothing resolve_smoothing(int smoothing)
+{
+    switch (smoothing)
+    {
+        case 0:
+            return BSpline::Smoothing::NONE;
+        case 1:
+            return BSpline::Smoothing::IDENTITY;
+        case 2:
+            return BSpline::Smoothing::PSPLINE;
+        default:
+            set_error_string("Error: Invalid smoothing type!");
+            return BSpline::Smoothing::NONE;
+    }
+}
+
+/**
+ * Resolve knot spacing type (see KnotSpacing in knot_builders.h)
+ * @param knot_spacing knot spacing as integer
+ * @return KnotSpacing
+ */
+KnotSpacing resolve_knot_spacing(int knot_spacing)
+{
+    switch (knot_spacing)
+    {
+        case 0:
+            return KnotSpacing::EXPERIMENTAL;
+        case 1:
+            return KnotSpacing::AS_SAMPLED;
+        case 2:
+            return KnotSpacing::EQUIDISTANT_CLAMPED;
+        case 3:
+            return KnotSpacing::EQUIDISTANT;
+        default:
+            set_error_string("Error: Invalid knot spacing!");
+            return KnotSpacing::AS_SAMPLED;
+    }
+}
+
 
 } // namespace SPLINTER

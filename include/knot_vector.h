@@ -81,22 +81,21 @@ public:
         return knots.cend();
     }
 
-    const double at(unsigned int i) const {
+    const double& at(unsigned int i) const {
         return knots.at(i);
     }
 
-    const double front() const {
+    const double& front() const {
         return knots.front();
     }
 
-    const double back() const {
+    const double& back() const {
         return knots.back();
     }
 
 private:
     std::vector<double> knots;
 
-    friend class Serializer;
 };
 
 bool operator==(const KnotVector &lhs, const KnotVector &rhs);

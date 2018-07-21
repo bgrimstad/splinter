@@ -46,17 +46,18 @@ x = np.arange(0, 11, 1)
 y = np.array([f1(xi) for xi in x])
 
 # Build cubic B-spline that interpolates the data
-bspline = splinter.BSplineBuilder(1, 1, degree=3).fit(x, y)
+bspline = splinter.bspline_interpolator(x, y, degree=3)
 
 # Evaluate the B-spline
 xd = np.arange(0, 10, .01)
 yd = bspline.eval(xd)
 
 # Save BSpline to file for loading it later:
-bspline.save("myfile.myextension")
+filename = "bspline.json"
+bspline.to_json(filename)
 
 # Load BSpline from file:
-loadedBSpline = splinter.BSpline("myfile.myextension")
+loaded_bspline = splinter.BSpline.from_json(filename)
 ```
 Notice that if you are going to evaluate the BSpline in more than one point, it is preferred to call eval once, instead of n times.
 

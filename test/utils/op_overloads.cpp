@@ -9,6 +9,7 @@
 
 #include <utils/op_overloads.h>
 #include <utils/test_utils.h>
+#include <utilities.h>
 
 
 /*
@@ -81,30 +82,24 @@ namespace SPLINTER
  */
 bool operator==(const DataTable &lhs, const DataTable &rhs)
 {
-    return
-            lhs.allow_duplicates == rhs.allow_duplicates
-            && lhs.allow_incomplete_grid == rhs.allow_incomplete_grid
-            && lhs.num_duplicates == rhs.num_duplicates
-            && lhs.dim_x == rhs.dim_x
+    // NOTE: requires equal ordering of samples and an equal number of samples
+    return  lhs._dim_x == rhs._dim_x
+            && lhs._dim_y == rhs._dim_y
             && lhs.samples == rhs.samples
-            && lhs.grid == rhs.grid
-            && lhs.getDimX() == rhs.getDimX()
-            && lhs.getNumSamples() == rhs.getNumSamples()
-            && lhs.getSamples() == rhs.getSamples()
-            && lhs.getGrid() == rhs.getGrid();
+            && lhs.get_num_samples() == rhs.get_num_samples();
 }
 
 bool operator==(const DataPoint &lhs, const DataPoint &rhs)
 {
-    for (unsigned int i = 0; i < lhs.getDimX(); i++)
+    for (unsigned int i = 0; i < lhs.get_dim_x(); i++)
     {
-        if (!equalsWithinRange(lhs.getX().at(i), rhs.getX().at(i)))
+        if (!assert_near(lhs.get_x().at(i), rhs.get_x().at(i)))
             return false;
     }
 
-    for (unsigned int i = 0; i < lhs.getDimY(); i++)
+    for (unsigned int i = 0; i < lhs.get_dim_y(); i++)
     {
-        if (!equalsWithinRange(lhs.getY().at(i), rhs.getY().at(i)))
+        if (!assert_near(lhs.get_y().at(i), rhs.get_y().at(i)))
             return false;
     }
 
@@ -114,21 +109,21 @@ bool operator==(const DataPoint &lhs, const DataPoint &rhs)
 bool operator==(const BSpline &lhs, const BSpline &rhs)
 {
     return
-            lhs.dimX == rhs.dimX
-            && lhs.dimY == rhs.dimY
-            && lhs.controlPoints.isApprox(rhs.controlPoints)
+            lhs.dim_x == rhs.dim_x
+            && lhs.dim_y == rhs.dim_y
+            && lhs.control_points.isApprox(rhs.control_points)
             && lhs.basis == rhs.basis
-            && lhs.getNumBasisFunctionsPerVariable() == rhs.getNumBasisFunctionsPerVariable()
-            && lhs.getKnotVectors() == rhs.getKnotVectors()
-            && lhs.getBasisDegrees() == rhs.getBasisDegrees()
-            && lhs.getDomainLowerBound() == rhs.getDomainLowerBound()
-            && lhs.getDomainUpperBound() == rhs.getDomainUpperBound();
+            && lhs.get_num_basis_functions_per_variable() == rhs.get_num_basis_functions_per_variable()
+            && lhs.get_knot_vectors() == rhs.get_knot_vectors()
+            && lhs.get_basis_degrees() == rhs.get_basis_degrees()
+            && lhs.get_domain_lower_bound() == rhs.get_domain_lower_bound()
+            && lhs.get_domain_upper_bound() == rhs.get_domain_upper_bound();
 }
 
 bool operator==(const BSplineBasis &lhs, const BSplineBasis &rhs)
 {
     return
-            lhs.numVariables == rhs.numVariables
+            lhs.num_variables == rhs.num_variables
             && lhs.bases == rhs.bases;
 }
 
@@ -137,7 +132,7 @@ bool operator==(const BSplineBasis1D &lhs, const BSplineBasis1D &rhs)
     return
             lhs.degree == rhs.degree
             && lhs.knots == rhs.knots
-            && lhs.targetNumBasisfunctions == rhs.targetNumBasisfunctions;
+            && lhs.target_num_basis_functions == rhs.target_num_basis_functions;
 }
 
 /*
@@ -159,32 +154,36 @@ bool operator!=(const DataPoint &lhs, const DataPoint &rhs)
 std::ostream &operator<<(std::ostream &out, const DataPoint &sample) {
     out << "(";
     bool firstLoop = true;
-    for (auto val : sample.getX()) {
+    for (auto val : sample.get_x()) {
         if (!firstLoop) {
             out << ", ";
         }
         out << val;
         firstLoop = false;
     }
-    out << ") = (" << sample.getY() << ")";
+    out << ") = (" << sample.get_y() << ")";
 
     return out;
 }
 
 std::ostream &operator<<(std::ostream &out, const DataTable &table)
 {
-    out << "dim_x: " << table.getDimX() << std::endl;
-    out << "numSamples: " << table.getNumSamples() << std::endl;
-    //out << "samples: " << table.getSamples() << std::endl;
-    out << "grid dimensions: ";
-    bool firstLoop = true;
-    for (const auto &dimension : table.getGrid())
-    {
-        if (!firstLoop)
-            out << ", ";
+    out << "DataTable (";
+    out << "dim_x: " << table.get_dim_x();
+    out << ", dim_y: " << table.get_dim_y();
+    out << ", num_samples: " << table.get_num_samples();
+    out << ")" << std::endl;
+    out << "--------------------------------------------------------" << std::endl;
 
-        out << dimension.size();
-        firstLoop = false;
+    for (auto &point : table.get_samples()) {
+        for (auto x : point.get_x()) {
+            out << x << ", ";
+        }
+        out << " : ";
+        for (auto y : point.get_y()) {
+            out << y << ", ";
+        }
+        out << std::endl;
     }
 
     return out;

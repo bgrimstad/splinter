@@ -156,7 +156,7 @@ set(CINTERFACE_SRC_LIST
     include/cinterface/cinterface.h
     include/cinterface/utilities.h
     src/cinterface/bspline.cpp
-    src/cinterface/bspline_builder.cpp
+    src/cinterface/bspline_builders.cpp
     src/cinterface/cinterface.cpp
     src/cinterface/data_table.cpp
     src/cinterface/utilities.cpp
@@ -167,9 +167,9 @@ set(SRC_LIST
     include/bspline.h
     include/bspline_basis.h
     include/bspline_basis_1d.h
-    include/knot_utils.h
+    include/knot_builders.h
     include/knot_vector.h
-    include/bspline_builder.h
+    include/bspline_builders.h
     include/bspline_utils.h
     include/data_point.h
     include/data_table.h
@@ -177,37 +177,33 @@ set(SRC_LIST
     include/definitions.h
     include/linear_solvers.h
     include/kronecker_product.h
-    include/serializer.h
     include/utilities.h
-    include/saveable.h
+    include/json_parser.h
     src/bspline.cpp
     src/bspline_basis.cpp
     src/bspline_basis_1d.cpp
-    src/knot_utils.cpp
+    src/knot_builders.cpp
     src/knot_vector.cpp
-    src/bspline_builder.cpp
+    src/bspline_builders.cpp
     src/bspline_utils.cpp
     src/data_point.cpp
     src/data_table.cpp
     src/function.cpp
     src/kronecker_product.cpp
-    src/serializer.cpp
     src/utilities.cpp
-    src/json_parser.cpp
-    include/json_parser.h)
+    src/json_parser.cpp)
 
 set(TEST_SRC_LIST
     ${SRC_LIST}
     test/main.cpp
     test/approximation/bspline.cpp
+    test/approximation/bspline_wls.cpp
     test/approximation/pspline.cpp
     test/general/bspline.cpp
     test/general/bspline_builder.cpp
-    test/general/data_table.cpp
+    test/unit/data_table.cpp
     test/general/utilities.cpp
     test/examples/approximation.cpp
-    test/serialization/data_table.cpp
-    test/serialization/bspline.cpp
     test/utils/op_overloads.h
     test/utils/op_overloads.cpp
     test/utils/test_function.h
@@ -218,7 +214,6 @@ set(TEST_SRC_LIST
     test/utils/test_utils.cpp
     test/utils/bspline_test_utils.h
     test/utils/bspline_test_utils.cpp
-    test/serialization/eigentypes.cpp
     test/unit/bspline_basis_1d.cpp
     test/unit/bspline_hessian.cpp
     test/unit/bspline_utils.cpp
@@ -227,7 +222,9 @@ set(TEST_SRC_LIST
     test/unit/json_parser.cpp
     test/utils/timer.h
     test/utils/bspline_collection.cpp
-    test/utils/bspline_collection.h)
+    test/utils/bspline_collection.h
+    test/utils/data_table_collection.cpp
+    test/utils/data_table_collection.h)
 
 set(SHARED_LIBRARY ${PROJECT_NAME_LOWER}-${VERSION})
 set(STATIC_LIBRARY ${PROJECT_NAME_LOWER}-static-${VERSION})
@@ -240,31 +237,12 @@ set(TEST "${PROJECT_NAME_LOWER}-test")
 add_library(${SHARED_LIBRARY} SHARED ${SRC_LIST})
 add_library(${STATIC_LIBRARY} STATIC ${SRC_LIST})
 
-# Testing executable
+# Create test executable
 add_executable(${TEST} ${TEST_SRC_LIST})
 target_link_libraries(${TEST} ${STATIC_LIBRARY})
 
-# Make the directory structure expected by the MatLab interface
-# License file
-install(
-        FILES ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE
-        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-matlab/
-)
-# Matlab files (.m)
-install(
-        DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/matlab
-        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-matlab
-)
-# Version file (used for deducing the name of the binary when loading it)
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/splinter-matlab/version ${VERSION})
-install(
-        FILES include/cinterface/cinterface.h
-        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-matlab/include
-)
-install(
-        TARGETS ${SHARED_LIBRARY}
-        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/splinter-matlab/lib/${OS_STRING}/${ARCH}
-)
+# Copy test resources
+file(COPY test/resources/ DESTINATION ${CMAKE_BINARY_DIR}/test-resources)
 
 # Make the directory structure expected by the Python interface
 # Python files (.py)

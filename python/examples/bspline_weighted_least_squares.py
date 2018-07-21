@@ -15,9 +15,12 @@ import splinterpy
 # Only for dev purposes
 import os.path
 if os.path.isdir("/home/bjarne/"):
-    splinterpy.load("/home/bjarne/Code/C++/splinter/build/release/libsplinter-4-0.so")
+    splinterpy.load("/home/bjarne/Code/splinter/build/debug/libsplinter-4-0.so")
 elif os.path.isdir("/home/anders/"):
     splinterpy.load("/home/anders/SPLINTER/build/debug/libsplinter-4-0.so")
+
+
+Smoothing = splinterpy.BSpline.Smoothing
 
 
 # Example with one variable
@@ -39,13 +42,13 @@ weights[5] = 0.001
 # Cubic B-spline that interpolates the data
 # NOTE: the B-spline will fit to the deweighted data point since it does not have any degrees of freedom, i.e. the
 # number of control points equal the number of data points
-b1 = splinterpy.BSplineBuilder(1, 1).fit(x, y, smoothing=splinterpy.BSplineBuilder.Smoothing.NONE, weights=weights)
+b1 = splinterpy.bspline_interpolator(x, y, degree=3)
 
 # Cubic B-spline with regularization and weights
-b2 = splinterpy.BSplineBuilder(1, 1).fit(x, y, smoothing=splinterpy.BSplineBuilder.Smoothing.IDENTITY, alpha=0.1, weights=weights)
+b2 = splinterpy.bspline_smoother(x, y, smoothing=Smoothing.IDENTITY, alpha=0.1, weights=weights)
 
 # Cubic P-spline with weights
-b3 = splinterpy.BSplineBuilder(1, 1).fit(x, y, smoothing=splinterpy.BSplineBuilder.Smoothing.PSPLINE, alpha=0.1, weights=weights)
+b3 = splinterpy.bspline_smoother(x, y, smoothing=Smoothing.PSPLINE, alpha=0.1, weights=weights)
 
 nd = 1000
 xd = np.linspace(0, 10, nd)

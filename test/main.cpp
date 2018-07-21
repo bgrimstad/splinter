@@ -16,7 +16,7 @@
 
 int main(int argc, char *argv[])
 {
-    setupTestFunctions();
+    setup_test_functions();
 
     SPLINTER::Timer tim;
     tim.start();

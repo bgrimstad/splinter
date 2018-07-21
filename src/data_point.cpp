@@ -12,32 +12,28 @@
 namespace SPLINTER
 {
 
-DataPoint::DataPoint()
-{
-}
-
 DataPoint::DataPoint(double x, double y)
 {
-    setData(std::vector<double>(1, x),
-            std::vector<double>(1, y));
+    set_data(std::vector<double>(1, x),
+             std::vector<double>(1, y));
 }
 
 DataPoint::DataPoint(const std::vector<double> &x, double y)
 {
-    setData(x, std::vector<double>(1, y));
+    set_data(x, std::vector<double>(1, y));
 }
 
 DataPoint::DataPoint(double x, const std::vector<double> &y)
 {
-    setData(std::vector<double>(1, x), y);
+    set_data(std::vector<double>(1, x), y);
 }
 
 DataPoint::DataPoint(const std::vector<double> &x, const std::vector<double> &y)
 {
-    setData(x, y);
+    set_data(x, y);
 }
 
-void DataPoint::setData(const std::vector<double> &x, const std::vector<double> &y)
+void DataPoint::set_data(const std::vector<double> &x, const std::vector<double> &y)
 {
     this->x = x;
     this->y = y;
@@ -45,14 +41,14 @@ void DataPoint::setData(const std::vector<double> &x, const std::vector<double> 
 
 bool DataPoint::operator<(const DataPoint &rhs) const
 {
-    if (this->getDimX() != rhs.getDimX())
+    if (this->get_dim_x() != rhs.get_dim_x())
         throw Exception("DataPoint::operator<: Cannot compare data points of different dimensions");
 
-    for (unsigned int i = 0; i < this->getDimX(); i++)
+    for (unsigned int i = 0; i < this->get_dim_x(); i++)
     {
-        if (x.at(i) < rhs.getX().at(i))
+        if (x.at(i) < rhs.get_x().at(i))
             return true;
-        else if (x.at(i) > rhs.getX().at(i))
+        else if (x.at(i) > rhs.get_x().at(i))
             return false;
     }
 

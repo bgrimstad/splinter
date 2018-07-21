@@ -1,5 +1,16 @@
 ## Changelog
 
+#### Version 4.0
+- Reworked interface for fitting B-splines to data. Fitting is now a two-stage process: 1) Create B-spline by defining the knot vectors and degrees (control points will be zeros), 2) Fit to sample data (control points will be updated). This process gives the user more control over the knot vectors that define the B-spline. Convenience functions for the most common B-spline setups have been added (e.g. for cubic B-spline interpolation).
+- Support for multidimensional control points have been added
+- B-splines can now be saved and loaded from JSON files (thanks to the JSON library by Niels Lohmann)
+- B-splines can now be fitted using weighted least squares (WLS) to account for uncertainty in sample data
+- SPLINTER will no longer support MATLAB - MATLAB interface has been removed
+- SPLINTER is now using continuous integration with Travis - we have added badges that show the current build status of the develop and master branches
+- New tests have been added
+- Remove support for Python 2
+- Update Eigen to version 3.3.4
+
 #### Version 3.0
 - Removed class for polynomial regression (PolynomialRegression).
 - Removed class for radial basis function approximation (RBFApproximant)

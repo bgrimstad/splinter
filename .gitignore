@@ -33,3 +33,6 @@ docs/**/*.*~
 # Created when running
 # python3 setup.py sdist
 python/dist/
+
+cmake-build-debug/
+cmake-build-release/

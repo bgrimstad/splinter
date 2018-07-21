@@ -14,6 +14,9 @@
 #include "function.h"
 #include "cinterface.h"
 #include "bspline.h"
+#include "knot_builders.h"
+#include <set>
+
 
 namespace SPLINTER
 {
@@ -21,9 +24,8 @@ namespace SPLINTER
 // Declare the global variables for use in all source files
 // All extern variables are defined in cinterface/utilities.cpp
 // Keep a list of objects so we avoid performing operations on objects that don't exist
-extern std::set<splinter_obj_ptr> dataTables;
+extern std::set<splinter_obj_ptr> datatables;
 extern std::set<splinter_obj_ptr> bsplines;
-extern std::set<splinter_obj_ptr> bspline_builders;
 
 extern int splinter_last_func_call_error; // Tracks the success of the last function call
 extern const char *splinter_error_string; // Error string (if the last function call resulted in an error)
@@ -36,8 +38,11 @@ DataTable *get_datatable(splinter_obj_ptr datatable_ptr);
 /* Check for existence of bspline_ptr, then cast splinter_obj_ptr to a BSpline * */
 BSpline *get_bspline(splinter_obj_ptr bspline_ptr);
 
-/* Check for existence of bspline_builder_ptr, then cast splinter_obj_ptr to a BSpline::Builder * */
-BSpline::Builder *get_builder(splinter_obj_ptr bspline_builder_ptr);
+// Convert int to Smoothing
+BSpline::Smoothing resolve_smoothing(int smoothing);
+
+// Convert int to KnotSpacing
+KnotSpacing resolve_knot_spacing(int knot_spacing);
 
 /**
  * Convert from column major to row major with point_dim number of columns.
@@ -109,18 +114,19 @@ std::vector<NUMERICAL_TYPE> get_vector(NUMERICAL_TYPE *array, int n)
  * @return std::vector<NUMERICAL_TYPE> with the same elements as in array
  */
 template <typename NUMERICAL_TYPE>
-std::vector<std::vector<NUMERICAL_TYPE>> get_vector_vector(NUMERICAL_TYPE *array, int *num_per_row, int num_rows)
+std::vector<std::vector<NUMERICAL_TYPE>> get_vector_vector(NUMERICAL_TYPE *array, unsigned int *num_per_row,
+                                                           unsigned int num_rows)
 {
-    auto num_per_row_as_vec = std::vector<int>(num_per_row, num_per_row + num_rows);
+    auto num_per_row_as_vec = std::vector<unsigned int>(num_per_row, num_per_row + num_rows);
 
     auto vec_vec = std::vector<std::vector<NUMERICAL_TYPE>>(num_rows);
 
     int k = 0;
-    for (int i = 0; i < num_rows; ++i)
+    for (unsigned int i = 0; i < num_rows; ++i)
     {
-        int num_row_i = num_per_row_as_vec.at(i);
+        unsigned int num_row_i = num_per_row_as_vec.at(i);
         std::vector<NUMERICAL_TYPE> vec(num_row_i);
-        for (int j = 0; j < num_row_i; ++j)
+        for (unsigned int j = 0; j < num_row_i; ++j)
         {
             vec.at(j) = array[k];
             k++;
@@ -141,15 +147,16 @@ std::vector<std::vector<NUMERICAL_TYPE>> get_vector_vector(NUMERICAL_TYPE *array
  * @return std::vector<NUMERICAL_TYPE> with the same elements as in array
  */
 template <typename NUMERICAL_TYPE>
-std::vector<std::vector<NUMERICAL_TYPE>> get_vector_vector(NUMERICAL_TYPE *array, int num_per_row, int num_rows)
+std::vector<std::vector<NUMERICAL_TYPE>> get_vector_vector(NUMERICAL_TYPE *array, unsigned int num_per_row,
+                                                           unsigned int num_rows)
 {
     auto vec_vec = std::vector<std::vector<NUMERICAL_TYPE>>(num_rows);
 
-    int k = 0;
-    for (int i = 0; i < num_rows; ++i)
+    unsigned int k = 0;
+    for (unsigned int i = 0; i < num_rows; ++i)
     {
         std::vector<NUMERICAL_TYPE> vec(num_per_row);
-        for (int j = 0; j < num_per_row; ++j)
+        for (unsigned int j = 0; j < num_per_row; ++j)
         {
             vec.at(j) = array[k];
             k++;

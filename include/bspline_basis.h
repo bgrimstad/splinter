@@ -13,6 +13,7 @@
 #include "definitions.h"
 #include "bspline_basis_1d.h"
 
+
 namespace SPLINTER
 {
 
@@ -20,51 +21,50 @@ class BSplineBasis
 {
 public:
     BSplineBasis();
-    BSplineBasis(const std::vector<std::vector<double>> &knotVectors, std::vector<unsigned int> basisDegrees);
+    BSplineBasis(std::vector<unsigned int> degrees, const std::vector<std::vector<double>> &knot_vectors);
 
     // Evaluation
     SparseVector eval(const DenseVector &x) const;
-    DenseMatrix evalBasisJacobianOld(const DenseVector &x) const; // Deprecated
-    SparseMatrix evalBasisJacobian(const DenseVector &x) const;
-    SparseMatrix evalBasisJacobian2(const DenseVector &x) const; // A bit slower than evaBasisJacobianOld()
-    SparseMatrix evalBasisHessian(const DenseVector &x) const;
+    DenseMatrix eval_basis_jacobian_old(const DenseVector &x) const; // Deprecated
+    SparseMatrix eval_basis_jacobian(const DenseVector &x) const;
+    SparseMatrix eval_basis_jacobian2(const DenseVector &x) const; // A bit slower than evaBasisJacobianOld()
+    SparseMatrix eval_basis_hessian(const DenseVector &x) const;
 
     // Knot vector manipulation
-    SparseMatrix refineKnots();
-    SparseMatrix refineKnotsLocally(const DenseVector &x);
-    SparseMatrix decomposeToBezierForm();
-    SparseMatrix insertKnots(double tau, unsigned int dim, unsigned int multiplicity = 1);
+    SparseMatrix refine_knots();
+    SparseMatrix refine_knots_locally(const DenseVector &x);
+    SparseMatrix decompose_to_bezier();
+    SparseMatrix insert_knots(double tau, unsigned int dim, unsigned int multiplicity = 1);
 
     // Getters
-    BSplineBasis1D getSingleBasis(unsigned int dim);
-    std::vector<std::vector<double>> getKnotVectors() const;
-    std::vector<double> getKnotVector(int dim) const;
+    BSplineBasis1D get_single_basis(unsigned int dim);
+    std::vector<std::vector<double>> get_knot_vectors() const;
+    std::vector<double> get_knot_vector(int dim) const;
 
-    std::vector<unsigned int> getBasisDegrees() const;
-    unsigned int getBasisDegree(unsigned int dim) const;
-    unsigned int getNumBasisFunctions() const;
-    unsigned int getNumBasisFunctions(unsigned int dim) const;
-    std::vector<unsigned int> getNumBasisFunctionsTarget() const;
+    std::vector<unsigned int> get_basis_degrees() const;
+    unsigned int get_basis_degree(unsigned int dim) const;
+    unsigned int get_num_basis_functions() const;
+    unsigned int get_num_basis_functions(unsigned int dim) const;
+    std::vector<unsigned int> get_num_basis_functions_target() const;
 
-    unsigned int getKnotMultiplicity(unsigned int dim, double tau) const;
+    unsigned int get_knot_multiplicity(unsigned int dim, double tau) const;
 
     /*
      * Returns the maximum number of supported basis functions at any point in the B-spline domain
      */
-    unsigned int numSupported() const;
+    unsigned int num_supported() const;
 
-    bool insideSupport(const DenseVector &x) const;
-    std::vector<double> getSupportLowerBound() const;
-    std::vector<double> getSupportUpperBound() const;
+    bool inside_support(const DenseVector &x) const;
+    std::vector<double> get_support_lower_bound() const;
+    std::vector<double> get_support_upper_bound() const;
 
     // Support related
-    SparseMatrix reduceSupport(const std::vector<double>& lb, const std::vector<double>& ub);
+    SparseMatrix reduce_support(const std::vector<double> &lb, const std::vector<double> &ub);
 
 private:
     std::vector<BSplineBasis1D> bases;
-    unsigned int numVariables;
+    unsigned int num_variables;
 
-    friend class Serializer;
     friend bool operator==(const BSplineBasis &lhs, const BSplineBasis &rhs);
 };
 

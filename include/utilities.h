@@ -11,7 +11,7 @@
 #define SPLINTER_UTILITIES_H
 
 #include <vector>
-#include <stdlib.h> // std::abs etc
+#include <cstdlib> // For std::abs, etc.
 #include <definitions.h>
 
 namespace SPLINTER
@@ -19,7 +19,7 @@ namespace SPLINTER
 
 // Compare two numbers
 template<typename T>
-bool assertNear(T x, T y, double tolAbs = 1e-8, double tolRel = 1e-8)
+bool assert_near(T x, T y, double tolAbs = 1e-8, double tolRel = 1e-8)
 {
     double dx = std::abs(x - y);
     double xAbs = 0.5*(std::abs(x) + std::abs(y));
@@ -28,31 +28,31 @@ bool assertNear(T x, T y, double tolAbs = 1e-8, double tolRel = 1e-8)
 }
 
 // Compare two vectors
-inline bool compareVectors(std::vector<double> x, std::vector<double> y, double tolAbs = 1e-8, double tolRel = 1e-8)
+inline bool compare_vectors(std::vector<double> x, std::vector<double> y, double tolAbs = 1e-8, double tolRel = 1e-8)
 {
     if (x.size() != y.size())
         return false;
 
     for (unsigned int i = 0; i < x.size(); ++i)
-        if (!assertNear(x.at(i), y.at(i), tolAbs, tolRel))
+        if (!assert_near(x.at(i), y.at(i), tolAbs, tolRel))
             return false;
 
     return true;
 }
 
-std::vector<double> eigToStdVec(const DenseVector &vec);
+std::vector<double> eig_to_std_vec(const DenseVector &vec);
 
-DenseVector stdToEigVec(const std::vector<double> &vec);
+DenseVector std_to_eig_vec(const std::vector<double> &vec);
 
-std::vector<std::vector<double>> eigMatToStdVecVec(const DenseMatrix &mat);
+std::vector<std::vector<double>> eig_to_std_mat(const DenseMatrix &mat);
 
-DenseMatrix stdVecVecToEigMat(const std::vector<std::vector<double>> &vec);
+DenseMatrix std_to_eig_mat(const std::vector<std::vector<double>> &vec);
 
 std::vector<double> linspace(double start, double stop, unsigned int num);
 
-std::vector<double> extractUniqueSorted(const std::vector<double> &values);
+std::vector<double> extract_unique_sorted(const std::vector<double> &values);
 
-std::vector<std::vector<double>> transposeVecVec(std::vector<std::vector<double>> x);
+std::vector<std::vector<double>> transpose_vec_vec(std::vector<std::vector<double>> x);
 
 } // namespace SPLINTER
 

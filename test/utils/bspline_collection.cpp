@@ -35,7 +35,7 @@ std::vector<std::vector<double>> get_random_control_points(unsigned int num_poin
     for (unsigned int i = 0; i < dim_y; ++i) {
         control_points.push_back(get_random_vector(num_points, 1234+i));
     }
-    return transposeVecVec(control_points);
+    return transpose_vec_vec(control_points);
 }
 
 unsigned int compute_num_control_points(std::vector<std::vector<double>> knot_vectors, std::vector<unsigned int> degrees)
@@ -77,7 +77,7 @@ std::vector<BSpline> get_bspline_collection()
                     auto num_control_points = compute_num_control_points(knot_vectors, degrees);
                     auto control_points = get_random_control_points(num_control_points, dim_y);
 
-                    BSpline bspline(control_points, knot_vectors, degrees);
+                    BSpline bspline(degrees, knot_vectors, control_points);
                     collection.push_back(bspline);
                 }
             }

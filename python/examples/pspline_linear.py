@@ -15,7 +15,7 @@ import splinterpy
 # Only for dev purposes
 import os.path
 if os.path.isdir("/home/bjarne/"):
-    splinterpy.load("/home/bjarne/Code/C++/splinter/build/release/libsplinter-4-0.so")
+    splinterpy.load("/home/bjarne/Code/splinter/build/debug/libsplinter-4-0.so")
 elif os.path.isdir("/home/anders/"):
     splinterpy.load("/home/anders/SPLINTER/build/debug/libsplinter-4-0.so")
 
@@ -25,8 +25,8 @@ x = np.linspace(0, 10, 11)
 y = 1*x + 1
 
 # Piecewise constant B-spline that interpolates the data
-PSPLINE = splinterpy.BSplineBuilder.Smoothing.PSPLINE
-bs = splinterpy.BSplineBuilder(1, 1, degree=3).fit(x, y, smoothing=PSPLINE, alpha=1.0)
+PSPLINE = splinterpy.BSpline.Smoothing.PSPLINE
+bs = splinterpy.bspline_smoother(x, y, degree=3, smoothing=PSPLINE, alpha=1.0)
 
 xd = np.arange(0, 10, .01)
 yd = bs.eval(xd)

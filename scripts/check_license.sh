@@ -19,7 +19,7 @@ NO_COLOR="\033[0m"
 
 NUM_MISSING=0
 NUM_OK=0
-TO_CHECK="$SPLINTER_DIR/CMakeLists.txt $SPLINTER_DIR/src $SPLINTER_DIR/include $SPLINTER_DIR/matlab $SPLINTER_DIR/test $SPLINTER_DIR/scripts $SPLINTER_DIR/python"
+TO_CHECK="$SPLINTER_DIR/CMakeLists.txt $SPLINTER_DIR/src $SPLINTER_DIR/include $SPLINTER_DIR/test $SPLINTER_DIR/scripts $SPLINTER_DIR/python"
 IGNORE="--hide=*.pyc --hide=__pycache__"
 
 function print_red {

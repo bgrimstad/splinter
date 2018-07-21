@@ -61,17 +61,17 @@ TEST_CASE("Eigen types to standard C++ conversion", COMMON_TAGS)
 
     SECTION("Converting between standard vector and DenseVector works correctly")
     {
-        CHECK(originalVec == stdToEigVec(originalVec));
-        CHECK(originalVec == eigToStdVec(stdToEigVec(originalVec)));
-        CHECK(emptyVec == eigToStdVec(emptyDenseVec));
-        CHECK(emptyVec == eigToStdVec(stdToEigVec(emptyVec)));
+        CHECK(originalVec == std_to_eig_vec(originalVec));
+        CHECK(originalVec == eig_to_std_vec(std_to_eig_vec(originalVec)));
+        CHECK(emptyVec == eig_to_std_vec(emptyDenseVec));
+        CHECK(emptyVec == eig_to_std_vec(std_to_eig_vec(emptyVec)));
     }
 
     SECTION("Converting between standard vector<vector<double>> and DenseMatrix works correctly")
     {
-        CHECK(originalVecVec == stdVecVecToEigMat(originalVecVec));
-        CHECK(originalVecVec == eigMatToStdVecVec(stdVecVecToEigMat(originalVecVec)));
-        CHECK(emptyVecVec == stdVecVecToEigMat(emptyVecVec));
-        CHECK(emptyVecVec == eigMatToStdVecVec(stdVecVecToEigMat(emptyVecVec)));
+        CHECK(originalVecVec == std_to_eig_mat(originalVecVec));
+        CHECK(originalVecVec == eig_to_std_mat(std_to_eig_mat(originalVecVec)));
+        CHECK(emptyVecVec == std_to_eig_mat(emptyVecVec));
+        CHECK(emptyVecVec == eig_to_std_mat(std_to_eig_mat(emptyVecVec)));
     }
 }
