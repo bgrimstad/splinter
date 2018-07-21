@@ -14,77 +14,11 @@
 #include <utilities.h>
 #include <utils/data_table_collection.h>
 
-
 using namespace SPLINTER;
-
 
 #define COMMON_TAGS "[general][datatable]"
 
-
-//DataTable create_datatable_old_format() {
-//    int dim = 2;
-//    auto func = getTestFunction(dim, 2);
-//
-//    std::vector<double> start = {0, 0};
-//    std::vector<double> end = {9.0, 4.0};
-//    std::vector<unsigned int> num_points = {10, 5};
-//
-//    // Range [0.0, 9.0] x [0.0, 4.0], 50 points total
-//    auto points = multi_linspace(start, end, num_points);
-//
-//    DataTable table;
-//
-//    for(auto &p : points) {
-//        table.add_sample(p, func->eval(p));
-//    }
-//
-//    return table;
-//}
-
-//DataTable2 copy_datatable(DataTable table) {
-//
-//    DataTable2 new_table;
-//
-//    for (auto &point : table.get_samples()) {
-//        new_table.add_sample(point);
-//    }
-//
-//    return new_table;
-//}
-
-//bool compare_datatables(DataTable table1, DataTable2 table2) {
-//
-//    if (table1.get_dim_x() != table2.get_dim_x()) {
-//        return false;
-//    }
-//
-//    if (table1.get_dim_y() != table2.get_dim_y()) {
-//        return false;
-//    }
-//
-//    if (table1.get_num_samples() != table2.get_num_samples()) {
-//        return false;
-//    }
-//
-//    auto it1 = table1.cbegin();
-//    auto it2 = table2.cbegin();
-//
-//    while (it1 != table1.cend()) {
-//        auto p1 = *it1;
-//        auto p2 = *it2;
-//
-//        if (p1 != p2) {
-//            return false;
-//        }
-//
-//        ++it1;
-//        ++it2;
-//    }
-//
-//    return true;
-//}
-
-TEST_CASE("DataTable save data tables", COMMON_TAGS) {
+TEST_CASE("DataTable save and load data tables", COMMON_TAGS) {
     auto collection = get_data_table_collection();
 
     for (auto &table : collection)
@@ -95,7 +29,6 @@ TEST_CASE("DataTable save data tables", COMMON_TAGS) {
                                + std::to_string(dim_x)
                                + std::string("_")
                                + std::to_string(dim_y)
-                               + std::string("_old_format")
                                + std::string(".json");
 
         table.to_json(filename);
@@ -238,6 +171,6 @@ TEST_CASE("DataTable is_grid_complete", COMMON_TAGS) {
         }
     }
 
-    REQUIRE(table.is_grid_complete());
-    REQUIRE(!table2.is_grid_complete());
+    CHECK(table.is_grid_complete());
+    CHECK(!table2.is_grid_complete());
 }
