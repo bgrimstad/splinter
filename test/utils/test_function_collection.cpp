@@ -7,7 +7,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-#include "test_functions.h"
+#include "test_function_collection.h"
 #include "test_function.h"
 #include <iostream>
 

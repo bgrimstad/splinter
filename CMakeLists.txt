@@ -208,8 +208,8 @@ set(TEST_SRC_LIST
     test/utils/op_overloads.cpp
     test/utils/test_function.h
     test/utils/test_function.cpp
-    test/utils/test_functions.h
-    test/utils/test_functions.cpp
+    test/utils/test_function_collection.h
+    test/utils/test_function_collection.cpp
     test/utils/test_utils.h
     test/utils/test_utils.cpp
     test/utils/bspline_test_utils.h
