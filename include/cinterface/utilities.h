@@ -15,6 +15,8 @@
 #include "cinterface.h"
 #include "bspline.h"
 #include "knot_builders.h"
+#include <set>
+
 
 namespace SPLINTER
 {

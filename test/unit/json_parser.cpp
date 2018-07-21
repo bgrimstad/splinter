@@ -14,9 +14,7 @@
 
 using namespace SPLINTER;
 
-
 #define COMMON_TAGS "[unit][json]"
-
 
 TEST_CASE("BSpline can be saved and loaded from json", COMMON_TAGS)
 {
@@ -37,7 +35,7 @@ TEST_CASE("DataTable can be saved and loaded from json", COMMON_TAGS)
 {
     std::string filename = "datatable.json";
 
-    auto datatable = DataTable(false, false);
+    auto datatable = DataTable();
 
     for (auto x1 : linspace(1, 20, 20)) {
         for (auto x2 : linspace(1, 20, 20)) {

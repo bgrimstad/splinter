@@ -27,8 +27,9 @@ public:
     DataPoint(double x, const std::vector<double> &y);
     DataPoint(const std::vector<double> &x, const std::vector<double> &y);
 
-    bool operator<(const DataPoint &rhs) const; // Returns false if the two are equal
-
+    /**
+     * Getters
+     */
     std::vector<double> get_x() const {
         return x;
     }
@@ -45,13 +46,14 @@ public:
         return (unsigned int) y.size();
     }
 
+    bool operator<(const DataPoint &rhs) const; // Returns false if the two are equal
+
 private:
-    DataPoint();
+    DataPoint() {};
 
     std::vector<double> x;
     std::vector<double> y;
-    void setData(const std::vector<double> &x, const std::vector<double> &y);
-
+    void set_data(const std::vector<double> &x, const std::vector<double> &y);
 };
 
 } // namespace SPLINTER

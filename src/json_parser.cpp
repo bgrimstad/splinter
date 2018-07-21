@@ -98,14 +98,9 @@ void datatable_to_json(const DataTable &data, const std::string &filename)
     std::ofstream ofs(filename);
     nlohmann::json json;
 
-    auto allow_duplicates = data._allow_duplicates;
-    auto allow_incomplete_grid = data._allow_incomplete_grid;
     auto num_samples = data.get_num_samples();
-    auto samples = data.samples;
-    auto grid = data.grid;
+    auto samples = data.get_samples();
 
-    json["allow_duplicates"] = allow_duplicates;
-    json["allow_incomplete_grid"] = allow_incomplete_grid;
     json["num_samples"] = num_samples;
 
     unsigned int i = 0;
@@ -126,11 +121,9 @@ DataTable datatable_from_json(const std::string &filename)
     nlohmann::json json;
     ifs >> json;
 
-    bool allow_duplicates = json["allow_duplicates"];
-    bool allow_incomplete_grid = json["allow_incomplete_grid"];
     unsigned int num_samples = json["num_samples"];
 
-    auto data_table = DataTable(allow_duplicates, allow_incomplete_grid);
+    auto data_table = DataTable();
 
     for (unsigned int i = 0; i < num_samples; ++i) {
         std::vector<double> x;
