@@ -150,8 +150,7 @@ public:
     std::string get_description() const override;
 
 protected:
-    BSpline();
-
+    // B-spline basis functions (multivariate)
     BSplineBasis basis;
 
     // B-spline control points of size (num_basis_functions, dim_y). Each row is a control point.
