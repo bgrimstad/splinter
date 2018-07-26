@@ -226,7 +226,8 @@ set(TEST_SRC_LIST
     test/utils/bspline_collection.cpp
     test/utils/bspline_collection.h
     test/utils/data_table_collection.cpp
-    test/utils/data_table_collection.h)
+    test/utils/data_table_collection.h
+    test/examples/fit_random_1d_spline.cpp)
 
 set(SHARED_LIBRARY ${PROJECT_NAME_LOWER}-${VERSION})
 set(STATIC_LIBRARY ${PROJECT_NAME_LOWER}-static-${VERSION})

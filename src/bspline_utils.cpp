@@ -33,7 +33,7 @@ namespace SPLINTER
  * 1) No regularization or weighting: XC = Y
  * 2) Weighting, no regularization: WXC = WY
  * 3) Regularization, no weighting: (X'X + alpha*R)C = X'Y
- * 4) Regularization and weighting: (X'*W*X + alpha*R) C = X'*W*Y
+ * 4) Regularization and weighting: (X'*W*X + alpha*R)C = X'*W*Y
  *
  * TODO: Use existing control points C0 as starting point and compute new control points as C = DeltaC + C0
  *
@@ -45,9 +45,8 @@ DenseMatrix compute_control_points(const BSpline &bspline, const DataTable &data
     SparseMatrix X = compute_basis_function_matrix(bspline, data);
     DenseMatrix Y = stack_sample_values(data);
 
-    // Left-hand side matrix
-    SparseMatrix A = X;
-    DenseMatrix B = Y;
+    SparseMatrix A; // Left-hand side matrix
+    DenseMatrix B; // Right-hand side matrix
 
     // Weight matrix
     if (weights.size() > 0) {
@@ -56,6 +55,9 @@ DenseMatrix compute_control_points(const BSpline &bspline, const DataTable &data
         SparseMatrix W = compute_weight_matrix(weights);
         A = W*X;
         B = W*Y;
+    } else {
+        A = X;
+        B = Y;
     }
 
     // Regularization
@@ -73,8 +75,7 @@ DenseMatrix compute_control_points(const BSpline &bspline, const DataTable &data
             I.setIdentity();
             R = I;
         }
-        else if (smoothing == BSpline::Smoothing::PSPLINE)
-        {
+        else if (smoothing == BSpline::Smoothing::PSPLINE) {
             /*
              * The P-Spline is a smoothing B-spline which relaxes the interpolation constraints on the control points to allow
              * smoother spline curves. It minimizes an objective which penalizes both deviation from sample points (to lower bias)
@@ -86,44 +87,46 @@ DenseMatrix compute_control_points(const BSpline &bspline, const DataTable &data
             R = D.transpose()*D;
         }
         
-        // Left-hand side matrix
         // NOTE: Using eval to avoid aliasing
         // NOTE2: consider changing regularization factor to (alpha/numSample)
         A = (X.transpose()*A + alpha*R).eval();
-        
-        // Right-hand side matrix
         B = (X.transpose()*B).eval();
     }
 
     // Solve equation AC = B for control points C
     DenseMatrix C;
 
-    long num_equations = A.rows();
-    int max_num_equations = 100;
-    bool solve_as_dense = (num_equations < max_num_equations);
+    // Solve as dense if both the number of rows and columns of A are less than 100
+    bool solve_as_dense = (std::max(A.rows(), A.cols()) < 100);
 
-    if (!solve_as_dense)
-    {
-#ifndef NDEBUG
+    if (!solve_as_dense) {
+
+        #ifndef NDEBUG
         std::cout << "compute_control_points: Computing B-spline control points using sparse solver." << std::endl;
-#endif // NDEBUG
+        #endif // NDEBUG
 
-        SparseLU<DenseMatrix> s;
-
-        solve_as_dense = !s.solve(A, B, C);
+        if (A.rows() == A.cols()) {
+            // NOTE: If using SparseLU, the A matrix must be square
+            SparseLU<DenseMatrix> s;
+            solve_as_dense = !s.solve(A, B, C);
+        }
+        else {
+            // Using SparseQR for non-square A matrix
+            SparseQR<DenseMatrix> s;
+            solve_as_dense = !s.solve(A, B, C);
+        }
     }
 
-    if (solve_as_dense)
-    {
-#ifndef NDEBUG
+    if (solve_as_dense) {
+
+        #ifndef NDEBUG
         std::cout << "compute_control_points: Computing B-spline control points using dense solver." << std::endl;
-#endif // NDEBUG
+        #endif // NDEBUG
 
         DenseMatrix Ad = A.toDense();
         DenseQR<DenseMatrix> s;
 //        DenseSVD<DenseMatrix> s;
-        if (!s.solve(Ad, B, C))
-        {
+        if (!s.solve(Ad, B, C)) {
             throw Exception("compute_control_points: Failed to solve for B-spline control points.");
         }
     }
