@@ -144,7 +144,7 @@ SparseMatrix compute_basis_function_matrix(const BSpline &bspline, const DataTab
     // Assume ColMajor storage order, in which case the inner vectors of SparseMatrix are columns.
     // If the storage order ever changes, change the reserve statement to:
     //     A.reserve( Eigen::VectorXi::Constant( num_samples, bspline.get_num_supported() ) );
-    static_assert( A.IsRowMajor == false );
+    static_assert( A.IsRowMajor == false, "" );
     // Although the number of non-zero elements per row equals bspline.get_num_supported(),
     // SparseMatrix::reserve requires a vector of size SparseMatrix::cols() a an argument;
     Eigen::VectorXi reserve_sizes( A.cols() );
