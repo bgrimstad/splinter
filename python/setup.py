@@ -20,12 +20,13 @@ import sys
 # python3 setup.py sdist bdist_wheel
 # Upload to TestPyPI: python -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 # Upload to PyPI: python -m twine upload --repository-url https://www.pypi.org/legacy/ dist/*
+# Install from TestPyPI: python3 -m pip install --index-url https://test.pypi.org/simple/ splinterpy
 
 # Version of the Python interface.
 # The dev version can be whatever, and is only used for testing uploads to PyPI.
 # Leave this as '' to signify the version is not a dev version
 # Should be reset to 0 after every minor version change
-PYTHON_INTERFACE_DEV_VERSION = '23'
+PYTHON_INTERFACE_DEV_VERSION = '24'
 
 version_file_name = 'version'  # Name of the file where the C++ back-end version is written
 interface_package_name = 'splinterpy'  # Both the name of the project and the name of the package
@@ -123,8 +124,8 @@ setup(
     license='MPL 2.0',
     keywords=['spline', 'interpolation', 'b-spline', 'approximation'],
     packages=[interface_package_name],
-    # Guessing it is not zip safe because it needs to load the shared library
-    zip_safe=False,
+    # This seems to work fine, so we keep it on
+    zip_safe=True,
     package_data={interface_package_name: package_data},
     install_requires=['numpy'],
     classifiers=[
