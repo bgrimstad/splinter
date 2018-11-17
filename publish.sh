@@ -40,10 +40,10 @@ python3 setup.py sdist bdist_wheel
 
 if [ ${MODE} == ${MODE_RELEASE} ]; then
     python3 -m twine upload dist/*
-    echo "Finished. To install SPLINTER, run 'pip3 install splinterpy'"
+    echo "Finished. To install SPLINTER, run 'pip install splinterpy'"
 elif [ ${MODE} == ${MODE_DEBUG} ]; then
     python3 -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
-    echo "Finished. To install SPLINTER, run 'pip3 install --index-url https://test.pypi.org/simple/ splinterpy'"
+    echo "Finished. To install SPLINTER, run 'pip install --index-url https://test.pypi.org/simple/ splinterpy'"
 else
     echo "Invalid mode: ${MODE}"
 fi
