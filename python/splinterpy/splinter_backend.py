@@ -18,7 +18,20 @@ class SplinterBackend:
         # Handle to the cdll instance
         self._handle = None
 
-        self.__version__ = "Not loaded"
+        full_path = os.path.realpath(__file__)  # Path to this file
+        splinter_python_main_dir = os.path.dirname(full_path)
+
+        # Locate version file. If we cannot find it then we won't be able to find splinter either
+        version_file = os.path.join(splinter_python_main_dir, "version")
+        if not os.path.exists(version_file):
+            raise Exception(
+                f"Missing version file in SPLINTER directory! "
+                f"Please notify the developers of SPLINTER of this error."
+            )
+
+        with open(version_file) as f:
+            splinter_version = f.read().strip()
+        self.version = splinter_version
 
     def is_loaded(self) -> bool:
         """
@@ -158,41 +171,32 @@ class SplinterBackend:
         set_signature('splinter_bspline_unfitted', handle_type, handle_type, c_int_p, c_int, c_int, c_int_p, c_int)
 
     def _locate_splinter(self) -> ty.Optional[str]:
-            is_linux = platform.system() == 'Linux'
-            is_windows = platform.system() == 'Windows'
-            is_mac = platform.system() == 'Darwin'
+        is_linux = platform.system() == 'Linux'
+        is_windows = platform.system() == 'Windows'
+        is_mac = platform.system() == 'Darwin'
 
-            full_path = os.path.realpath(__file__)  # Path to this file
-            splinter_python_main_dir = os.path.dirname(full_path)
+        full_path = os.path.realpath(__file__)  # Path to this file
+        splinter_python_main_dir = os.path.dirname(full_path)
 
-            # Locate version file. If we cannot find it then we won't be able to find splinter either
-            version_file = os.path.join(splinter_python_main_dir, "version")
-            if not os.path.exists(version_file):
-                return None
+        splinter_basename = "splinter-" + self.version
+        if is_linux:
+            operating_system = "linux"
+            splinter_name = "lib" + splinter_basename + ".so"
+        elif is_windows:
+            operating_system = "windows"
+            splinter_name = splinter_basename + ".dll"
+        elif is_mac:
+            operating_system = "osx"
+            splinter_name = "lib" + splinter_basename + ".dylib"
+        else:
+            raise "SPLINTER: Unknown platform: " + platform.system()
 
-            f = open(version_file)
-            splinter_version = f.read().strip()
-            self.__version__ = splinter_version
+        lib_splinter = os.path.join(splinter_python_main_dir, "lib", operating_system, get_architecture(), splinter_name)
 
-            splinter_basename = "splinter-" + splinter_version
-            if is_linux:
-                operating_system = "linux"
-                splinter_name = "lib" + splinter_basename + ".so"
-            elif is_windows:
-                operating_system = "windows"
-                splinter_name = splinter_basename + ".dll"
-            elif is_mac:
-                operating_system = "osx"
-                splinter_name = "lib" + splinter_basename + ".dylib"
-            else:
-                raise "SPLINTER: Unknown platform: " + platform.system()
+        if os.path.exists(lib_splinter):
+            return lib_splinter
 
-            lib_splinter = os.path.join(splinter_python_main_dir, "lib", operating_system, get_architecture(), splinter_name)
-
-            if os.path.exists(lib_splinter):
-                return lib_splinter
-
-            return None
+        return None
 
 
 splinter_backend_obj = SplinterBackend()

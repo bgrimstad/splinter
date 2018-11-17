@@ -58,4 +58,4 @@ except Exception as e:
     print(e)
 
 # Important to set this after the SPLINTER backend has been loaded
-__version__ = splinter_backend_obj.__version__
+__version__ = splinter_backend_obj.version
