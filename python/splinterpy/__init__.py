@@ -11,7 +11,6 @@ import tempfile
 from .splinter_backend import splinter_backend_obj
 
 from .bspline import BSpline
-from .datatable import DataTable
 from .bsplineboosting import BSplineBoosting
 from .bsplinebuilders import bspline_interpolator, bspline_smoother, bspline_unfitted
 
@@ -50,10 +49,9 @@ copyreg.pickle(BSpline, reducer)
 __version__ = splinter_backend_obj.__version__
 
 __all__ = [
-    "splinter_backend",
     "bspline",
     "bsplinebuilders",
-    "bsplineboosting"
+    "bsplineboosting",
 ]
 
 try:
