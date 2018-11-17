@@ -25,8 +25,8 @@ class SplinterBackend:
         version_file = os.path.join(splinter_python_main_dir, "version")
         if not os.path.exists(version_file):
             raise Exception(
-                f"Missing version file in SPLINTER directory! "
-                f"Please notify the developers of SPLINTER of this error."
+                "Missing version file in SPLINTER directory! "
+                "Please notify the developers of SPLINTER of this error."
             )
 
         with open(version_file) as f:
