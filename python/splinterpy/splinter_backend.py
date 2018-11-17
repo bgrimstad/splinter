@@ -186,4 +186,5 @@ class SplinterBackend:
 
             return None
 
+
 splinter_backend_obj = SplinterBackend()
