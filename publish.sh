@@ -10,6 +10,8 @@ MODE=${MODE_DEBUG}
 if [ $# -eq 1 ] && [ $1 == ${MODE_RELEASE} ]; then
     echo "Release mode"
     MODE=${MODE_RELEASE}
+else
+    echo "Debug mode"
 fi
 
 rm -r ${BUILD_DIR}
@@ -27,8 +29,10 @@ python3 setup.py sdist bdist_wheel
 
 if [ ${MODE} == ${MODE_RELEASE} ]; then
     python3 -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+    echo "Finished. To install SPLINTER, run `pip3 install splinterpy`"
 elif [ ${MODE} == ${MODE_DEBUG} ]; then
     python3 -m twine upload --repository-url https://www.pypi.org/legacy/ dist/*
+    echo "Finished. To install SPLINTER, run `pip3 install --index-url https://test.pypi.org/simple/ splinterpy`"
 else
     echo "Invalid mode: ${MODE}"
 fi
