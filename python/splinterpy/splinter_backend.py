@@ -167,12 +167,12 @@ class SplinterBackend:
             self.__version__ = splinter_version
 
             splinter_basename = "splinter-" + splinter_version
-            if is_windows:
-                operating_system = "windows"
-                splinter_name = splinter_basename + ".dll"
-            elif is_linux:
+            if is_linux:
                 operating_system = "linux"
                 splinter_name = "lib" + splinter_basename + ".so"
+            elif is_windows:
+                operating_system = "windows"
+                splinter_name = splinter_basename + ".dll"
             elif is_mac:
                 operating_system = "osx"
                 splinter_name = "lib" + splinter_basename + ".dylib"
