@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+#
+# Publish SPLINTER to (Test)PyPI
+# Publish to TestPyPI: ./publish.sh
+# Publish to PyPI: ./publish.sh release
+#
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 BUILD_DIR="${DIR}/build/"
