@@ -24,7 +24,7 @@ __version__ = splinter_backend_obj.__version__
 __all__ = [
     "splinter_backend",
     "bspline",
-    "bsplinebuilders.py",
+    "bsplinebuilders",
     "bsplineboosting"
 ]
 
