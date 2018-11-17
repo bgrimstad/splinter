@@ -10,11 +10,22 @@ import os
 import os.path
 import sys
 
+# Publishing to PyPI:
+# mkdir build && cd build
+# rm -r *
+# cmake .. -DCMAKE_BUILD_TYPE=release
+# make
+# make install
+# cd splinter-python
+# python3 setup.py sdist bdist_wheel
+# Upload to TestPyPI: python -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+# Upload to PyPI: python -m twine upload --repository-url https://www.pypi.org/legacy/ dist/*
+
 # Version of the Python interface.
 # The dev version can be whatever, and is only used for testing uploads to PyPI.
 # Leave this as '' to signify the version is not a dev version
 # Should be reset to 0 after every minor version change
-PYTHON_INTERFACE_DEV_VERSION = '22'
+PYTHON_INTERFACE_DEV_VERSION = '23'
 
 version_file_name = 'version'  # Name of the file where the C++ back-end version is written
 interface_package_name = 'splinterpy'  # Both the name of the project and the name of the package
