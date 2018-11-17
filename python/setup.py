@@ -22,11 +22,16 @@ import sys
 # Upload to PyPI: python -m twine upload --repository-url https://www.pypi.org/legacy/ dist/*
 # Install from TestPyPI: python3 -m pip install --index-url https://test.pypi.org/simple/ splinterpy
 
-# Version of the Python interface.
-# The dev version can be whatever, and is only used for testing uploads to PyPI.
-# Leave this as '' to signify the version is not a dev version
-# Should be reset to 0 after every minor version change
-PYTHON_INTERFACE_DEV_VERSION = ''
+# Patch version of the Python interface.
+# SPLINTER itself should get a patch version, but for now we only add a patch version to the Python interface
+# A drawback is that running splinterpy.__version__ returns only the major and minor version numbers.
+PYTHON_INTERFACE_PATCH_VERSION = "" or "0"
+
+try:
+    int(PYTHON_INTERFACE_PATCH_VERSION)
+except ValueError:
+    print(f"Invalid patch version!")
+    exit(1)
 
 version_file_name = 'version'  # Name of the file where the C++ back-end version is written
 interface_package_name = 'splinterpy'  # Both the name of the project and the name of the package
@@ -55,13 +60,11 @@ with open(version_file_path, 'r') as version_file:
 splinter_major_version, splinter_minor_version = splinter_version_string.split('-')
 
 
-if PYTHON_INTERFACE_DEV_VERSION == '':
-    python_version_string = '{}.{}'.format(splinter_major_version,
-                                           splinter_minor_version)
-else:
-    python_version_string = '{}.{}.dev{}'.format(splinter_major_version,
-                                                 splinter_minor_version,
-                                                 PYTHON_INTERFACE_DEV_VERSION)
+python_version_string = '{}.{}.{}'.format(
+    splinter_major_version,
+    splinter_minor_version,
+    PYTHON_INTERFACE_PATCH_VERSION
+)
 
 
 def get_available_backends(lib_path):
