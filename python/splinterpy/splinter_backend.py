@@ -50,7 +50,6 @@ class SplinterBackend:
         try:
             self._handle = ctypes.cdll.LoadLibrary(lib_file)
             self._set_function_signatures()
-            out("Loaded SPLINTER from " + str(lib_file) + "!")
 
         except Exception as e:
             out("Error:")
