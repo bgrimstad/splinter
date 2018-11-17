@@ -5,10 +5,10 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-import copyreg
-import tempfile
+import copyreg as _copyreg
+import tempfile as _tempfile
 
-from .splinter_backend import splinter_backend_obj
+from .splinter_backend import splinter_backend_obj as _backend
 
 from .bspline import BSpline
 from .bsplineboosting import BSplineBoosting
@@ -22,12 +22,12 @@ def load(lib_file_path: str):
     :param lib_file_path:
     :return:
     """
-    splinter_backend_obj.load(lib_file_path)
+    _backend.load(lib_file_path)
 
 
 # Tell Pickle how to pickle and unpickle the BSpline class
 def _constructor(serialized_data) -> BSpline:
-    with tempfile.NamedTemporaryFile() as temp:
+    with _tempfile.NamedTemporaryFile() as temp:
         with open(temp.name, "wb") as f:
             f.write(serialized_data)
 
@@ -35,7 +35,7 @@ def _constructor(serialized_data) -> BSpline:
 
 
 def _reducer(bspline: BSpline):
-    with tempfile.NamedTemporaryFile() as temp:
+    with _tempfile.NamedTemporaryFile() as temp:
         bspline.to_json(temp.name)
         with open(temp.name, "rb") as f:
             data = f.read()
@@ -44,7 +44,7 @@ def _reducer(bspline: BSpline):
 
 
 # Register reducer as the reducer for objects of type BSpline
-copyreg.pickle(BSpline, _reducer)
+_copyreg.pickle(BSpline, _reducer)
 
 __all__ = [
     "bspline",
@@ -53,9 +53,9 @@ __all__ = [
 ]
 
 try:
-    splinter_backend_obj.load()
+    _backend.load()
 except Exception as e:
     print(e)
 
 # Important to set this after the SPLINTER backend has been loaded
-__version__ = splinter_backend_obj.version
+__version__ = _backend.version

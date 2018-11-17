@@ -25,7 +25,7 @@ import sys
 # Patch version of the Python interface.
 # SPLINTER itself should get a patch version, but for now we only add a patch version to the Python interface
 # A drawback is that running splinterpy.__version__ returns only the major and minor version numbers.
-PYTHON_INTERFACE_PATCH_VERSION = "" or "0"
+PYTHON_INTERFACE_PATCH_VERSION = "2" or "0"
 
 try:
     int(PYTHON_INTERFACE_PATCH_VERSION)
