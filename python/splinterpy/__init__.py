@@ -46,8 +46,6 @@ def reducer(bspline: BSpline):
 # Register reducer as the reducer for objects of type BSpline
 copyreg.pickle(BSpline, reducer)
 
-__version__ = splinter_backend_obj.__version__
-
 __all__ = [
     "bspline",
     "bsplinebuilders",
@@ -58,3 +56,6 @@ try:
     splinter_backend_obj.load()
 except Exception as e:
     print(e)
+
+# Important to set this after the SPLINTER backend has been loaded
+__version__ = splinter_backend_obj.__version__
