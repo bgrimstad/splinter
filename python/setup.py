@@ -126,5 +126,16 @@ setup(
     # Guessing it is not zip safe because it needs to load the shared library
     zip_safe=False,
     package_data={interface_package_name: package_data},
-    install_requires=['numpy']
+    install_requires=['numpy'],
+    classifiers=[
+          'Development Status :: 4 - Beta',
+          'Intended Audience :: Developers',
+          'Intended Audience :: Science/Research',
+          'License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)',
+          'Operating System :: POSIX',
+          'Programming Language :: Python :: 3',
+          'Topic :: Scientific/Engineering :: Mathematics',
+          'Topic :: Scientific/Engineering :: Artificial Intelligence',
+          'Topic :: Software Development :: Libraries :: Python Modules',
+          ],
 )
