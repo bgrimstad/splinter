@@ -39,7 +39,7 @@ cd splinter-python/
 python3 setup.py sdist bdist_wheel
 
 if [ ${MODE} == ${MODE_RELEASE} ]; then
-    python3 -m twine upload --repository-url https://pypi.org/legacy/ dist/*
+    python3 -m twine upload dist/*
     echo "Finished. To install SPLINTER, run 'pip3 install splinterpy'"
 elif [ ${MODE} == ${MODE_DEBUG} ]; then
     python3 -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
