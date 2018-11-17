@@ -26,7 +26,7 @@ import sys
 # The dev version can be whatever, and is only used for testing uploads to PyPI.
 # Leave this as '' to signify the version is not a dev version
 # Should be reset to 0 after every minor version change
-PYTHON_INTERFACE_DEV_VERSION = '25'
+PYTHON_INTERFACE_DEV_VERSION = '26'
 
 version_file_name = 'version'  # Name of the file where the C++ back-end version is written
 interface_package_name = 'splinterpy'  # Both the name of the project and the name of the package
