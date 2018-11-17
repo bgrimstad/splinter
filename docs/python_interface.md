@@ -1,4 +1,6 @@
 ## Python interface
+NOTE: If you intend to use SPLINTER with Python on Linux x64, you can install SPLINTER through PyPI: `pip install splinterpy`
+
 We have made an interface so you can use SPLINTER through Python. If you follow the instructions provided below you should be good to go in a matter of minutes (unless you choose to compile the library yourself).
 The interface has been tested and should work with both Python 2.7 and 3.x.
 
