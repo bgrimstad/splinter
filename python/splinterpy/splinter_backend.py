@@ -106,7 +106,7 @@ class SplinterBackend:
         if self.handle.splinter_get_error():
             # TODO: Sometimes the string is correct, sometimes not. Investigate.
             errorMsg = get_py_string(self.handle.splinter_get_error_string())
-            raise Exception(errorMsg)
+            raise Exception("Got exception when calling {}: {}".format(function.__name__, errorMsg))
 
         return res
 
