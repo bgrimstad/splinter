@@ -6,9 +6,11 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import os  # Path manipulation for
-import platform  # Detect OS
-from .utilities import *
 import ctypes
+import platform  # Detect OS
+import typing as ty
+
+from .utilities import *
 
 
 class SplinterBackend:
@@ -59,7 +61,6 @@ class SplinterBackend:
             out("Here is the error message:")
             out(str(e))
             self._handle = None
-
 
     @property
     def handle(self):
@@ -149,7 +150,7 @@ class SplinterBackend:
         set_signature('splinter_bspline_smoother', handle_type, handle_type, c_int, c_int, c_double, c_double_p, c_int)
         set_signature('splinter_bspline_unfitted', handle_type, handle_type, c_int_p, c_int, c_int, c_int_p, c_int)
 
-    def _locate_splinter(self) -> str:
+    def _locate_splinter(self) -> ty.Optional[str]:
             is_linux = platform.system() == 'Linux'
             is_windows = platform.system() == 'Windows'
             is_mac = platform.system() == 'Darwin'
