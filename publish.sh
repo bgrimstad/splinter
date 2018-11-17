@@ -28,11 +28,11 @@ cd splinter-python/
 python3 setup.py sdist bdist_wheel
 
 if [ ${MODE} == ${MODE_RELEASE} ]; then
-    python3 -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
-    echo "Finished. To install SPLINTER, run `pip3 install splinterpy`"
+    python3 -m twine upload --repository-url https://pypi.org/legacy/ dist/*
+    echo "Finished. To install SPLINTER, run 'pip3 install splinterpy'"
 elif [ ${MODE} == ${MODE_DEBUG} ]; then
-    python3 -m twine upload --repository-url https://www.pypi.org/legacy/ dist/*
-    echo "Finished. To install SPLINTER, run `pip3 install --index-url https://test.pypi.org/simple/ splinterpy`"
+    python3 -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+    echo "Finished. To install SPLINTER, run 'pip3 install --index-url https://test.pypi.org/simple/ splinterpy'"
 else
     echo "Invalid mode: ${MODE}"
 fi
