@@ -117,7 +117,7 @@ if len(sys.argv) >= 3 and sys.argv[2] == "upload":
 setup(
     name=interface_package_name,
     version=python_version_string,
-    description='A library for multivariate function approximation using splines',
+    description='SPLINTER is a library for multivariate function approximation using splines',
     url='http://github.com/bgrimstad/splinter',
     author='Bjarne Grimstad and others',
     author_email='bjarne.grimstad@gmail.com',
