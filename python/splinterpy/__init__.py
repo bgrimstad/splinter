@@ -26,7 +26,7 @@ def load(lib_file_path: str):
 
 
 # Tell Pickle how to pickle and unpickle the BSpline class
-def constructor(serialized_data) -> BSpline:
+def _constructor(serialized_data) -> BSpline:
     with tempfile.NamedTemporaryFile() as temp:
         with open(temp.name, "wb") as f:
             f.write(serialized_data)
@@ -34,17 +34,17 @@ def constructor(serialized_data) -> BSpline:
         return BSpline.from_json(temp.name)
 
 
-def reducer(bspline: BSpline):
+def _reducer(bspline: BSpline):
     with tempfile.NamedTemporaryFile() as temp:
         bspline.to_json(temp.name)
         with open(temp.name, "rb") as f:
             data = f.read()
 
-    return constructor, (data, )
+    return _constructor, (data,)
 
 
 # Register reducer as the reducer for objects of type BSpline
-copyreg.pickle(BSpline, reducer)
+copyreg.pickle(BSpline, _reducer)
 
 __all__ = [
     "bspline",
