@@ -43,8 +43,10 @@ class SplinterBackend:
         if lib_file is None:
             lib_file = self._locate_splinter()
             if lib_file is None:
-                raise FileNotFoundError("Unable to automatically locate SPLINTER.\n"\
-                + "You can load it manually by doing splinter_py.load(\"/path/to/SPLINTER.so\")")
+                raise FileNotFoundError(
+                    "Unable to automatically locate SPLINTER.\n"
+                    "You can load it manually by doing splinter_py.load(\"/path/to/SPLINTER.so\")"
+                )
         else:
             if not os.path.exists(lib_file):
                 raise FileNotFoundError("Unable to load SPLINTER from {}: File does not exist!".format(lib_file))
@@ -55,7 +57,8 @@ class SplinterBackend:
 
         except Exception as e:
             out("Error:")
-            out("Either you are trying to load a library with another architecture (32bit/64bit) than the Python you are using, ", True)
+            out("Either you are trying to load a library with another architecture (32bit/64bit) ")
+            out("than the Python you are using, ", True)
             out("or the file you are trying to load ({}) could not be found.".format(lib_file))
             out("For reference your Python is " + str(8*ctypes.sizeof(ctypes.c_void_p)) + "bit.")
             out("Here is the error message:")
