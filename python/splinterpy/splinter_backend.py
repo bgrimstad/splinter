@@ -45,11 +45,15 @@ class SplinterBackend:
             if lib_file is None:
                 raise FileNotFoundError(
                     "Unable to automatically locate SPLINTER.\n"
-                    "You can load it manually by doing splinter_py.load(\"/path/to/SPLINTER.so\")"
+                    "It is possible that SPLINTER was not compiled for the operating system and architecture you are "
+                    "using. If that is the case, you can compile SPLINTER yourself and load it using "
+                    "'splinterpy.load(\"/path/to/SPLINTER.so\")'"
                 )
         else:
             if not os.path.exists(lib_file):
-                raise FileNotFoundError("Unable to load SPLINTER from {}: File does not exist!".format(lib_file))
+                raise FileNotFoundError(
+                    "Unable to load SPLINTER from {}: File does not exist!".format(lib_file)
+                )
 
         try:
             self._handle = ctypes.cdll.LoadLibrary(lib_file)
