@@ -14,7 +14,11 @@ The B-spline consists of piecewise polynomial basis functions, and allows the us
 Figure: Illustration of a bicubic B-spline generated with the SPLINTER library.
 
 ### Requirements for use
+C++, C or Python on other platforms than Linux x64:
+
 A standards compliant C++11 compiler.
+
+Linux x64: `pip install splinterpy`
 
 ### Guides
 * [Basic usage](docs/basic_usage.md)
