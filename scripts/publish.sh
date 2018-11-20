@@ -12,7 +12,7 @@
 # Publish to PyPI: ./publish.sh release
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
-BUILD_DIR="${DIR}/build/"
+BUILD_DIR="${DIR}/../build/"
 
 MODE_DEBUG="debug"
 MODE_RELEASE="release"
