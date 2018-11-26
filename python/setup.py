@@ -30,7 +30,7 @@ PYTHON_INTERFACE_PATCH_VERSION = "4" or "0"
 try:
     int(PYTHON_INTERFACE_PATCH_VERSION)
 except ValueError:
-    print(f"Invalid patch version!")
+    print("Invalid patch version!")
     exit(1)
 
 version_file_name = 'version'  # Name of the file where the C++ back-end version is written
