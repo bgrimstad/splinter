@@ -8,6 +8,7 @@
 */
 
 #include "json_parser.h"
+#include "json.h"
 #include "bspline.h"
 #include "data_table.h"
 #include "utilities.h"

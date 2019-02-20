@@ -10,7 +10,7 @@
 #ifndef SPLINTER_JSON_PARSER_H
 #define SPLINTER_JSON_PARSER_H
 
-#include "json.h"
+#include <string>
 
 namespace SPLINTER
 {
