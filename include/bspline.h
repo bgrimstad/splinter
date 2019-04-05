@@ -55,9 +55,13 @@ public:
     using Function::eval;
     using Function::eval_jacobian;
 
-    // Evaluate the B-spline at x. Returns vector of size (dim_y).
+    // Evaluate the B-spline at x. Returns vector of size 'dim_y'.
     std::vector<double> eval(const std::vector<double> &x) const override;
     DenseVector eval(const DenseVector &x) const override;
+
+    // Evaluate at m points X, where X is a matrix of size (m, dim_x).
+    // Returns a matrix Y of size (m, dim_y).
+    DenseMatrix batch_eval(const DenseMatrix &x) const;
 
     // Evaluate the Jacobian at x. Returns matrix of size (dim_y, dim_x).
     DenseMatrix eval_jacobian(const DenseVector &x) const override;
@@ -67,6 +71,10 @@ public:
 
     // Evaluate B-spline basis functions at x. Returns vector of size (num_basis_functions).
     SparseVector eval_basis(const DenseVector &x) const;
+
+    // Evaluate B-spline basis functions at m points X, where X is a matrix of size (m, dim_x).
+    // Returns a matrix of size (m, num_basis_functions).
+    SparseMatrix batch_eval_basis(const DenseMatrix &x) const;
 
     // Evaluate Jacobian of B-spline basis functions at x. Returns vector of size (num_basis_functions, num_x).
     SparseMatrix eval_basis_jacobian(const DenseVector &x) const;

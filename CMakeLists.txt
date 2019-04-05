@@ -204,6 +204,7 @@ set(TEST_SRC_LIST
     test/unit/data_table.cpp
     test/general/utilities.cpp
     test/examples/approximation.cpp
+    test/examples/batch_eval_2d.cpp
     test/utils/op_overloads.h
     test/utils/op_overloads.cpp
     test/utils/test_function.h

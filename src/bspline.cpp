@@ -58,6 +58,13 @@ DenseVector BSpline::eval(const DenseVector &x) const
     return res;
 }
 
+DenseMatrix BSpline::batch_eval(const DenseMatrix &x) const
+{
+//    check_input(x);
+    DenseMatrix res = batch_eval_basis(x) * control_points;
+    return res;
+}
+
 /**
  * Returns the (dimY x dimX) Jacobian evaluated at x
  */
@@ -114,6 +121,35 @@ SparseVector BSpline::eval_basis(const DenseVector &x) const
 #endif // NDEBUG
 
     return basis.eval(x);
+}
+
+/**
+ * Batch evaluation of B-spline basis functions
+ */
+SparseMatrix BSpline::batch_eval_basis(const DenseMatrix &x) const
+{
+    int m = x.rows();
+
+    int nnz = 1;
+    for (auto deg : get_basis_degrees())
+        nnz *= deg + 1;
+    nnz *= m;  // Since we have m points
+
+    typedef Eigen::Triplet<double> T;
+    std::vector<T> triplets;
+    triplets.reserve(nnz);
+    for (int i = 0; i < m; ++i)
+    {
+        auto bi = basis.eval(x.row(i));
+        for (SparseVector::InnerIterator bij(bi); bij; ++bij) {
+            triplets.push_back(T(i, bij.index(), bij.value()));
+        }
+    }
+
+    SparseMatrix b(m, basis.get_num_basis_functions());
+    b.setFromTriplets(triplets.begin(), triplets.end());
+
+    return b;
 }
 
 /**
