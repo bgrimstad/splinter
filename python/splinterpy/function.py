@@ -70,6 +70,7 @@ class Function(object):
         f_handle = splinter_backend_obj.handle.splinter_bspline_eval_hessian_row_major
         hes = splinter_backend_obj.call(f_handle, self._handle, list_to_c_array_of_doubles(x), len(x))
 
+        # TODO: add support for self._dim_y > 1
         # Convert from ctypes array to Python list of list of lists
         # hessians is a list of the hessians in all points
         hessians = []
