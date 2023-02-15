@@ -45,6 +45,12 @@ class Function(object):
         return results
 
     def eval_jacobian(self, x):
+        if self._dim_y != 1:
+            raise NotImplementedError(
+                    "eval_jacobian has not been implemented for dim_y != 1!\n"
+                    "As a workaround you can create one interpolator per y-dimension.\n"
+            )
+
         x = self._transform_input(x)
 
         num_points = len(x) // self._dim_x
@@ -63,6 +69,12 @@ class Function(object):
         return jacobians
 
     def eval_hessian(self, x):
+        if self._dim_y != 1:
+            raise NotImplementedError(
+                    "eval_hessian has not been implemented for dim_y != 1!\n"
+                    "As a workaround you can create one interpolator per y-dimension.\n"
+            )
+
         x = self._transform_input(x)
 
         num_points = len(x) // self._dim_x
